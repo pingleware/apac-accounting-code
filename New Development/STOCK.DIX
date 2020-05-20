@@ -1,0 +1,110 @@
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ This routine is  used to  create  an index of the various ³
+      *    ³ words that are present in the Stock description.	       ³
+      *    ³ The first record will be used for the first 12 characters ³
+      *    ³ of the Stock description as it is for description index   ³
+      *    ³ of the Stock record. All Stock records types will have an ³
+      *    ³ entry for each word that appears in the description. The  ³
+      *    ³ following procedure will be applied;		       ³
+      *    ³	Find the next word and move the next 12 characters to  ³
+      *    ³	index key. Repeat until the end of the description has ³
+      *    ³	been reached. This procedure allows for words such as; ³
+      *    ³	the, and, etc to have the word following as part of    ³
+      *    ³	the key which reduces the duplicate keys and gives a   ³
+      *    ³	better index spread.				       ³
+      *    ³ This routine can be altered as required.		       ³
+      *    ³ See also STOCK.DSC (Does not log to recovery file).       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      * 							       *
+      *  Aug 2008	- New file (STKALT) - Stock alternate index    *
+      * 		  included for lookups, using any word con-    *
+      * 		  tained in the Stock description.	       *
+      * 							       *
+      ******************************************************************
+       STOCK-DESC-INDEX   SECTION 60.
+       STOCK-INDEX.
+      *
+      *    ****    Initialize the extended alpha index record.
+      *
+	     MOVE STK-CODE	 TO STKA-CODE.
+	     MOVE ZERO		 TO STKA-NO.
+	     MOVE STK-DESC	 TO W50-DATA STKA-DESC STKA-DKEY.
+      *
+      *    ****    Write the first entry of the Alternate Index.
+      * 	   This is the same as the Alpha Index entry for the
+      * 	   Stock record.
+      *
+	     PERFORM WRITE-STKALT THRU WRITE-STKALT-EXIT.
+      *
+      *    ****   Log to recovery file.
+      *
+	     MOVE 1		 TO WS-ACTION.
+	     PERFORM AY49S THRU AY59.
+	     MOVE 1		 TO WS-S1.
+	     MOVE 30		 TO WS-S3.
+      *
+      *    ****    Find the length of the Stock description (characters).
+      * 	   Look for first non space character - starting with 30
+      * 	   and working back. (WS-S3)
+      *
+       STOCK-FIND-LENGTH.
+	   IF W50-CCHAR(WS-S3) = SPACE
+	       SUBTRACT 1	 FROM WS-S3
+	       GO TO STOCK-FIND-LENGTH.
+	     MOVE ZERO		 TO WS-S4.
+      *
+      *    ****    Find the next word in the description.
+      *
+	STOCK-NEXT-WORD.
+      *
+      *    ****    Check if end of word reached and add 1 to the number
+      * 	   of words found (WS-S4). This is used, together with
+      * 	   the account number, to provide a unique key for the
+      * 	   STKALT records.
+      *
+	   IF W50-CCHAR(1) = SPACE
+      *
+      *    ****    Move data, one character to the left and reduce the
+      * 	   number of characters left in the description.
+      *
+	       MOVE W50-D39	 TO W50-DATA
+	       SUBTRACT 1	 FROM WS-S3
+	       ADD 1		 TO WS-S4
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ If it is necessary to exclude words from the alternate    ³
+      *    ³ index, such as '(PTY)', 'LTD' etc, then this would be the ³
+      *    ³ the point to perform the routine to exclude the word.     ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	       GO TO STOCK-STORE-NEXT.
+      *
+      *    ****    Move data, one character to the left and reduce the
+      * 	   number of characters left in the description.
+      *
+	     MOVE W50-D39	 TO W50-DATA.
+	     SUBTRACT 1 	 FROM WS-S3.
+	   IF WS-S3 > 0
+	       GO TO STOCK-NEXT-WORD.
+      *
+      *    ****  No more words left in the description.
+      *
+	     GO TO STOCK-DESC-INDEX-EXIT.
+
+       STOCK-STORE-NEXT.
+	     MOVE WS-S4		 TO STKA-NO.
+	     MOVE W50-DATA	 TO STKA-DKEY.
+      *
+      *    ****    Write an entry in the Alternate Index.
+      * 	   This is an additional Alpha Index entry for the
+      * 	   Stock Record.
+      *
+	     PERFORM WRITE-STKALT THRU WRITE-STKALT-EXIT.
+      *
+      *    ****   Log to recovery file.
+      *
+	     MOVE 1		 TO WS-ACTION.
+	     PERFORM AY49S THRU AY59.
+	   IF WS-S3 > 0
+	       GO TO STOCK-NEXT-WORD.
+
+       STOCK-DESC-INDEX-EXIT.
+	     EXIT.

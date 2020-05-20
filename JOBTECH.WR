@@ -1,0 +1,42 @@
+      *
+      * *****  ***  ****  ***** ****  ***  *   *    ***** *** *	   ****
+      *   *   *   * *	*   *	*    *	 * *   *    *	   *  *	   *
+      *   *   *   * *	*   *	*    *	   *   *    *	   *  *	   *
+      *   *   *   * ****    *	***  *	   *****    ***	   *  *	   ***
+      *   *   *   * *	*   *	*    *	   *   *    *	   *  *	   *
+      * * *   *   * *	*   *	*    *	 * *   *    *	   *  *	   *
+      * '*'    ***  ****    *	****  ***  *   *    *	  *** **** ****
+      *
+000010 REWRITE-JOBTECH.
+000020	     REWRITE TIM-REC1.
+000030     IF WS-STAT1 NOT = "0"
+000040	       MOVE 61		 TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060	     GO TO WRITE-JOBTECH-EXIT.
+000070
+000080 REWRITE-JOBTECH-UNLOCK.
+000090	     REWRITE TIM-REC1.
+000100     IF WS-STAT1 NOT = "0"
+000110	       MOVE 61		 TO WS-F-ERROR
+000120         PERFORM WRITE-ERROR.
+000130	     UNLOCK JOBTECH.
+000140	     GO TO WRITE-JOBTECH-EXIT.
+000150
+000160 DELETE-JOBTECH-REC.
+000170	     DELETE JOBTECH.
+000180     IF WS-STAT1 NOT = "0"
+000190	       MOVE 61		 TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210	     GO TO WRITE-JOBTECH-EXIT.
+000220
+000230 WRITE-JOBTECH.
+000240	     WRITE TIM-REC1.
+000250     IF WS-STATUS = "22"
+000260	       DELETE JOBTECH
+000270	       GO TO WRITE-JOBTECH.
+000280     IF WS-STAT1 NOT = "0"
+000290	       MOVE 61		 TO WS-F-ERROR
+000300         PERFORM WRITE-ERROR.
+
+000340 WRITE-JOBTECH-EXIT.
+000350       EXIT.

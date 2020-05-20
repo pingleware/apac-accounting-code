@@ -1,0 +1,96 @@
+      /
+000010 FD  SORDER    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-SORDER.
+000030 01  SOR-REC1.
+           03  SOR-KEY.
+000050       05  SOR-REF       PIC  X(08).
+             05  SOR-SEQN.
+                 07  SOR-SEQ   PIC  9(03).
+                 07  SOR-SUB   PIC  9(02).
+             05  SOR-SQN REDEFINES SOR-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 0  -  HEADER RECORD
+      *                 : 1  -  ITEM DETAILS
+      *                 : 2  -  PARTS DETAILS
+      *                 : 3  -  REMARKS
+      *                 : 4  -  INTERNAL NOTES FOR PICKING SLIP 
+      *                 : 5  -  ADDRESS
+      *                 : 9  -  TRAILER
+      *
+           03  SOR-TYPE        PIC  9(01).
+           03  SOR-AC          PIC  X(06).
+           03  SOR-DETAIL.
+             05  SOR-NAME      PIC  X(40).
+000070	     05  SOR-DTE       PIC  9(08)    COMP-3.
+             05  SOR-PICNO     PIC  9(02)    COMP-5.
+000090       05  SOR-ORD       PIC  X(12).
+000130       05  SOR-SMAN      PIC  9(04)    COMP-5.
+             05  SOR-DOC       PIC  X(01).
+               88  SOR-DELIV   VALUE "D".
+               88  SOR-INVOIC  VALUE "I".
+               88  SOR-ORDER   VALUE "O".
+               88  SOR-QUOTE   VALUE "Q".
+             05  SOR-PAGE      PIC  9(02).
+             05  SOR-OREF      PIC  X(09).
+             05  SOR-EXP       PIC  X(01).
+             05  SOR-PRC       PIC  X(01).
+             05  SOR-ADV       PIC  X(01).
+             05  SOR-TEL       PIC  X(14).
+             05  SOR-CONTACT   PIC  X(19).
+	     05  SOR-BIN       PIC  X(06).
+000140     03  SOR-DET2 REDEFINES SOR-DETAIL.
+	     05  SOR-EXT-ITEM.
+000190	       07  SOR-ITEM    PIC  X(14).
+	       07  SOR-ITM     PIC  X(03).
+	       07  FILLER      PIC  X(01).
+000210	     05  SOR-DESC      PIC  X(40).
+             05  SOR-SERIAL REDEFINES SOR-DESC.
+                 07  FILLER    PIC X(01).
+		 07  SOR-SNUM OCCURS 2.
+                     09  SOR-SNO
+			       PIC X(18).
+                     09  FILLER
+                               PIC X(01).
+                 07  FILLER    PIC X(01).
+000160       05  SOR-QNT       PIC S9(05)V99 COMP-3.
+	     05  SOR-COST      PIC S9(06)V999 COMP-3.
+	     05  SOR-SELL      PIC S9(08)V999 COMP-3.
+             05  SOR-VAT       PIC S9(07)V99 COMP-3.
+000280       05  SOR-VAL       PIC S9(09)V99 COMP-3.
+000270	     05  SOR-INCTAX    PIC S9(09)V99 COMP-3.
+000270	     05  SOR-NONTAX    PIC S9(09)V99 COMP-3.
+000270	     05  SOR-TAXVAL    PIC S9(09)V99 COMP-3.
+             05  SOR-DSC       PIC S9(02)V99 COMP-3.
+             05  SOR-DISC      PIC S9(07)V99 COMP-3.
+             05  SOR-SERNO     PIC  X(01).
+	     05  SOR-PER       PIC  X(07).
+	     05  SOR-VAT-SUB   PIC  9(01).
+	     05  SOR-PACK      PIC  9(01)    COMP-0.
+000140     03  SOR-DET3 REDEFINES SOR-DETAIL.
+000290       05  SOR-SUBTOT    PIC S9(09)V99 COMP-3.
+000300       05  SOR-DSCNT     PIC S9(07)V99 COMP-3.
+             05  SOR-NON-TXBL  PIC S9(09)V99 COMP-3.
+             05  SOR-TAXABLE   PIC S9(09)V99 COMP-3.
+000310       05  SOR-TAX       PIC S9(07)V99 COMP-3.
+000320       05  SOR-TOT       PIC S9(09)V99 COMP-3.
+             05  SOR-INVOICE   PIC  X(08).
+             05  SOR-BAL       PIC S9(09)V99 COMP-3.
+000310       05  SOR-ADVTAX    PIC S9(07)V99 COMP-3.
+             05  SOR-INSTRUCT  PIC  X(09).
+             05  SOR-PMETH     PIC  9(01).
+             05  SOR-STATUS    PIC  9(03)    COMP-3.
+             05  SOR-HTEL      PIC  X(14).
+             05  SOR-ID        PIC  X(14).
+	     05  SOR-COMMENT   PIC  X(29).
+000140     03  SOR-DET4 REDEFINES SOR-DETAIL.
+             05  SOR-AD1       PIC  X(30).
+             05  SOR-AD2       PIC  X(26).
+             05  SOR-AD3       PIC  X(26).
+             05  SOR-AD4       PIC  X(26).
+             05  SOR-PC        PIC  X(04).
+	     05  FILLER        PIC  X(02).
+000140	   03  SOR-DET5 REDEFINES SOR-DETAIL.
+	     05  SOR-TEXT      PIC  X(63).
+	     05  SOR-SIGN      PIC  X(20).
+	     05  FILLER        PIC  X(31).

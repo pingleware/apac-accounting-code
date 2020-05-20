@@ -1,0 +1,33 @@
+      /
+002000 FD  GLTRAN    LABEL RECORD IS STANDARD
+002010               VALUE OF FILE-ID IS W02-GLTRAN.
+002020 01  T-REC.
+           03  T-KEY.
+002160         05  T-AC        PIC  9(06).
+002030	       05  T-DATE      PIC  9(08).
+002040         05  T-DTE REDEFINES T-DATE.
+002050		   07  T-CC    PIC  9(02).
+002050             07  T-YY    PIC  9(02).
+002060             07  T-MM    PIC  9(02).
+002070             07  T-DD    PIC  9(02).
+               05  T-AKEY.
+      *
+      *     01 OR 02 - Journal Entries
+      *     03 OR 04 - Cheques
+      *     06 OR 07 - Deposits
+      *     08 OR 09 - Electronic Funds
+      *
+002120		   07  T-CODE  PIC  9(02).
+                   07  T-REFER.
+002110                 09  T-REF
+                               PIC  9(07).
+                   07  T-SEQ   PIC  9(02).
+               05  T-SUB       PIC  9(01).
+002080     03  T-NAR           PIC  X(40).
+002090     03  T-DESC REDEFINES T-NAR.
+002100         05  T-NARATIVE  PIC  X(36).
+               05  FILLER      PIC  9(07)    COMP-3.
+002130     03  T-VAL           PIC S9(09)V99 COMP-3.
+002170     03  T-FLAG          PIC  X(01).
+           03  T-BATCH         PIC  9(06)    COMP-3.
+	   03  FILLER	       PIC  X(03).

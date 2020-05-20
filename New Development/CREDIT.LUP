@@ -1,0 +1,236 @@
+      /
+      *    ****    C R E D I T O R   L O O K U P   R O U T I N E
+      *
+      *                       PERFORMED FROM AA50
+      *            (P R O C E S S   F U N C T I O N   K E Y S)
+      *
+012510 CREDITOR-LOOKUP         SECTION.
+
+012520 CREDIT-LUP-SCREEN.
+012530       DISPLAY CLR-SCREEN.
+             DISPLAY S-CRD.
+             MOVE SPACE              TO WS-OPTION.
+
+       CREDIT-LUP-CLR-SCREEN.
+             MOVE 0601               TO CPOS.
+             PERFORM CREDIT-CRT-EDGE UNTIL CLIN = 22.
+             MOVE SPACES             TO W15-NAME.
+
+       CREDIT-LUP-DATA.
+             ACCEPT SA-CRD.
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY    MOVE SPACES TO W15-ACNO
+000150                           GO TO CREDIT-LOOKUP-EXIT
+                 WHEN OTHER      PERFORM AA900-ALARM
+               END-EVALUATE
+               GO TO CREDIT-LUP-DATA.
+             MOVE SPACES             TO WS-BLNK78.
+             DISPLAY WS-BLNK78 AT 2302 WITH FOREGROUND-COLOR Cyan.
+             DISPLAY SPACE     AT 2501 WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue HIGHLIGHT.
+             MOVE ALL "°"            TO WS-BLNK78.
+             MOVE 6                  TO CLIN.
+             MOVE 1                  TO W75-S W75-S1.
+
+       CREDIT-LUP-TAB-LOOP.
+             MOVE SPACES             TO W75-CNO(W75-S1).
+           IF W75-S1 < 18
+               ADD 1                 TO W75-S1
+               GO TO CREDIT-LUP-TAB-LOOP.
+             MOVE ZERO               TO W75-S1.
+
+       CREDIT-LUP-ENTRY-TYPE.
+           IF W15-NAME = SPACES
+               MOVE "!"              TO W15-NAME.
+             MOVE 40                 TO WS-LENGTH.
+             CALL "CBL_TOUPPER" USING W15-NAME BY VALUE WS-LENGTH RETURNING WS-STATUS.
+             MOVE 1                  TO WS-LENGTH.
+             MOVE W15-NAME           TO P-NAME.
+             PERFORM START-AT-CRED-NAME THRU READ-CREDIT-EXIT.
+           IF WS-F-ERROR = 3
+               GO TO CREDIT-NO-RECORD.
+
+       CREDIT-GET-CRED-RECORD.
+           IF WS-OPTION = "J"
+               MOVE SPACE            TO WS-OPTION
+               GO TO CREDIT-SKIP-CRED-READ.
+027520       PERFORM READ-CREDIT-NEXT THRU READ-CREDIT-EXIT.
+           IF WS-F-ERROR = 3
+               SUBTRACT 1            FROM W75-S
+               GO TO CREDIT-FULL-SCREEN.
+
+       CREDIT-SKIP-CRED-READ.
+             MOVE P-NUMBER           TO W75-CNO(W75-S).
+             DISPLAY SD-CRD AT LINE CLIN.
+027700           IF CLIN < 21
+027710               ADD 1           TO CLIN W75-S
+027720               GO TO CREDIT-GET-CRED-RECORD.
+
+       CREDIT-FULL-SCREEN.
+001020       DISPLAY " "       AT 2303 WITH FOREGROUND-COLOR Brown HIGHLIGHT
+001030               " highlight - "         WITH FOREGROUND-COLOR Grey
+                     "PgUp"                  WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                     "/"                     WITH FOREGROUND-COLOR Grey
+                     "PgDn"                  WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                     " - "                   WITH FOREGROUND-COLOR Grey
+001040               "ENTER"                 WITH FOREGROUND-COLOR Brown HIGHLIGHT
+001050               " select - "            WITH FOREGROUND-COLOR Grey
+001170               "Esc"                   WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                     "ape - "                WITH FOREGROUND-COLOR Grey
+                     "F9"                    WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                     " memo/remarks"         WITH FOREGROUND-COLOR Grey.
+
+       CREDIT-SAVE-FULL-SCREEN.
+             PERFORM SAVE-SCREEN-2.
+             MOVE 0                  TO W75-S1.
+             MOVE 0601               TO CPOS.
+
+       CREDIT-CRT-ATTRIB.
+             MOVE 3920               TO W41-LENGTH.
+             CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS W42-ATTRIB2 W41-LENGTH RETURNING WS-STATUS.
+             MOVE 4000               TO W41-LENGTH.
+
+       CREDIT-GET-USER-OPT.
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+             PERFORM CLEAR-L50.
+           IF ADIS-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN UP-KEY     GO TO CREDIT-ADJ-NO-KEYS
+                 WHEN DOWN-KEY   GO TO CREDIT-CHK-NO-KEYS
+                 WHEN ENTER-KEY
+                 WHEN CR-KEY     GO TO CREDIT-CHK-SELECT
+                 WHEN OTHER      PERFORM AA900-ALARM
+               END-EVALUATE
+               GO TO CREDIT-GET-USER-OPT
+           ELSE
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY    MOVE SPACES TO W15-ACNO
+                                 GO TO CREDIT-LOOKUP-EXIT
+                 WHEN PAGE-DOWN  GO TO CREDIT-GET-NEXT-PAGE
+                 WHEN PAGE-UP    GO TO CREDIT-GET-PREV-PAGE
+                 WHEN F9-KEY     PERFORM CREDIT-ADD-SPECS THRU CREDIT-ADD-EXIT
+                                 PERFORM CREDIT-FULL-SCREEN
+001510                           GO TO CREDIT-GET-USER-OPT
+                 WHEN OTHER      PERFORM AA900-ALARM
+               END-EVALUATE
+               GO TO CREDIT-GET-USER-OPT.
+             PERFORM AA900-ALARM.
+001280       GO TO CREDIT-GET-USER-OPT.
+
+001240 CREDIT-GET-NEXT-PAGE.
+           IF W75-S < 16
+               GO TO CREDIT-GET-USER-OPT.
+
+       CREDIT-NEW-PAGE.
+             MOVE 0601               TO CPOS.
+             PERFORM CREDIT-CRT-EDGE UNTIL CLIN = 22.
+             MOVE 6                  TO CLIN.
+             MOVE LOW-VALUES         TO W75-KEYS.
+             MOVE 1                  TO W75-S W75-S1.
+             PERFORM CREDIT-LUP-TAB-LOOP.
+027830       GO TO CREDIT-GET-CRED-RECORD.
+
+       CREDIT-GET-PREV-PAGE.
+             MOVE 1                  TO WS-IXS1.
+      *
+      *    ****    SET OPTION TO BYPASS THE READ NEXT
+      *
+             MOVE "J"                TO WS-OPTION.
+
+       CREDIT-GET-PREV-LOOP.
+             PERFORM READ-CREDIT-PREV THRU READ-CREDIT-EXIT.
+           IF WS-F-ERROR = 3
+               MOVE SPACE            TO WS-OPTION
+               GO TO CREDIT-NEW-PAGE.
+           IF WS-IXS1 < 31
+               ADD 1                 TO WS-IXS1
+               GO TO CREDIT-GET-PREV-LOOP.
+             GO TO CREDIT-NEW-PAGE.
+
+027970 CREDIT-NO-RECORD.
+027730       DISPLAY "No record - " AT 2512 WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue HIGHLIGHT
+                     "N"                    WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                     "ext or "              WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue HIGHLIGHT
+                     "Q"                    WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                     "uit > <"              WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue HIGHLIGHT.
+
+       CREDIT-GET-USER-OPT-2.
+027990       ACCEPT WS-OPTION AT 2538 WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Grey HIGHLIGHT AUTO.
+             CALL "CBL_TOUPPER" USING WS-OPTION BY VALUE WS-LENGTH RETURNING WS-STATUS.
+           IF NOT(WS-OPTION = "N" OR "Q")
+               GO TO CREDIT-GET-USER-OPT-2.
+027800     IF WS-OPTION = "N"
+027810         GO TO CREDIT-LUP-SCREEN.
+             MOVE SPACES             TO W15-ACNO.
+028000       GO TO CREDIT-LOOKUP-EXIT.
+
+       CREDIT-ADJ-NO-KEYS.
+           IF W75-S1 > 1
+               SUBTRACT 1            FROM W75-S1 CLIN.
+             GO TO CREDIT-HIGHLIGHT.
+
+       CREDIT-CHK-NO-KEYS.
+           IF W75-S1 = ZERO
+               MOVE 1                TO W75-S1
+               GO TO CREDIT-HIGHLIGHT.
+           IF W75-S1 < W75-S
+               ADD 1                 TO W75-S1 CLIN.
+
+       CREDIT-HIGHLIGHT.
+             PERFORM CREDIT-CRT-ATTRIB.
+             DISPLAY W43-DET(CLIN) AT CPOS WITH REVERSE-VIDEO.
+             GO TO CREDIT-GET-USER-OPT.
+
+       CREDIT-CHK-SELECT.
+           IF W75-S1 = ZERO
+               GO TO CREDIT-GET-USER-OPT.
+             MOVE CSTART             TO WS1-CURSOR.
+             MOVE W75-CNO(W75-S1)    TO P-NUMBER.
+             PERFORM READ-CREDIT THRU READ-CREDIT-EXIT.
+             MOVE ZERO               TO COL-AND-LINE.
+             MOVE P-NUMBER           TO W15-ACNO.
+             GO TO CREDIT-LOOKUP-EXIT.
+
+       CREDIT-ADD-SPECS.
+002040     IF W75-S1 = ZERO
+002050         GO TO CREDIT-ADD-EXIT.
+002000       MOVE W75-CNO(W75-S1)    TO CME-AC W15-ACNO.
+             MOVE 1                  TO CME-SEQ.
+             PERFORM READ-CRDMEM THRU READ-CRDMEM-EXIT.
+           IF NOT(WS-F-ERROR = ZERO)
+               DISPLAY "No Memo or remarks" AT 2502 WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+               CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS
+               GO TO CREDIT-ADD-EXIT.
+             INITIALIZE W200-MEM-FLDS.
+
+       CREDIT-ADD-LOOP.
+             MOVE CME-SEQ            TO WS-S1.
+             MOVE CME-DATA           TO W200-MEM(WS-S1).
+             PERFORM READ-CRDMEM-NEXT THRU READ-CRDMEM-EXIT.
+           IF WS-F-ERROR = ZERO
+               IF CME-AC = W15-ACNO
+                   GO TO CREDIT-ADD-LOOP.
+             PERFORM SAVE-SCREEN-3.
+             MOVE 7                  TO SHADE-ROW.
+             MOVE 19                 TO SHADE-COL.
+             MOVE 60                 TO SHADE-WIDTH.
+             MOVE 15                 TO SHADE-LINES.
+             DISPLAY S-MEM.
+             PERFORM SCREEN-SHADOW.
+             DISPLAY SA-MEM.
+021280       DISPLAY " ENTER to continue  " AT 2502 WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT.
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+             PERFORM RESTORE-SCREEN-3.
+
+       CREDIT-ADD-EXIT.
+             EXIT.
+
+       CREDIT-CRT-EDGE.
+002130       DISPLAY WS-MCR1  AT CPOS WITH BACKGROUND-COLOR Black FOREGROUND-COLOR Cyan
+                     WS-MCR78         WITH FOREGROUND-COLOR Cyan
+                     WS-MCR80         WITH BACKGROUND-COLOR Black FOREGROUND-COLOR Cyan.
+019260       ADD 1                   TO CLIN.
+
+       CREDIT-LOOKUP-EXIT.
+             EXIT.

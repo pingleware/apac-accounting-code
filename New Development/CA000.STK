@@ -1,0 +1,48 @@
+      *
+      *    ****         G E T   S T O C K   R E C O R D   
+      *
+      *                         CALL STPREAD
+      *
+      *    STPREAD is called with W10-INSTR set to indicate how to read
+      *    the Stock Record:
+      *                     A = Alternate Code
+      *                     I = Stock/Item Code
+      *                     S = Stock/Item or X-Ref Code
+      *                     X = X-Ref Code
+      *
+      *    If W10-INSTR is "S" on entry and the code in W10-EXT-ENTRY is 
+      *    unsuccessful when used as the STK-CODE, it is then tried as 
+      *    the STK-XREF code.
+      *
+      *    If the READ is unsuccessful the program will exit returning
+      *    WS-F-ERROR = 22.
+      *
+      *    If the READ is successful the program will exit with the 
+      *    Stock record details in W10-STK-RECORD. Inclusive prices and
+      *    dates in DDMMCCYY format are returned in W10-STOCK layout.
+      *    For details see copy file W10.STK.
+      *    
+       CA000         SECTION.
+       CA00.
+             CALL "STP\STPREAD" USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY DATA-FILE-IDS W10-STOCK WS-EXT-STK WS-F-ERROR.
+           IF WS-F-ERROR = 0
+               MOVE W10-EXT-ENTRY    TO STK-CODE
+      *
+      *      Must the stock record be locked?
+      *
+               IF LOCK-RECORD
+                   PERFORM READ-STOCK-LOCK THRU READ-STOCK-EXIT
+               ELSE
+                   PERFORM READ-STOCK THRU READ-STOCK-EXIT
+               END-IF    
+      *
+      *    If the average cost in the record is zero, make it equal
+      *    to the current cost.
+      *
+               IF W1O-IND < 2
+                   IF W10-AVGE = ZERO
+                       MOVE W10-COST TO W10-AVGE.
+             MOVE SPACE              TO W10-INSTR2.
+               
+       CA99.
+             EXIT.

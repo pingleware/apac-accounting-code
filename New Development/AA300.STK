@@ -1,0 +1,21 @@
+      *
+      *    ****   D I S P L A Y   L O O K U P   O P T I O N S
+      *
+       AA300              SECTION.
+       AA301.
+                   DISPLAY "F1"                                                                    AT 2502 WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                             "=Help,"                                                                      WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                                   "F2"                                                                    WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                                     "=Itm code/"                                                          WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                                               "F3"                                                        WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                                                 "=Alt code/"                                              WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                                                           "F4"                                            WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                                                             "=Desc/"                                      WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                                                                   "F5"                                    WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                                                                     "=Desc2/"                             WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                                                                            "F6"                           WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                                                                              "=X/Ref/"                    WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                                                                                     "F9"                  WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                                                                                       "=Any Word Lookup." WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue.
+       AA305.
+             EXIT.

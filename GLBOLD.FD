@@ -1,0 +1,20 @@
+      /
+002000 FD  GLBOLD    LABEL RECORD IS STANDARD
+002010               VALUE OF FILE-ID IS W02-GLBOLD
+                     RECORDING MODE IS VARIABLE.
+002020 01  GLO-REC.
+	   03  GLO-KEY.
+	       05  GLO-REFER   PIC  X(07).
+	       05  GLO-REF REDEFINES GLO-REFER
+			       PIC  9(07).
+	       05  GLO-SEQ     PIC  9(02).
+002030	   03  GLO-DATE        PIC  9(08).
+002040	   03  GLO-DTE REDEFINES GLO-DATE.
+002050	       05  GLO-CC      PIC  9(02).
+002050	       05  GLO-YY      PIC  9(02).
+002060	       05  GLO-MM      PIC  9(02).
+002070	       05  GLO-DD      PIC  9(02).
+002160	   03  GLO-AC	       PIC  9(06).
+002080	   03  GLO-NAR	       PIC  X(40).
+002130	   03  GLO-VALUE       PIC S9(09)V99 COMP-3.
+	   03  FILLER	       PIC  X(03).

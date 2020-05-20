@@ -1,0 +1,52 @@
+      /    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё This routine is used to either call the stock / inventory Ё
+      *    Ё lookup  program and cancel it when control is returned or Ё
+      *    Ё it performs the creditor/accounts payable account lookup. Ё
+      *    Ё The relevant error message will be displayed if an excep- Ё
+      *    Ё tion occurs. The usual parameters are passed to the look- Ё
+      *    Ё up program as well  W10-STOCK  which will contain the de- Ё
+      *    Ё tails of the item that has been selected  when control is Ё
+      *    Ё returned  to the calling program.	W15-ACNO will  contain Ё
+      *    Ё the  creditor / accounts  payable account number  if  the Ё
+      *    Ё CREDITOR-LOOKUP routine is performed.                     Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       AA50-LOOKUP     SECTION.
+       AA50C.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё          Save the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM SAVE-SCREEN.
+             PERFORM SCREEN-CONTENTS.
+             MOVE PRG-CRED-LUP      TO PRG-NAME.
+             CALL PRG-NAME USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY DATA-FILE-IDS W15-INPUT-AREA
+	                 ON EXCEPTION GO TO AA55
+             END-CALL.
+             GO TO AA54.
+
+       AA50.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё          Save the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM SAVE-SCREEN.
+             MOVE PRG-STOCK-LUP      TO PRG-NAME.
+             CALL PRG-NAME USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY DATA-FILE-IDS W10-STOCK
+	                 ON EXCEPTION GO TO AA55
+             END-CALL.
+
+       AA54.
+             CANCEL PRG-NAME.
+             GO TO AA58.
+
+       AA55.
+             MOVE SPACES             TO WS-ERR-MES.
+             STRING "Program- " DELIMITED SIZE PRG-NAME DELIMITED " " " not on disk, press ANY key" DELIMITED SIZE INTO WS-ERR-MES.
+             PERFORM ERROR-MESSAGE.
+
+       AA58.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё       Restore the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM RESTORE-SCREEN.
+
+       AA59.
+             EXIT.

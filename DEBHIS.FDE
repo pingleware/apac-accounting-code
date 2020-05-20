@@ -1,0 +1,27 @@
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё This file is used for extracting debtor purchase history  Ё
+      *    Ё for the last 12 months. This data can be exported, re-    Ё
+      *    Ё produced on the screen or printed at the User's request.  Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000010 FD  DEBHIS    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DEBHIS.
+000220 01  DHS-REC1.
+000230	   03  DHS-KEY.
+	       05  DHS-AC	PIC  X(06).
+	       05  DHS-EXT-CODE.
+		   07  DHS-CODE	PIC  X(14).
+		   07  DHS-ITM	PIC  X(03).
+		   07  FILLER	PIC  X(01).
+	       05  DHS-RESTART REDEFINES DHS-EXT-CODE.
+		   07  DHS-S-AC PIC  X(06).
+		   07  DHS-E-AC PIC  X(06).
+		   07  DHS-COMP PIC  X(01).
+		   07  DHS-MTH	PIC  X(01).
+		   07  DHS-YEAR PIC  9(04).
+	   03  DHS-DESC 	PIC  X(30).
+	   03  DHS-START-MNTH	PIC  9(02).
+	   03  DHS-MONTH OCCURS 12.
+000250	       05  DHS-QNT	PIC S9(09)V99 COMP-3.
+	       05  DHS-TCOST	PIC S9(09)V99 COMP-3.
+	       05  DHS-TSELL	PIC S9(09)V99 COMP-3.

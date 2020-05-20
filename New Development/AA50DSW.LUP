@@ -1,0 +1,53 @@
+       AA50-LOOKUP     SECTION.
+       AA50.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё          Save the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM SAVE-SCREEN.
+             PERFORM SCREEN-CONTENTS.
+             MOVE PRG-STOCK-LUP      TO PRG-NAME.
+             CALL PRG-NAME USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY DATA-FILE-IDS W10-STOCK ON EXCEPTION GO TO AA55
+             END-CALL.
+             GO TO AA54.
+
+       AA50D.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё          Save the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM SAVE-SCREEN.
+             PERFORM SCREEN-CONTENTS.
+             MOVE PRG-DEBT-LUP       TO PRG-NAME.
+             CALL PRG-NAME USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY DATA-FILE-IDS W40-COMPANY
+                  ON EXCEPTION GO TO AA55
+             END-CALL.
+             GO TO AA54.
+
+       AA50W.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё          Save the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM SAVE-SCREEN.
+             PERFORM SCREEN-CONTENTS.
+             MOVE PRG-WARHS-LUP     TO PRG-NAME.
+             CALL PRG-NAME USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY DATA-FILE-IDS WS-WHSE
+	                 ON EXCEPTION GO TO AA55
+             END-CALL.
+             MOVE WS-WHSE            TO W15-WHSE.
+
+       AA54.
+             CANCEL PRG-NAME.
+             GO TO AA58.
+
+       AA55.
+             MOVE SPACES             TO WS-ERR-MES.
+             STRING "Program- " DELIMITED SIZE PRG-NAME DELIMITED " " " not on disk, press ANY key" DELIMITED SIZE INTO WS-ERR-MES.
+             PERFORM ERROR-MESSAGE.
+
+       AA58.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё       Restore the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM RESTORE-SCREEN.
+
+       AA59.
+             EXIT.

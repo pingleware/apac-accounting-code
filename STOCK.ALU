@@ -1,0 +1,756 @@
+      /    *************************************************************
+      *    ****    S T O C K   L O O K U P   -	 S T K A L T	    ****
+      *    *************************************************************
+      * 							       *
+      * 	   PERFORMED FROM AA50				       *
+      * 	   (P R O C E S S   F U N C T I O N   K E Y S)	       *
+      * 							       *
+      *  Aug 2008	- New file (STKALT) - Stock alternate index    *
+      * 		  included for lookups, using any word con-    *
+      * 		  tained in the Stock description.	       *
+      * 							       *
+      * Nov 2009	- Include words from Description 2 and from    *
+      * 		  the Item code (Some item codes are comprised *
+      * 		  of individual words and these will be        *
+      * 		  included in the alternate Index)	       *
+      * 							       *
+      ******************************************************************
+000010 STOCK-A-LOOKUP		SECTION.
+
+       STOCK-A-SAVE-LIN.
+	     MOVE LIN		 TO SLIN.
+
+000030 STCKA-LUP-SCREEN.
+000040       DISPLAY CLR-SCREEN. 
+000050	     DISPLAY S-STK.
+	     DISPLAY "STOCK LOOKUP" AT 0230
+		     WITH FOREGROUND-COLOR 7 HIGHLIGHT
+		     " (ANY WORD)" WITH FOREGROUND-COLOR 6 HIGHLIGHT.
+	     DISPLAY WS-RT-HD AT 0354
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT.
+	     DISPLAY "Single" AT 0368
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT.
+008890	     DISPLAY "Find Word or Part :" AT 0302.
+	     MOVE 1		 TO WS-PRICE.
+	     MOVE SPACE 	 TO WS-OPTION.
+
+       STCKA-LUP-CLR-SCREEN.
+000060       MOVE 0601           TO CPOS.
+000080	     PERFORM STCKA-CRT-EDGE UNTIL CLIN = 22.
+000160	     MOVE SPACES	 TO W10-ACODE W10-DESC W10-DESC2
+000170				    W10-EXT-CODE2 W10-EXT-CODE1.
+
+000110 STCKA-LUP-DATA.
+000120	     ACCEPT SA-STKD.
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+000140		     MOVE SPACES TO W10-EXT-ITEM
+000150		     GO TO STOCK-A-LOOKUP-EXIT
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO STCKA-LUP-DATA.
+
+       STCKA-START-LOOKUP.
+	     DISPLAY WS-BLNK78 AT 2302 WITH FOREGROUND-COLOR 3.
+000170	     DISPLAY CLEAR-L25.
+000180       MOVE 6              TO CLIN.
+000200	     MOVE 1		 TO W75-S W75-S1 WS-P1 W75-P.
+
+       STCKA-LUP-TAB-LOOP.
+	     MOVE SPACES	 TO W75-EXT-CODE(W75-S1).
+           IF W75-S1 < 18
+               ADD 1             TO W75-S1
+	       GO TO STCKA-LUP-TAB-LOOP.
+             MOVE ZERO           TO W75-S1.
+
+       STCKA-LUP-ENTRY-TYPE.
+      *
+      *    ****    D E S C R I P T I O N   S E Q U E N C E
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ If no description has been entered, inform the User that  ³
+      *    ³ to view the stock in description sequence, starting from  ³
+      *    ³ the first description in the file, the F2 key lookup must ³
+      *    ³ be used.						       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	   IF W10-DESC = SPACES
+	       DISPLAY "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"
+		       AT 1217 WITH FOREGROUND-COLOR 4 HIGHLIGHT
+				    BACKGROUND-COLOR 4
+		       "¿" WITH FOREGROUND-COLOR 0 HIGHLIGHT
+				BACKGROUND-COLOR 4
+		       "³" AT 1317 WITH FOREGROUND-COLOR 4 HIGHLIGHT
+					BACKGROUND-COLOR 4
+		       "Use " WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				   BACKGROUND-COLOR 4
+		       "F2" WITH FOREGROUND-COLOR 6 HIGHLIGHT
+				 BACKGROUND-COLOR 4
+		       " for all descriptions  -  "
+		       WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			    BACKGROUND-COLOR 4
+		       "Press ANY key"
+		       WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			    BACKGROUND-COLOR 4
+		       "³" WITH FOREGROUND-COLOR 0 HIGHLIGHT
+				BACKGROUND-COLOR 4
+		       "À" AT 1417 WITH FOREGROUND-COLOR 4 HIGHLIGHT
+					BACKGROUND-COLOR 4
+		       "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+			WITH FOREGROUND-COLOR 0 HIGHLIGHT
+			     BACKGROUND-COLOR 4
+	       MOVE 13		 TO SHADE-ROW
+	       MOVE 19		 TO SHADE-COL
+	       MOVE 45		 TO SHADE-WIDTH
+	       MOVE 2		 TO SHADE-LINES
+	       PERFORM SCREEN-SHADOW
+	       PERFORM HIDE-THE-CURSOR
+	       CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS
+	       PERFORM DISPLAY-THE-CURSOR
+	       GO TO STOCK-A-LOOKUP-EXIT.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ Convert the description to upper case, as all keys in the ³
+      *    ³ system are stored as upper case.			       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+000650	     MOVE W10-DESC	 TO W50-DATA.
+000660	     MOVE 30		 TO W50-LENGTH.
+	     CALL "CBL_TOUPPER" USING W50-30
+				  BY VALUE W50-LENGTH
+				  RETURNING WS-STATUS.
+000720	     MOVE W50-30	 TO W10-DESC.
+	     MOVE 1		 TO WS-LENGTH.
+	     MOVE W10-DESC	 TO W40-ADESC.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ WS-SW4 - Will be equal to the number of characters that   ³
+      *    ³ have been keyed in by the User.			       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      *	     MOVE 1		 TO WS-S4.
+      *	     PERFORM UNTIL W40-ALT-CHAR(WS-S4) = SPACE OR
+      *			   WS-S4 > 12
+      *		 ADD 1		 TO WS-S4.
+      *      SUBTRACT 1 	 FROM WS-S4.
+	     MOVE 12		 TO WS-S4.
+	     PERFORM UNTIL W40-ALT-CHAR(WS-S4) NOT = SPACE OR
+			   WS-S4 < 2
+		 SUBTRACT 1	 FROM WS-S4.
+	     MOVE W10-DESC	 TO STKA-DKEY.
+	     PERFORM START-AT-STKA-DESC THRU READ-STKALT-EXIT.
+	   IF WS-F-ERROR = 49
+	       GO TO STCKA-NO-RECORD.
+
+000810 STCKA-GET-STOCK-REC.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³	  Must the READ-STKALT-NEXT statement be skipped?      ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	   IF WS-OPTION = "J"
+               MOVE SPACE        TO WS-OPTION
+	       GO TO STCKA-SKIP-STCKA-READ.
+000840	     PERFORM READ-STKALT-NEXT THRU READ-STKALT-EXIT.
+	   IF WS-F-ERROR = 49
+               SUBTRACT 1        FROM W75-S
+	       GO TO STCKA-FULL-SCREEN.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ Check that the details (word) of the desc that have been  ³
+      *    ³ read, match the characters that have been entered by the  ³
+      *    ³ User. Number of characters that were entered are stored   ³
+      *    ³ in WS-S4.						       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     MOVE 1		 TO WS-S3.
+	     MOVE SPACES	 TO W40-ALT-KEY.
+	     PERFORM UNTIL WS-S3 > WS-S4
+		 MOVE STKA-DCHAR(WS-S3)
+				 TO W40-DESC-CH(WS-S3)
+		 ADD 1		 TO WS-S3.
+	   IF W40-ALT-KEY > W40-ALT-LUP
+	       SUBTRACT 1	 FROM W75-S
+	       GO TO STCKA-FULL-SCREEN.
+
+       STCKA-SKIP-STCKA-READ.
+	     MOVE STKA-CODE	 TO W75-EXT-CODE(W75-S) STK-CODE.
+002020	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+	     MOVE 1		 TO W75-PACK.
+
+       STCKA-PRICES-LOOP.
+	     MOVE STK-PR(W75-PACK)
+				 TO W75-PR(W75-S, W75-PACK).
+	     MOVE STK-SL(W75-PACK)
+				 TO W75-SL(W75-S, W75-PACK).
+	     MOVE STK-CSH(W75-PACK)
+				 TO W75-CSH(W75-S, W75-PACK).
+	     MOVE STK-WSL(W75-PACK)
+				 TO W75-WSL(W75-S, W75-PACK).
+	   IF STK-TAX NOT = ZERO
+	       MOVE W05-VAT (STK-TAX)
+			     TO W05-RATE
+	       COMPUTE W75-VSL(W75-S, W75-PACK)	ROUNDED
+		     = W75-SL(W75-S, W75-PACK) +
+		      (W75-SL(W75-S, W75-PACK) * W05-RTE)
+	       COMPUTE W75-VCSH(W75-S, W75-PACK) ROUNDED
+		     = W75-CSH(W75-S, W75-PACK)	+
+		      (W75-CSH(W75-S, W75-PACK) * W05-RTE)
+	       COMPUTE W75-VWSL(W75-S, W75-PACK) ROUNDED
+		     = W75-WSL(W75-S, W75-PACK)	+
+		      (W75-WSL(W75-S, W75-PACK) * W05-RTE)
+	   ELSE
+	       MOVE W75-SL(W75-S, W75-PACK)
+				 TO W75-VSL(W75-S, W75-PACK)
+	       MOVE W75-CSH(W75-S, W75-PACK)
+				 TO W75-VCSH(W75-S, W75-PACK)
+	       MOVE W75-WSL(W75-S, W75-PACK)
+				 TO W75-VWSL(W75-S, W75-PACK).
+      *
+      *    ****    H A V E   A L L   P R I C E S   B E E N
+      * 	   S T O R E D	 ?
+      *
+	   IF W75-PACK < 4
+	       ADD 1		 TO W75-PACK
+	       GO TO STCKA-PRICES-LOOP.
+      *
+      *    ****    U S E   D I F F E R E N T   C O L O U R S   F O R
+      * 	   E A C H   S T O C K	 T Y P E
+      *
+       STCKA-FB-COL.
+      * 					C O N T R O L E D
+	   IF STK-IND = 0
+	       MOVE "HIGHLIGHT FOREGROUND-COLOR  3"
+				 TO  WS-CONT
+	   ELSE
+      * 					P R I C E D   I T E M
+	   IF STK-IND = 1
+	       MOVE "HIGHLIGHT FOREGROUND-COLOR  6"
+				 TO  WS-CONT
+	   ELSE
+      * 					B U Y - O U T
+	   IF STK-IND = 2
+	       MOVE "HIGHLIGHT FOREGROUND-COLOR  7"
+				 TO  WS-CONT
+	   ELSE
+      * 					H E A D I N G
+	   IF STK-IND = 4
+	       MOVE "HIGHLIGHT FOREGROUND-COLOR  2"
+				 TO  WS-CONT
+	   ELSE
+      * 					L A B O U R
+	       MOVE "HIGHLIGHT FOREGROUND-COLOR  5"
+				 TO  WS-CONT.
+
+       STCKA-DISP-DET.
+	   IF WS-USE-ITM = "Y"
+	       MOVE STK-CODE	 TO W30-ITM-CODE
+	   ELSE
+	   IF WS-EXT-STK = "Y"
+	       MOVE STK-CODE	 TO W30-EXT-CODE
+	   ELSE
+	       MOVE STK-ITEM	 TO W30-ITEM.
+000970	     DISPLAY (CLIN, 2) STK-CODE WITH CONTROL WS-CONT.
+             MOVE STK-DESC       TO W10-DESC.
+000980	     DISPLAY ( , 21) W10-SDSC WITH CONTROL WS-CONT.
+	   IF STK-QUANT < ZERO
+000990	       MOVE STK-QUANT  TO W100-NQNT
+	   ELSE
+	   IF STK-QUANT > 999999.99
+	       MOVE STK-QUANT  TO W100-LQNT
+	   ELSE
+	       MOVE STK-QUANT  TO W100-QNT.
+	   IF NOT (STK-IND = 4)
+001000	       DISPLAY ( , 51) W100-QUANT WITH CONTROL WS-CONT
+001010	       MOVE W75-SL(W75-S, W75-P)
+				 TO W100-S6V2
+001020	       DISPLAY ( , 61) W100-PRICE WITH CONTROL WS-CONT
+001030	       MOVE W75-VSL(W75-S, W75-P)
+				 TO W100-S6V2
+001040	       DISPLAY ( , 71) W100-PRICE WITH CONTROL WS-CONT.
+001050     IF CLIN < 21
+001060	       ADD 1		 TO CLIN W75-S
+001070         GO TO STOCK-GET-STOCK-REC.
+
+      *
+      *    ****   U S E R   O P T I O N S
+      *
+001010 STCKA-FULL-SCREEN.
+001020	     DISPLAY "" AT 2302 WITH FOREGROUND-COLOR 14
+		     X"1B1A" WITH FOREGROUND-COLOR 14
+001030		     "," WITH FOREGROUND-COLOR 7
+		     "PgUp" WITH FOREGROUND-COLOR 14
+		     "," WITH FOREGROUND-COLOR 7
+		     "PgDn" WITH FOREGROUND-COLOR 14
+		     "," WITH FOREGROUND-COLOR 7
+001040		     "ENTER" WITH FOREGROUND-COLOR 14
+001050		     "," WITH FOREGROUND-COLOR 7
+001170		     "Esc" WITH FOREGROUND-COLOR 14
+		     "," WITH FOREGROUND-COLOR 7
+		     "F2" WITH FOREGROUND-COLOR 14
+		     "=View," WITH FOREGROUND-COLOR 7
+		     "F5" WITH FOREGROUND-COLOR 14
+		     "=Packs," WITH FOREGROUND-COLOR 7
+		     "F6" WITH FOREGROUND-COLOR 14
+		     "=Dsc2," WITH FOREGROUND-COLOR 7
+		     "F7" WITH FOREGROUND-COLOR 14
+		     "=Bin," WITH FOREGROUND-COLOR 7
+		     "F8" WITH FOREGROUND-COLOR 14
+		     "=Xref/alt,"
+		      WITH FOREGROUND-COLOR 7
+		     "F9" WITH FOREGROUND-COLOR 14
+		     "=remks"
+		      WITH FOREGROUND-COLOR 7.
+001170	     DISPLAY "1" AT 2502
+		     WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+		     " " WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     WS-RT-HD WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     "," WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     "2" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+		     " " WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     WS-CS-HD WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     "," WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     "3" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+		     " " WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     WS-WS-HD WITH BACKGROUND-COLOR 3
+				   FOREGROUND-COLOR 1.
+
+       STCKA-POSITION-CURSOR.
+	     PERFORM SAVE-SCREEN-2.
+001220	     MOVE 0		 TO W75-S1.
+001230       MOVE 0601           TO CPOS.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³		  Restore the screen attributes.	       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+001250 STCKA-CRT-ATTRIB.
+	     MOVE 1920		 TO W41-LENGTH.
+	     CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS
+					      W42-ATTRIB2
+					      W41-LENGTH
+					RETURNING WS-STATUS.
+001290	     MOVE 2000		 TO W41-LENGTH.
+
+001310 STCKA-GET-USER-OPT.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     DISPLAY SPACE AT 2540
+		     WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+	   IF ADIS-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN UP-KEY
+001320		     GO TO STCKA-ADJ-NO-KEYS
+		 WHEN DOWN-KEY
+001340		     GO TO STCKA-CHK-NO-KEYS
+		 WHEN LEFT-KEY
+		     IF W75-P > 1
+			 SUBTRACT 1  FROM W75-P
+			 GO TO STCKA-CHK-PACKS
+		 WHEN RIGHT-KEY
+		     IF W75-P < 4
+			 ADD 1	     TO W75-P
+			 GO TO STCKA-CHK-PACKS
+		 WHEN ENTER-KEY
+		 WHEN CR-KEY
+		     GO TO STCKA-CHK-SELECT
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO STCKA-GET-USER-OPT
+	   ELSE
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+		     MOVE SPACES TO W10-EXT-ITEM
+		     GO TO STCKA-LOOKUP-EXIT
+		 WHEN PAGE-DOWN
+001340		     GO TO STCKA-GET-NEXT-PAGE
+		 WHEN PAGE-UP
+001340		     GO TO STCKA-GET-PREV-PAGE
+		 WHEN F2-KEY
+		     PERFORM BA000
+001510		     GO TO STCKA-GET-USER-OPT
+		 WHEN F5-KEY
+		     PERFORM BB000
+001510		     GO TO STCKA-GET-USER-OPT
+		 WHEN F6-KEY
+		     MOVE WS1-CURS
+				 TO CRT-LINE
+		     PERFORM STCKA-DESC2 THRU STCKA-DESC2-EXIT
+		     MOVE CRT-LINE
+				 TO WS1-CURS
+001510		     GO TO STCKA-GET-USER-OPT
+		 WHEN F7-KEY
+		     MOVE WS1-CURS
+				 TO CRT-LINE
+		     PERFORM STCKA-BIN THRU STCKA-BIN-EXIT
+		     MOVE CRT-LINE
+				 TO WS1-CURS
+001510		     GO TO STCKA-GET-USER-OPT
+		 WHEN F8-KEY
+		     MOVE WS1-CURS
+				 TO CRT-LINE
+		     PERFORM STCKA-CODES THRU STCKA-CODES-EXIT
+		     MOVE CRT-LINE
+				 TO WS1-CURS
+001510		     GO TO STCKA-GET-USER-OPT
+		 WHEN F9-KEY
+		     PERFORM STCKA-ADD-SPECS THRU STCKA-ADD-EXIT
+		     PERFORM STCKA-FULL-SCREEN
+001510		     GO TO STCKA-GET-USER-OPT
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO STCKA-GET-USER-OPT
+	   ELSE
+	   IF DATA-8BIT
+	       MOVE KEY-CODE-1X  TO WS-OPTION
+	       GO TO STCKA-CHK-PRICES.
+	     CALL X"E5".
+001280	     GO TO STCKA-GET-USER-OPT.
+
+       STCKA-CHK-PACKS.
+	   IF W75-P = 1
+	       DISPLAY "Single" AT 0368
+			WITH FOREGROUND-COLOR 3 HIGHLIGHT
+	   ELSE
+	   IF W75-P = 2
+	       DISPLAY "Pack 1" AT 0368
+			WITH FOREGROUND-COLOR 3 HIGHLIGHT
+	   ELSE
+	   IF W75-P = 3
+	       DISPLAY "Pack 2" AT 0368
+			WITH FOREGROUND-COLOR 3 HIGHLIGHT
+	   ELSE
+	   IF W75-P = 4
+	       DISPLAY "Pack 3" AT 0368
+			WITH FOREGROUND-COLOR 3 HIGHLIGHT.
+	     GO TO STCKA-DISP-PRICES.
+
+       STCKA-CHK-PRICES.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+001500	   IF NOT (WS-OPTION = "1" OR "2" OR "3")
+001510	       GO TO STCKA-GET-USER-OPT.
+	     MOVE WS-OPTION	 TO WS-PRICE.
+
+       STCKA-DISP-PRICES.
+	   IF WS-PRICE = "2"
+	       GO TO STCKA-CASH-PRICES.
+	   IF WS-PRICE = "1"
+	       GO TO STCKA-RETAIL-PRICES.
+	   IF WS-PRICE = "3"
+	       GO TO STCKA-WSALE-PRICES.
+	     CALL X"E5".
+001280	     GO TO STCKA-GET-USER-OPT.
+
+       STCKA-GET-NEXT-PAGE.
+001550     IF W75-S < 16
+001560	       GO TO STCKA-GET-USER-OPT.
+
+       STCKA-NEW-PAGE.
+001570       MOVE 0601           TO CPOS.
+001580	     PERFORM STCKA-CRT-EDGE UNTIL CLIN = 22.
+001590       MOVE 6              TO CLIN.
+001600       MOVE LOW-VALUES TO W75-KEYS.
+001610	     MOVE 1		 TO W75-S W75-S1 W75-P.
+001620	     PERFORM STCKA-LUP-TAB-LOOP.
+	     DISPLAY WS-RT-HD AT 0354 WITH FOREGROUND-COLOR 11.
+001630	     GO TO STCKA-GET-STOCK-REC.
+
+       STCKA-GET-PREV-PAGE.
+             MOVE 1              TO WS-IXS1.
+      *
+      *    ****    SET OPTION TO BYPASS THE READ NEXT
+      *
+             MOVE "J"            TO WS-OPTION.
+
+       STCKA-GET-PREV-LOOP.
+	     PERFORM READ-STKALT-PREV THRU READ-STKALT-EXIT.
+           IF WS-F-ERROR = 22
+	       MOVE SPACE	 TO WS-OPTION
+	       PERFORM STCKA-LUP-SCREEN THRU STCKA-LUP-CLR-SCREEN
+	       MOVE W40-ADESC	 TO STKA-DKEY
+	       PERFORM START-AT-STKA-DESC THRU READ-STKALT-EXIT
+	       GO TO STCKA-NEW-PAGE.
+	   IF WS-IXS1 < 31
+               ADD 1             TO WS-IXS1
+	       GO TO STCKA-GET-PREV-LOOP.
+	     GO TO STCKA-NEW-PAGE.
+
+       STCKA-CASH-PRICES.
+	     DISPLAY WS-CS-HD AT 0354 WITH FOREGROUND-COLOR 11.
+             MOVE 1              TO W75-S2.
+             MOVE 06             TO LIN.
+
+       STCKA-CASH-LOOP.
+	   IF NOT (W75-CSH(W75-S2, W75-P) = ZERO)
+001010	       MOVE W75-CSH(W75-S2, W75-P)
+				 TO W100-S6V2
+001020	       DISPLAY (LIN, 61) W100-PRICE WITH FOREGROUND-COLOR 11
+001010	       MOVE W75-VCSH(W75-S2, W75-P)
+				 TO W100-S6V2
+001040	       DISPLAY ( , 71) W100-PRICE WITH FOREGROUND-COLOR 11
+	   ELSE
+	   IF W75-P > 1
+	       DISPLAY (LIN, 61) "   N/A   " WITH FOREGROUND-COLOR 11
+	       DISPLAY ( , 71) "         " WITH FOREGROUND-COLOR 11
+	   ELSE
+	       DISPLAY (LIN, 61) "         " WITH FOREGROUND-COLOR 11.
+           IF W75-S2 < W75-S
+               ADD 1             TO W75-S2 LIN
+	       GO TO STCKA-CASH-LOOP.
+	     GO TO STCKA-SAVE-FULL-SCREEN.
+
+       STCKA-RETAIL-PRICES.
+	     DISPLAY WS-RT-HD AT 0354 WITH FOREGROUND-COLOR 11.
+             MOVE 1              TO W75-S2.
+             MOVE 06             TO LIN.
+
+       STCKA-RETAIL-LOOP.
+	   IF NOT (W75-SL(W75-S2, W75-P) = ZERO)
+001010	       MOVE W75-SL(W75-S2, W75-P)
+				 TO W100-S6V2
+001020	       DISPLAY (LIN, 61) W100-PRICE WITH FOREGROUND-COLOR 11
+001010	       MOVE W75-VSL(W75-S2, W75-P)
+				 TO W100-S6V2
+001040	       DISPLAY ( , 71) W100-PRICE WITH FOREGROUND-COLOR 11
+	   ELSE
+	   IF W75-P > 1
+	       DISPLAY (LIN, 61) "   N/A   " WITH FOREGROUND-COLOR 11
+	       DISPLAY ( , 71) "         " WITH FOREGROUND-COLOR 11
+	   ELSE
+	       DISPLAY (LIN, 61) "         " WITH FOREGROUND-COLOR 11.
+           IF W75-S2 < W75-S
+               ADD 1             TO W75-S2 LIN
+	       GO TO STCKA-RETAIL-LOOP.
+	     GO TO STCKA-SAVE-FULL-SCREEN.
+
+       STCKA-WSALE-PRICES.
+	     DISPLAY WS-WS-HD AT 0354 WITH FOREGROUND-COLOR 11.
+             MOVE 1              TO W75-S2.
+             MOVE 06             TO LIN.
+
+       STCKA-WSALE-LOOP.
+	   IF NOT (W75-WSL(W75-S2, W75-P) = ZERO)
+001010	       MOVE W75-WSL(W75-S2, W75-P)
+				 TO W100-S6V2
+001020	       DISPLAY (LIN, 61) W100-PRICE WITH FOREGROUND-COLOR 11
+001010	       MOVE W75-VWSL(W75-S2, W75-P)
+				 TO W100-S6V2
+001040	       DISPLAY ( , 71) W100-PRICE WITH FOREGROUND-COLOR 11
+	   ELSE
+	   IF W75-P > 1
+	       DISPLAY (LIN, 61) "   N/A   " WITH FOREGROUND-COLOR 11
+	       DISPLAY ( , 71) "         " WITH FOREGROUND-COLOR 11
+	   ELSE
+	       DISPLAY (LIN, 61) "         " WITH FOREGROUND-COLOR 11.
+           IF W75-S2 < W75-S
+               ADD 1             TO W75-S2 LIN
+	       GO TO STCKA-WSALE-LOOP.
+	     GO TO STCKA-SAVE-FULL-SCREEN.
+
+       STCKA-SAVE-FULL-SCREEN.
+	     DISPLAY " " AT 2572 WITH BACKGROUND-COLOR 3
+				      FOREGROUND-COLOR 1.
+001990	     PERFORM STCKA-CRT-ATTRIB.
+001180       MOVE 0 TO W44-FUNCTION.
+001190	     CALL X"B7" USING W44-FUNCTION W41-SAVE W43-SCREEN2.
+           IF W75-S1 > 0
+	       GO TO STCKA-HIGHLIGHT.
+	     GO TO STCKA-GET-USER-OPT.
+
+001650 STCKA-NO-RECORD.
+001660	     DISPLAY "No record - " AT 2512
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+001670		     "N" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+001680		     "ext or "
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+001690		     "Q" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+001700		     "uit > <"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+
+001720 STCKA-GET-USER-OPT-2.
+001730	     ACCEPT WS-OPTION AT 2538
+		    WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15 AUTO.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+001790	   IF NOT (WS-OPTION = "N" OR "Q")
+001800	       GO TO STCKA-GET-USER-OPT-2.
+001810     IF WS-OPTION = "N"
+001820	       GO TO STCKA-LUP-SCREEN.
+001830	     MOVE SPACES	 TO W10-EXT-ITEM.
+001840	     GO TO STCKA-LOOKUP-EXIT.
+
+001860 STCKA-ADJ-NO-KEYS.
+001870     IF W75-S1 > 1
+001880         SUBTRACT 1        FROM W75-S1 CLIN.
+001890	     GO TO STCKA-HIGHLIGHT.
+
+001910 STCKA-CHK-NO-KEYS.
+001920     IF W75-S1 = ZERO
+001930         MOVE 1            TO W75-S1
+001940	       GO TO STCKA-HIGHLIGHT.
+001950     IF W75-S1 < W75-S
+001960         ADD 1             TO W75-S1 CLIN.
+
+001980 STCKA-HIGHLIGHT.
+001990	     PERFORM STCKA-CRT-ATTRIB.
+002000       DISPLAY W43-DET (CLIN) AT CPOS WITH REVERSE-VIDEO.
+002010	     GO TO STCKA-GET-USER-OPT.
+
+002030 STCKA-CHK-SELECT.
+002040     IF W75-S1 = ZERO
+002050	       GO TO STCKA-GET-USER-OPT.
+002060	     MOVE CSTART	 TO WS1-CURSOR.
+002070	     MOVE W75-EXT-CODE(W75-S1)
+				 TO W10-EXT-ITEM STK-CODE.
+002080	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+      *
+      *    ****   To avoid non stock items labour and free format items
+      * 	  having the last item on screens description when the
+      * 	  lookup program returns control to the calling program
+      * 	  the stock description is moved to the W10- Link area.
+      *
+	     MOVE STK-DESC	 TO W10-DESC.
+002090	     MOVE ZERO		 TO COL-AND-LINE.
+002100	     GO TO STCKA-LOOKUP-EXIT.
+
+       STCKA-ADD-SPECS.
+002040     IF W75-S1 = ZERO
+002050	       GO TO STCKA-ADD-EXIT.
+	     INITIALIZE SME-RECORD1.
+002070	     MOVE W75-EXT-CODE(W75-S1)
+				 TO SME-CODE W10-EXT-ITEM.
+             MOVE 1              TO SME-SEQ.
+             PERFORM READ-STKMEM THRU READ-STKMEM-EXIT.
+           IF WS-F-ERROR NOT = ZERO
+	       DISPLAY "No add. specifications" AT 2545
+			WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+	       CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS
+	       GO TO STCKA-ADD-EXIT.
+             INITIALIZE W200-MEM-FLDS.
+
+       STCKA-ADD-LOOP.
+             MOVE SME-SEQ        TO WS-S1.
+             MOVE SME-DATA       TO W200-MEM (WS-S1).
+             PERFORM READ-STKMEM-NEXT THRU READ-STKMEM-EXIT.
+           IF WS-F-ERROR = ZERO
+	       IF SME-CODE = W10-EXT-ITEM
+		   GO TO STCKA-ADD-LOOP.
+	     PERFORM SAVE-SCREEN-3.
+	     MOVE 7		 TO SHADE-ROW.
+	     MOVE 19		 TO SHADE-COL.
+	     MOVE 60		 TO SHADE-WIDTH.
+	     MOVE 15		 TO SHADE-LINES.
+	     DISPLAY S-MEM.
+	     PERFORM SCREEN-SHADOW.
+	     DISPLAY SA-MEM.
+021280	     DISPLAY "ENTER to continue" AT 2555
+                      WITH FOREGROUND-COLOR 14.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-3.
+
+       STCKA-ADD-EXIT.
+             EXIT.
+
+       STCKA-CODES.
+	     PERFORM SAVE-SCREEN-3.
+	     MOVE 1		 TO W75-S2.
+	     MOVE 06		 TO CLIN LIN.
+	     MOVE 51		 TO CCOL
+	     DISPLAY S-CODES.
+000150	     PERFORM STCKA-CDE-EDGE UNTIL CLIN = 22.
+	     DISPLAY WS-BLNK78 AT 2302 WITH FOREGROUND-COLOR 3.
+000340	     DISPLAY CLEAR-L25.
+      *
+      *    ****    D I S P L A Y   X - R E F   A N D   A L T   C O D E S
+      *
+       STCKA-CDE-DISP.
+002070	     MOVE W75-EXT-CODE(W75-S2)
+				 TO STK-CODE.
+002080	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+	     PERFORM STCKA-FB-COL.
+	   IF NOT STK-IND = 4
+	       DISPLAY (LIN, 51) STK-XREF WITH CONTROL WS-CONT
+	       DISPLAY ( , 70) STK-ACODE WITH CONTROL WS-CONT.
+	   IF W75-S2 < W75-S
+               ADD 1             TO W75-S2 LIN
+	       GO TO STCKA-CDE-DISP.
+021280       DISPLAY "ENTER to continue" AT 2355
+		      WITH FOREGROUND-COLOR 6 HIGHLIGHT.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-3.
+
+       STCKA-CODES-EXIT.
+             EXIT.
+      *
+      *    ****    D I S P L A Y   D E S C R I P T I O N   2
+      *
+       STCKA-DESC2.
+	     PERFORM SAVE-SCREEN-3.
+	     MOVE 1		 TO W75-S2.
+	     MOVE 06		 TO LIN.
+	     DISPLAY "Description-2" AT 0421 WITH REVERSE-VIDEO.
+000340	     DISPLAY CLEAR-L25.
+
+       STCKA-DSC-DISP.
+002070	     MOVE W75-EXT-CODE(W75-S2)
+				 TO STK-CODE.
+002080	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+	     PERFORM STCKA-FB-COL.
+	   IF STK-DESC2 = SPACES
+	       MOVE STK-DESC	 TO W10-DESC
+	   ELSE
+	       MOVE STK-DESC2	 TO W10-DESC.
+	   IF NOT STK-IND = 4
+	       DISPLAY (LIN, 21) W10-SDSC WITH CONTROL WS-CONT.
+	   IF W75-S2 < W75-S
+               ADD 1             TO W75-S2 LIN
+	       GO TO STCKA-DSC-DISP.
+021280	     DISPLAY "ENTER to continue" AT 2555
+                      WITH FOREGROUND-COLOR 14.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-3.
+
+       STCKA-DESC2-EXIT.
+             EXIT.
+
+002120 STCKA-CDE-EDGE.
+002130	     DISPLAY "                  ³          " AT CPOS
+		      WITH FOREGROUND-COLOR 3.
+002140	     ADD 1		 TO CLIN.
+
+       STCKA-BIN.
+	     PERFORM SAVE-SCREEN-3.
+	     MOVE 1		 TO W75-S2.
+	     MOVE 06		 TO CLIN LIN.
+	     MOVE 51		 TO CCOL
+	     DISPLAY S-BIN.
+000150	     PERFORM STCKA-BIN-EDGE UNTIL CLIN = 22.
+	     DISPLAY WS-BLNK78 AT 2302 WITH FOREGROUND-COLOR 3.
+000340	     DISPLAY CLEAR-L25.
+
+       STCKA-BIN-DISP.
+002070	     MOVE W75-EXT-CODE(W75-S2)
+				 TO STK-CODE.
+002080	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+	     PERFORM STCKA-FB-COL.
+	   IF NOT STK-IND = 4
+	       DISPLAY (LIN, 53) STK-BIN WITH CONTROL WS-CONT.
+	   IF W75-S2 < W75-S
+               ADD 1             TO W75-S2 LIN
+	       GO TO STCKA-BIN-DISP.
+021280       DISPLAY "ENTER to continue" AT 2355
+                      WITH FOREGROUND-COLOR 14.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-3.
+
+       STCKA-BIN-EXIT.
+             EXIT.
+
+002120 STCKA-BIN-EDGE.
+002130	     DISPLAY "         " AT CPOS WITH FOREGROUND-COLOR 3.
+002140	     ADD 1		 TO CLIN.
+
+002120 STCKA-CRT-EDGE.
+002130	     DISPLAY "³" AT CPOS WITH BACKGROUND-COLOR 0
+				      FOREGROUND-COLOR 3
+		     "                  ³                             ³
+      -		     "        ³         ³         "
+		      WITH FOREGROUND-COLOR 3
+		     "³" WITH BACKGROUND-COLOR 0
+			      FOREGROUND-COLOR 3.
+002140	     ADD 1		 TO CLIN.
+
+       STOCK-A-LOOKUP-EXIT.
+002170       EXIT.

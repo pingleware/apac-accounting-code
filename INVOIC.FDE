@@ -1,0 +1,114 @@
+      /
+000010 FD  INVOICE   IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-INVOIC.
+000030 01  DOC-REC1.
+           03  DOC-KEY.
+             05  DOC-AC        PIC  X(06).
+000050	     05  DOC-REF.
+		 07  DOC-ONE   PIC  X(01).
+		 07  DOC-SEVEN PIC  X(07).
+             05  DOC-SEQN.
+                 07  DOC-SEQ   PIC  9(03).
+                 07  DOC-SUB   PIC  9(02).
+             05  DOC-SQN REDEFINES DOC-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 0  -  HEADER RECORD
+      *                 : 1  -  ITEM DETAILS
+      *                 : 2  -  DISCOUNT DETAILS
+      *                 : 3  -  REMARKS
+      * 		: 4  -	NON STOCK LINE DETAILS
+      * 		: 5  -	DELIVERY ADDRESS
+      *                 : 9  -  TRAILER
+      *
+           03  DOC-TYPE        PIC  9(01).
+000070	   03  DOC-DTE	       PIC  9(08).
+           03  DOC-DETAIL.
+             05  DOC-NAME      PIC  X(40).
+             05  DOC-PICNO     PIC  9(02)    COMP-5.
+000090       05  DOC-ORD       PIC  X(12).
+000130       05  DOC-SMAN      PIC  9(04)    COMP-5.
+             05  DOC-DOC       PIC  X(01).
+               88  DOC-CREDIT  VALUE "C".
+	       88  DOC-INVOIC  VALUE "I".
+             05  DOC-PAGE      PIC  9(02).
+             05  DOC-OREF      PIC  X(09).
+             05  DOC-EXP       PIC  X(01).
+             05  DOC-PRC       PIC  X(01).
+             05  DOC-ADV       PIC  X(01).
+             05  DOC-VALUE     PIC S9(09)V99 COMP-3.
+	     05  DOC-PROF      PIC  X(01).
+	     05  DOC-USER      PIC  9(04)    COMP-5.
+	     05	 DOC-UNME      PIC  X(30).
+	     05  FILLER        PIC  X(45).
+000140	   03  DOC-DET2 REDEFINES DOC-DETAIL.
+	     05  DOC-EXT-ITEM.
+000190		 07  DOC-ITEM  PIC  X(14).
+		 07  DOC-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+	     05  DOC-MSER.
+000090           07  DOC-DESC  PIC  X(30).
+		 07  FILLER    PIC  X(10).
+             05  DOC-SERIALS REDEFINES DOC-MSER.
+                 07  FILLER    PIC  X(01).
+		 07  DOC-SNUM OCCURS 2.
+		   09  DOC-SNO PIC  X(18).
+                   09  FILLER  PIC  X(01).
+                 07  FILLER    PIC  X(01).
+000160	     05  DOC-QNT       PIC S9(06)V999 COMP-3.
+	     05  DOC-COST      PIC S9(07)V999 COMP-3.
+	     05  DOC-SELL      PIC S9(07)V999 COMP-3.
+             05  DOC-VAT       PIC S9(07)V99 COMP-3.
+000280       05  DOC-VAL       PIC S9(09)V99 COMP-3.
+000270	     05  DOC-INCTAX    PIC S9(09)V99 COMP-3.
+000270       05  DOC-NONTAX    PIC S9(07)V99 COMP-3.
+000270       05  DOC-TAXVAL    PIC S9(07)V99 COMP-3.
+             05  DOC-DSC       PIC S9(02)V99 COMP-3.
+             05  DOC-DISC      PIC S9(07)V99 COMP-3.
+	     05  DOC-SERNO     PIC  X(18).
+	     05  DOC-UNITS     PIC S9(04)V999 COMP-3.
+	     05  DOC-CONVERT   PIC S9(06)V999 COMP-3.
+	     05  DOC-PER       PIC  X(08).
+	     05  DOC-PACK      PIC  9(01)    COMP-0.
+	     05  DOC-VAT-SUB   PIC  9(01).
+	     05  DOC-V-PER     PIC S9(03)V99 COMP-3.
+	     05  DOC-CASES     PIC S9(05)    COMP-3.
+000140	   03  DOC-DET3 REDEFINES DOC-DETAIL.
+000290       05  DOC-SUBTOT    PIC S9(09)V99 COMP-3.
+000300       05  DOC-DSCNT     PIC S9(07)V99 COMP-3.
+             05  DOC-NON-TXBL  PIC S9(09)V99 COMP-3.
+             05  DOC-TAXABLE   PIC S9(09)V99 COMP-3.
+000310       05  DOC-TAX       PIC S9(07)V99 COMP-3.
+000320       05  DOC-TOT       PIC S9(09)V99 COMP-3.
+             05  DOC-INVOICE   PIC  X(08).
+             05  DOC-BAL       PIC S9(09)V99 COMP-3.
+000310       05  DOC-ADVTAX    PIC S9(07)V99 COMP-3.
+             05  DOC-TERMS     PIC  X(01).
+	     05  DOC-CONTACT   PIC  X(14).
+	     05  DOC-TEL       PIC  X(14).
+	     05  DOC-INSTRUCT  PIC  X(15).
+	     05  DOC-EXT       PIC  X(03).
+	     05  FILLER        PIC  X(54).
+000140	   03  DOC-DET4 REDEFINES DOC-DETAIL.
+	     05  DOC-REMKS.
+		 07  FILLER    PIC  X(04).
+		 07  DOC-JRMKS PIC  X(40).
+		 07  FILLER    PIC  X(16).
+	     05  DOC-PSELL     PIC S9(09)V99 COMP-3.
+	     05  DOC-PVAT      PIC S9(09)V99 COMP-3.
+000280	     05  DOC-PVAL      PIC S9(09)V99 COMP-3.
+000270	     05  DOC-PINCTAX   PIC S9(09)V99 COMP-3.
+000270	     05  DOC-PNONTAX   PIC S9(09)V99 COMP-3.
+000270	     05  DOC-PTAXVAL   PIC S9(09)V99 COMP-3.
+	     05  DOC-LEDG      PIC  X(04).
+	     05  DOC-VAT-PSUB  PIC  9(01).
+	     05  DOC-V-PPER    PIC S9(03)V99 COMP-3.
+	     05  FILLER        PIC  X(50).
+000140	   03  DOC-DET5 REDEFINES DOC-DETAIL.
+	     05  DOC-AD1       PIC  X(30).
+	     05  DOC-AD2       PIC  X(30).
+	     05  DOC-AD3       PIC  X(30).
+	     05  DOC-AD4       PIC  X(30).
+	     05  DOC-PC        PIC  X(04).
+	     05  FILLER        PIC  X(30).

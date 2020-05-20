@@ -1,0 +1,42 @@
+      /
+000010 FD  PORDER    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-PORDER.
+000030 01  ORD-RECORD1.
+	   03  ORD-EXT-ITEM.
+000040	       05  ORD-ITEM    PIC  X(14).
+	       05  ORD-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+000200	   03  ORD-CRED        PIC  X(06).
+           03  ORD-KEY.
+000050         05  ORD-ORD     PIC  9(08)    COMP.
+               05  ORD-LINE    PIC  9(02)    COMP.
+000060	   03  ORD-DATE        PIC  9(08)    COMP-3.
+000070     03  ORD-QUANT       PIC S9(05)V99 COMP-3.
+           03  ORD-QNT REDEFINES ORD-QUANT
+                               PIC S9(07)    COMP-3.
+000080	   03  ORD-COST        PIC S9(09)V99 COMP-3.
+000080     03  ORD-SELL        PIC S9(09)V99 COMP-3.
+	   03  ORD-OCOST       PIC S9(06)V999 COMP-3.
+           03  ORD-CURRENCY    PIC  X(10).
+           03  ORD-DRATE       PIC S9(03)V99 COMP-3.
+	   03  ORD-UCOST       PIC S9(07)V9999 COMP-3.
+000090	   03  ORD-DELIV       PIC  9(08)    COMP-3.
+000100     03  ORD-TERMS       PIC  9(06).
+000110     03  ORD-TRM   REDEFINES ORD-TERMS.
+000120         05  ORD-30      PIC  9(01).
+000130         05  ORD-60      PIC  9(01).
+000140         05  ORD-90      PIC  9(01).
+000150         05  ORD-120     PIC  9(01).
+000160         05  ORD-150     PIC  9(01).
+000170         05  ORD-180     PIC  9(01).
+           03  ORD-BO          PIC  X(01).
+           03  ORD-PSLIP       PIC  X(08).
+           03  ORD-INST        PIC  X(08).
+           03  ORD-PMT         PIC  X(08).
+           03  ORD-DISC        PIC  9(03)V99 COMP-3.
+           03  ORD-CONTACT     PIC  X(30).
+           03  ORD-TEL         PIC  X(14).
+           03  ORD-FAX         PIC  X(14).
+000060	   03  ORD-DDTE        PIC  9(08)    COMP-3.
+	   03  FILLER	       PIC  X(09).

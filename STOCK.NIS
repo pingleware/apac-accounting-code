@@ -1,0 +1,15 @@
+      $SET KEYCOMPRESS "7"
+000110     SELECT STOCK   ASSIGN DISK
+                          LOCK MANUAL
+                          WITH LOCK ON MULTIPLE RECORDS
+000120                    STATUS WS-STATUS
+000130                    ACCESS DYNAMIC
+000140                    ORGANIZATION INDEXED
+000150                    RECORD STK-CODE
+                          ALTERNATE RECORD STK-BKEY =
+                            STK-BIN STK-CODE
+                          ALTERNATE RECORD STK-DKEY
+                            DUPLICATES
+                          ALTERNATE STK-BCODE
+                            DUPLICATES.
+      $SET NOKEYCOMPRESS

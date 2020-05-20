@@ -1,0 +1,71 @@
+      *==================================================================
+      *
+      *    The routine READ-ERROR will be performed if a status other than
+      *    zero is returned after any READ or START request and requires
+      *    that the file number to be moved to WS-F-ERROR before being
+      *    performed.
+      *
+      *    On returning from READ-ERROR, WS-ERROR will contain a value as
+      *    follows:
+      * 	    0 - No error or status to report
+      * 	    1 - Record locked
+      * 	    2 - Duplicate key
+      * 	    3 - No Record / End of file / Invalid key
+      * 	    4 - File already open
+      * 	    5 - File already closed
+      * 	    6 - Index corrupted
+      * 	    7 - Network / Communication error
+      * 	    8 - Limit exceeded - Record locks
+      * 	    9 - File limit exceeded (files open)
+      * 	   10 - Open for output
+      * 	   11 - Open for input
+      * 	   12 - File locked
+      * 	   13 - File not open
+      * 	   14 - File not open for I/O
+      * 	   99 - All other errors
+      *
+007910 READ-GACCNT.
+007920	     READ GACCNT	 WITH IGNORE LOCK.
+007930     IF WS-STATUS = "00"
+007940         GO TO READ-GACCNT-EXIT.
+007950     IF WS-STAT1 = "2" OR "3" OR "4"
+007960         MOVE 8            TO WS-F-ERROR
+007970         PERFORM READ-ERROR.
+008010       MOVE 8              TO WS-F-ERROR.
+008020       PERFORM READ-ERROR.
+008030       GO TO READ-GACCNT-EXIT.
+
+008040 READ-GACCNT-LOCK.
+008050	     READ GACCNT	 WITH KEPT LOCK.
+008060     IF WS-STATUS = "00"
+008070         GO TO READ-GACCNT-EXIT.
+008080     IF WS-STAT1 = "2" OR "3" OR "4"
+008090         MOVE 8            TO WS-F-ERROR
+008100         PERFORM READ-ERROR.
+008110     IF RECORD-LOCKED
+	       MOVE W02-GACCNT	 TO WS-FILE
+	       MOVE WS-GLKEY	 TO WS-KEY
+008120         PERFORM LOCKED-RECORD
+008130         GO TO READ-GACCNT-LOCK.
+008140     IF TOO-MANY-LOCKS
+008150         UNLOCK GACCNT
+008160         GO TO READ-GACCNT-LOCK.
+008170       MOVE 8              TO WS-F-ERROR.
+008180       PERFORM READ-ERROR.
+008190       GO TO READ-GACCNT-EXIT.
+
+008200 READ-GACCNT-CHECK.
+008210	     READ GACCNT	 WITH IGNORE LOCK.
+008220     IF WS-STATUS = "00"
+008230         GO TO READ-GACCNT-EXIT.
+008240     IF WS-STATUS = "23"
+008250         MOVE 1 TO WS-INDG
+008260         GO TO READ-GACCNT-EXIT.
+008270     IF WS-STAT1 = "2" OR "3" OR "4"
+008280         MOVE 8            TO WS-F-ERROR
+008290         PERFORM READ-ERROR.
+008330       MOVE 8              TO WS-F-ERROR.
+008340       PERFORM READ-ERROR.
+
+008350 READ-GACCNT-EXIT.
+008360       EXIT.

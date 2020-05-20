@@ -1,0 +1,40 @@
+      /
+000010 FD  TXPTRN    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-TXPTRN.
+000030 01  TXP-RECORD1.
+	   03  TXP-KEY.
+      *
+      *    The first record on the file is the control record
+      *    and will have the type "C", taxtype 0 and the date
+      *    will contain the start date for the period.
+      *    
+      *    TYPE: "1" = Input Tax
+      *          "2" = Output Tax
+      *          "3" = Input Payments
+      *          "4" = Output Payments
+      *
+	       05  TXP-TYPE    PIC  X(01).
+      *
+      *    ACTYPE: 1 = Debtors        (Sales / Returns)
+      *            2 = Cash           (Sales / Refunds)
+      *            3 = Creditors      (Purchases)
+      *            4 = General Ledger (Rates, Vehicles ETC)
+      *
+	       05  TXP-ACTYPE  PIC  9(01).
+      *
+      *    CODE:  This is the transaction code
+      *
+	       05  TXP-CODE    PIC  9(02).
+000050	       05  TXP-DATE    PIC  9(08).
+000060	       05  TXP-REF     PIC  X(08).
+	       05  TXP-SEQ     PIC  9(04).
+000070	   03  TXP-VALUE       PIC S9(09)V99 COMP-3.
+	   03  TXP-TAXFREE     PIC S9(09)V99 COMP-3.
+	   03  TXP-VAT-RATE    OCCURS 12.
+	       05  TXP-VAL     PIC S9(09)V99 COMP-3.
+	       05  TXP-VAT     PIC S9(09)V99 COMP-3.
+	   03  TXP-EXEMPT      PIC S9(09)V99 COMP-3.
+000100	   03  TXP-AC.
+	       05  TXP-CAC     PIC  9(05).
+               05  FILLER      PIC  X(01).

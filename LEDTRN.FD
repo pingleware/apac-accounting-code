@@ -1,0 +1,25 @@
+      /
+002000 FD  LEDTRN    LABEL RECORD IS STANDARD
+002010               VALUE OF FILE-ID IS W02-LEDTRN.
+002020 01  L-REC.
+           03  L-KEY.
+002160         05  L-AC        PIC  9(06).
+002030	       05  L-DATE      PIC  9(08).
+002040         05  L-DTE REDEFINES L-DATE.
+002050		   07  L-CC    PIC  9(02).
+002050             07  L-YY    PIC  9(02).
+002060             07  L-MM    PIC  9(02).
+002070             07  L-DD    PIC  9(02).
+002120         05  L-CODE      PIC  9(02).
+               05  L-REFER.
+002110             07  L-REF   PIC  9(07).
+               05  L-SEQ       PIC  9(02).
+               05  L-SUB       PIC  9(01).
+002080     03  L-NAR           PIC  X(40).
+002090     03  L-DESC REDEFINES L-NAR.
+002100         05  L-NARATIVE  PIC  X(36).
+               05  FILLER      PIC  9(07)    COMP-3.
+002130     03  L-VAL           PIC S9(09)V99 COMP-3.
+002170     03  L-FLAG          PIC  X(01).
+           03  L-BATCH         PIC  9(06)    COMP-3.
+	   03  FILLER	       PIC  X(03).

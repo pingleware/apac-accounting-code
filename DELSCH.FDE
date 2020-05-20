@@ -1,0 +1,27 @@
+      /
+000010 FD  DELSCH    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DELSCH.
+000030 01  SCH-RECORD1.
+	   03  SCH-KEY.
+000200	       05  SCH-DEBT    PIC  X(06).
+	       05  SCH-CONT    PIC  X(08).
+	       05  SCH-SEQ     PIC  9(03).
+	   03  SCH-ROUTE       PIC  X(08).
+	   03  SCH-CALL        PIC  X(03).
+000040	   03  SCH-ITEM        PIC  X(14).
+	   03  SCH-ITM	       PIC  X(03).
+	   03  SCH-FREQ        PIC  X(01).
+      *
+      *    ****    D A Y   O F	 W E E K   (SMTWTFS)
+      *
+	   03  SCH-DAYS        PIC  X(07).
+	   03  SCH-DAY REDEFINES SCH-DAYS
+			       PIC  X(01)    OCCURS 7.
+	   03  SCH-NEXT        PIC  9(01).
+	   03  SCH-START       PIC  9(08)    COMP-3.
+000060	   03  SCH-DATE        PIC  9(08)    COMP-3.
+000070	   03  SCH-QUANT       PIC S9(07)V99 COMP-3.
+	   03  SCH-QNT REDEFINES SCH-QUANT
+			       PIC S9(09)    COMP-3.
+	   03  FILLER	       PIC  X(03).

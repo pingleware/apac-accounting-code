@@ -1,0 +1,117 @@
+      /
+      *    ****    D E B T O R   T R A N S A C T I O N   C O D E
+      *                  L O O K U P   R O U T I N E
+      *
+      *           PERFORMED FROM TRANSACTION (SUNDRY / BATCH)
+      *
+       TRANCDE-VIEW            SECTION.
+      
+       TRNC-VIEW-SCREEN.
+             DISPLAY S-TRN.
+             MOVE 11                 TO WS-PARKEY.
+      
+       TRNC-VIEW-CLR-SCREEN.
+             MOVE 1355               TO CPOS.
+             PERFORM TRNC-CRT-EDGE UNTIL CLIN = 33.
+             MOVE 8                  TO SHADE-ROW.
+             MOVE 55                 TO SHADE-COL.
+             MOVE 22                 TO SHADE-WIDTH.
+             MOVE 26                 TO SHADE-LINES.
+             PERFORM SCREEN-SHADOW.
+             MOVE 1356               TO CPOS.
+             MOVE 1                  TO W75-S W75-S1.
+      
+       TRNC-VIEW-NUMB.
+             PERFORM CLEAR-L50.
+             MOVE 13                 TO CLIN.
+             MOVE 1                  TO W75-S.
+             MOVE ZERO               TO W75-S1.
+      
+       TRNC-READ.
+             PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+             MOVE 1                  TO WS-S1.
+      
+       TRNC-DISPLAY.
+           IF PAR-E-DESC(WS-S1) = SPACES
+               GO TO TRNC-CHECK-END.
+             MOVE PAR-T-CODE(WS-S1)  TO W75-CODE.
+             DISPLAY W75-CODE          AT LINE CLIN COLUMN 56 WITH BACKGROUND-COLOR Grey FOREGROUND-COLOR Blue.
+             DISPLAY PAR-E-DESC(WS-S1) AT LINE CLIN COLUMN 60 WITH BACKGROUND-COLOR Grey FOREGROUND-COLOR Blue.
+           IF PAR-ACTION(WS-S1) = 1
+               DISPLAY "Cr"            AT LINE CLIN COLUMN 74 WITH BACKGROUND-COLOR Grey FOREGROUND-COLOR Blue
+           ELSE
+               DISPLAY "Dt"            AT LINE CLIN COLUMN 74 WITH BACKGROUND-COLOR Grey FOREGROUND-COLOR Blue.
+           IF CLIN < 32
+               ADD 1                 TO CLIN
+           ELSE
+               GO TO TRNC-FULL-WINDOW.
+      
+       TRNC-CHECK-END.
+           IF WS-S1 < 2
+               ADD 1                 TO WS-S1
+               GO TO TRNC-DISPLAY.
+           IF WS-PARKEY < 60
+               ADD 1                 TO WS-PARKEY
+               GO TO TRNC-READ.
+      
+       TRNC-FULL-WINDOW.
+             DISPLAY "PgUp"               AT 5027 WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                         "/"                      WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                          "PgDn"                  WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                              " - "               WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                                 "Esc"            WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                                    "ape to quit" WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue.
+      
+       TRNC-GET-USER-OPT.
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY    GO TO TRANCDE-VIEW-EXIT
+                 WHEN PAGE-DOWN  GO TO TRNC-GET-NEXT-PAGE
+                 WHEN PAGE-UP    GO TO TRNC-GET-PREV-PAGE
+                 WHEN OTHER      PERFORM AA900-ALARM
+               END-EVALUATE
+               GO TO TRNC-GET-USER-OPT.
+             PERFORM AA900-ALARM.
+             GO TO TRNC-GET-USER-OPT.
+      
+       TRNC-CRT-EDGE.
+             DISPLAY "³   ³            ³   ³" AT CPOS WITH BACKGROUND-COLOR Grey FOREGROUND-COLOR Black.
+             ADD 1               TO CLIN.
+      
+       TRNC-GET-NEXT-PAGE.
+           IF WS-PARKEY > 59 AND WS-S1 > 1
+               GO TO TRNC-GET-USER-OPT.
+      
+       TRNC-NEW-PAGE.
+             MOVE 1355               TO CPOS.
+             PERFORM TRNC-CRT-EDGE UNTIL CLIN = 33.
+             MOVE 13                 TO CLIN.
+             MOVE 1                  TO W75-S W75-S1.
+             ADD 1                   TO WS-PARKEY.
+             GO TO TRNC-READ.
+      
+       TRNC-GET-PREV-PAGE.
+             MOVE 1                  TO WS-IXS1.
+      
+       TRNC-GET-PREV-LOOP.
+             PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+      
+       TRNC-GET-PREV-TEST.
+           IF NOT(PAR-E-DESC(WS-S1) = SPACES)
+               IF WS-IXS1 < 32
+                   ADD 1             TO WS-IXS1
+               ELSE
+                   GO TO TRNC-NEW-PAGE.
+           IF WS-S1 > 1
+               SUBTRACT 1            FROM WS-S1
+               GO TO TRNC-GET-PREV-TEST.
+           IF WS-PARKEY > 11
+               SUBTRACT 1            FROM WS-PARKEY
+               MOVE 2                TO WS-S1
+               GO TO TRNC-GET-PREV-LOOP.
+             SUBTRACT 1              FROM WS-PARKEY.
+             GO TO TRNC-NEW-PAGE.
+      
+       TRANCDE-VIEW-EXIT.
+             EXIT.

@@ -1,0 +1,16 @@
+000010 FD  CATLOG    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-CATLOG.
+000030 01  CAT-RECORD1.
+	   03  CAT-KEY.
+	       05  CAT-ID      PIC  X(40).
+	   03  CAT-ABREV       PIC  X(12).
+	   03  CAT-TYP1        PIC  X(30).
+	   03  CAT-TYP2        PIC  X(30).
+	   03  CAT-TYP3        PIC  X(30).
+	   03  CAT-TYP4        PIC  X(30).
+	   03  CAT-TYP5        PIC  X(30).
+	   03  CAT-TYP6        PIC  X(30).
+	   03  CAT-TYP7        PIC  X(30).
+	   03  CAT-TYP8        PIC  X(30).
+	   03  CAT-TYP9        PIC  X(30).
+	   03  CAT-TYP10       PIC  X(30).

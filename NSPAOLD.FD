@@ -1,0 +1,13 @@
+      /
+       FD  SPAOLD    LABEL RECORD STANDARD
+003050               VALUE OF FILE-ID W02-SPAOLD
+000220               RECORDING MODE IS VARIABLE.
+003060 01  PRO-REC1.
+           03  PRO-ITEM        PIC X(14).
+	   03  PRO-ITM	       PIC  X(03).
+           03  PRO-COMMENT     PIC X(40).
+           03  PRO-TYPE        PIC 9(02)      COMP.
+           03  PRO-PARTS OCCURS 30.
+	      05  PRO-CODE     PIC X(14).
+	      05  PRO-PITM     PIC  X(03).
+              05  PRO-QUANT    PIC 9(05)V9999 COMP-3.

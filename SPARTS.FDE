@@ -1,0 +1,17 @@
+      /
+       FD  SPARTS    IS EXTERNAL
+		     LABEL RECORD STANDARD
+003050               VALUE OF FILE-ID W02-SPARTS.
+003060 01  PRT-REC1.
+	   03  PRT-EXT-ITEM.
+	       05  PRT-ITEM    PIC  X(14).
+	       05  PRT-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  PRT-COMMENT     PIC  X(40).
+	   03  PRT-TYPE        PIC  9(02)      COMP.
+           03  PRT-PARTS OCCURS 30.
+	      05  PRT-EXT-CODE.
+		  07  PRT-CODE PIC  X(14).
+		  07  PRT-PITM PIC  X(03).
+		  07  FILLER   PIC  X(01).
+	      05  PRT-QUANT    PIC  9(05)V9999 COMP-3.

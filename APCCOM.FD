@@ -1,0 +1,11 @@
+      /    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё This file contains details of the different sets of books Ё
+      *    Ё that have been opened in the APAC system. These details   Ё
+      *	   Ё are Company code, name and path.			       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000010 FD  APCCOM   LABEL RECORD STANDARD
+000020		    VALUE OF FILE-ID "COMPANY.APC".
+       01  COM-RECORD.
+	   03  COM-CODE        PIC  X(03).
+	   03  COM-NAME        PIC  X(40).
+	   03  COM-PATH        PIC  X(40).

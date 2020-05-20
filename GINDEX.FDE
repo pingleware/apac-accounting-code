@@ -1,0 +1,11 @@
+      /
+000010 FD  GINDEX    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-GINDEX.
+000030 01  I-REC1.
+000040     03  I-DATE              PIC 9(06).
+000050     03  I-INDEX.
+000060         05  I-ACS OCCURS 100 INDEXED BY G-IX.
+000070             07  I-ACT       PIC 9(06)     COMP-3.
+000080             07  I-LNK       PIC 9(04)     COMP-5.
+000090     03  I-NEXT              PIC 9(04)     COMP-5.

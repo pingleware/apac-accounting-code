@@ -1,0 +1,37 @@
+
+       REWRITE-STKDEX.
+	     REWRITE STX-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 46		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-STKDEX-EXIT.
+
+       REWRITE-STKDEX-UNLOCK.
+	     REWRITE STX-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 46		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK STKDEX.
+	     GO TO WRITE-STKDEX-EXIT.
+
+       DELETE-STKDEX-REC.
+	     DELETE STKDEX.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 46		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK STKDEX.
+	     GO TO WRITE-STKDEX-EXIT.
+
+       WRITE-STKDEX.
+	     WRITE STX-REC1.
+009270	   IF WS-STATUS = "22"
+009330	       ADD 1		 TO STX-SEQ
+	       GO TO WRITE-STKDEX.
+	   IF WS-STAT1 NOT = "0"
+	       MOVE 46		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     CLOSE STKDEX.
+	     OPEN I-O STKDEX.
+
+       WRITE-STKDEX-EXIT.
+             EXIT.

@@ -1,0 +1,4 @@
+           03  W02-APACFILE.
+               05  W02-N-OR-L        PIC  X(08) VALUE "SYSTEMS\".
+               05  W02-SYSPTH        PIC  X(03).
+               05  FILLER            PIC  X(10) VALUE "_FILE.APC".

@@ -1,0 +1,27 @@
+      /
+000010 FD  DEBORD    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DEBORD.
+000030 01  DOR-RECORD1.
+	   03  DOR-KEY.
+000200	       05  DOR-DEBT    PIC  X(06).
+	       05  DOR-CONT    PIC  X(08).
+	       05  DOR-SEQ     PIC  9(03).
+	   03  DOR-ROUTE       PIC  X(08).
+	   03  DOR-CALL        PIC  X(03).
+000040	   03  DOR-ITEM        PIC  X(14).
+	   03  DOR-ITM	       PIC  X(03).
+	   03  DOR-FREQ        PIC  X(01).
+      *
+      *    ****    D A Y   O F	 W E E K   (SMTWTFS)
+      *
+	   03  DOR-DAYS        PIC  X(07).
+	   03  DOR-DAY REDEFINES DOR-DAYS
+			       PIC  X(01)    OCCURS 7.
+	   03  DOR-NEXT        PIC  9(01).
+	   03  DOR-START       PIC  9(08)    COMP-3.
+000060	   03  DOR-DATE        PIC  9(08)    COMP-3.
+000070	   03  DOR-QUANT       PIC S9(07)V99 COMP-3.
+	   03  DOR-QNT REDEFINES DOR-QUANT
+			       PIC S9(09)    COMP-3.
+	   03  FILLER	       PIC  X(03).

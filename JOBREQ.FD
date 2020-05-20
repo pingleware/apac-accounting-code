@@ -1,0 +1,74 @@
+      /
+000010 FD  JOBREQ    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JOBREQ.
+000030 01  REQ-REC1.
+	   03  REQ-KEY.
+000050	     05  REQ-REF       PIC  X(08).
+	     05	 REQ-SEQN.
+		 07  REQ-SEQ   PIC  9(03).
+		 07  REQ-SUB   PIC  9(02).
+	     05	 REQ-SQN REDEFINES REQ-SEQN
+			       PIC  9(05).
+      *
+      *    ****    TYPE : 0  -  HEADER RECORD
+      *                 : 1  -  ITEM DETAILS
+      *                 : 2  -  DISCOUNT DETAILS
+      *                 : 3  -  REMARKS
+      *                 : 4  -  INTERNAL NOTES FOR PICKING SLIP 
+      *                 : 9  -  TRAILER
+      *
+	   03  REQ-TYPE        PIC  9(01).
+	   03  REQ-JOB-KEY.
+	     05	 REQ-JOB       PIC  X(08).
+	     05	 REQ-JOB-SEQN.
+	       07  REQ-JOB-SEQ PIC  9(03).
+	       07  REQ-JOB-SUB PIC  9(02).
+000140	   03  REQ-DETAIL.
+	     05  REQ-EXT-ITEM.
+000190		 07  REQ-ITEM  PIC  X(14).
+		 07  REQ-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+000210	     05	 REQ-DESC.
+		 07  REQ-LDESC PIC  X(34).
+		 07  FILLER    PIC  X(06).
+	     05  REQ-SERIAL REDEFINES REQ-DESC.
+                 07  FILLER    PIC X(01).
+		 07  REQ-SNUM OCCURS 2.
+		     09  REQ-SNO
+			       PIC X(18).
+                     09  FILLER
+                               PIC X(01).
+		 07  FILLER    PIC X(01).
+000160	     05	 REQ-QNT       PIC S9(06)V999 COMP-3.
+	     05	 REQ-COST      PIC S9(06)V999 COMP-3.
+	     05	 REQ-SELL      PIC S9(08)V999 COMP-3.
+	     05	 REQ-VAT       PIC S9(07)V99 COMP-3.
+000280	     05	 REQ-VAL       PIC S9(09)V99 COMP-3.
+000270	     05	 REQ-INCTAX    PIC S9(07)V99 COMP-3.
+000270	     05	 REQ-NONTAX    PIC S9(09)V99 COMP-3.
+000270	     05	 REQ-TAXVAL    PIC S9(09)V99 COMP-3.
+	     05	 REQ-DSC       PIC S9(02)V99 COMP-3.
+	     05	 REQ-DISC      PIC S9(07)V99 COMP-3.
+	     05	 REQ-SERNO     PIC  X(18).
+	     05	 REQ-TECH      PIC  9(02).
+	     05	 REQ-PICNO     PIC  9(02)    COMP-5.
+      *
+      *    ****    STATUS : A = Allocated
+      *			    R = Requested
+      *			    S = Supplied
+      *
+	     05  REQ-STATUS    PIC  X(01).
+      *
+      *    ****    INSTRUCT : S = SWAP OUT
+      *			      G = GUARANTEE
+      *
+	     05  REQ-INSTRUCT  PIC  X(01).
+	     05  REQ-PRC       PIC  X(01).
+      *
+      *    ****    O R I G I N A L    I T E M	C O D E   A N D
+      * 	   S E R I A L	 N U M B E R
+      *
+	     05  REQ-ORG-ITEM  PIC  X(18).
+	     05  REQ-ORG-SERNO PIC  X(18).
+	     05  REQ-VAT-SUB   PIC  9(01).
+	     05  FILLER	       PIC  X(04).

@@ -1,0 +1,308 @@
+      ******************************************************************
+      *                                                                *
+      *                     V E R S I O N   9                          *
+      *                                                                *
+      * Changed DEB-ADDRESS  and DEB-PADDR  from  group fields with 70 *
+      * characters to  group  fields  containing  DEB-ADD-L1/2/3/4 and *
+      * DEB-PADD-L1/2/3/4  respectively. Each  of these new fields are *
+      * defined as PIC X(30).  As new  PC's and  Servers  contain huge *
+      * amounts of  disk  space  this  has  been  changed,  which also *
+      * results in simplifying the code for handling addresses in Data *
+      * capture, enquiries, reports etc. This also removes the restric-*
+      * tion on the number of characters that an address may contain.  *
+      *                                                                *
+      * Added Cell phone number field DEB-C-TEL (W40-C-TEL) PIC X(14). *
+      *                                                                *
+      * Changed DEB-FIN (W40-FIN) from a 9 to an X field.              *
+      *                                                                *
+      * Changed DEB-NAME from 40 characters to a group name containing *
+      * the following fields: DEB-SNAME, DEB-1ST-NAME and DEB-2ND-NAME *
+      * each defined as  PIC  X(24) as  well  as  DEB-INIT  PIC  X(08) *
+      * (W40-SURNAME,  W40-FNAME, W40-FNAME  and  W40-INITIALS).  This *
+      * allows for a name of  80 characters although the screen layout *
+      * (due to the fact  that  the  system  is  using an 80 character *
+      * width screen) for a Company and Internal accounts is providing *
+      * for only 60 characters. This allows an  additional 20 charact- *
+      * ers for Company and Internal account names.                    *
+      *                                                                *
+      * Added eMail address field DEB-EMAIL (W40-EMAIL) PIC X(64).     *
+      *                                                                *
+      ******************************************************************
+       01  W40-COMPANY.
+           03  W40-DEBTREC.
+               05  W40-ACNO          PIC  X(06).
+               05  W40-TYPE          PIC  9(01).
+               05  W40-CATEGORY.
+                   07  W40-CAT       PIC  9(02).
+               05  W40-TITLE         PIC  9(02)    COMP-5.
+               05  W40-NAME1.
+                   07  W40-NAME.
+                       09  W40-ENTRY PIC  X(08).
+                       09  FILLER    PIC  X(32).
+                   07  FILLER        PIC  X(40).
+               05  W40-NAME2                       REDEFINES W40-NAME1.
+                   07  W40-SURNAME   PIC  X(24).
+                   07  W40-FNAME     PIC  X(24).
+                   07  W40-SNAME     PIC  X(24).
+                   07  W40-INITIALS  PIC  X(08).
+               05  W40-NAME3                       REDEFINES W40-NAME1.
+                   07  W40-NCHAR     PIC  X(01)    OCCURS 80.
+               05  W40-ADDRESS.
+                   07  W40-ADD1      PIC  X(30).
+                   07  W40-ADD2      PIC  X(30).
+                   07  W40-ADD3      PIC  X(30).
+                   07  W40-ADD4      PIC  X(30).
+               05  W40-ADDRESS1                    REDEFINES W40-ADDRESS.
+                   07  W40-ACHAR     PIC  X(01)    OCCURS 120.
+               05  W40-PADDRESS.
+                   07  W40-PADD1     PIC  X(30).
+                   07  W40-PADD2     PIC  X(30).
+                   07  W40-PADD3     PIC  X(30).
+                   07  W40-PADD4     PIC  X(30).
+               05  W40-PADDR2                      REDEFINES W40-PADDRESS.
+                   07  W40-PCHAR     PIC X(01)     OCCURS 120.
+               05  W40-PC1.
+                   07  W40-POST      PIC  X(08).
+               05  W40-PC2.
+                   07  W40-PPOST     PIC  X(08).
+               05  W40-HTEL.
+                   07  W40-H-TEL     PIC  X(14).
+               05  W40-TEL.
+                   07  W40-B-TEL     PIC  X(14).
+               05  W40-CTEL.
+                   07  W40-C-TEL     PIC  X(14).
+               05  W40-FAX           PIC  X(14).
+               05  W40-ID            PIC  X(14).
+               05  W40-TAX           PIC  X(14).
+               05  W40-CONTACT       PIC  X(30).
+               05  W40-CON-NME                     REDEFINES W40-CONTACT.
+                   07  W40-ALT-KEY.
+                     09  W40-NME-CH  PIC  X(01)  OCCURS 12.
+                   07  FILLER        PIC  X(18).
+               05  W40-EMAIL         PIC  X(64).
+               05  W40-ACTIVE        PIC  9(08)    COMP-3.
+               05  W40-STM           PIC S9(09)V99 COMP-3.
+               05  W40-BAL           PIC S9(09)V99 COMP-3.
+               05  W40-CUR           PIC S9(09)V99 COMP-3.
+               05  W40-30            PIC S9(09)V99 COMP-3.
+               05  W40-60            PIC S9(09)V99 COMP-3.
+               05  W40-90            PIC S9(09)V99 COMP-3.
+               05  W40-120           PIC S9(09)V99 COMP-3.
+               05  W40-DEBT          PIC S9(09)V99 COMP-3.
+               05  W40-CRED          PIC S9(09)V99 COMP-3.
+               05  W40-PURYTD        PIC S9(09)V99 COMP-3.
+               05  W40-PURPRV        PIC S9(09)V99 COMP-3.
+               05  W40-INTEREST      PIC S9(05)V99 COMP-3.
+               05  W40-VAT           PIC S9(05)V99 COMP-3.
+               05  W40-CRL           PIC  9(07)    COMP-3.
+               05  W40-FINANCE.
+                   07  W40-FIN       PIC  X(01).
+               05  W40-TERMS         PIC  X(01).
+               05  W40-BDT           PIC  9(01).
+               05  W40-LANG          PIC  X(01).
+               05  W40-PMT           PIC  9(08)    COMP-3.
+               05  W40-INV-TYPE      PIC  X(01).
+               05  W40-LAST-PMT      PIC S9(09)V99 COMP-3.
+               05  W40-LAB           PIC  X(01).
+               05  W40-OI            PIC  X(01).
+                   88  W40-OPEN-ITEM               VALUE "O".
+                   88  W40-BAL-FORWARD             VALUE "B".
+               05  W40-PRICE         PIC  X(01).
+                   88  W40-VALID-PRICE             VALUE "1" "2" "3".
+               05  W40-ART11         PIC  X(01).
+                   88  W40-TAX-EXEMPT              VALUE "Y".
+               05  W40-SDISC         PIC  9(02)    COMP-5.
+               05  W40-DISC          PIC  9(02)    COMP-5.
+               05  W40-SMAN          PIC  9(02)    COMP-5.
+               05  W40-CONAC         PIC  X(06).
+               05  W40-PURMTH.
+      *
+      *    ****   The total amount PURCHASED each MONTH for the PAST
+      *           TWELVE MONTHS (Credit notes adjust these figures)
+      *
+                   07  W40-MTHPUR    PIC S9(09)V99 COMP-3 OCCURS 12.
+               05  W40-AREA.
+                   07  W40-GROUP     PIC  X(04).
+                   07  FILLER        PIC  X(04).
+               05  W40-PMTMTH.
+                   07  W40-PMTS                    OCCURS 12.
+      *
+      *    ****   The total amount PAID each MONTH for the PAST TWELVE
+      *           MONTHS (Payment reversals adjust these figures)
+      *
+                     09  W40-MTHPMT  PIC S9(09)V99 COMP-3.
+      *
+      *    ****   INDICATOR
+      *           C = STATEMENT BALANCE
+      *           S = SHORT PAID
+      *           1 = 30 DAYS
+      *           2 = 60 DAYS
+      *           3 = 90 DAYS
+      *           4 = 120 + DAYS
+      *
+                       09  W40-MTHPRF  PIC  X(01).
+                       09  W40-MTHDTE  PIC  9(08)  COMP-5.
+      *
+      *    ****   Number of outstanding Jobs
+      *
+               05  W40-JOBS          PIC  9(02)    COMP-5.
+      *
+      *    ****   Departments Excluded or Allowed.
+      *           Excluded - All others are allowed.
+      *           Allowed  - All others are excluded.
+      *
+               05  W40-RESTRICT      PIC  X(01).
+                   88  W40-SALES-EXCLUDED          VALUE "E".
+                   88  W40-SALES-ALLOWED           VALUE "A".
+                   88  W40-NO-SALES-RESTRICTIONS   VALUE "N".
+               05  FILLER            PIC  X(14).
+      *
+      *     E N D   D E B T O R   *   E N D   D E B T O R   *
+      *
+      *     =================================================
+      *
+      *             I N S T R U C T I O N S   F O R
+      *             DEBTOR NAME OR ADDRESS ROUTINES
+      *                           and
+      *                     ALLOCATE CREDIT
+      *
+           03  W40-INSTR             PIC  X(01).
+               88  DISPLAY-NAME                    VALUE "D".
+               88  FRMT-INDIVIDUAL                 VALUE "I".
+               88  FRMT-COMPANY                    VALUE "C".
+               88  PRINT-NAME                      VALUE "P".
+      *
+               88  DISPLAY-ADDRESS                 VALUE "S".
+               88  PRINT-ADDRESS                   VALUE "P".
+               88  FRMT-ADDRESS                    VALUE "F".
+      *
+               88  ALLOCATE-AUTO                   VALUE "A".
+               88  ALLOCATE-MANUAL                 VALUE "M".
+               88  ALLOCATE-UPDATE                 VALUE "U".
+      *
+      *     W40-INST is also used by DTPReadAR:
+      *              G = Read Debtor Record for account per W40-ACT-NO
+      *              H = If account W40-ACT-NO change to "I" otherwise 
+      *                  EXIT with error code in W40-RESULT
+      *              I = Start the access depending on W40-LUP
+      *              N = next Debtor record: Current/Previous Period.
+      *              R = Select a range of account numbers START and END
+      *              S = Select a starting number.
+      *              P = Select a previous period and check if files
+      *                  exist - Open files and set pointer for the
+      *                  next read.
+      *              U = User to select an account number
+      *
+           03  W40-LUP               PIC  X(01).
+           03  W40-CPOS              PIC  9(04).
+           03  W40-ANAME.
+               05  W40-ALT-LUP.
+                   07  W40-ALT-CHAR  PIC  X(01)    OCCURS 12.
+               05  FILLER            PIC  X(28).
+           03  W40-DSP-NAME.
+               05  W40-DSP-NME-CHAR  PIC  X(01)    OCCURS 40.
+           03  W40-STR-ADDRESS.
+               05  W40-DSP-ADDRESS.
+                   07  W40-DSP-ADD-CHAR  PIC  X(01)    OCCURS 60.
+               05  FILLER            PIC  X(68).
+           03  W40-PRINT-ADDRESS                       REDEFINES W40-STR-ADDRESS.
+               05  W40-ADD-1         PIC  X(30).
+               05  W40-ADD-2         PIC  X(30).
+               05  W40-ADD-3         PIC  X(30).
+               05  W40-ADD-4         PIC  X(30).
+               05  W40-ADD-PC        PIC  X(08).
+           03  W40-PST-ADDRESS.    
+               05  W40-DSP-PADDRESS.
+                   07  W40-DSP-PADD-CHAR PIC  X(01)    OCCURS 60.
+               05  FILLER            PIC  X(68).
+           03  W40-PRINT-PADDRESS                      REDEFINES W40-PST-ADDRESS.
+               05  W40-PADD-1        PIC  X(30).
+               05  W40-PADD-2        PIC  X(30).
+               05  W40-PADD-3        PIC  X(30).
+               05  W40-PADD-4        PIC  X(30).
+               05  W40-PADD-PC       PIC  X(08).
+           03  W40-ASSIST            PIC  X(30).
+           03  W40-SELECT.
+               05  W40-START-AC      PIC  X(06).
+               05  W40-END-AC        PIC  X(06).
+               05  W40-AGE-DATES.
+                   07  W40-120-D     PIC  9(08)    COMP-3.
+                   07  W40-90-D      PIC  9(08)    COMP-3.
+                   07  W40-60-D      PIC  9(08)    COMP-3.
+                   07  W40-30-D      PIC  9(08)    COMP-3.
+                   07  W40-CUR-D     PIC  9(08)    COMP-3.
+               05  W40-TODAY         PIC  9(08).
+               05  W40-PERIOD        PIC  X(01)    VALUE "C".
+                   88  PREVIOUS-PERIOD             VALUE "P".
+               05  W40-RESULT        PIC  X(01).
+               05  W40-DSP-OR-PRN    PIC  X(01).
+               05  W40-ACT-NO        PIC  X(06).
+               05  FILLER            PIC  X(06).
+           03  W40-PRNINV            PIC  X(01).
+           03  W40-LAST              PIC  9(03).
+           03  W40-REPRINT           PIC  X(01).
+           03  W40-PRC               PIC  X(01).
+           03  W40-CR                PIC  X(01).
+           03  W40-DTE               PIC  9(08).
+           03  W40-PARCELS           PIC  9(03).
+           03  W40-SPAR              PIC  X(01).
+           03  W40-NOSELL            PIC  X(01).
+           03  W40-NME.
+               05  W40-NCH           PIC  X(01)    OCCURS 32.
+           03  W40-CODE              PIC  X(06)    VALUE SPACES.
+           03  W40-OCAT              PIC  9(02).
+           03  W40-LINE                            REDEFINES W40-OCAT.
+               05  W40-CLIN          PIC  9(02).
+           03  W40-LEDG              PIC  X(04).
+           03  W40-OLD-LEDG                        REDEFINES W40-LEDG.
+               05  W40-SCDE          PIC  X(03).
+               05  FILLER            PIC  X(01).
+           03  W40-ONE               PIC S9(09)V99 COMP-3.
+           03  W40-MTD               PIC S9(09)V99 COMP-3.
+           03  W40-CURW              PIC S9(09)V99 COMP-3.
+           03  W40-30W               PIC S9(09)V99 COMP-3.
+           03  W40-60W               PIC S9(09)V99 COMP-3.
+           03  W40-90W               PIC S9(09)V99 COMP-3.
+           03  W40-120W              PIC S9(09)V99 COMP-3.
+           03  W40-INT               PIC S9(09)V99 COMP-3.
+           03  W40-ARREARS           PIC S9(09)V99 COMP-3 REDEFINES W40-INT.
+           03  W40-OOI               PIC  X(01).
+           03  W40-EXEMPT            PIC  X(01).
+           03  W40-STATUS            PIC  9(03)    COMP-3.
+      *
+      *   ***   U S E D   F O R   C O D   A C C O U N T 
+      *
+           03  W40-CUS-DET.
+               05  W40-NM1           PIC  X(40).
+               05  W40-AD1           PIC  X(30).
+               05  W40-AD2           PIC  X(30).
+               05  W40-AD3           PIC  X(30).
+               05  W40-AD4           PIC  X(30).
+               05  W40-PC            PIC  X(04).
+           03  W40-TRAN                            REDEFINES W40-CUS-DET.
+               05  W40-TRN.
+                   07  W40T-AC       PIC  X(06).
+                   07  W40T-DATE     PIC  9(08)    COMP.
+                   07  W40T-CODE     PIC  9(02).
+                   07  W40T-REF      PIC  X(08).
+      *    
+      *    TYPE: "U" = Unpaid.         \
+      *          "P" = Paid.            >  DEBIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      *          "A" = Allocated.       >  CREDIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+                   07  W40T-TYPE     PIC  X(01).
+                   07  W40T-REG      PIC  X(09).
+                   07  W40T-ORD      PIC  X(12).
+                   07  W40T-VALUE    PIC S9(09)V99 COMP-3.
+                   07  W40T-TAXFREE  PIC S9(09)V99 COMP-3.
+                   07  W40T-TAX      PIC S9(07)V99 COMP-3.
+                   07  W40T-DISC     PIC S9(03)V99 COMP-3.
+                   07  W40T-PAID     PIC S9(09)V99 COMP-3.
+                   07  W40T-REC      PIC  X(08).
+                   07  W40T-AGE      PIC  9(02)    COMP-5.
+                   07  FILLER        PIC  X(01).
+               05  FILLER            PIC  X(82).

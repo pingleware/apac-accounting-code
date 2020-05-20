@@ -1,0 +1,18 @@
+      /
+000010 FD  JTCOLD    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JTCOLD
+000220		     RECORDING MODE IS VARIABLE.
+000030 01  TMO-REC1.
+	   03  TMO-KEY.
+	       05  TMO-TECH    PIC  9(04).
+	       05  TMO-DATE    PIC  9(08).
+	       05  TMO-TIME    PIC  9(06).
+	   03  TMO-JOB	       PIC  X(08).
+	   03  TMO-E-DATE      PIC  9(08).
+	   03  TMO-E-TIME      PIC  9(06).
+	   03  TMO-ITEM        PIC  X(40).
+	   03  TMO-PMETH       PIC  X(02).
+	   03  TMO-AC	       PIC  X(06).
+	   03  TMO-NAME        PIC  X(40).
+	   03  TMO-WCOMP       PIC  X(06).
+	   03  TMO-WNAME       PIC  X(40).

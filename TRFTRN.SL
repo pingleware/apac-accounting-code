@@ -1,0 +1,8 @@
+      $SET KEYCOMPRESS "7"
+000010     SELECT LEDTRN  ASSIGN DISK
+000020                    LOCK AUTOMATIC
+000030                    STATUS WS-STATUS
+000040                    ACCESS DYNAMIC
+000050                    ORGANIZATION INDEXED
+000220                    RECORD L-KEY.
+      $SET NOKEYCOMPRESS

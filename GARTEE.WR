@@ -1,0 +1,45 @@
+      *
+      *     ***  *   *   *   ****    *   *   *   ***** ***** *     *****
+      *    *   * *   *  * *  *   *  * *  **  *   *       *   *     *
+      *    *     *   * *   * *  *  *   * * * *   *       *   *     *
+      *    *     *   * *   * ***   *   * *  **   ***     *   *     ***
+      *    *  ** *   * ***** *  *  ***** *   *   *       *   *     *
+      *    *   * *   * *   * *   * *   * *   *   *       *   *     *
+      *     ***   ***  *   * *   * *   * *   *   *     ***** ***** *****
+      *
+000010 REWRITE-GARTEE.
+000020       REWRITE GUA-RECORD1.
+000030     IF WS-STAT1 NOT = "0"
+000040         MOVE 9            TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060       GO TO WRITE-GARTEE-EXIT.
+000070
+000080 REWRITE-GARTEE-UNLOCK.
+000090       REWRITE GUA-RECORD1.
+000100     IF WS-STAT1 NOT = "0"
+000110         MOVE 9            TO WS-F-ERROR
+000120         PERFORM WRITE-ERROR.
+000130       UNLOCK GARTEE.
+000140       GO TO WRITE-GARTEE-EXIT.
+000150
+000160 DELETE-GARTEE-REC.
+000170       DELETE GARTEE.
+000180     IF WS-STAT1 NOT = "0"
+000190         MOVE 9            TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210       UNLOCK GARTEE.
+000220       GO TO WRITE-GARTEE-EXIT.
+000230
+000240 WRITE-GARTEE.
+000250       WRITE GUA-RECORD1.
+000260     IF WS-STAT1 NOT = "0"
+000270         MOVE 9            TO WS-F-ERROR
+               IF WS-STATUS = "22"
+                   GO TO WRITE-GARTEE-EXIT
+               ELSE
+000280             PERFORM WRITE-ERROR.
+	     CLOSE GARTEE.
+	     OPEN I-O GARTEE.
+
+000320 WRITE-GARTEE-EXIT.
+000330       EXIT.

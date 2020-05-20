@@ -1,0 +1,5 @@
+000010     03  W02-WORKSTAT.
+               05  FILLER            PIC  X(09) VALUE "WORKSTAT.".
+               05  W02-WS.
+                   07  FILLER        PIC  X(01).
+                   07  W02-WR        PIC  X(02).

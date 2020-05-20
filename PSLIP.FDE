@@ -1,0 +1,83 @@
+      /
+000010 FD  PSLIP     IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-PSLIP.
+000030 01  PIC-RECORD1.
+	   03  PIC-KEY.
+	       05  PIC-REF     PIC  X(08).
+	       05  PIC-SEQ     PIC  9(03).
+      *
+      *        H = Header
+      *        I = Item
+      *        T = Total
+      *
+	   03  PIC-TYPE        PIC  X(01).
+	   03  PIC-DRAW        PIC  9(02).
+000040	   03  PIC-CODE        PIC  9(03).
+	   03  PIC-EXT-ITEM.
+000050	       05  PIC-ITEM    PIC  X(14).
+	       05  PIC-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  PIC-MSER.
+000090	       05  PIC-DESC.
+		   07  PIC-SDSC
+			       PIC  X(29).
+	       05  FILLER      PIC  X(10).
+	       05  PIC-SCALE   PIC  X(01).
+	   03  PIC-SERIALS REDEFINES PIC-MSER.
+               05  FILLER      PIC  X(01).
+	       05  PIC-SNUM OCCURS 2.
+		   07  PIC-SNO PIC  X(18).
+                   07  FILLER  PIC  X(01).
+               05  FILLER      PIC  X(01).
+	   03  PIC-SERNO       PIC  X(18).
+000100	   03  PIC-QNT	       PIC S9(05)V99 COMP-3.
+	   03  PIC-WEIGHT REDEFINES PIC-QNT
+			       PIC S9(04)V999 COMP-3.
+000110	   03  PIC-COST        PIC S9(06)V999 COMP-3.
+000120	   03  PIC-SELL        PIC S9(08)V999 COMP-3.
+000130	   03  PIC-VAT	       PIC S9(07)V99 COMP-3.
+000140	   03  PIC-VAL	       PIC S9(09)V99 COMP-3.
+000150	   03  PIC-INCTAX      PIC S9(09)V99 COMP-3.
+000160	   03  PIC-NONTAX      PIC S9(09)V99 COMP-3.
+000170	   03  PIC-TAXVAL      PIC S9(09)V99 COMP-3.
+000180	   03  PIC-DSC	       PIC S9(02)V99 COMP-3.
+000190	   03  PIC-DISC        PIC S9(07)V99 COMP-3.
+	   03  PIC-SUPER       PIC  9(02)    COMP-3.
+	   03  PIC-PACK	       PIC  9(01).
+	   03  PIC-VAT-SUB     PIC  9(01).
+	   03  PIC-ART11       PIC  X(01).
+	   03  PIC-SPEC        PIC  X(01).
+	   03  PIC-3DEC        PIC  X(01).
+	   03  FILLER	       PIC  X(10).
+000030 01  PIC-RECORD2.
+	   03  FILLER	       PIC  X(14).
+	   03  PIC-SMAN        PIC  9(02).
+	   03  PIC-SNAME       PIC  X(21).
+	   03  PIC-DATE        PIC  9(08).
+	   03  PIC-TIME        PIC  X(08).
+	   03  PIC-VATNO       PIC  X(14).
+	   03  PIC-CLIENT      PIC  X(34).
+	   03  FILLER	       PIC  X(61).
+000030 01  PIC-RECORD3.
+	   03  FILLER	       PIC  X(14).
+	   03  PIC-TIME2       PIC  X(08).
+	   03  PIC-TOTAL       PIC S9(09)V99 COMP-3.
+	   03  PIC-DISCOUNT    PIC S9(09)V99 COMP-3.
+	   03  PIC-TAX-DET OCCURS 6.
+	       05  PIC-TAXABLE PIC S9(09)V99 COMP-3.
+	       05  PIC-VATVAL  PIC S9(07)V99 COMP-3.
+	   03  PIC-EXCTAX      PIC S9(09)V99 COMP-3.
+	   03  PIC-DUE	       PIC S9(09)V99 COMP-3.
+	   03  PIC-CASH	       PIC S9(07)V99 COMP-3.
+	   03  PIC-CHQ	       PIC S9(07)V99 COMP-3.
+	   03  PIC-CARD	       PIC S9(07)V99 COMP-3.
+	   03  PIC-SPEED       PIC S9(07)V99 COMP-3.
+	   03  PIC-VOUCH       PIC S9(07)V99 COMP-3.
+	   03  PIC-CHANGE      PIC S9(07)V99 COMP-3.
+	   03  PIC-ROUND       PIC S9(01)V99 COMP-3.
+	   03  PIC-RTVAL       PIC S9(01)V99 COMP-3.
+	   03  PIC-RTTAX       PIC S9(01)V99 COMP-3.
+	   03  PIC-TAX.
+	       05  PIC-CRNOTE  PIC S9(07)V99 COMP-3.
+	       05  FILLER      PIC X(09).

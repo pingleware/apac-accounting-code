@@ -1,0 +1,37 @@
+
+       REWRITE-PURDEX.
+	     REWRITE PRD-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 56		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-PURDEX-EXIT.
+
+       REWRITE-PURDEX-UNLOCK.
+	     REWRITE PRD-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 56		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK PURDEX.
+	     GO TO WRITE-PURDEX-EXIT.
+
+       DELETE-PURDEX-REC.
+	     DELETE PURDEX.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 56		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK PURDEX.
+	     GO TO WRITE-PURDEX-EXIT.
+
+       WRITE-PURDEX.
+	     WRITE PRD-REC1.
+009270	   IF WS-STATUS = "22"
+009330	       ADD 1		 TO PRD-SEQ
+	       GO TO WRITE-PURDEX.
+	   IF WS-STAT1 NOT = "0"
+	       MOVE 56		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     CLOSE PURDEX.
+	     OPEN I-O PURDEX.
+
+       WRITE-PURDEX-EXIT.
+             EXIT.

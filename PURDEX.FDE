@@ -1,0 +1,22 @@
+      /
+000010 FD  PURDEX    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-PURDEX.
+000220 01  PRD-REC1.
+000230	   03  PRD-KEY.
+	       05  PRD-SUPP    PIC  X(06).
+	       05  PRD-EXT-CODE.
+		 07  PRD-CODE  PIC  X(14).
+		 07  PRD-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+	       05  PRD-DTE     PIC  9(08)    COMP.
+	       05  PRD-SEQ     PIC  9(04)    COMP.
+	       05  PRD-TRAN    PIC  X(01).
+	   03  PRD-REF	       PIC  X(08).
+000250	   03  PRD-QNT	       PIC S9(07)V99 COMP-3.
+	   03  PRD-COST        PIC S9(09)V99 COMP-3.
+	   03  PRD-NAME.
+	       05  PRD-NME     PIC  X(30).
+	       05  FILLER      PIC  X(10).
+	   03  PRD-WHSE        PIC  X(06).
+	   03  FILLER	       PIC  X(04).

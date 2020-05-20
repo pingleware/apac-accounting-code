@@ -1,0 +1,61 @@
+      *==================================================================
+      *
+      *    The routine READ-ERROR will be performed if a status other than
+      *    zero is returned after any READ or START request and requires
+      *    that the file number to be moved to WS-F-ERROR before being
+      *    performed.
+      *
+      *    On returning from READ-ERROR, WS-ERROR will contain a value as
+      *    follows:
+      * 	    0 - No error or status to report
+      * 	    1 - Record locked
+      * 	    2 - Duplicate key
+      * 	    3 - No Record / End of file / Invalid key
+      * 	    4 - File already open
+      * 	    5 - File already closed
+      * 	    6 - Index corrupted
+      * 	    7 - Network / Communication error
+      * 	    8 - Limit exceeded - Record locks
+      * 	    9 - File limit exceeded (files open)
+      * 	   10 - Open for output
+      * 	   11 - Open for input
+      * 	   12 - File locked
+      * 	   13 - File not open
+      * 	   14 - File not open for I/O
+      * 	   99 - All other errors
+      *
+008690 READ-PARAM.
+008700       READ PARAM          WITH IGNORE LOCK.
+008710     IF WS-STATUS = "00"
+008720         GO TO READ-PARAM-EXIT.
+008730     IF WS-STAT1 = "2" OR "3" OR "4"
+008740         MOVE 15           TO WS-F-ERROR
+008750         PERFORM READ-ERROR.
+008760*    IF RECORD-LOCKED
+008770*        PERFORM LOCKED-RECORD
+008780*        GO TO READ-PARAM.
+008790       MOVE 15             TO WS-F-ERROR.
+008800       PERFORM READ-ERROR.
+      
+008810 READ-PARAM-LOCK-END.
+008820     READ PARAM            WITH KEPT LOCK.
+008830     IF WS-STATUS = "00"
+008840         GO TO READ-PARAM-EXIT.
+008850     IF WS-STAT1 = "2" OR "3" OR "4"
+008860         MOVE 15           TO WS-F-ERROR
+008870         PERFORM READ-ERROR.
+008880     IF RECORD-LOCKED
+000110         DISPLAY SPACE AT 2550
+000120         DISPLAY "PLEASE BE PATIENT" AT 2551 
+000130                  WITH FOREGROUND-COLOR 14 BLINK
+	       MOVE ZERO	 TO WS-KEY
+006290	       PERFORM ONE-SECOND-DELAY THRU LOCK-REC-EXIT
+008900	       GO TO READ-PARAM-LOCK-END.
+008910     IF TOO-MANY-LOCKS
+008920         UNLOCK PARAM
+008930	       GO TO READ-PARAM-LOCK-END.
+008940       MOVE 15             TO WS-F-ERROR.
+008950	     PERFORM READ-ERROR.
+
+008960 READ-PARAM-EXIT.
+008970       EXIT.

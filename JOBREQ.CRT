@@ -1,0 +1,27 @@
+009090 01  S-REQ.
+009100	   03  LINE  2 COLUMN 31 FOREGROUND-COLOR 15
+009110				 VALUE "REQUISITION LOOKUP".
+009120	   03  LINE  3 COLUMN  2 "Start Requisition :".
+009130     03  LINE  4 COLUMN  2 REVERSE-VIDEO VALUE 
+009140	       " Req no   Job no  Item code      Description
+009150-        "              Quantity".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออออัออออออออัออออออออออออออ
+      -        "ัอออออออออออออออออออออออออออออออออออัอออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออออฯออออออออฯออออออออออออออ
+      -        "ฯอออออออออออออออออออออออออออออออออออฯอออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009180     03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE 
+009190       "Key in at least the first character of the job code or pre
+009200-      "ss".
+009210     03          COLUMN 63 FOREGROUND-COLOR 14 VALUE "Esc".
+009220     03          COLUMN 66 FOREGROUND-COLOR 7 VALUE " to exit".
+009230	   03  LINE 25 COLUMN  2 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 14 VALUE
+009240                           "Pressing 'ENTER' key only, will start 
+009250-                          "from the beginning of the order file".
+009280 01  SA-REQ.
+009290	   03  LINE  3 COLUMN 22 FOREGROUND-COLOR 11
+009300				 PIC  Z(08) USING W10-JREQ AUTO.

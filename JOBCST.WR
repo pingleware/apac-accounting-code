@@ -1,0 +1,42 @@
+
+       REWRITE-JOBCST.
+             REWRITE JOB-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 13           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-JOBCST-EXIT.
+
+       REWRITE-JOBCST-UNLOCK.
+             REWRITE JOB-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 13           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK JOBCST.
+             GO TO WRITE-JOBCST-EXIT.
+
+       DELETE-JOBCST-REC-UNLOCK.
+             DELETE JOBCST.
+           IF WS-STAT1 NOT = "0"
+               MOVE 13           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK JOBCST.
+             GO TO WRITE-JOBCST-EXIT.
+
+       DELETE-JOBCST-REC.
+             DELETE JOBCST.
+           IF WS-STAT1 NOT = "0"
+               MOVE 13           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-JOBCST-EXIT.
+
+       WRITE-JOBCST.
+             WRITE JOB-REC1.
+           IF WS-STATUS = "22"
+               ADD 1             TO JOB-SEQ
+               GO TO WRITE-JOBCST.
+           IF WS-STAT1 NOT = "0"
+               MOVE 13           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-JOBCST-EXIT.
+             EXIT.

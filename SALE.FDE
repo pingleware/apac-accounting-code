@@ -1,0 +1,92 @@
+      /
+000010 FD  SALE      IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-SALE.
+000030 01  SAL-RECORD1.
+000040	   03  SAL-CODE        PIC  9(03).
+	   03  SAL-EXT-ITEM.
+000050	       05  SAL-ITEM    PIC  X(14).
+000060	       05  SAL-INVOICE REDEFINES SAL-ITEM.
+000070		   07  SAL-REF PIC  9(08).
+000080		   07  FILLER  PIC  X(06).
+	       05  SAL-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+           03  SAL-MSER.
+000090         05  SAL-DESC.
+                   07  SAL-SDSC
+			       PIC  X(29).
+	       05  FILLER      PIC  X(10).
+	       05  SAL-SCALE   PIC  X(01).
+           03  SAL-SERIALS REDEFINES SAL-MSER.
+               05  FILLER      PIC  X(01).
+	       05  SAL-SNUM OCCURS 2.
+		   07  SAL-SNO PIC  X(18).
+		   07  FILLER  PIC  X(01).
+	       05  FILLER      PIC  X(01).
+	   03  SAL-SERNO       PIC  X(18).
+000100	   03  SAL-QNT	       PIC S9(05)V99 COMP-3.
+	   03  SAL-WEIGHT REDEFINES SAL-QNT
+			       PIC S9(04)V999 COMP-3.
+	   03  SAL-CASES       PIC S9(05)     COMP-3.
+000110	   03  SAL-COST        PIC S9(06)V999 COMP-3.
+000120	   03  SAL-SELL        PIC S9(08)V999 COMP-3.
+000130     03  SAL-VAT         PIC S9(07)V99 COMP-3.
+000140	   03  SAL-VAL	       PIC S9(09)V99 COMP-3.
+000150	   03  SAL-INCTAX      PIC S9(09)V99 COMP-3.
+000160	   03  SAL-NONTAX      PIC S9(09)V99 COMP-3.
+000170	   03  SAL-TAXVAL      PIC S9(09)V99 COMP-3.
+000180     03  SAL-DSC         PIC S9(02)V99 COMP-3.
+000190	   03  SAL-DISC        PIC S9(07)V99 COMP-3.
+           03  SAL-SUPER       PIC  9(02)    COMP-3.
+           03  SAL-SEQN.
+               05  SAL-SEQ     PIC  9(03).
+               05  SAL-SUB     PIC  9(02).
+           03  SAL-SQN REDEFINES SAL-SEQN
+                               PIC  9(05).
+           03  SAL-TECH        PIC  9(02)    COMP-3.
+	   03  SAL-JOBNO       PIC  9(08).
+      *
+      *        I = Internal Notes
+      *        P = Part Requisition
+      *        R = Remarks
+      *        S = Stock Item
+      *        T = Template Item
+      *
+	   03  SAL-TYPE        PIC  X(01).
+	   03  SAL-AGE.
+	       05  SAL-STATUS  PIC  X(01).
+      *
+      *    ****    INSTRUCT : S = SWAP OUT
+      *			      G = GUARANTEE
+      *
+	   03  SAL-INSTRUCT    PIC  X(01).
+	   03  SAL-PACK	       PIC  9(01).
+	   03  SAL-VAT-SUB     PIC  9(01).
+	   03  SAL-ART11       PIC  X(01).
+	   03  SAL-SPEC        PIC  X(01).
+	   03  SAL-CONVERT     PIC S9(06)V999 COMP-3.
+
+000030 01  SAP-RECORD1.
+000040	   03  SAP-CODE        PIC  9(03).
+000090	   03  SAP-DESC.
+	       05  SAP-QTE     PIC  X(07).
+	       05  FILLER      PIC  X(01).
+	       05  SAP-SDSC    PIC  X(52).
+000110	   03  SAP-LEDG	       PIC  X(04).
+000120	   03  SAP-SELL        PIC S9(09)V99 COMP-3.
+000130	   03  SAP-VAT	       PIC S9(09)V99 COMP-3.
+000140	   03  SAP-VAL	       PIC S9(09)V99 COMP-3.
+000150	   03  SAP-INCTAX      PIC S9(09)V99 COMP-3.
+000160	   03  SAP-NONTAX      PIC S9(09)V99 COMP-3.
+000170	   03  SAP-TAXVAL      PIC S9(09)V99 COMP-3.
+000180	   03  SAP-DSC	       PIC S9(02)V99 COMP-3.
+000190	   03  SAP-DISC        PIC S9(07)V99 COMP-3.
+	   03  SAP-SEQN.
+	       05  SAP-SEQ     PIC  9(03).
+	       05  SAP-SUB     PIC  9(02).
+	   03  SAP-SQN REDEFINES SAP-SEQN
+                               PIC  9(05).
+	   03  SAP-TECH        PIC  9(02)    COMP-3.
+	   03  SAP-VAT-SUB     PIC  9(01)    COMP-5.
+	   03  SAP-ART11       PIC  X(01).
+	   03  FILLER	       PIC  X(41).

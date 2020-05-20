@@ -1,0 +1,31 @@
+      *
+      *    ****   G E T   S T O C K   R E C O R D   U S I N G   X R E F
+      *
+015170 CA200         SECTION.
+015180 CA201.
+013310	     MOVE 18		 TO W50-LENGTH.
+
+       CA205.
+013320	     MOVE W10-EXT-CODE2	 TO W50-DATA.
+           IF W50-1 = SPACE
+	       MOVE W50-17	 TO W10-EXT-CODE2
+               GO TO CA205.      
+	     CALL "CBL_TOUPPER" USING W50-DATA
+                                BY VALUE W50-LENGTH
+                                RETURNING W50-STATUS.
+013380	     MOVE W50-EXT-ITEM	 TO W10-EXT-CODE2.
+
+       CA206.
+013380	     MOVE W50-EXT-ITEM	  TO STK-XREF.
+
+       CA210.
+             PERFORM START-AT-STOCK-XREF THRU READ-STOCK-EXIT.
+           IF WS-F-ERROR = 22
+               GO TO CA299.
+             PERFORM READ-STOCK-NEXT THRU READ-STOCK-EXIT.
+	   IF NOT (STK-XREF = W50-EXT-ITEM)
+	       GO TO CA299.
+             PERFORM CA500.
+
+       CA299.
+             EXIT.

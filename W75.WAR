@@ -1,0 +1,6 @@
+       01  W75-KEYS.
+	   03  W75-S	      PIC  9(02) COMP-5.
+	   03  W75-S1	      PIC  9(02) COMP-5.
+	   03  W75-S2	      PIC  9(02) COMP-5.
+	   03  W75-WHOUSE OCCURS 18.
+	       05  W75-WHCDE  PIC  X(06).

@@ -1,0 +1,6 @@
+000010     SELECT DEBTRN  ASSIGN DISK
+000020                    LOCK AUTOMATIC
+000030                    STATUS WS-STATUS
+000040                    ACCESS DYNAMIC
+000050                    ORGANIZATION RELATIVE
+000220                    RELATIVE WS-DBTKEY.

@@ -1,0 +1,37 @@
+
+       REWRITE-CARDEX.
+             REWRITE CRD-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 43           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-CARDEX-EXIT.
+
+       REWRITE-CARDEX-UNLOCK.
+             REWRITE CRD-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 43           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK CARDEX.
+             GO TO WRITE-CARDEX-EXIT.
+
+       DELETE-CARDEX-REC.
+             DELETE CARDEX.
+           IF WS-STAT1 NOT = "0"
+               MOVE 43           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK CARDEX.
+             GO TO WRITE-CARDEX-EXIT.
+
+       WRITE-CARDEX.
+             WRITE CRD-REC1.
+009270	   IF WS-STATUS = "22"
+009330	       ADD 1		 TO CRD-SEQ
+	       GO TO WRITE-CARDEX.
+	   IF WS-STAT1 NOT = "0"
+               MOVE 43           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             CLOSE CARDEX.
+             OPEN I-O CARDEX.
+
+       WRITE-CARDEX-EXIT.
+             EXIT.

@@ -1,0 +1,91 @@
+      *
+      *    ****  THIS SCREEN - CLEARS THE DISPLAY AND SETS THE DEFAULT
+      *          COLOUR TO 3 (LIGHT BLUE).
+      *
+       01  CLR-SCREEN.
+      	   03  BLANK SCREEN FOREGROUND-COLOR Cyan BACKGROUND-COLOR Blue.
+      *                                              1         2         3         4         5         6         7         8
+      *                                     12345678901234567890123456789012345678901234567890123456789012345678901234567890
+      *                                                                                    dd/mm/yyyy
+      *        05  LINE  1 COLUMN  1 VALUE "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´          ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿".
+      *                                                                                    dd/mm/yyyy       HH:MM:SS
+               05  LINE  1 COLUMN  1 VALUE "Ú´              ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´          ÃÄÄÄÄÄ´        ÃÄÄÄÄÄÄ¿".
+               05  LINE  2 COLUMN  1 VALUE "³                                                                              ³".
+               05  LINE  3 COLUMN  1 VALUE "³                                                                              ³".
+               05  LINE  4 COLUMN  1 VALUE "ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´".
+               05  LINE  5 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE  6 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE  7 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE  8 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE  9 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 10 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 11 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 12 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 13 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 14 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 15 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 16 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 17 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 18 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 19 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 20 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 21 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 22 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 23 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 24 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 25 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 26 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 27 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 28 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 29 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 30 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 31 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 32 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 33 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 34 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 35 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 36 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 37 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 38 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 39 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 40 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 41 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 42 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 43 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 44 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 45 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 46 COLUMN  1 VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³".
+               05  LINE 47 COLUMN  1 VALUE "ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´".
+               05  LINE 48 COLUMN  1 VALUE "³                                           Note helpdesk number : 082-566-3095³".
+               05  LINE 49 COLUMN  1 VALUE "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ".
+      *        05  LINE	 1 COLUMN 48 FOREGROUND-COLOR Brown HIGHLIGHT PIC Z9/99/9999 USING TODAY-DDMMYY.
+      *        05  LINE  2 COLUMN  2 BACKGROUND-COLOR Grey  FOREGROUND-COLOR Red VALUE "APAC ".
+      *        05          COLUMN  7 BACKGROUND-COLOR Grey  FOREGROUND-COLOR Red PIC  X(12) FROM APAC-SYSTEM.
+      *        05          COLUMN 66 BACKGROUND-COLOR Grey  FOREGROUND-COLOR Red VALUE "Version - ".
+      *        05          COLUMN 76 BACKGROUND-COLOR Grey  FOREGROUND-COLOR Red PIC  X(04) FROM APAC-VERSION.
+
+           03  CLR-COMPANY-HEAD.
+               05  FOREGROUND-COLOR Cyan HIGHLIGHT.
+                   07  LINE  1 COLUMN  3 PIC  X(14)      FROM W05-WORK-STATION.
+                   07          COLUMN 48 PIC  Z9/99/9999 FROM LS-TODAY-DDMMYY FOREGROUND-COLOR Brown HIGHLIGHT.
+                   07  CLR-TIME.
+                       09      COLUMN 65 PIC  X(08)      FROM W05-HHMMSS      FOREGROUND-COLOR Brown HIGHLIGHT.
+
+           03  CLR-VERSION-HEAD.
+               05  FOREGROUND-COLOR Red HIGHLIGHT.
+                   07  LINE  2 COLUMN  2 VALUE "APAC ".
+                   
+                   07          COLUMN  7 PIC  X(12)      FROM APAC-SYSTEM.
+                   07          COLUMN 21 PIC  X(40)      FROM W05-COMPANY FOREGROUND-COLOR Cyan HIGHLIGHT.
+                   07          COLUMN 65 VALUE " Version - ".
+                   07          COLUMN 76 PIC  X(04)      FROM APAC-VERSION.
+                   07  LINE  3 COLUMN 65 PIC  X(15)      FROM W05-PROGRAM.
+
+           03  CLR-SCREEN-HEAD.
+               05  FOREGROUND-COLOR Grey HIGHLIGHT.
+                   07  LINE  3 COLUMN 21 PIC  X(40)      FROM W05-HEADING.
+           03  CLEAR-L50.
+               05  LINE 50 BLANK LINE BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue.
+
+       01  CLR-LINE.
+           03  VALUE "³°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°°³" FOREGROUND-COLOR Cyan BACKGROUND-COLOR Blue.

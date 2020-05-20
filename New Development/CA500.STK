@@ -1,0 +1,46 @@
+      *
+      *    ****    Calculate the inclusive prices
+      *
+       CA500         SECTION.
+       CA505.
+      *
+      * 	 Adjust the average cost for negative or zero quantity
+      *
+           IF STK-QUANT < 0.001
+               MOVE STK-COST         TO STK-AVGE.
+             MOVE 1                  TO W50-S1.
+
+       CA510.
+      *
+      *      If any of the cash or wholesale prices are zero insert the
+      *      price from the higher price (for cash - retail and for 
+      *                                   wholesale - cash)
+      *
+           IF STK-WSL(W50-S1) = ZERO
+               IF NOT(STK-CSH(W50-S1) = ZERO)
+                   MOVE STK-CSH(W50-S1) TO STK-WSL(W50-S1)
+               ELSE
+                   MOVE STK-SL(W50-S1)  TO STK-WSL(W50-S1).
+           IF STK-CSH(W50-S1) = ZERO
+               MOVE STK-SL(W50-S1)   TO STK-CSH(W50-S1).
+             MOVE STK-SL(W50-S1)     TO W10-SL(W50-S1).
+             MOVE STK-CSH(W50-S1)    TO W10-CSH(W50-S1).
+             MOVE STK-WSL(W50-S1)    TO W10-WSL(W50-S1).
+             MOVE ZERO               TO W05-RATE.
+           IF STK-TAX > 0
+               MOVE W05-VAT(STK-TAX) TO W05-RATE.
+             COMPUTE W10-VCSH(W50-S1) ROUNDED = W10-CSH(W50-S1) + (W10-CSH(W50-S1) * W05-RTE).
+             COMPUTE W10-VWSL(W50-S1) ROUNDED = W10-WSL(W50-S1) + (W10-WSL(W50-S1) * W05-RTE).
+             COMPUTE W10-VSL(W50-S1)  ROUNDED = W10-SL(W50-S1)  + (W10-SL(W50-S1)  * W05-RTE).
+           IF W50-S1 < 4
+               ADD 1                 TO W50-S1
+               GO TO CA510.
+           IF STK-PRC = ZERO
+               MOVE 1                TO STK-PRC.
+      *
+      *    Move the Stock record to Working storage area.
+      *         
+             MOVE STK-RECORD1        TO W10-STK-RECORD.
+
+       CA599.
+             EXIT.

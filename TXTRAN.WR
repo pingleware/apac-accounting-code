@@ -1,0 +1,44 @@
+      *
+      *  ***** *   * ***** ****    *   *   *     **** *** *    ****  
+      *    *   *   *   *   *   *  * *  *   *     *     *  *    *     
+      *    *    * *    *   *   * *   * **  *     *     *  *    *     
+      *    *     *     *   ****  ***** * * *     ***   *  *    ***   
+      *    *    * *    *   *   * *   * *  **     *     *  *    *     
+      *    *   *   *   *   *   * *   * *   *     *     *  *    *     
+      *    *   *   *   *   *   * *   * *   *     *    *** **** ****  
+      *
+010780 REWRITE-TXTRAN.
+010790       REWRITE TAX-RECORD1.
+010800     IF WS-STAT1 NOT = "0"
+010810         MOVE 32           TO WS-F-ERROR
+010820         PERFORM WRITE-ERROR.
+010830       GO TO WRITE-TXTRAN-EXIT.
+      
+010780 REWRITE-TXTRAN-UNLOCK.
+010790       REWRITE TAX-RECORD1.
+010800     IF WS-STAT1 NOT = "0"
+010810         MOVE 32           TO WS-F-ERROR
+010820         PERFORM WRITE-ERROR.
+             UNLOCK TXTRAN.
+010830       GO TO WRITE-TXTRAN-EXIT.
+      
+010840 DELETE-TXTRAN-REC.
+010850       DELETE TXTRAN.
+010860     IF WS-STAT1 NOT = "0"
+010870         MOVE 32           TO WS-F-ERROR
+010880         PERFORM WRITE-ERROR.
+010830       GO TO WRITE-TXTRAN-EXIT.
+      
+010840 WRITE-TXTRAN.
+010850       WRITE TAX-RECORD1.
+           IF WS-STATUS = "22"
+               ADD 1             TO TAX-SEQ
+               GO TO WRITE-TXTRAN.
+010860     IF WS-STAT1 NOT = "0"
+010870         MOVE 32           TO WS-F-ERROR
+010880         PERFORM WRITE-ERROR.
+	     CLOSE TXTRAN.
+	     OPEN I-O TXTRAN.
+      
+010890 WRITE-TXTRAN-EXIT.
+010900       EXIT.

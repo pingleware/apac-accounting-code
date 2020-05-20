@@ -1,0 +1,26 @@
+      /
+002000 FD  GLTRANP   IS EXTERNAL
+		     LABEL RECORD IS STANDARD
+002010		     VALUE OF FILE-ID IS W02-GLTRANP.
+002020 01  TP-REC.
+	   03  TP-KEY.
+002160	       05  TP-AC       PIC  9(06).
+002030	       05  TP-DATE     PIC  9(06).
+002040	       05  TP-DTE REDEFINES TP-DATE.
+002050		   07  TP-YY   PIC  9(02).
+002060		   07  TP-MM   PIC  9(02).
+002070		   07  TP-DD   PIC  9(02).
+	       05  TP-AKEY.
+002120		   07  TP-CODE PIC  9(02).
+		   07  TP-REFER.
+002110		       09  TP-REF
+                               PIC  9(07).
+		   07  TP-SEQ  PIC  9(02).
+	       05  TP-SUB      PIC  9(01).
+002080	   03  TP-NAR	       PIC  X(40).
+002090	   03  TP-DESC REDEFINES TP-NAR.
+002100	       05  TP-NARATIVE PIC  X(36).
+               05  FILLER      PIC  9(07)    COMP-3.
+002130	   03  TP-VAL	       PIC S9(09)V99 COMP-3.
+002170	   03  TP-FLAG	       PIC  X(01).
+	   03  TP-BATCH	       PIC  9(06)    COMP-3.

@@ -1,0 +1,13 @@
+       01  W75-KEYS.
+	   03  W75-S	      PIC  9(02) COMP-5.
+	   03  W75-S1	      PIC  9(02) COMP-5.
+	   03  W75-S2	      PIC  9(02) COMP-5.
+           03  W75-ITEMS OCCURS 18.
+	       05  W75-CODE   PIC  X(18).
+	       05  W75-SELL   PIC  9(07)V99 COMP-3.
+	       05  W75-VSELL  PIC  9(07)V99 COMP-3.
+	       05  W75-CASH   PIC  9(07)V99 COMP-3.
+	       05  W75-VCASH  PIC  9(07)V99 COMP-3.
+	       05  W75-WSALE  PIC  9(07)V99 COMP-3.
+	       05  W75-VWSALE PIC  9(07)V99 COMP-3.
+	   03  W75-SLEDG      PIC  X(04) OCCURS 10.

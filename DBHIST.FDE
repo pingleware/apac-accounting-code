@@ -1,0 +1,119 @@
+      /
+000010 FD  DBHIST    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DBHIST.
+000030 01  DBH-RECORD1.
+000040	   03  DBH-ACNO        PIC  X(06).
+000050	   03  DBH-TYPE        PIC  9(01).
+000060	   03  DBH-CATEGORY.
+000070	       05  DBH-CAT     PIC  9(02).
+000150	   03  DBH-TITLE       PIC  9(02)    COMP-5.
+000080	   03  DBH-NAME.
+000090	       05  DBH-NKEY.
+		 07  DBH-NCASH PIC  X(09).
+                 07  FILLER    PIC  X(03).
+000100         05  FILLER      PIC  X(28).
+000110	   03  DBH-ADDRESS.
+	       05  DBH-ADD     PIC  X(60).
+               05  FILLER      PIC  X(10).
+000120	   03  DBH-PADDR.
+	       05  DBH-PAD.
+      *
+      *    ****  Details of age and statement dates when history file
+      * 	 created. These fields appear on the first record in
+      * 	 the history file, which has an account no "     !"
+      * 	 and a name "  !". Created by age program DTP006.
+      *
+		 07  DBH-W30-AGE-DATES.
+		   09  DBH-W30-120 PIC	9(08) COMP-3.
+		   09  DBH-W30-90  PIC	9(08) COMP-3.
+		   09  DBH-W30-60  PIC	9(08) COMP-3.
+		   09  DBH-W30-30  PIC	9(08) COMP-3.
+		   09  DBH-W30-CUR PIC	9(08) COMP-3.
+		 07  DBH-STM-DTE   PIC	9(08) COMP-3.
+		 07  FILLER    PIC  X(30).
+               05  FILLER      PIC  X(10).
+000130	   03  DBH-POST        PIC  X(08).
+000140	   03  DBH-PPOST       PIC  X(08).
+000160	   03  DBH-H-TEL       PIC  X(14).
+000170	   03  DBH-B-TEL       PIC  X(14).
+000170	   03  DBH-FAX	       PIC  X(14).
+000180	   03  DBH-ID	       PIC  X(14).
+000190	   03  DBH-TAX	       PIC  X(14).
+	   03  DBH-CONTACT     PIC  X(30).
+000200	   03  DBH-ACTIVE      PIC  9(08)    COMP-3.
+000210	   03  DBH-STM	       PIC S9(09)V99 COMP-3.
+000220	   03  DBH-BAL	       PIC S9(09)V99 COMP-3.
+000230	   03  DBH-CUR	       PIC S9(09)V99 COMP-3.
+000240	   03  DBH-30	       PIC S9(09)V99 COMP-3.
+000250	   03  DBH-60	       PIC S9(09)V99 COMP-3.
+000260	   03  DBH-90	       PIC S9(09)V99 COMP-3.
+000270	   03  DBH-120	       PIC S9(09)V99 COMP-3.
+000280	   03  DBH-DEBT        PIC S9(09)V99 COMP-3.
+000290	   03  DBH-CRED        PIC S9(09)V99 COMP-3.
+000300	   03  DBH-PURYTD      PIC S9(09)V99 COMP-3.
+000310	   03  DBH-PURPRV      PIC S9(09)V99 COMP-3.
+000320	   03  DBH-INT	       PIC S9(05)V99 COMP-3.
+000320	   03  DBH-VAT	       PIC S9(05)V99 COMP-3.
+000330	   03  DBH-CRL	       PIC  9(07)    COMP-3.
+000340	   03  DBH-FINANCE.
+000350	       05  DBH-FIN     PIC  9(01).
+000360	   03  DBH-TERMS       PIC  X(01).
+000370	   03  DBH-BDT	       PIC  9(01).
+000380	   03  DBH-LANG        PIC  X(01).
+000390	   03  DBH-PMT	       PIC  9(08)    COMP-3.
+	   03  DBH-INV-TYPE    PIC  X(01).
+	   03  DBH-LAST-PMT    PIC S9(09)V99 COMP-3.
+	   03  DBH-LAB	       PIC  X(01).
+	   03  DBH-OI	       PIC  X(01).
+	       88  H-OPEN-ITEM	 VALUE "O".
+	       88  H-BAL-FORWARD VALUE "B".
+	   03  DBH-PRICE       PIC  X(01).
+	       88  VALID-PRICE VALUE "1" "2" "3".
+	   03  DBH-ART11       PIC  X(01).
+	       88  TAX-EXEMPT  VALUE "Y".
+000400	   03  DBH-SDISC       PIC  9(02)    COMP-5.
+000410	   03  DBH-DISC        PIC  9(02)    COMP-5.
+000420	   03  DBH-SMAN        PIC  9(02)    COMP-5.
+	   03  DBH-CONAC       PIC  X(06).
+	   03  DBH-PURMTH.
+      *
+      *    ****   The total amount PURCHASED each MONTH for the PAST
+      * 	  TWELVE MONTHS (Credit notes adjust these figures)
+      *
+	       05  DBH-MTHPUR  PIC S9(09)V99 COMP-3 OCCURS 12.
+	   03  DBH-AREA.
+	       05  DBH-GROUP   PIC  X(04).
+	       05  FILLER      PIC  X(04).
+	   03  DBH-PMTMTH.
+	       05  DBH-PMTS OCCURS 12.
+      *
+      *    ****   The total amount PAID each MONTH for the PAST TWELVE
+      * 	  MONTHS (Payment reversals adjust these figures)
+      *
+		   07  DBH-MTHPMT  PIC S9(09)V99 COMP-3.
+      *
+      *    ****   INDICATOR
+      * 	  C = STATEMENT BALANCE
+      * 	  S = SHORT PAID
+      * 	  1 = 30 DAYS
+      * 	  2 = 60 DAYS
+      * 	  3 = 90 DAYS
+      * 	  4 = 120 + DAYS
+      *
+		   07  DBH-MTHPRF  PIC	X(01).
+		   07  DBH-MTHDTE  PIC	9(08)	 COMP-5.
+      *
+      *    ****   Number of outstanding Jobs
+      *
+	   03  DBH-JOBS	       PIC  9(02)    COMP-5.
+      *
+      *    ****   Departments Excluded or Allowed.
+      * 	  Excluded - All others are allowed.
+      * 	  Allowed  - All others are excluded.
+      *
+	   03  DBH-RESTRICT    PIC  X(01).
+	       88  SALES-EXCLUDED	 VALUE "E".
+	       88  SALES-ALLOWED	 VALUE "A".
+	       88  NO-SALES-RESTRICTIONS VALUE "N".
+	   03  FILLER	       PIC  X(14).

@@ -1,0 +1,13 @@
+       01  S99.
+           03  BACKGROUND-COLOR Cyan.
+               05           COLUMN 24 VALUE "здддддддддддддддддддддддддддддд" FOREGROUND-COLOR Cyan  HIGHLIGHT.
+               05           COLUMN 55 VALUE "©"                               FOREGROUND-COLOR Black.
+               05  LINE + 1 COLUMN 24 VALUE "Ё"                               FOREGROUND-COLOR Cyan  HIGHLIGHT.
+               05           COLUMN 25 VALUE "Correct "                        FOREGROUND-COLOR Blue .
+               05           COLUMN 33 VALUE "ENTER"                           FOREGROUND-COLOR Brown HIGHLIGHT.
+               05           COLUMN 38 VALUE " - "                             FOREGROUND-COLOR Blue.
+               05           COLUMN 41 VALUE "N"                               FOREGROUND-COLOR Brown HIGHLIGHT.
+               05           COLUMN 42 VALUE " if incorrect"                   FOREGROUND-COLOR Blue.
+               05           COLUMN 55 VALUE "Ё"                               FOREGROUND-COLOR Black.
+               05  LINE + 1 COLUMN 24 VALUE "ю"                               FOREGROUND-COLOR Cyan  HIGHLIGHT.
+               05           COLUMN 25 VALUE "дддддддддддддддддддддддддддддды" FOREGROUND-COLOR Black.

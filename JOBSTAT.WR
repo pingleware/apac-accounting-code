@@ -1,0 +1,42 @@
+      *
+      * *****  ***  ****   ***	*****	*   *****    ***** *** *    ****
+      *   *   *   * *	* *   *   *    * *    *      *	    *  *    *
+      *   *   *   * *	* *	  *   *   *   *      *	    *  *    *
+      *   *   *   * ****   ***	  *   *****   *      ***    *  *    ***
+      *   *   *   * *	*     *   *   *   *   *      *	    *  *    *
+      * * *   *   * *	* *   *   *   *   *   *      *	    *  *    *
+      * '*'    ***  ****   ***	  *   *   *   *      *	   *** **** ****
+      *
+000010 REWRITE-JOBSTAT.
+000020	     REWRITE JST-REC1.
+000030     IF WS-STAT1 NOT = "0"
+000040	       MOVE 60		 TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060	     GO TO WRITE-JOBSTAT-EXIT.
+000070
+000080 REWRITE-JOBSTAT-UNLOCK.
+000090	     REWRITE JST-REC1.
+000100     IF WS-STAT1 NOT = "0"
+000110	       MOVE 60		 TO WS-F-ERROR
+000120         PERFORM WRITE-ERROR.
+000130	     UNLOCK JOBSTAT.
+000140	     GO TO WRITE-JOBSTAT-EXIT.
+000150
+000160 DELETE-JOBSTAT-REC.
+000170	     DELETE JOBSTAT.
+000180     IF WS-STAT1 NOT = "0"
+000190	       MOVE 60		 TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210	     GO TO WRITE-JOBSTAT-EXIT.
+000220
+000230 WRITE-JOBSTAT.
+000240	     WRITE JST-REC1.
+000250     IF WS-STATUS = "22"
+000260	       DELETE JOBSTAT
+000270	       GO TO WRITE-JOBSTAT.
+000280     IF WS-STAT1 NOT = "0"
+000290	       MOVE 60		 TO WS-F-ERROR
+000300         PERFORM WRITE-ERROR.
+
+000340 WRITE-JOBSTAT-EXIT.
+000350       EXIT.

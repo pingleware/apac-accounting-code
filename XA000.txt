@@ -1,0 +1,23 @@
+		     "Extracting consolodated transactions:        ¦"
+		      WITH BACKGROUND-COLOR 0 FOREGROUND-COLOR 5.
+	     DISPLAY "+" AT 1117 WITH FOREGROUND-COLOR 5 HIGHLIGHT
+				      BACKGROUND-COLOR 5
+		     "----------------------------------------------+"
+		      WITH BACKGROUND-COLOR 0 FOREGROUND-COLOR 5.
+	     PERFORM SCREEN-SHADOW.
+	     MOVE " !"		 TO DEB-NAME.
+	     PERFORM START-AT-DEBT-NAME THRU READ-DEBTOR-EXIT.
+010780	   IF WS-F-ERROR = 6
+021070	       GO TO XA999-EXIT.
+
+       XA05.
+021090	     PERFORM READ-DEBTOR-NEXT THRU READ-DEBTOR-EXIT.
+	     DISPLAY DEB-ACNO AT 1057
+		     WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			  BACKGROUND-COLOR 5.
+	   IF
+
+
+									      ¦
+ __________________________________________________________________________-+
+F1=Help> <Alt=Menu> <F6=Window> 			     M	   CN 00034.015

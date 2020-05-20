@@ -1,0 +1,102 @@
+      /
+000010 FD  INVOIC    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-INVOICE.
+000030 01  INV-REC1.
+	   03  INV-KEY.
+	     05  INV-AC        PIC  X(06).
+000050	     05  INV-REF       PIC  X(08).
+	     05  INV-SEQN.
+		 07  INV-SEQ   PIC  9(03).
+		 07  INV-SUB   PIC  9(02).
+	     05  INV-SQN REDEFINES INV-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 0  -  HEADER RECORD
+      *                 : 1  -  ITEM DETAILS
+      *                 : 2  -  DISCOUNT DETAILS
+      *                 : 3  -  REMARKS
+      * 		: 4  -	NON STOCK LINE DETAILS
+      * 		: 5  -	DELIVERY ADDRESS
+      *                 : 9  -  TRAILER
+      *
+	   03  INV-TYPE        PIC  9(01).
+000070	   03  INV-DTE	       PIC  9(08).
+	   03  INV-DETAIL.
+	     05  INV-NAME      PIC  X(40).
+	     05  INV-PICNO     PIC  9(02)    COMP-5.
+000090	     05  INV-ORD       PIC  X(12).
+000130	     05  INV-SMAN      PIC  9(04)    COMP-5.
+	     05  INV-DOC       PIC  X(01).
+	       88  INV-CREDIT  VALUE "C".
+	       88  INV-INVOIC  VALUE "I".
+	     05  INV-PAGE      PIC  9(02).
+	     05  INV-OREF      PIC  X(09).
+	     05  INV-EXP       PIC  X(01).
+	     05  INV-PRC       PIC  X(01).
+	     05  INV-ADV       PIC  X(01).
+	     05  INV-VALUE     PIC S9(09)V99 COMP-3.
+	     05  INV-PROF      PIC  X(01).
+	     05  FILLER        PIC  X(72).
+000140	   03  INV-DET2 REDEFINES INV-DETAIL.
+	     05  INV-EXT-ITEM.
+000190		 07  INV-ITEM  PIC  X(14).
+		 07  INV-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+	     05  INV-MSER.
+000090		 07  INV-DESC  PIC  X(30).
+		 07  FILLER    PIC  X(10).
+	     05  INV-SERIALS REDEFINES INV-MSER.
+                 07  FILLER    PIC  X(01).
+		 07  INV-SNUM OCCURS 2.
+		   09  INV-SNO PIC  X(18).
+                   09  FILLER  PIC  X(01).
+                 07  FILLER    PIC  X(01).
+000160	     05  INV-QNT       PIC S9(06)V999 COMP-3.
+	     05  INV-COST      PIC S9(07)V999 COMP-3.
+	     05  INV-SELL      PIC S9(07)V999 COMP-3.
+	     05  INV-VAT       PIC S9(07)V99 COMP-3.
+000280	     05  INV-VAL       PIC S9(09)V99 COMP-3.
+000270	     05  INV-INCTAX    PIC S9(09)V99 COMP-3.
+000270	     05  INV-NONTAX    PIC S9(07)V99 COMP-3.
+000270	     05  INV-TAXVAL    PIC S9(07)V99 COMP-3.
+	     05  INV-DSC       PIC S9(02)V99 COMP-3.
+	     05  INV-DISC      PIC S9(07)V99 COMP-3.
+	     05  INV-SERNO     PIC  X(18).
+	     05  INV-UNITS     PIC S9(04)V999 COMP-3.
+	     05  INV-CONVERT   PIC S9(06)V999 COMP-3.
+	     05  INV-PER       PIC  X(08).
+	     05  INV-PACK      PIC  9(01)    COMP-0.
+000140	   03  INV-DET3 REDEFINES INV-DETAIL.
+000290	     05  INV-SUBTOT    PIC S9(09)V99 COMP-3.
+000300	     05  INV-DSCNT     PIC S9(07)V99 COMP-3.
+	     05  INV-NON-TXBL  PIC S9(09)V99 COMP-3.
+	     05  INV-TAXABLE   PIC S9(09)V99 COMP-3.
+000310	     05  INV-TAX       PIC S9(07)V99 COMP-3.
+000320	     05  INV-TOT       PIC S9(09)V99 COMP-3.
+	     05  INV-INVOICE   PIC  X(08).
+	     05  INV-BAL       PIC S9(09)V99 COMP-3.
+000310	     05  INV-ADVTAX    PIC S9(07)V99 COMP-3.
+	     05  INV-TERMS     PIC  X(01).
+	     05  INV-CONTACT   PIC  X(14).
+	     05  INV-TEL       PIC  X(14).
+	     05  INV-INSTRUCT  PIC  X(15).
+	     05  INV-EXT       PIC  X(03).
+	     05  FILLER        PIC  X(49).
+000140	   03  INV-DET4 REDEFINES INV-DETAIL.
+	     05  INV-REMKS     PIC  X(60).
+	     05  INV-PSELL     PIC S9(09)V99 COMP-3.
+	     05  INV-PVAT      PIC S9(09)V99 COMP-3.
+000280	     05  INV-PVAL      PIC S9(09)V99 COMP-3.
+000270	     05  INV-PINCTAX   PIC S9(09)V99 COMP-3.
+000270	     05  INV-PNONTAX   PIC S9(09)V99 COMP-3.
+000270	     05  INV-PTAXVAL   PIC S9(09)V99 COMP-3.
+	     05  INV-LEDG      PIC  X(04).
+	     05  FILLER        PIC  X(49).
+000140	   03  INV-DET5 REDEFINES INV-DETAIL.
+	     05  INV-AD1       PIC  X(30).
+	     05  INV-AD2       PIC  X(30).
+	     05  INV-AD3       PIC  X(30).
+	     05  INV-AD4       PIC  X(30).
+	     05  INV-PC        PIC  X(04).
+	     05  FILLER        PIC  X(33).

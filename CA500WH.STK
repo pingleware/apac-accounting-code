@@ -1,0 +1,55 @@
+      *
+      *    ****    Calculate the inclusive prices
+      *
+       CA500         SECTION.
+       CA505.
+      * 			 Adjust the average cost for negative
+      * 			 or zero quantity
+	   IF STK-QUANT < 0.001
+	       MOVE STK-COST	 TO STK-AVGE.
+           IF STK-WSALE = ZERO
+               IF STK-CASH NOT = ZERO
+                   MOVE STK-CASH TO STK-WSALE
+               ELSE
+                   MOVE STK-SELL TO STK-WSALE.
+015630	   IF STK-CASH = ZERO
+015640	       MOVE STK-SELL	 TO STK-CASH.
+      *    IF STK-IND < 2
+      *        IF STK-CASH < STK-WSALE
+      *		   MOVE STK-WSALE  TO STK-CASH
+      *        END-IF
+      *        IF STK-SELL < STK-CASH
+      *		   MOVE STK-CASH	TO STK-SELL
+      *        END-IF
+      *        IF STK-CMARKUP < STK-WMARKUP
+      *		   MOVE STK-WMARKUP	TO STK-CMARKUP
+      *        END-IF
+      *        IF STK-MARKUP < STK-CMARKUP
+      *		   MOVE STK-CMARKUP	TO STK-MARKUP
+      *        END-IF.
+	     MOVE STK-CASH	 TO W10-CASH.
+	     MOVE STK-SELL	 TO W10-SELL.
+	     MOVE STK-WSALE	 TO W10-WSALE.
+             MOVE ZERO           TO W05-RATE.
+           IF STK-TAX > 0
+	       MOVE W05-VAT (STK-TAX)
+				 TO W05-RATE.
+             COMPUTE W10-VCASH ROUNDED 
+		   = W10-CASH + (W10-CASH * W05-RTE).
+             COMPUTE W10-VWSALE ROUNDED 
+		   = W10-WSALE + (W10-WSALE * W05-RTE).
+             COMPUTE W10-VSELL ROUNDED 
+		   = W10-SELL + (W10-SELL * W05-RTE).
+	   IF STK-PRC = ZERO
+	       MOVE "EA"	 TO STK-PACK.
+	   IF (W40-CODE = SPACES) OR (STK-IND > 1)
+	       GO TO CA599.
+	     MOVE W40-CODE	 TO WST-WAR.
+	     MOVE W10-ITEM	 TO WST-CODE.
+	     MOVE SPACES	 TO WST-ITM.
+	     PERFORM READ-WSTOCK THRU READ-WSTOCK-EXIT.
+	   IF WS-F-ERROR = 52
+	       MOVE ZERO	 TO WST-QUANT.
+
+015650 CA599.
+015660       EXIT.

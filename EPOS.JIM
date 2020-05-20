@@ -1,0 +1,22 @@
+       IDENTIFICATION DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01  KEY-STATUS.
+	   03  KEY-TYPE        PIC  X(01).
+	       88  NORM-END    VALUE "0".
+	       88  USER-FUNC   VALUE "1".
+	       88  ADIS-FUNC   VALUE "2".
+	       88  DATA-8BIT   VALUE "3".
+	       88  DATA-16BIT  VALUE "4".
+	   03  KEY-CODE-1      PIC  9(02) COMP-X.
+	   03  KEY-CODE-1X REDEFINES KEY-CODE-1
+			       PIC  X(01).
+	   03  KEY-CODE-2      PIC  9(02) COMP-X.
+
+       01  GET-SINGLE-CHAR     PIC  9(02)    COMP-X VALUE 26.
+       SCREEN SECTION.
+       COPY "EPOS.ss".
+       PROCEDURE DIVISION.
+	     DISPLAY G-EPOS.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     STOP RUN.

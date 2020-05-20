@@ -1,0 +1,82 @@
+      /
+000010 FD  SLIP      LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-SLIP.
+000030 01  SLP-RECORD1.
+	   03  SLP-KEY.
+	       05  SLP-REF     PIC  X(08).
+	       05  SLP-SEQ     PIC  9(03).
+      *
+      *        H = Header
+      *        I = Item
+      *        T = Total
+      *
+	   03  SLP-TYPE        PIC  X(01).
+	   03  SLP-DRAW        PIC  9(02).
+000040	   03  SLP-CODE        PIC  9(03).
+	   03  SLP-EXT-ITEM.
+000050	       05  SLP-ITEM    PIC  X(14).
+	       05  SLP-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  SLP-MSER.
+000090	       05  SLP-DESC.
+		   07  SLP-SDSC
+			       PIC  X(29).
+	       05  FILLER      PIC  X(10).
+	       05  SLP-SCALE   PIC  X(01).
+	   03  SLP-SERIALS REDEFINES SLP-MSER.
+               05  FILLER      PIC  X(01).
+	       05  SLP-SNUM OCCURS 2.
+		   07  SLP-SNO PIC  X(18).
+                   07  FILLER  PIC  X(01).
+               05  FILLER      PIC  X(01).
+	   03  SLP-SERNO       PIC  X(18).
+000100	   03  SLP-QNT	       PIC S9(05)V99 COMP-3.
+	   03  SLP-WEIGHT REDEFINES SLP-QNT
+			       PIC S9(04)V999 COMP-3.
+000110	   03  SLP-COST        PIC S9(06)V999 COMP-3.
+000120	   03  SLP-SELL        PIC S9(08)V999 COMP-3.
+000130	   03  SLP-VAT	       PIC S9(07)V99 COMP-3.
+000140	   03  SLP-VAL	       PIC S9(09)V99 COMP-3.
+000150	   03  SLP-INCTAX      PIC S9(09)V99 COMP-3.
+000160	   03  SLP-NONTAX      PIC S9(09)V99 COMP-3.
+000170	   03  SLP-TAXVAL      PIC S9(09)V99 COMP-3.
+000180	   03  SLP-DSC	       PIC S9(02)V99 COMP-3.
+000190	   03  SLP-DISC        PIC S9(07)V99 COMP-3.
+	   03  SLP-SUPER       PIC  9(02)    COMP-3.
+	   03  SLP-PACK	       PIC  9(01).
+	   03  SLP-VAT-SUB     PIC  9(01).
+	   03  SLP-ART11       PIC  X(01).
+	   03  SLP-SPEC        PIC  X(01).
+	   03  SLP-3DEC        PIC  X(01).
+	   03  FILLER	       PIC  X(10).
+000030 01  SLP-RECORD2.
+	   03  FILLER	       PIC  X(14).
+	   03  SLP-SMAN        PIC  9(02).
+	   03  SLP-SNAME       PIC  X(21).
+	   03  SLP-DATE        PIC  9(08).
+	   03  SLP-TIME        PIC  X(08).
+	   03  SLP-VATNO       PIC  X(14).
+	   03  FILLER	       PIC  X(95).
+000030 01  SLP-RECORD3.
+	   03  FILLER	       PIC  X(14).
+	   03  SLP-TIME2       PIC  X(08).
+	   03  SLP-TOTAL       PIC S9(09)V99 COMP-3.
+	   03  SLP-DISCOUNT    PIC S9(09)V99 COMP-3.
+	   03  SLP-TAX-DET OCCURS 6.
+	       05  SLP-TAXABLE PIC S9(09)V99 COMP-3.
+	       05  SLP-VATVAL  PIC S9(07)V99 COMP-3.
+	   03  SLP-EXCTAX      PIC S9(09)V99 COMP-3.
+	   03  SLP-DUE	       PIC S9(09)V99 COMP-3.
+	   03  SLP-CASH	       PIC S9(07)V99 COMP-3.
+	   03  SLP-CHQ	       PIC S9(07)V99 COMP-3.
+	   03  SLP-CARD	       PIC S9(07)V99 COMP-3.
+	   03  SLP-SPEED       PIC S9(07)V99 COMP-3.
+	   03  SLP-VOUCH       PIC S9(07)V99 COMP-3.
+	   03  SLP-CHANGE      PIC S9(07)V99 COMP-3.
+	   03  SLP-ROUND       PIC S9(01)V99 COMP-3.
+	   03  SLP-RTVAL       PIC S9(01)V99 COMP-3.
+	   03  SLP-RTTAX       PIC S9(01)V99 COMP-3.
+	   03  SLP-TAX.
+	       05  SLP-CRNOTE  PIC S9(07)V99 COMP-3.
+	       05  SLP-EFT     PIC S9(07)V99 COMP-3.
+	       05  FILLER      PIC X(04).

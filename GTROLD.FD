@@ -1,0 +1,28 @@
+      /
+002000 FD  GTROLD    LABEL RECORD IS STANDARD
+002010               VALUE OF FILE-ID IS W02-GTROLD
+000220               RECORDING MODE IS VARIABLE.
+002020 01  TO-REC.
+           03  TO-KEY.
+002160         05  TO-AC       PIC  9(06).
+002030	       05  TO-DATE     PIC  9(08).
+002040         05  TO-DTE REDEFINES TO-DATE.
+002050		   07  TO-CC   PIC  9(02).
+002050             07  TO-YY   PIC  9(02).
+002060             07  TO-MM   PIC  9(02).
+002070             07  TO-DD   PIC  9(02).
+	       05  TO-AKEY.
+002120		   07  TO-CODE PIC  9(02).
+		   07  TO-REFER.
+002110		       09  TO-REF
+                               PIC  9(07).
+		   07  TO-SEQ  PIC  9(02).
+	       05  TO-SUB      PIC  9(01).
+002080     03  TO-NAR          PIC  X(40).
+002090     03  TO-DESC REDEFINES TO-NAR.
+002100         05  TO-NARATIVE PIC  X(36).
+               05  FILLER      PIC  9(07)    COMP-3.
+002130     03  TO-VAL          PIC S9(09)V99 COMP-3.
+002170     03  TO-FLAG         PIC  X(01).
+           03  TO-BATCH        PIC  9(06)    COMP-3.
+	   03  FILLER	       PIC  X(03).

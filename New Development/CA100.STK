@@ -1,0 +1,29 @@
+      *
+      *    ****   G E T   S T O C K   R E C O R D   U S I N G
+      *                  A L T E R N A T E   C O D E
+      *
+       CA100         SECTION.
+       CA101.
+             MOVE 10                 TO W50-LENGTH.
+
+       CA105.
+             MOVE W10-ACODE          TO W50-DATA.
+      *
+      *    Remove leading spaces
+      *         
+           IF W50-1 = SPACE
+               MOVE W50-9            TO W10-ACODE
+               GO TO CA105.
+             CALL "CBL_TOUPPER" USING W50-DATA BY VALUE W50-LENGTH RETURNING W50-STATUS.
+             MOVE W50-ACODE          TO STK-ACODE W10-ACODE.
+
+       CA110.
+             PERFORM START-AT-ALT-CODE THRU READ-STOCK-EXIT.
+           IF WS-F-ERROR = 22
+               GO TO CA199.
+             PERFORM READ-STOCK-NEXT THRU READ-STOCK-EXIT.
+           IF WS-F-ERROR = 0
+               PERFORM CA500.
+
+       CA199.
+             EXIT.

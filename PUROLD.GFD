@@ -1,0 +1,42 @@
+      /
+000010 FD  PUROLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-PUROLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  ORO-RECORD1.
+	   03  ORO-EXT-ITEM.
+000040	       05  ORO-ITEM    PIC  X(14).
+	       05  ORO-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+000200	   03  ORO-CRED        PIC  X(06).
+	   03  ORO-KEY.
+000050	       05  ORO-ORD     PIC  9(08)    COMP.
+	       05  ORO-LINE    PIC  9(02)    COMP.
+000060	   03  ORO-DATE        PIC  9(08)    COMP-3.
+000070	   03  ORO-QUANT       PIC S9(05)V99 COMP-3.
+	   03  ORO-QNT REDEFINES ORO-QUANT
+                               PIC S9(07)    COMP-3.
+000080	   03  ORO-COST        PIC S9(09)V99 COMP-3.
+000080	   03  ORO-SELL        PIC S9(09)V99 COMP-3.
+	   03  ORO-OCOST       PIC S9(06)V999 COMP-3.
+	   03  ORO-CURRENCY    PIC  X(10).
+	   03  ORO-DRATE       PIC S9(03)V99 COMP-3.
+	   03  ORO-UCOST       PIC S9(07)V9999 COMP-3.
+000090	   03  ORO-DELIV       PIC  9(08)    COMP-3.
+000100	   03  ORO-TERMS       PIC  9(06).
+000110	   03  ORO-TRM	 REDEFINES ORO-TERMS.
+000120	       05  ORO-30      PIC  9(01).
+000130	       05  ORO-60      PIC  9(01).
+000140	       05  ORO-90      PIC  9(01).
+000150	       05  ORO-120     PIC  9(01).
+000160	       05  ORO-150     PIC  9(01).
+000170	       05  ORO-180     PIC  9(01).
+	   03  ORO-BO	       PIC  X(01).
+	   03  ORO-PSLIP       PIC  X(08).
+	   03  ORO-INST        PIC  X(08).
+	   03  ORO-PMT	       PIC  X(08).
+	   03  ORO-DISC        PIC  9(03)V99 COMP-3.
+	   03  ORO-CONTACT     PIC  X(30).
+	   03  ORO-TEL	       PIC  X(14).
+	   03  ORO-FAX	       PIC  X(14).
+000060	   03  ORO-DDTE        PIC  9(08)    COMP-3.
+	   03  FILLER	       PIC  X(09).

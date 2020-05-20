@@ -1,0 +1,48 @@
+      /    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё This routine is used to call the stock / inventory lookup Ё
+      *    Ё program and cancel it when control is returned. The rele- Ё
+      *    Ё vant  error message  will be  displayed  if an  exception Ё
+      *    Ё occurs.  The usual  parameters are passed	to the	lookup Ё
+      *    Ё program as well W10-STOCK	which will contain the details Ё
+      *    Ё of  the  item that has  been  selected  when  control  is Ё
+      *    Ё returned to the calling program.			       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       AA50-LOOKUP     SECTION.
+       AA50.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Save the screen contents and attributes as well as the    Ё
+      *    Ё current cursor position.				       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+011050	     PERFORM SAVE-SCREEN.
+	     MOVE LIN		 TO SLIN.
+	     CALL PRG-NAME
+		 USING	LS-PARID
+			LS-USER-ID
+			LS0-PROGRAMS
+			LS0-SECURITY
+			W10-STOCK
+		 ON EXCEPTION
+		     GO TO AA55
+	     END-CALL.
+	     CANCEL PRG-NAME.
+	     GO TO AA58.
+
+       AA55.
+	     MOVE SPACE 	 TO WS-ERR-MES.
+	     STRING "Program- " DELIMITED SIZE
+		     PRG-NAME DELIMITED " "
+		     " not on disk, press ANY key"
+		     DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+
+       AA58.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Restore the screen contents and attributes as well as the Ё
+      *    Ё cursor position prior to calling the lookup program.      Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+011320	     PERFORM RESTORE-SCREEN.
+	     MOVE SLIN		 TO LIN.
+
+       AA59.
+	     EXIT.

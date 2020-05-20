@@ -1,0 +1,3016 @@
+      $SET LINKCOUNT"576"
+      ******************************************************************
+      *                                                                *
+      *   ********  **	   **  **    **	 *******   **	 **  *******   *
+      *      **	    ***	   **  **    **	 **    **  **	 **  **	   **  *
+      *      **	    ** *   **  **    **	 **    **  **	 **  **	   **  *
+      *      **	    **	*  **  **    **	 **    **  **	 **  *******   *
+      *      **	    **	 * **	**  **	 **    **  **	 **  **	       *
+      *      **	    **	  ***	 ****	 **    **  **	 **  **	       *
+      *   ********  **	   **	  **	 *******    ******   **	       *
+      *                                                                *
+      *     ENGLISH                                                    *
+      *                                                                *
+      *     I N V O I C E   L O O K U P   A N D   R E P R I N T        *
+      *                                                                *
+      *     VERSION 8.15.02 - December 2011			       *
+      * 							       *
+      ******************************************************************
+      * 							       *
+      *  June 2008	- Include user number and name on the invoice  *
+      * 		  header record to enable lookup of person     *
+      * 		  who captured the Invoice/Credit note.        *
+      * 							       *
+      *  December 2009	- Changed security levels:		       *
+      * 		  LS0-SALEV and LS0-DBLEV must be > 1.	       *
+      * 							       *
+      *  March 2010	- Include facility to print to a USB printer   *
+      * 		  via the Windows print using the relavent     *
+      * 		  print API's supplied with MF COBOL.          *
+      * 							       *
+      ******************************************************************
+000010 IDENTIFICATION DIVISION.
+000020 PROGRAM-ID.     INVDUP.
+000030 AUTHOR.         J.W.LEMMON (APAC).
+000040 DATE-WRITTEN.   JANUARY 1989.
+
+		   COPYRIGHT NOTICE: COPYRIGHT (C) 1989 - 2012
+				     by James William Lemmon.
+				       (Id No. 4412165050082).
+
+		   All rights reserved.
+
+		   e-mail jwlemmon@gmail.com.
+
+000050 SECURITY.
+		   This program is free software; you can redistribute
+		   it and/or modify it under the terms of the GNU General
+		   Public License as published by the Free Software
+		   Foundation; either version 2 of the License, or (at
+		   your option) any later version.
+
+		   This program is distributed in the hope that it will
+		   be useful, but WITHOUT ANY WARRANTY; without even the
+		   implied warranty of MERCHANTABILITY or FITNESS FOR A
+		   PARTICULAR PURPOSE.	See the GNU General Public License
+		   for more details.
+
+		   You should have received a copy of the GNU General
+		   Public License along with this program; if not, write
+		   to the Free Software Foundation, Inc., 59 Temple Place
+		   - Suite 330, Boston, MA 02111-1307, USA.
+
+000050 ENVIRONMENT DIVISION.
+000060 CONFIGURATION SECTION.
+000070 SPECIAL-NAMES.
+000080		       CURSOR IS CSTART
+000090		       CONSOLE IS CRT
+		       CRT STATUS IS KEY-STATUS.
+000100 INPUT-OUTPUT SECTION.
+000110 FILE-CONTROL.
+
+       COPY APACFIDS.SL.
+
+000150 COPY CONTROL.SL.
+
+       COPY DEBMEM.SL.
+
+000190 COPY DEBTOR.ISL.
+
+000200	   SELECT INVDET  ASSIGN W02-INVDET
+000040                    STATUS WS-STATUS
+                          ORGANIZATION LINE SEQUENTIAL.
+
+000250 COPY INVOIC.SL.
+
+000010	   SELECT INVSAL  ASSIGN DISK
+000020                    LOCK MANUAL
+000030                    STATUS WS-STATUS
+000040                    ACCESS RANDOM
+000050                    ORGANIZATION RELATIVE
+000060			  RELATIVE WS-IVSKEY.
+
+000270 COPY PARAM.SL.
+
+       COPY SALE.SL.
+
+000330 COPY STOCK.SL.
+
+      /
+000390 DATA DIVISION.
+000400 FILE SECTION.
+
+       COPY APACFIDS.FDE.
+
+000440 COPY CONTROL.FDE.
+
+       COPY DEBMEM.FDE.
+
+000480 COPY DEBTOR.FDE.
+
+       FD  INVDET    LABEL RECORD OMITTED.
+       01  EXP-REC1.
+	   03  EXP-DATA     PIC  X(256).
+
+000540 COPY INVOIC.FDE.
+
+000560 COPY PARAM.FDE.
+
+000600 COPY SALE.FDE.
+
+000620 COPY STOCK.FDE.
+
+      /
+000010 FD INVSAL     IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-INVSAL.
+000030 01  IVS-RECORD1.
+000040	   03  IVS-CODE        PIC  9(03).
+000050	   03  IVS-ITEM        PIC  X(14).
+000060	   03  IVS-INVOICE REDEFINES IVS-ITEM.
+000070	       05  IVS-REF     PIC  X(08).
+000080         05  FILLER      PIC  X(06).
+	   03  IVS-MSER.
+000090	       05  IVS-DESC.
+		   07  IVS-SDSC
+			       PIC  X(29).
+	       05  FILLER      PIC  X(05).
+	   03  IVS-SERIALS REDEFINES IVS-MSER.
+               05  FILLER      PIC  X(01).
+	       05  IVS-SNUM OCCURS 3.
+		   07  IVS-SNO PIC  X(10).
+                   07  FILLER  PIC  X(01).
+	   03  IVS-SERNO       PIC  X(10).
+000100	   03  IVS-QNT	       PIC S9(05)V99 COMP-3.
+000110	   03  IVS-COST        PIC S9(06)V999 COMP-3.
+000120	   03  IVS-SELL        PIC S9(07)V99 COMP-3.
+000130	   03  IVS-VAT	       PIC S9(07)V99 COMP-3.
+000140	   03  IVS-VAL	       PIC S9(07)V99 COMP-3.
+000150	   03  IVS-INCTAX      PIC S9(07)V99 COMP-3.
+000160	   03  IVS-NONTAX      PIC S9(07)V99 COMP-3.
+000170	   03  IVS-TAXVAL      PIC S9(07)V99 COMP-3.
+000180	   03  IVS-DSC	       PIC S9(02)V99 COMP-3.
+000190	   03  IVS-DISC        PIC S9(05)V99 COMP-3.
+	   03  IVS-SUPER       PIC  9(02)    COMP-3.
+	   03  IVS-SEQN.
+	       05  IVS-SEQ     PIC  9(03).
+	       05  IVS-SUB     PIC  9(02).
+	   03  IVS-SQN REDEFINES IVS-SEQN
+                               PIC  9(05).
+	   03  IVS-TECH        PIC  9(02)    COMP-3.
+
+      /
+002130 WORKING-STORAGE SECTION.
+       77  WS-CHECK	   PIC	X(18)	 VALUE
+			   "aeWlimemnomLalismJ".
+002140 77  WS-DISC	   PIC	99V99	 COMP-3.
+002150 77  WS-TDISC        PIC  99V99    COMP-3.
+002170 77  WS-SUB	   PIC	9(04)	 COMP-5.
+002170 77  WS-SUPER        PIC  9(02)    COMP-5.
+002180 77  WS-S1           PIC  9(04)    COMP-5.
+002190 77  WS-S2           PIC  9(04)    COMP-5.
+002200 77  WS-S3           PIC  9(04)    COMP-5.
+002210 77  WS-S4           PIC  9(04)    COMP-5.
+002220 77  WS-S5           PIC  9(04)    COMP-5.
+002230 77  WS-S6           PIC  9(04)    COMP-5.
+002240 77  WS-S7           PIC  9(04)    COMP-5.
+002250 77  WS-S8           PIC  9(04)    COMP-5.
+002260 77  WS-S9           PIC  9(04)    COMP-5.
+002270 77  WS-IXS          PIC  9(04)    COMP-5.
+002280 77  WS-IXS1         PIC  9(04)    COMP-5.
+002290 77  WS-IXS2         PIC  9(04)    COMP-5.
+002300 77  WS-IXS3         PIC  9(04)    COMP-5.
+002310 77  WS-IXS4         PIC  9(04)    COMP-5.
+002320 77  WS-PARKEY       PIC  9(04)    COMP-5.
+001690 77  WS-ENQPOS	   PIC	9(06)	 COMP-5.
+001700 77  WS-ENQEND       PIC  9(06)    COMP-5.
+002350 77  WS-KEYSTR       PIC  9(06)    COMP-5.
+002380 77  WS-SALSTR       PIC  9(04)    COMP-5.
+002390 77  WS-SALKEY       PIC  9(04)    COMP-5.
+002390 77  WS-IVSKEY	   PIC	9(04)	 COMP-5.
+002400 77  WS-NETKEY       PIC  9(04)    COMP-5.
+002420 77  WS-RECKEY       PIC  9(06)    COMP-5.
+002430 77  WS-RECOVER      PIC  9(06)    COMP-5.
+002440 77  WS-TRANS        PIC  9(06)    COMP-5 VALUE 1.
+       77  WS-NUM	   PIC	Z9.
+002480 77  WS-START	   PIC	9(08).
+002490 77  WS-END          PIC  9(08).
+002510 77  WS-TME2         PIC  9(08).
+       77  WS-PROF	   PIC	X(01).
+       88  PROF-INV	   VALUE "Y".
+       77  WS-WIND	   PIC	X(01).
+       88  WIND-INV	   VALUE "Y".
+002550 77  WS-PAR	   PIC	9(01) VALUE 0.
+002560 77  WS-INO          PIC  9(02) VALUE 0.
+002570 77  WS-PGE-LENGTH   PIC  9(02) VALUE 48.
+002570 77  WS-LINES        PIC  9(02) VALUE 0.
+002580 77  WS-FIRST	   PIC	9(03) VALUE 0.
+002590 77  WS-LAST	   PIC	9(03) VALUE 0.
+002600 77  WS-LASTINV      PIC  9(04)    COMP-5.
+002610 77  WS-LINE         PIC  9(04)    COMP-5.
+002630 77  WS-L1	   PIC	9(04)	 COMP-5.
+002750 77  WS-OPTION	   PIC	X(01).
+       77  WS-DREF	   PIC	X(01).
+002770 77  WS-EXP	   PIC	X(01).
+002780 77  WS-LOOK         PIC  X(01) VALUE "S".
+002790 77  WS-ETYPE        PIC  X(01) VALUE "I".
+002820 77  WS-ERROR        PIC  9(01).
+002880 77  WS-CONREC	   PIC	9(01) VALUE ZERO.
+002890 77  WS-HEAD         PIC  X(01).
+002900 77  WS-TYPE         PIC  X(01).
+002910 77  WS-AGE          PIC  X(01).
+002920 77  WS-PRC          PIC  X(01).
+002920 77  WS-INPUT        PIC  X(01) VALUE "N".
+002920 77  WS-COPY         PIC  X(01) VALUE "N".
+002920 77  WS-NOSELL       PIC  X(01) VALUE "N".
+       77  WS-PRNINV       PIC  X(01) VALUE "Y".
+002980 77  WS-A 	   PIC	X(19) VALUE "Any key to continue".
+002990 77  WS-E            PIC  X(15) VALUE "**END** - ENTER".
+003000 77  WS-ERR1         PIC  X(22) VALUE "Invalid Account Number".
+003010 77  WS-ERR2         PIC  X(09) VALUE "No Record".
+003020 77  WS-PER          PIC  Z(02)9.99.
+003030 77  WS-CR           PIC  X(01).
+       77  TODAY-DDMMYY	   PIC	9(08) COMP-5.
+       77  WS-USUB	   PIC	9(04) COMP-5.
+       77  WS-INVPASS	   PIC	X(06).
+       77  WS-PASSWORD	   PIC	X(06).
+      /
+       01  PRG-NAME.
+	   03  FILLER	   PIC	X(04) VALUE "INVF".
+	   03  PRG-NUMBER  PIC	9(02) VALUE ZERO.
+       01  PRG-PNAME.
+	   03  FILLER	   PIC	X(04) VALUE "INPF".
+	   03  PRG-PNUMBER PIC	9(02) VALUE 01.
+       01  PRG-WNAME.
+	   03  FILLER	   PIC	X(04) VALUE "INVF".
+	   03  PRG-WNUMBER PIC	X(03) VALUE "12W".
+
+003050 01  WS-DB-LINE.
+003060	   03  WS-TOP-LINE.
+003070	       05  WS-TCHAR PIC  X(80) VALUE "ÆÍÍÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÑÍÍÍÍÍÍ
+      -        "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍµ".
+003080	   03  WS-TOP-LNE2.
+001390	       05  WS-TCR   PIC  X(80) VALUE "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      -        "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿".
+003100	   03  WS-TP-LINE2 REDEFINES WS-TOP-LNE2.
+003110         05  FILLER      PIC  X(01).
+003120         05  WS-TOP-COMP PIC  X(40).
+001430	       05  FILLER      PIC  X(23).
+	       05  WS-WRKHD    PIC  X(11).
+001430	       05  FILLER      PIC  X(01).
+	       05  WS-WRKST    PIC  X(03).
+001430	       05  FILLER      PIC  X(01).
+003140	   03  WS-MID-LINE.
+001450	       05  WS-MCHAR PIC  X(80) VALUE "³              ³   ³
+      -        "                       ³        ³         ³          ³".
+	   03  WS-MINV-LINE REDEFINES WS-MID-LINE.
+	       05  WS-MIV1     PIC  X(01).
+	       05  WS-MIV78    PIC  X(78).
+	       05  WS-MIV80    PIC  X(01).
+003160	   03  WS-MID-LNE2.
+	       05  FILLER      PIC  X(01) VALUE "³".
+	       05  WS-BLNK78   PIC  X(78) VALUE ALL "°".
+	       05  FILLER      PIC  X(01) VALUE "³".
+003180	   03  WS-BOT-LINE.
+003190	       05  WS-BCHAR PIC  X(80) VALUE "ÆÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÏÍÍÍÍÍÍ
+      -        "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍµ".
+003200	   03  WS-BOT-LNE2.
+001510	       05  WS-BCR   PIC  X(80) VALUE "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      -        "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ".
+003240	   03  WS-B-LINE REDEFINES WS-BOT-LNE2.
+003250         05  FILLER  PIC X(01).
+               05  WS-MEM-LINE.
+003260            07  WS-SRT-LINE
+003270                     PIC X(50).
+                  07  FILLER
+                           PIC X(10).
+003280         05  FILLER  PIC X(19).
+003220     03  WS-TOP-LNE.
+003230	       05  WS-TCHR  PIC	 X(80) VALUE "ÆÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍ
+      -        "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍµ".
+003240     03  WS-T-LINE REDEFINES WS-TOP-LNE.
+003250         05  FILLER  PIC X(01).
+003260         05  WS-H-LINE
+003270                     PIC X(78).
+003280         05  FILLER  PIC X(01).
+003290     03  WS-MID-LNE.
+003300	       05  WS-MCHR  PIC  X(80) VALUE "³                ³
+      -        "                      ³          ³         ³         ³".
+	   03  WS-MST-LNE REDEFINES WS-MID-LNE.
+	       05  WS-MST1     PIC  X(01).
+	       05  WS-MST78    PIC  X(78).
+	       05  WS-MST80    PIC  X(01).
+003310	   03  WS-BOT-LNE.
+003320	       05  WS-BCHR  PIC	 X(80) VALUE "ÆÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍ
+      -        "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍµ".
+003330	   03  WS-TP-LNE.
+003340	       05  WS-TCH   PIC  X(80) VALUE "ÆÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+      -        "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍµ".
+003350     03  WS-MD-LNE.
+003360	       05  WS-MCH   PIC  X(80) VALUE "³      ³
+      -        "                      ³           ³          ³       ³".
+	   03  WS-MDDT-LNE REDEFINES WS-MD-LNE.
+	       05  WS-MDT1     PIC  X(01).
+	       05  WS-MDT78    PIC  X(78).
+	       05  WS-MDT80    PIC  X(01).
+003370	   03  WS-BT-LNE.
+003380	       05  WS-BCH   PIC  X(80) VALUE "ÆÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+      -        "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍµ".
+	   03  WS-MM-LINE.
+	       05  FILLER      PIC  X(01) VALUE "³".
+	       05  WS-SPACE    PIC  X(60) VALUE SPACES.
+	       05  FILLER      PIC  X(01) VALUE "³".
+	   03  WS-HME-LINE PIC	X(60) VALUE ALL "Í".
+003390 01  WS-ENTRY.
+003400     03  WS-ENT0     PIC  X(08).
+003410     03  WS-TYPE0    PIC  X(01).
+003420     03  WS-KEY0     PIC  9(06)    COMP-5.
+003430 01  WS-ENTRY1.
+003440     03  WS-ENT1     PIC  X(08).
+003450     03  WS-TYPE1    PIC  X(01).
+003460     03  WS-KEY1     PIC  9(06)    COMP-5.
+
+003480 COPY WS.WS.
+
+       01  WS-HELP.
+	   03  WS-MODULE       PIC  X(03) VALUE "INV".
+	   03  WS-PROG	       PIC  X(03) VALUE "DUP".
+
+000290 01  WS-PARID.
+000020	   03  WS-SYS-ID       PIC  X(03).
+
+003660 01  W02-FID.
+	   03  W02-INVDET.
+	       05  W02-EXPORT PIC X(64) VALUE "INVOICE.TXT".
+
+       COPY APACFIDS.ID.
+
+003700 COPY CONTROL.ID.
+
+003740 COPY DEBTOR.ID.
+
+000140 COPY DEBMEM.ID.
+
+003800 COPY INVOIC.ID.
+
+003800 COPY INVSAL.ID.
+
+       COPY PARAM.ID.
+
+003840 COPY SALE.ID.
+
+003860 COPY STOCK.ID.
+
+       COPY W05.VAT.
+
+004060 01  W05-INV.
+004070     03  W05-ENTRY       PIC  ZZZ9.
+004080     03  FILLER          PIC  X(01) VALUE SPACES.
+004090	   03  W05-DATE        PIC  Z9/99/9999.
+004100     03  FILLER          PIC  X(01) VALUE SPACES.
+004110	   03  W05-TYPE        PIC  X(01).
+004120     03  FILLER          PIC  X(01) VALUE SPACES.
+004130	   03  W05-REF.
+	       05  W05-REF1    PIC  X(01).
+	       05  W05-REF8    PIC  X(08).
+004150     03  W05-VALUE       PIC  Z(06)9.99-.
+
+       COPY W10.SAL.
+
+       01  W10-USER-DETAIL.
+	   03  W10-USER        PIC  9(04) COMP-5.
+	   03  W10-UNME.
+	       05  W10-N1-2    PIC  X(02).
+	       05  W10-N3-4    PIC  X(02).
+	       05  W10-N5-6    PIC  X(02).
+	       05  W10-N7-8    PIC  X(02).
+	       05  W10-N9-10   PIC  X(02).
+	       05  W10-N11-12  PIC  X(02).
+	       05  W10-N13-14  PIC  X(02).
+	       05  W10-N15-16  PIC  X(02).
+	       05  W10-N17-18  PIC  X(02).
+	       05  W10-N19-20  PIC  X(02).
+	       05  W10-N21-22  PIC  X(02).
+	       05  W10-N23-24  PIC  X(02).
+	       05  W10-N25-26  PIC  X(02).
+	       05  W10-N27-28  PIC  X(02).
+	       05  W10-N29-30  PIC  X(02).
+	   03  W10-USNO        PIC  ZZ9.
+
+       01  W10-REF.
+           03  W10-NUM         PIC  9(08).
+
+       COPY W12.WS.
+
+004610 01  W15-DISCOUNT.
+004620     03  W15-DISC        PIC S9(03)V99 COMP-3 OCCURS 10.
+
+       01  W15-ALLOCATIONS.
+           03  W15-DETAIL.
+             05  W15-TRAN OCCURS 15.
+               07  W15-VALUE   PIC  Z(06)9.99- BLANK WHEN ZERO.
+               07  W15-ALLOC   PIC  Z(06)9.99- BLANK WHEN ZERO.
+           03  W15-DISPLAY REDEFINES W15-DETAIL.
+               05  W15-BAL1    PIC  X(11).
+               05  W15-ALL1    PIC  X(11).
+               05  W15-BAL2    PIC  X(11).
+               05  W15-ALL2    PIC  X(11).
+               05  W15-BAL3    PIC  X(11).
+               05  W15-ALL3    PIC  X(11).
+               05  W15-BAL4    PIC  X(11).
+               05  W15-ALL4    PIC  X(11).
+               05  W15-BAL5    PIC  X(11).
+               05  W15-ALL5    PIC  X(11).
+               05  W15-BAL6    PIC  X(11).
+               05  W15-ALL6    PIC  X(11).
+               05  W15-BAL7    PIC  X(11).
+               05  W15-ALL7    PIC  X(11).
+               05  W15-BAL8    PIC  X(11).
+               05  W15-ALL8    PIC  X(11).
+               05  W15-BAL9    PIC  X(11).
+               05  W15-ALL9    PIC  X(11).
+               05  W15-BAL10   PIC  X(11).
+               05  W15-ALL10   PIC  X(11).
+               05  W15-BAL11   PIC  X(11).
+               05  W15-ALL11   PIC  X(11).
+               05  W15-BAL12   PIC  X(11).
+               05  W15-ALL12   PIC  X(11).
+               05  W15-BAL13   PIC  X(11).
+               05  W15-ALL13   PIC  X(11).
+               05  W15-BAL14   PIC  X(11).
+               05  W15-ALL14   PIC  X(11).
+               05  W15-BAL15   PIC  X(11).
+               05  W15-ALL15   PIC  X(11).
+
+       01 W15-SECURITY.
+	   03  W15-NAME        PIC  X(30) VALUE SPACES.
+	   03  W15-ENCRYPT REDEFINES W15-NAME.
+	       05  W15-N1-2    PIC  X(02).
+	       05  W15-N3-4    PIC  X(02).
+	       05  W15-N5-6    PIC  X(02).
+	       05  W15-N7-8    PIC  X(02).
+	       05  W15-N9-10   PIC  X(02).
+	       05  W15-N11-12  PIC  X(02).
+	       05  W15-N13-14  PIC  X(02).
+	       05  W15-N15-16  PIC  X(02).
+	       05  W15-N17-18  PIC  X(02).
+	       05  W15-N19-20  PIC  X(02).
+	       05  W15-N21-22  PIC  X(02).
+	       05  W15-N23-24  PIC  X(02).
+	       05  W15-N25-26  PIC  X(02).
+	       05  W15-N27-28  PIC  X(02).
+	       05  W15-N29-30  PIC  X(02).
+
+       COPY W20.WS.
+
+004720 01  W25-CALCS.
+004730     03  W25-RESULT      PIC 9(05)V99.
+004740     03  W25-RESULT1 REDEFINES W25-RESULT.
+004750         05  W25-WHOLE   PIC 9(03).
+004760         05  W25-DECIMAL PIC 9(02).
+           03  W25-RESULT2 REDEFINES W25-RESULT.
+               05  W25-KEY     PIC 9(04).
+               05  W25-SUB     PIC 9(01).
+               05  FILLER      PIC 9(02).
+004770     03  W25-TOTAL       PIC 9(07)V99  COMP-3.
+004780     03  W25-VALUE       PIC S9(07)V99 COMP-3.
+004790     03  W25-CREDIT      PIC S9(07)V99 COMP-3.
+
+004800 01  W30-MESSAGE.
+004810     03  W30-PERC        PIC Z9.99.
+004820     03  FILLER          PIC  X(40) VALUE 
+004830         "% Settlement discount if paid in 30 DAYS".
+
+       COPY W40.DBT.
+
+       COPY W40.WS.
+
+003890 01  W45-TRAN.
+003900     03  W45-CODE        PIC 9(02).
+003910     03  W45-ENG         PIC X(12).
+003920     03  W45-AFR         PIC X(12).
+003930     03  W45-ACT         PIC X(01).
+
+       COPY FUNCTION.WS.
+
+005610 COPY W50.WS.
+
+       01  W55-EXPORT.
+           03  W55-S1          PIC  9(04) COMP-5.
+           03  W55-EXP-DATA.
+	       05  W55-EXP     PIC  X(01) OCCURS 1024.
+
+003550 01  W60-NME-ADD.
+003560     03  W60-NAME.
+003570         05  W60-NCHAR OCCURS 40 PIC X(01).
+003580     03  W60-ADDRESS.
+003590         05  W60-ACHAR OCCURS 70 PIC X(01).
+003580     03  W60-ADDR REDEFINES W60-ADDRESS.
+               05  W60-ADD     PIC X(60).
+               05  FILLER      PIC X(10).
+003600     03  W60-ADDRESS1.
+               05  W60-PAD     PIC X(60).
+               05  FILLER      PIC X(10).
+005690     03  W60-ITM.
+005700         05  W60-ICHAR OCCURS 14 PIC X(01).
+
+003820 01  W60-FIELDS.
+           03  W60-S           PIC  9(02) COMP-5.
+003830	   03  W60-FNO	       PIC  9(02) COMP-5 OCCURS 7.
+
+005810 COPY W70DEBT.IWS.
+
+005830 01  W75-KEYS.
+005840     03  W75-S          PIC 9(02) COMP-5.
+005850     03  W75-S1         PIC 9(02) COMP-5.
+           03  W75-S2         PIC 9(02) COMP-5.
+           03  W75-KEY        PIC  9(06)    COMP-5.
+           03  W75-ALLOCATED  PIC S9(09)V99 COMP-3.
+           03  W75-BALANCE    PIC S9(09)V99 COMP-3.
+005860     03  W75-DNO        PIC X(06) OCCURS 18.
+
+005880 01  W75-TITLES.
+005890     03  W75-DESCRIP.
+005900         05  FILLER      PIC X(28)      VALUE
+005910                     "Mr     Mnr    Mrs    Mev    ".
+005920         05  FILLER      PIC X(28)      VALUE
+005930                     "Miss   Mej    Ms     Ms     ".
+005940         05  FILLER      PIC X(28)      VALUE
+005950                     "Dr     Dr     Rev    Ds     ".
+005960         05  FILLER      PIC X(28)      VALUE
+005970                     "Prof   Prof   The HonSy Edel".
+005980         05  FILLER      PIC X(28)      VALUE
+005990                     "                            ".
+006000     03  W75-CODES REDEFINES W75-DESCRIP.
+006010         05  W75-TITLE  OCCURS 10.
+006020             07  W75-ETITLE PIC X(07).
+006030             07  W75-ATITLE PIC X(07).
+
+006040 01  W80-ACCOUNT.
+006050     03  W80-ACNO        PIC X(06).
+006060     03  W80-CRED REDEFINES W80-ACNO.
+006070         05  W80-CNO     PIC 9(05).
+006080         05  W80-CAC REDEFINES W80-CNO.
+006090             07  W80-CTYPE PIC 9(01).
+006100             07  W80-SER   PIC 9(04).
+006110         05  FILLER        PIC 9(01).
+006120     03  W80-TYPE        PIC 9(01).
+
+       COPY W90.DBT.
+
+007010 01  W100-EDIT.
+007020     03  W100-LBAL       PIC Z(06)9.99-.
+007030	   03  W100-LARR       PIC Z(06)9.99.
+007040     03  W100-BAL        PIC Z(08)9.99-.
+007050     03  W100-CUR        PIC Z(08)9.99-.
+007060     03  W100-30         PIC Z(08)9.99-.
+007070     03  W100-60         PIC Z(08)9.99-.
+007080     03  W100-90         PIC Z(08)9.99-.
+007090     03  W100-120        PIC Z(08)9.99-.
+007100     03  W100-INT        PIC Z(08)9.99-.
+007110     03  W100-CRL        PIC Z(06)9.
+           03  W100-SER        PIC ZZ9.
+007020	   03  W100-PRC        PIC Z(06)9.99-.
+007100	   03  W100-VAL        PIC Z(08)9.99-.
+	   03  W100-S9V2.
+	       05  W100-V1     PIC  -(09)9.99.
+007120	   03  W100-V2.
+007130	       05  W100-S6V2   PIC Z(05)9.99-.
+007140	   03  W100-V3 REDEFINES W100-V2.
+007150         05  W100-PRICE  PIC X(09).
+007160         05  FILLER      PIC X(01).
+007170	   03  W100-V4 REDEFINES W100-V2.
+007180         05  W100-EXT    PIC Z(06)9.99.
+           03  W100-V5 REDEFINES W100-V2.
+               05  W100-QNT    PIC Z(05)9.99-.
+       01  W200-MEMO.
+           03  W200-MEM-FLDS. 
+               05  W200-MEM1   PIC  X(60).
+               05  W200-MEM2   PIC  X(60).
+               05  W200-MEM3   PIC  X(60).
+               05  W200-MEM4   PIC  X(60).
+               05  W200-MEM5   PIC  X(60).
+               05  W200-MEM6   PIC  X(60).
+               05  W200-MEM7   PIC  X(60).
+               05  W200-MEM8   PIC  X(60).
+               05  W200-MEM9   PIC  X(60).
+               05  W200-MEM10  PIC  X(60).
+               05  W200-MEM11  PIC  X(60).
+               05  W200-MEM12  PIC  X(60).
+           03  W200-MEM-FOC REDEFINES W200-MEM-FLDS.
+               05  W200-MEM    PIC  X(60) OCCURS 12.
+
+       LINKAGE SECTION.
+
+       COPY CHAIN.LS.
+
+      /
+007190 SCREEN SECTION.
+
+       COPY BLANK.CRT.
+
+       COPY DEBLUP.CRT.
+
+008320 01  S10.
+008330     03  LINE  2 COLUMN 29 FOREGROUND-COLOR 15
+008340                           VALUE "INVOICE LOOKUP/RE-PRINT".
+008350     03  LINE  3 COLUMN  2 VALUE "Account No.".
+008360	   03	       COLUMN 21 VALUE "Name".
+008370     03  LINE  4 COLUMN  3 REVERSE-VIDEO VALUE 
+008380	       " No    Date    T Reference     Value     No    Date    T
+008390-        " Reference     Value".
+
+       COPY INVOICE.CRT.
+
+       01  S26-REF.
+	   03  LINE 12 COLUMN 45 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC Z(08) USING W10-NUM AUTO.
+
+009600 01  S26-QNT.
+009610	   03	       COLUMN 51 FOREGROUND-COLOR 3 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+009620                           PIC Z(04)9.99 USING W10-QUANT AUTO.
+
+009600 01  S26-QNT-N.
+009610	   03	       COLUMN 51 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+009620				 PIC Z(04)9.9- USING W10-QUANT AUTO.
+
+009630 01  S26-PRC.
+009640	   03	       COLUMN 60 FOREGROUND-COLOR 3 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+009650                           PIC Z(05)9.99 USING W10-SELL AUTO.
+
+009840 01  S027-CNOTE.
+009850	   03  LINE  2 COLUMN 35 FOREGROUND-COLOR 7 HIGHLIGHT
+009860                           VALUE "CREDIT NOTE".
+	   03  LINE  4 COLUMN 61 VALUE " Inv. Date".
+
+009870 01  S28.
+009880	   03  LINE 25 COLUMN 65 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+009890				 PIC ZZZ9 USING WS-IVSKEY AUTO.
+
+009930 01  S36.
+009940	   03  FOREGROUND-COLOR 7 HIGHLIGHT BACKGROUND-COLOR 0
+				PIC X(06) USING W80-ACNO AUTO.
+
+       COPY S99.CRT.
+
+       01  S-DEB-MEM.
+           03  LINE  7 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7 VALUE 
+           "   M E M O / R E M A R K S / C O R R E S P O N D E N C E    
+      -    "".
+
+       01  S-MEM.
+           03  LINE  6 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G9.
+           03          COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING WS-MEM-LINE.
+           03          COLUMN 78 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G10.
+           03  LINE  7 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G3.
+           03          COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7 VALUE 
+           "   M E M O / R E M A R K S / S P E C I F I C A T I O N S    
+      -    "".
+           03          COLUMN 78 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G3.
+           03  LINE  8 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G14.
+           03          COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING WS-HME-LINE.
+           03          COLUMN 78 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G13.
+           03  LINE  9 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 10 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 11 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 12 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 13 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 14 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 15 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 16 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 17 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 18 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 19 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 20 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 21 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G11.
+           03          COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING WS-MEM-LINE.
+           03          COLUMN 78 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G12.
+       01  SA-MEM.
+           03  LINE  9 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM1 AUTO.
+           03  LINE 10 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM2 AUTO.
+           03  LINE 11 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM3 AUTO.
+           03  LINE 12 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM4 AUTO.
+           03  LINE 13 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM5 AUTO.
+           03  LINE 14 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM6 AUTO.
+           03  LINE 15 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM7 AUTO.
+           03  LINE 16 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM8 AUTO.
+           03  LINE 17 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM9 AUTO.
+           03  LINE 18 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM10 AUTO.
+           03  LINE 19 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM11 AUTO.
+           03  LINE 20 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM12 AUTO.
+
+       COPY ERROR.CRT.
+
+       COPY OPT.CRT.
+
+      /
+001230 PROCEDURE DIVISION
+		 USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY.
+010230 AA000-MAIN	       SECTION.
+010240 AA000-INIT.
+003240	   IF (LS0-SALEV < 2) AND (LS0-DBLEV < 2)
+	       MOVE "Not Authorised"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+	       GO TO AZ100.
+010250	     PERFORM ZA000-INIT.
+016330	     PERFORM BE000.
+	     CLOSE SALE INVSAL.
+013280 AZ100.
+013290       EXIT PROGRAM.
+
+       AA50-LOOKUP     SECTION.
+       AA50.
+	     PERFORM SAVE-SCREEN.
+011080	     MOVE 4		 TO W44-FUNCTION.
+011090	     PERFORM SCREEN-CONTENTS.
+	     PERFORM DEBTOR-LOOKUP.
+	     PERFORM RESTORE-SCREEN.
+       AA99.
+             EXIT.
+
+       COPY FUNCTION.CRT.
+
+       COPY OPTION.CRT.
+
+010930 COPY LOCKED.RC2.
+
+010950 COPY CLEAR.CRT.
+
+      /
+      *    ****    READ FILES ROUTINES
+      *
+011110 AC000              SECTION.
+
+011150 COPY CONTROL.RD.
+
+011190 COPY DEBTOR.RD.
+
+000140 COPY DEBMEM.RD.
+
+011250 COPY INVOIC.RD.
+
+011270 COPY PARAM.RD.
+
+011290 COPY SALE.RD.
+
+011310 COPY STOCK.RD.
+
+009060 READ-INVSAL.
+009070	     READ INVSAL.
+009080     IF WS-STATUS = "00"
+009090	       GO TO READ-INVSAL-EXIT.
+009100     IF WS-STAT1 = "2" OR "3" OR "4"
+009110         MOVE 19           TO WS-F-ERROR
+009120         PERFORM READ-ERROR.
+009130     IF RECORD-LOCKED
+009140         PERFORM LOCKED-RECORD
+009150	       GO TO READ-INVSAL.
+009160       MOVE 19             TO WS-F-ERROR.
+009170       PERFORM READ-ERROR.
+
+009180 READ-INVSAL-EXIT.
+009190       EXIT.
+
+      /
+011350 AD000-WRITE             SECTION.
+
+011390 COPY CONTROL.WR.
+
+011430 COPY DEBTOR.WR.
+
+011510 COPY PARAM.WR.
+
+011530 COPY SALE.WR.
+
+       WRITE-INVDET.
+000250       WRITE EXP-REC1.
+000260     IF WS-STATUS NOT = "00"
+000270         MOVE 99           TO WS-F-ERROR
+000280         PERFORM WRITE-ERROR.
+000310
+000320 WRITE-INVDET-EXIT.
+000330       EXIT.
+
+010000 REWRITE-INVSAL.
+010010	     REWRITE IVS-RECORD1.
+010020     IF WS-STATUS NOT = "00"
+010030         MOVE 19           TO WS-F-ERROR
+010040         PERFORM WRITE-ERROR.
+010050	     GO TO WRITE-INVSAL-EXIT.
+
+010060 WRITE-INVSAL.
+010070	     WRITE IVS-RECORD1.
+010080     IF WS-STATUS NOT = "00"
+010090         IF WS-STATUS = "22"
+010100		   GO TO REWRITE-INVSAL
+010110         ELSE
+010120             MOVE 19       TO WS-F-ERROR
+010130             PERFORM WRITE-ERROR.
+
+010140 WRITE-INVSAL-EXIT.
+010150       EXIT.
+
+011630 COPY DEBTOR.ILU.
+
+       COPY APAC.HLP.
+
+       BB010	       SECTION.
+       BB10.
+	     MOVE W15-N29-30	 TO W10-N1-2.
+	     MOVE W15-N1-2	 TO W10-N3-4.
+	     MOVE W15-N27-28	 TO W10-N5-6.
+	     MOVE W15-N3-4	 TO W10-N7-8.
+	     MOVE W15-N25-26	 TO W10-N9-10.
+	     MOVE W15-N5-6	 TO W10-N11-12.
+	     MOVE W15-N23-24	 TO W10-N13-14.
+	     MOVE W15-N7-8	 TO W10-N15-16.
+	     MOVE W15-N21-22	 TO W10-N17-18.
+	     MOVE W15-N9-10	 TO W10-N19-20.
+	     MOVE W15-N19-20	 TO W10-N21-22.
+	     MOVE W15-N11-12	 TO W10-N23-24.
+	     MOVE W15-N17-18	 TO W10-N25-26.
+	     MOVE W15-N13-14	 TO W10-N27-28.
+	     MOVE W15-N15-16	 TO W10-N29-30.
+
+       BB15.
+	     EXIT.
+
+      *
+      *    ****    Read debtor record - using account number.
+      *
+013750 CA155-GET-DEBTOR  SECTION 2.
+013760 CA155.
+012010       MOVE W80-ACNO       TO DEB-ACNO.
+012020       PERFORM READ-DEBTOR THRU READ-DEBTOR-EXIT.
+           IF WS-F-ERROR = 6
+               MOVE 1            TO WS-ERROR
+014380     ELSE
+013870     IF DEB-ACNO NOT = W80-ACNO
+013880         MOVE 2            TO WS-ERROR
+013890     ELSE
+013900         MOVE 0            TO WS-ERROR
+013910         MOVE DEB-TYPE     TO W80-TYPE.
+013920 CA160-EXIT.
+013930       EXIT.
+      *    *************************************************************
+      *    ****  Unpack Street address (Line 1, 2, 3 and 4) into W40
+      *    *************************************************************
+014040 CA175-ADDRESS	 SECTION 2.
+014050 CA175.
+014060       UNSTRING W60-ADDRESS DELIMITED BY "*"
+014070                           INTO W40-ADD1 
+014080                                W40-ADD2 
+014090                                W40-ADD3 
+014100                                W40-ADD4
+014110       OVERFLOW
+014120           MOVE 1          TO WS-ERROR.
+014130 CA175-EXIT.
+014140       EXIT.
+      *    *************************************************************
+      *    ****  Unpack Postal address (Line 1, 2, 3 and 4) into W40
+      *    *************************************************************
+014150 CA185-ADDRESS	 SECTION 2.
+014160 CA185.
+014170       UNSTRING W60-ADDRESS1 DELIMITED BY "*"
+014180                           INTO W40-PADD1 
+014190                                W40-PADD2 
+014200                                W40-PADD3 
+014210                                W40-PADD4
+014220       OVERFLOW
+014230           MOVE 1          TO WS-ERROR.
+014240 CA185-EXIT.
+014250       EXIT.
+      /    *************************************************************
+      *    **  I N V O I C E   L O O K U P   A N D   R E - P R I N T  **
+      *    *************************************************************
+044860 BE000	     SECTION 5.
+044870 BE00.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³	     I N V O I C E   L O O K U P   S C R E E N	       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+044880	     DISPLAY CLR-SCREEN.
+044890       DISPLAY S10.
+044900       MOVE 0541           TO CPOS.
+044910       PERFORM BE25 UNTIL CLIN > 22.
+044920       MOVE W12-TODAY      TO W90-DTE.
+044930       MOVE SPACES         TO W80-ACNO.
+
+044940 BE05.
+018790	     DISPLAY "F1" AT 2502
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+		     "=Help,"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     "F2" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+044960		     "=Debtor Lookup,"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     "F3" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+044960		     "=Reference No Lookup"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+044970       ACCEPT S36 AT 0314.
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+		     MOVE SPACES TO W80-ACNO
+		     GO TO BE199
+016550		 WHEN F1-KEY
+		     PERFORM HELP-ROUTINE
+		 WHEN F2-KEY
+016560		     PERFORM AA50-LOOKUP
+		 WHEN F3-KEY
+016560		     PERFORM BF000
+		     GO TO BE00
+		 WHEN OTHER
+		     CALL X"E5"
+		     GO TO BE05
+	       END-EVALUATE
+045000	       DISPLAY S36 AT 0314
+045010         IF W80-ACNO = SPACES
+045020             GO TO BE05.
+045030	     DISPLAY CLEAR-L25.
+045040     IF W80-ACNO = SPACES
+045060         GO TO BE199.
+	     MOVE 6		 TO WS-LENGTH.
+	     CALL "CBL_TOUPPER" USING W80-ACNO
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+	     MOVE 1		 TO WS-LENGTH.
+045070	     DISPLAY CLEAR-L25.
+045080       PERFORM CA155-GET-DEBTOR.
+045090     IF WS-ERROR = 1
+032780	       MOVE "No record"  TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+045110	       GO TO BE05.
+045120     IF WS-ERROR = 2
+032810	       MOVE "Invalid account"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+045150	       GO TO BE05.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³	    D I S P L A Y   D E B T O R	  D E T A I L S        ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+045160	     MOVE DEB-NAME	 TO W40-NAME.
+045170     IF W80-TYPE = 1
+045180         INSPECT W40-NAME REPLACING ALL "*" BY " "
+045190         INSPECT W40-NAME REPLACING FIRST "!" BY " ".
+045200	     DISPLAY W40-NAME AT 0326
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+	     MOVE "Display 'I'nvoice no or 'O'ther ref [I]"
+				 TO WS-ERR-MES.
+	     MOVE "I"		 TO WS-OPTION.
+
+045280	BE08.
+	     PERFORM OPT-MESSAGE.
+	     MOVE WS-OPTION	 TO WS-DREF.
+	   IF NOT (WS-DREF = "I" OR "O")
+	       GO TO BE08.
+045210	     MOVE W80-ACNO	 TO DOC-AC W40-ACNO.
+	     MOVE " 0000000"	 TO DOC-REF.
+	     MOVE ZERO		 TO DOC-TYPE.
+045220       PERFORM START-AT-INVOIC-AC THRU READ-INVOIC-EXIT.
+045230     IF WS-F-ERROR NOT = ZERO
+045240	       MOVE "No Invoices on File"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+045270         GO TO BE00.
+045290	     MOVE 1		 TO WS-FIRST.
+045300       MOVE ZERO           TO WS-LASTINV.
+045310       MOVE 0502           TO CPOS.
+
+045320 BE10.
+045330       PERFORM READ-INVOIC-NEXT THRU READ-INVOIC-EXIT.
+045340     IF (WS-F-ERROR NOT = ZERO) OR
+045350        (DOC-AC NOT = W80-ACNO)
+045360         GO TO BE20.
+045370     IF DOC-TYPE NOT = 0
+045380         GO TO BE10.
+045400	     MOVE DOC-REF	 TO IVS-REF.
+045430       ADD 1               TO WS-LASTINV.
+045440	     MOVE WS-LASTINV	 TO WS-IVSKEY.
+045450	     MOVE WS-LASTINV	 TO IVS-CODE.
+045460	     PERFORM WRITE-INVSAL THRU WRITE-INVSAL-EXIT.
+045470       MOVE WS-LASTINV     TO W05-ENTRY.
+045480	     MOVE DOC-DTE	 TO W22-DTE2.
+	     MOVE W22-CC2	 TO W22-CC3.
+	     MOVE W22-YY2	 TO W22-YY3.
+	     MOVE W22-MM2	 TO W22-MM3.
+	     MOVE W22-DD2	 TO W22-DD3.
+	     MOVE W22-DTE3	 TO W05-DATE.
+	   IF WS-DREF = "O"
+	       MOVE DOC-OREF	 TO W05-REF
+	   ELSE
+045490	       MOVE DOC-REF	 TO W05-REF
+	       IF W05-REF1 = " "
+		   MOVE "0"	 TO W05-REF1.
+045500     IF DOC-INVOIC
+045510	       MOVE "I" 	 TO W05-TYPE
+045520     ELSE
+045530	       MOVE "C" 	 TO W05-TYPE.
+045540       MOVE DOC-VALUE      TO W05-VALUE.
+045550	     DISPLAY W05-INV AT CPOS
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT.
+045560     IF CLIN < 22
+045570         ADD 1             TO CLIN
+045580         GO TO BE10.
+045590     IF CCOL = 02
+045600         MOVE 0542         TO CPOS
+045610         GO TO BE10.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³		       S C R E E N   F U L L		       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+       BE12.
+045620	     MOVE "'E'xit,'N'ext,'D'isplay,'P'rint or e'X'port"
+				 TO WS-ERR-MES.
+	     MOVE SPACE 	 TO WS-OPTION.
+
+045680 BE15.
+	     PERFORM OPT-MESSAGE.
+045750	   IF NOT (WS-OPTION = "D" OR "E" OR "N" OR "P" OR "X")
+045760	       GO TO BE12.
+045780     IF WS-OPTION = "E"
+045790         GO TO BE00.
+045800     IF WS-OPTION = "P"
+045810         GO TO BE30.
+	   IF WS-OPTION = "D"
+	       PERFORM SAVE-SCREEN-3
+	       PERFORM BE100 THRU BE199
+	       PERFORM RESTORE-SCREEN-3
+	       GO TO BE12.
+	   IF WS-OPTION = "X"
+	       MOVE "N" 	 TO WS-EXP
+	       PERFORM BG000
+	       GO TO BE12.
+045820       MOVE 0501           TO CPOS.
+045830       PERFORM ERASE-SCREEN-LOOP UNTIL CLIN > 22.
+045840       MOVE 0541           TO CPOS.
+045850       PERFORM BE25 UNTIL CLIN > 22.
+045860       MOVE 0502           TO CPOS.
+045870       GO TO BE10.
+
+045880 BE20.
+045890     IF CPOS = 0502
+045900         GO TO BE00.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³	     A C C O U N T   C H A N G E D  (E N D)	       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+       BE21.
+045910	     MOVE "'E'xit, 'D'isplay, 'P'rint or e'X'port"
+				 TO WS-ERR-MES.
+	     MOVE SPACE 	 TO WS-OPTION.
+
+045950 BE22.
+	     PERFORM OPT-MESSAGE.
+046020	   IF NOT (WS-OPTION = "D" OR "E" OR "P" OR "X")
+046030	       GO TO BE21.
+046050     IF WS-OPTION = "P"
+046060         GO TO BE30.
+           IF WS-OPTION = "D"
+	       PERFORM SAVE-SCREEN-3
+	       PERFORM BE100 THRU BE199
+	       PERFORM RESTORE-SCREEN-3
+	       GO TO BE21.
+	   IF WS-OPTION = "X"
+	       MOVE "N" 	 TO WS-EXP
+	       PERFORM BG000
+	       GO TO BE12.
+046070	     GO TO BE00.
+
+046080 BE25.
+046090       DISPLAY WS-G6 AT CPOS.
+046100       ADD 1               TO CLIN.
+
+046110 BE30.
+	     PERFORM SAVE-SCREEN.
+	     MOVE SPACES	 TO W40-CSHPASS.
+	     MOVE 12		 TO SHADE-ROW.
+	     MOVE 30		 TO SHADE-COL.
+	     MOVE 23		 TO SHADE-WIDTH.
+	     MOVE 2		 TO SHADE-LINES.
+	     DISPLAY "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ" AT 1128
+		      WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			   BACKGROUND-COLOR 7
+		     "¿" WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7.
+042540	     DISPLAY "³ " AT 1228 WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				       BACKGROUND-COLOR 7
+		     "Enter Password        "
+		      WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			   BACKGROUND-COLOR 7
+		     "³" WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7.
+	     DISPLAY "À" AT 1328 WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				      BACKGROUND-COLOR 7
+		     "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7.
+	     PERFORM SCREEN-SHADOW.
+042550	     ACCEPT WS-PASSWORD AT 1245
+		    WITH BACKGROUND-COLOR 5
+			 FOREGROUND-COLOR 3 HIGHLIGHT AUTO NO-ECHO.
+	     MOVE 6		 TO WS-LENGTH.
+	     CALL "CBL_TOUPPER" USING WS-PASSWORD
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS
+	     PERFORM RESTORE-SCREEN.
+	   IF NOT (WS-PASSWORD = WS-INVPASS OR "IPRINT")
+	       MOVE "Invalid Password"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+	       GO TO BE00.
+046120	     DISPLAY "Enter item No to Print" AT 2541
+046130		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+046140	     MOVE ZERO		 TO WS-IVSKEY.
+      *
+      *    ****    G E T   T H E   N U M B E R   O F   T H E   I T E M
+      *            T H A T   M U S T   B E   P R I N T E D
+      *
+046150 BE35.
+046160	     ACCEPT S28.
+046170	   IF WS-IVSKEY = ZERO
+046180	       DISPLAY CLEAR-L25
+046190         GO TO BE00.
+046200	   IF WS-IVSKEY > WS-LASTINV
+046210	       MOVE "Invalid Number"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+046230	       GO TO BE35.
+      *
+      *	   ****	   PRINT INVOICE/CREDIT NOTE
+      *
+       BE36.
+      *    ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+      *    º Give the User the choice of printing the copy Invoice/Cr  º
+      *    º Note on either the normal printer or selecting a printer  º
+      *    º from the other printers avaiable via Windows Selection.   º
+      *    ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+	     MOVE "Select a USB/Windows Printer (Y/N)  [N]"
+				 TO WS-ERR-MES.
+	     MOVE "N"		 TO WS-OPTION.
+
+045280	BE36A.
+	     PERFORM OPT-MESSAGE.
+	     MOVE WS-OPTION	 TO WS-WIND.
+	   IF NOT(WS-WIND = "Y" OR "N")
+	       GO TO BE36A.
+046810	     MOVE SPACES	 TO W40-ADDRESS1 W40-PC1
+				    W40-PADDRESS W40-PC2.
+	     MOVE 1		 TO WS-S9.
+
+       BE36B.
+018660	     MOVE ZERO		 TO W90-VAT(WS-S9) W90-TAXVAL(WS-S9).
+	   IF WS-S9 < 12
+	       ADD 1		 TO WS-S9
+	       GO TO BE36B.
+018660	     MOVE ZERO		 TO W90-BDT W90-SALES
+				    W90-BAL W90-LDISC
+018670				    W90-CUR W90-NONTAX
+				    W90-EXCTOT.
+046270	     PERFORM BE200.
+
+       BE37.
+020010     IF W10-SMAN NOT = ZERO
+020030         ADD 100 W10-SMAN    GIVING WS-PARKEY
+020040         PERFORM READ-PARAM THRU READ-PARAM-EXIT
+               MOVE PAR-SALESMAN TO W40-ASSIST
+           ELSE
+               MOVE SPACES       TO W40-ASSIST.
+	     MOVE WS-LAST	 TO W40-LAST.
+	     MOVE "Y"		 TO W40-REPRINT.
+	     MOVE W20-DTE	 TO W40-DTE.
+	     MOVE W10-SMAN	 TO W40-SMAN.
+	     MOVE WS-PRC	 TO W40-PRC.
+	     MOVE WS-CR 	 TO W40-CR.
+
+046800 BE38.
+046820       MOVE DEB-ADDRESS    TO W60-ADDRESS.
+046830       PERFORM CA175-ADDRESS.
+046840	   IF NOT (DEB-POST = "0000" OR "9999")
+046850         MOVE DEB-POST     TO W40-PC1.
+046860     IF W40-ADD4 = SPACES
+046870         MOVE W40-PC1      TO W40-ADD4
+046880         MOVE SPACES       TO W40-PC1.
+046890     IF W40-ADD3 = SPACES
+046900         MOVE W40-ADD4     TO W40-ADD3
+046910         MOVE SPACES       TO W40-ADD4.
+046920     IF W40-ADD2 = SPACES
+046930         MOVE W40-ADD3     TO W40-ADD2
+046940         MOVE SPACES       TO W40-ADD3.
+046950     IF W40-ADD1 = SPACES
+046960         MOVE W40-ADD2     TO W40-ADD1
+046970         MOVE SPACES       TO W40-ADD2.
+	   IF W40-PADD1 = SPACES
+046980	       MOVE DEB-PADDR	 TO W60-ADDRESS1
+046990	       PERFORM CA185-ADDRESS
+047000	       IF NOT (DEB-PPOST = "0000" OR "9999")
+047010		   MOVE DEB-PPOST
+				 TO W40-PC2.
+047020     IF W40-PADD4 = SPACES
+047030         MOVE W40-PC2      TO W40-PADD4
+047040         MOVE SPACES       TO W40-PC2.
+047050     IF W40-PADD3 = SPACES
+047060         MOVE W40-PADD4    TO W40-PADD3
+047070         MOVE SPACES       TO W40-PADD4.
+047080     IF W40-PADD2 = SPACES
+047090         MOVE W40-PADD3    TO W40-PADD2
+047100         MOVE SPACES       TO W40-PADD3.
+047110     IF W40-PADD1 = SPACES
+047120         MOVE W40-PADD2    TO W40-PADD1
+047130         MOVE SPACES       TO W40-PADD2.
+      *    *************************************************************
+      *    **		 C l i e n t   V A T   n u m b e r	      **
+      *    *************************************************************
+	     MOVE DEB-TAX	 TO W40-TAX.
+029610	     CLOSE SALE.
+             OPEN I-O SALE.
+	   IF PROF-INV
+	       CALL PRG-PNAME USING LS-PARID
+				    LS-USER-ID
+				    LS0-PROGRAMS
+				    W40-COMPANY
+				    W90-TRAN
+		    ON EXCEPTION
+			GO TO BE40
+	       END-CALL
+	       CANCEL PRG-PNAME
+	   ELSE
+	   IF WIND-INV
+	       CALL PRG-WNAME USING LS-PARID
+				    LS-USER-ID
+				    LS0-PROGRAMS
+				    LS0-SECURITY
+				    W40-COMPANY
+				    W90-TRAN
+		    ON EXCEPTION
+			GO TO BE40
+	       END-CALL
+	       CANCEL PRG-WNAME
+	   ELSE
+	       CALL PRG-NAME USING LS-PARID
+				   LS-USER-ID
+				   LS0-PROGRAMS
+				   LS0-SECURITY
+				   W40-COMPANY
+				   W90-TRAN
+		    ON EXCEPTION
+			GO TO BE40
+	       END-CALL
+	       CANCEL PRG-NAME.
+	     GO TO BE45.
+
+       BE40.
+	     MOVE SPACES     TO WS-ERR-MES.
+	     STRING "Program- " DELIMITED SIZE
+		     PRG-NAME DELIMITED " "
+		     " not on disk, press ANY key"
+		     DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+
+       BE45.
+029690	     DISPLAY CLEAR-L25.
+029610	     CLOSE SALE.
+029600       OPEN OUTPUT SALE.
+029610       CLOSE SALE.
+             OPEN I-O SALE.
+
+       BE46.
+	     EXIT.
+
+       BE47.
+029700	     MOVE "ENTER to continue - E to exit"
+				 TO WS-ERR-MES.
+	     MOVE SPACE 	 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+029800	   IF WS-OPTION = "E"
+029820	       GO TO BE199.
+	     GO TO BE00.
+
+       BE100.
+046120	     DISPLAY "Enter item to Display" AT 2542
+046130		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+046140	     MOVE ZERO		 TO WS-IVSKEY.
+      *
+      *    ****    G E T   T H E   N U M B E R   O F   T H E   I T E M
+      *            T H A T   M U S T   B E   P R I N T E D
+      *
+046150 BE105.
+046160	     ACCEPT S28.
+046170	   IF WS-IVSKEY = ZERO
+046180	       DISPLAY CLEAR-L25
+046190	       GO TO BE199.
+046200	   IF WS-IVSKEY > WS-LASTINV
+046210	       MOVE "Invalid Number"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+046230	       GO TO BE105.
+	     MOVE 1		 TO WS-S9.
+
+       BE108.
+018660	     MOVE ZERO		 TO W90-VAT(WS-S9) W90-TAXVAL(WS-S9).
+	   IF WS-S9 < 12
+	       ADD 1		 TO WS-S9
+	       GO TO BE108.
+018660	     MOVE ZERO		 TO W90-BDT W90-SALES
+				    W90-BAL W90-LDISC
+018670				    W90-CUR W90-NONTAX
+				    W90-EXCTOT.
+             PERFORM BE200.
+018580       DISPLAY CLR-SCREEN.
+018590       DISPLAY S26.
+           IF WS-CR = "C"
+               DISPLAY S027-CNOTE.
+018620       MOVE 8              TO LIN.
+018630       PERFORM BE198 UNTIL LIN > 18.
+025520	     DISPLAY W90-REF AT 0510
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+018640	     MOVE W20-DTE	 TO W22-DTE2.
+	     MOVE W22-CC2	 TO W22-CC3.
+	     MOVE W22-YY2	 TO W22-YY3.
+	     MOVE W22-MM2	 TO W22-MM3.
+	     MOVE W22-DD2	 TO W22-DD3.
+	     MOVE W22-DTE3	 TO W90-DTE.
+018650	     DISPLAY W90-DTE AT 0570
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+018680       MOVE 1              TO WS-FIRST WS-SALKEY.
+           IF W90-EXP = "E" OR "X"
+               MOVE W05-VATNO    TO W90-TAX
+           ELSE
+               MOVE SPACES       TO W90-TAX.
+             DISPLAY S36 AT 0308.
+019060	     DISPLAY W40-NAME AT 0320
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+019960	     DISPLAY W90-ORD AT 0368
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+020010     IF W10-SMAN NOT = ZERO
+020030         ADD 100 W10-SMAN    GIVING WS-PARKEY
+020040         PERFORM READ-PARAM THRU READ-PARAM-EXIT
+020030	       DISPLAY W10-SMAN AT 0411
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+020160	       DISPLAY PAR-SALESMAN AT 0420
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+               MOVE PAR-SALESMAN TO W40-ASSIST
+           ELSE
+               MOVE SPACES       TO W40-ASSIST.
+	   IF DEB-B-TEL = SPACES
+	       MOVE DEB-H-TEL	 TO W40-TEL
+	   ELSE
+	       MOVE DEB-B-TEL	 TO W40-TEL.
+	     DISPLAY W40-TEL AT 0466
+		    WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			 BACKGROUND-COLOR 0.
+020660	     DISPLAY W90-CONTACT AT 0529
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+020760	     DISPLAY W90-REG AT 0554
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+             MOVE 1              TO WS-SALKEY.
+022610       MOVE W90-DB         TO W90-TOTAL.
+022620       SUBTRACT W90-LDISC  FROM W90-TOTAL.
+022980	     MOVE W90-DB	 TO W100-VAL.
+022990	     DISPLAY W100-VAL AT 2015
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+023000       MULTIPLY -1 BY W90-LDISC 
+023010				 GIVING W100-VAL.
+023020	     DISPLAY W100-VAL AT 2115
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+      *
+      *    ****    C A L C U L A T E   T A X   ( RUNNING TOTAL )
+      *
+022690	   IF W90-TAX = SPACES
+022700         GO TO BE110.
+022710	   IF W90-TTAX NOT = ZERO
+               MOVE W90-TTAX     TO W25-TOTAL
+023100	       MOVE W25-TOTAL	 TO W100-VAL
+023110	       DISPLAY W100-VAL AT 2215
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+022760         ADD W25-TOTAL     TO W90-TOTAL.
+
+022770 BE110.
+023140	     MOVE W90-TOTAL	 TO W100-VAL.
+023150	     DISPLAY W100-VAL AT 2315
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+      *
+      *    ****    D I S P L A Y   S A L E S   D E T A I L S
+      *
+029120 BE115.
+029130       MOVE 8              TO LIN.
+029140       PERFORM BE198 UNTIL LIN > 18.
+029150       MOVE 8              TO LIN.
+029160       MOVE 1              TO WS-LINES WS-FIRST.
+
+029170 BE120.
+029180	     MOVE WS-FIRST	 TO WS-SALKEY.
+      *
+      *    ****    H A V E   A L L   T H E   E N T R I E S   B E E N
+      *            D I S P L A Y E D
+      *
+029190 BE125.
+029200	   IF WS-SALKEY > WS-LAST
+029210	       GO TO BE165.
+029220       PERFORM READ-SALE THRU READ-SALE-EXIT.
+      *
+      *    ****    D I S P L A Y   E N T R Y   D E T A I L S
+      *
+029240	   IF SAL-ITEM = SPACES
+	       IF SAL-TYPE = "R"
+029250		   DISPLAY (LIN, 10) SAL-MSER
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+	       ELSE
+		   DISPLAY (LIN, 21) SAL-SDSC
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+	       END-IF
+029260	       GO TO BE130.
+029270	     DISPLAY (LIN, 2) SAL-ITEM
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+030090	     DISPLAY ( , 17) "   "
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+029280	     DISPLAY ( , 21) SAL-SDSC
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+029290       MOVE SAL-QNT        TO W10-QUANT.
+	   IF W10-QUANT < ZERO
+	       DISPLAY S26-QNT-N AT LINE LIN
+	   ELSE
+029300	       DISPLAY S26-QNT AT LINE LIN.
+029310       MOVE SAL-SELL       TO W10-SELL.
+029320       DISPLAY S26-PRC AT LINE LIN.
+029330       MOVE SAL-VAL        TO W100-EXT.
+029340	     DISPLAY ( , 70) W100-EXT
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+      *
+      *    ****    I S   T H E   S C R E E N   F U L L
+      *
+029350 BE130.
+029360     IF LIN < 18
+029370         ADD 1             TO LIN WS-SALKEY WS-LINES
+029380         GO TO BE125.
+
+       BE135.
+      *    *************************************************************
+      *    ****     If no USER recorded, then skip this routine.    ****
+      *    *************************************************************
+	   IF W10-USER = ZERO
+	       GO TO BE155.
+011010	     DISPLAY "F6" AT 2502
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+		     "=Person responsible for capturing,"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+011070		     "Esc" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+		     "ape"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+
+       BE140.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+		      GO TO BE155
+		 WHEN F6-KEY
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³   Display the name of person who captured the document    ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		      DISPLAY CLEAR-L25
+		      PERFORM BE150 THRU BE155
+		 WHEN OTHER
+		      GO TO BE140
+	       END-EVALUATE.
+
+       BE145.
+	     GO TO BE155.
+
+       BE150.
+	   IF W10-USER = ZERO
+	       GO TO BE155.
+	     PERFORM SAVE-SCREEN-2.
+	     MOVE 9		 TO SHADE-ROW.
+	     MOVE 16		 TO SHADE-COL.
+	     MOVE 51		 TO SHADE-WIDTH.
+	     MOVE 3		 TO SHADE-LINES.
+	     DISPLAY "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      -		     "ÄÄ" AT 0814 WITH FOREGROUND-COLOR 0
+				       BACKGROUND-COLOR 7
+		     "¿" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "³         Person who captured this document
+      -		     "	" AT 0914 WITH FOREGROUND-COLOR 0
+				       BACKGROUND-COLOR 7
+		     "³" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "³ User No: " AT 1014 WITH FOREGROUND-COLOR 0
+						BACKGROUND-COLOR 7
+		     W10-USNO WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				    BACKGROUND-COLOR 7
+		     " Name: " WITH FOREGROUND-COLOR 0
+				    BACKGROUND-COLOR 7
+		     W10-UNME WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				   BACKGROUND-COLOR 7
+		     " ³" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			       BACKGROUND-COLOR 7.
+	     DISPLAY "À" AT 1114 WITH FOREGROUND-COLOR 0
+				      BACKGROUND-COLOR 7
+		     "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      -		     "ÄÙ" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			       BACKGROUND-COLOR 7.
+	     PERFORM SCREEN-SHADOW.
+	     DISPLAY "Press " AT 2502 WITH FOREGROUND-COLOR 3
+		     "ANY" WITH FOREGROUND-COLOR 6 HIGHLIGHT
+		     " key to continue" WITH FOREGROUND-COLOR 3.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-2.
+
+       BE155.
+	     EXIT.
+
+       BE160.
+	     MOVE "'N'ext page,'P'rint,e'X'port or 'E'xit [N]"
+				 TO WS-ERR-MES.
+	     MOVE "N"		 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+029730	   IF NOT (WS-OPTION = "E" OR "P" OR "N" OR "X")
+	       GO TO BE160.
+           IF WS-OPTION = "P"
+	       PERFORM BE36 THRU BE46
+	       GO TO BE199.
+           IF WS-OPTION = "E"
+	       GO TO BE199.
+	   IF WS-OPTION = "X"
+	       MOVE "Y" 	 TO WS-EXP
+	       PERFORM BG000
+	       GO TO BE199.
+             PERFORM BE115.
+             GO TO BE125.
+
+       BE165.
+             EXIT.
+
+       BE170.
+	     PERFORM BE135 THRU BE155.
+      *
+      *    ****    D I S P L A Y   O P T I O N S
+      *
+029390 BE180.
+029420	     MOVE "'P'rint, e'X'port invoice or 'E'xit"
+				 TO WS-ERR-MES.
+	     MOVE "P"		 TO WS-OPTION.
+
+029660 BE185.
+	     PERFORM OPT-MESSAGE.
+029730	   IF NOT (WS-OPTION = "E" OR "P" OR "X")
+029740	       GO TO BE180.
+029750     IF WS-OPTION = "E"
+029760	       GO TO BE199.
+	   IF WS-OPTION = "X"
+	       MOVE "Y" 	 TO WS-EXP
+	       PERFORM BG000
+	       GO TO BE199.
+	     PERFORM BE36 THRU BE46.
+	     GO TO BE199.
+
+       BE198.
+023890	     DISPLAY (LIN, 1) WS-MIV1 WITH BACKGROUND-COLOR 0
+					   FOREGROUND-COLOR 3
+			      WS-MIV78 WITH FOREGROUND-COLOR 3
+			      WS-MIV80 WITH BACKGROUND-COLOR 0
+					    FOREGROUND-COLOR 3.
+023900	     ADD 1		 TO LIN.
+
+048630 BE199.
+048640       EXIT.
+      *
+      *    ****   G E T   I N V O I C E  /  C R E D I T   N O T E
+      * 		       D E T A I L S
+      * 	  DOC-TYPE:
+      *
+      * 		   0 = HEADER
+      * 		   1 = ITEM DETAILS
+      * 		   2 = DISCOUNT DETAILS
+      * 		   3 = REMARKS
+      * 		   5 = DELIVERY ADDRESS
+      * 		   6 = REMARKS (ADVANCED) (SERIAL NUMBERS ETC)
+      * 		   9 = TRAILER
+      *
+       BE200		 SECTION 5.
+       BE201.
+             MOVE ZERO           TO WS-ERROR.
+046240	     PERFORM READ-INVSAL THRU READ-INVSAL-EXIT.
+046250	     MOVE IVS-REF	 TO DOC-REF.
+             MOVE DEB-ACNO       TO DOC-AC.
+             MOVE 100            TO DOC-SQN.
+046270       PERFORM READ-INVOIC THRU READ-INVOIC-EXIT.
+           IF WS-F-ERROR = 12
+               GO TO BE295.
+             MOVE 1              TO WS-LAST WS-SALKEY.
+	     GO TO BE210.
+
+       BE205.
+             PERFORM READ-INVOIC-NEXT THRU READ-INVOIC-EXIT.
+           IF WS-F-ERROR = 12
+	       GO TO BE295.
+      *
+      *                      H E A D E R   R E C O R D
+      *
+       BE210.
+014780	   IF DOC-TYPE = 0
+               MOVE DOC-REF      TO W90-REF
+014860         MOVE DOC-NAME     TO W40-NAME
+	       MOVE DOC-DTE	 TO W20-DTE
+014870         MOVE DOC-ORD      TO W90-ORD
+014880         MOVE DOC-SMAN     TO W10-SMAN
+014850         MOVE DOC-DOC      TO WS-CR
+014850         MOVE DOC-OREF     TO W90-REG
+014890         MOVE DOC-EXP      TO W90-EXP
+014910	       MOVE DOC-PRC	 TO WS-PRC
+	       MOVE DOC-PROF	 TO WS-PROF
+	       MOVE DOC-USER	 TO W10-USER W10-USNO
+	       MOVE DOC-UNME	 TO W15-NAME
+	       PERFORM BB010
+014920     ELSE
+      *
+      *                      I T E M   D E T A I L S
+      *
+014930     IF DOC-TYPE = 1
+014940	       INITIALIZE SAL-RECORD1
+	       IF PROF-INV
+		   MOVE DOC-REMKS    TO SAP-DESC
+		   MOVE DOC-PSELL    TO SAP-SELL
+		   MOVE DOC-PVAT     TO SAP-VAT
+		   MOVE DOC-PVAL     TO SAP-VAL
+		   MOVE DOC-PINCTAX  TO SAP-INCTAX
+		   MOVE DOC-PNONTAX  TO SAP-NONTAX
+		   MOVE DOC-PTAXVAL  TO SAP-TAXVAL
+		   MOVE DOC-LEDG     TO SAP-LEDG
+015140		   MOVE DOC-SQN	     TO SAL-SQN
+015080		   PERFORM BE215
+	       ELSE
+		   MOVE "S"	     TO SAL-TYPE
+014950		   MOVE DOC-EXT-ITEM TO SAL-EXT-ITEM
+014960		   MOVE DOC-DESC     TO SAL-DESC
+014970		   MOVE DOC-QNT	     TO SAL-QNT
+		   MOVE DOC-CASES    TO SAL-CASES
+014980		   MOVE DOC-COST     TO SAL-COST
+014990		   MOVE DOC-SELL     TO SAL-SELL
+015000		   MOVE DOC-VAT	     TO SAL-VAT
+015010		   MOVE DOC-VAL	     TO SAL-VAL
+		   MOVE DOC-VAT-SUB  TO SAL-VAT-SUB
+015020		   MOVE DOC-INCTAX   TO SAL-INCTAX
+015030		   MOVE DOC-NONTAX   TO SAL-NONTAX
+015040		   MOVE DOC-TAXVAL   TO SAL-TAXVAL
+015050		   MOVE DOC-DSC	     TO SAL-DSC
+015060		   MOVE DOC-DISC     TO SAL-DISC
+015140		   MOVE DOC-SQN	     TO SAL-SQN
+		   IF NOT (SAL-VAT-SUB = ZERO)
+		       ADD SAL-VAT   TO W90-VAT(SAL-VAT-SUB)
+		       ADD SAL-TAXVAL
+				     TO W90-TAXVAL(SAL-VAT-SUB)
+		   END-IF
+015080		   PERFORM BE215
+	       END-IF
+015090     ELSE
+      *
+      *                      D I S C O U N T   D E T A I L S
+      *
+015100     IF DOC-TYPE = 2
+015110         INITIALIZE SAL-RECORD1
+015120         MOVE DOC-DSC      TO SAL-DSC
+015130         MOVE DOC-DISC     TO SAL-DISC
+015140         MOVE DOC-SQN      TO SAL-SQN
+015150         PERFORM BE215
+015160     ELSE
+      *
+      *                      R E M A R K S
+      *
+015170     IF DOC-TYPE = 3
+015180         INITIALIZE SAL-RECORD1
+015190         MOVE DOC-MSER     TO SAL-MSER
+015140         MOVE DOC-SQN      TO SAL-SQN
+015210         PERFORM BE215
+015220	   ELSE
+      *
+      * 		     D E L I V E R Y   A D D R E S S
+      *
+015170	   IF DOC-TYPE = 5
+	       MOVE DOC-AD1	 TO W40-PADD1
+	       MOVE DOC-AD2	 TO W40-PADD2
+	       MOVE DOC-AD3	 TO W40-PADD3
+	       MOVE DOC-AD4	 TO W40-PADD4
+	       MOVE DOC-PC	 TO W40-PC2
+	   ELSE
+      *
+      * 		     R E M A R K S     ( A D V A N C E D )
+      *
+015170	   IF DOC-TYPE = 6
+015180         INITIALIZE SAL-RECORD1
+	       MOVE "R" 	 TO SAL-TYPE
+015190         MOVE DOC-MSER     TO SAL-MSER
+015140         MOVE DOC-SQN      TO SAL-SQN
+015210         PERFORM BE215
+015220	   ELSE
+      *
+      * 		     T R A I L E R
+      *
+015170	   IF DOC-TYPE = 9
+015230         MOVE DOC-SUBTOT   TO W90-DB
+015240         MULTIPLY -1 BY DOC-DSCNT    
+015250                           GIVING W90-TDISC
+015260         MOVE W90-TDISC    TO W90-LDISC
+015270         MOVE DOC-NON-TXBL TO W90-NONTAX
+015280	       MOVE DOC-TAXABLE  TO W90-EXCTOT
+015290         MOVE DOC-TAX      TO W90-TTAX
+015300         MOVE DOC-TOT      TO W90-TOTAL
+015310         MOVE DOC-BAL      TO W90-BAL
+	       MOVE DOC-TERMS	 TO W90-TERMS
+	       MOVE DOC-CONTACT  TO W90-CONTACT
+               SUBTRACT 1        FROM WS-LAST
+015330         GO TO BE299.
+015340       GO TO BE205.
+
+015360 BE215.
+015370       MOVE WS-LAST        TO SAL-CODE.
+015380       PERFORM WRITE-SALE THRU WRITE-SALE-EXIT.
+015390       ADD 1               TO WS-LAST WS-SALKEY.
+
+       BE295.
+	     MOVE "Data base corrupted"
+				 TO WS-ERR-STRING.
+003260	     PERFORM ERROR-MESSAGE.
+             MOVE 1              TO WS-ERROR.
+
+       BE299.
+	     EXIT.
+      *
+      *    ****    I N V O I C E   R E F E R E N C E   L O O K U P
+      *
+       BF000	       SECTION 51.
+       BF00.
+	     PERFORM SAVE-SCREEN-3.
+	     MOVE ZERO		 TO W10-NUM.
+	     MOVE 12		 TO SHADE-ROW.
+	     MOVE 28		 TO SHADE-COL.
+	     MOVE 27		 TO SHADE-WIDTH.
+	     MOVE 2		 TO SHADE-LINES.
+	     DISPLAY "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ" AT 1126
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "¿" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "³ Reference Number          " AT 1226
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "³" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "À" AT 1326
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+		      WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			   BACKGROUND-COLOR 7.
+	     PERFORM SCREEN-SHADOW.
+
+       BF05.
+	     ACCEPT S26-REF.
+	     PERFORM RESTORE-SCREEN.
+	   IF W10-NUM = ZERO
+	       GO TO BF199.
+	     MOVE W10-NUM	 TO DOC-REF.
+	     MOVE ZERO		 TO DOC-SQN DOC-TYPE.
+	     PERFORM START-AT-INVOIC-REF THRU READ-INVOIC-EXIT.
+	   IF WS-F-ERROR = 12
+045270	       GO TO BF15.
+
+       BF10.
+045330	     PERFORM READ-INVOIC-NEXT THRU READ-INVOIC-EXIT.
+	   IF WS-F-ERROR = 12
+045270	       GO TO BF15.
+045340	   IF (WS-F-ERROR NOT = ZERO) OR
+045350	      (DOC-REF NOT = W10-NUM)
+045270	       GO TO BF15.
+045370	   IF DOC-TYPE NOT = 0
+045380	       GO TO BF10.
+	     GO TO BF100.
+
+       BF15.
+045240	     MOVE "Document not on File"
+				 TO WS-ERR-STRING.
+003260	     PERFORM ERROR-MESSAGE.
+	     GO TO BF05.
+      *
+      *	   ****	   PRINT INVOICE/CREDIT NOTE
+      *
+       BF36.
+      *    ÉÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ»
+      *    º Give the User the choice of printing the copy Invoice/Cr  º
+      *    º Note on either the normal printer or selecting a printer  º
+      *    º from the other printers avaiable via Windows Selection.   º
+      *    ÈÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¼
+	     MOVE "Select a USB/Windows Printer (Y/N)  [N]"
+				 TO WS-ERR-MES.
+	     MOVE "N"		 TO WS-OPTION.
+
+045280	BF36A.
+	     PERFORM OPT-MESSAGE.
+	     MOVE WS-OPTION	 TO WS-WIND.
+	   IF NOT(WS-WIND = "Y" OR "N")
+	       GO TO BF36A.
+046810	     MOVE SPACES	 TO W40-ADDRESS1 W40-PC1
+				    W40-PADDRESS W40-PC2.
+
+       BF37.
+020010     IF W10-SMAN NOT = ZERO
+020030         ADD 100 W10-SMAN    GIVING WS-PARKEY
+020040         PERFORM READ-PARAM THRU READ-PARAM-EXIT
+               MOVE PAR-SALESMAN TO W40-ASSIST
+           ELSE
+               MOVE SPACES       TO W40-ASSIST.
+	     MOVE WS-LAST	 TO W40-LAST.
+	     MOVE "Y"		 TO W40-REPRINT.
+	     MOVE W20-DTE	 TO W40-DTE.
+	     MOVE W10-SMAN	 TO W40-SMAN.
+	     MOVE WS-PRC	 TO W40-PRC.
+	     MOVE WS-CR 	 TO W40-CR.
+
+046800 BF38.
+046820       MOVE DEB-ADDRESS    TO W60-ADDRESS.
+046830       PERFORM CA175-ADDRESS.
+046840     IF NOT (DEB-POST = ZERO OR 9999)
+046850         MOVE DEB-POST     TO W40-PC1.
+046860     IF W40-ADD4 = SPACES
+046870         MOVE W40-PC1      TO W40-ADD4
+046880         MOVE SPACES       TO W40-PC1.
+046890     IF W40-ADD3 = SPACES
+046900         MOVE W40-ADD4     TO W40-ADD3
+046910         MOVE SPACES       TO W40-ADD4.
+046920     IF W40-ADD2 = SPACES
+046930         MOVE W40-ADD3     TO W40-ADD2
+046940         MOVE SPACES       TO W40-ADD3.
+046950     IF W40-ADD1 = SPACES
+046960         MOVE W40-ADD2     TO W40-ADD1
+046970         MOVE SPACES       TO W40-ADD2.
+	   IF W40-PADD1 = SPACES
+046980	       MOVE DEB-PADDR	 TO W60-ADDRESS1
+046990	       PERFORM CA185-ADDRESS
+047000	       IF NOT (DEB-PPOST = ZERO OR 9999)
+047010		   MOVE DEB-PPOST
+				 TO W40-PC2.
+047020     IF W40-PADD4 = SPACES
+047030         MOVE W40-PC2      TO W40-PADD4
+047040         MOVE SPACES       TO W40-PC2.
+047050     IF W40-PADD3 = SPACES
+047060         MOVE W40-PADD4    TO W40-PADD3
+047070         MOVE SPACES       TO W40-PADD4.
+047080     IF W40-PADD2 = SPACES
+047090         MOVE W40-PADD3    TO W40-PADD2
+047100         MOVE SPACES       TO W40-PADD3.
+047110     IF W40-PADD1 = SPACES
+047120         MOVE W40-PADD2    TO W40-PADD1
+047130         MOVE SPACES       TO W40-PADD2.
+      *    *************************************************************
+      *    **		 C l i e n t   V A T   n u m b e r	      **
+      *    *************************************************************
+	     MOVE DEB-TAX	 TO W40-TAX.
+029610	     CLOSE SALE.
+             OPEN I-O SALE.
+	   IF PROF-INV
+	       CALL PRG-PNAME USING LS-PARID
+				   LS-USER-ID
+				   LS0-PROGRAMS
+				   W40-COMPANY
+				   W90-TRAN
+		    ON EXCEPTION
+			GO TO BF40
+	       END-CALL
+	       CANCEL PRG-PNAME
+	   ELSE
+	   IF WIND-INV
+	       CALL PRG-WNAME USING LS-PARID
+				    LS-USER-ID
+				    LS0-PROGRAMS
+				    LS0-SECURITY
+				    W40-COMPANY
+				    W90-TRAN
+		    ON EXCEPTION
+			GO TO BE40
+	       END-CALL
+	       CANCEL PRG-WNAME
+	   ELSE
+	       CALL PRG-NAME USING LS-PARID
+				   LS-USER-ID
+				   LS0-PROGRAMS
+				   LS0-SECURITY
+				   W40-COMPANY
+				   W90-TRAN
+		    ON EXCEPTION
+			GO TO BF40
+	       END-CALL
+	       CANCEL PRG-NAME.
+	     GO TO BF45.
+
+       BF40.
+	     MOVE SPACES     TO WS-ERR-MES.
+	     STRING "Program- " DELIMITED SIZE
+		     PRG-NAME DELIMITED " "
+		     " not on disk, press ANY key"
+		     DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+
+       BF45.
+029690	     DISPLAY CLEAR-L25.
+029610	     CLOSE SALE.
+029600       OPEN OUTPUT SALE.
+029610       CLOSE SALE.
+             OPEN I-O SALE.
+
+       BF46.
+	     EXIT.
+
+       BF100.
+012010	     MOVE DOC-AC	 TO W80-ACNO
+				    W40-ACNO.
+045080       PERFORM CA155-GET-DEBTOR.
+	     MOVE 1		 TO WS-S9.
+
+       BF108.
+018660	     MOVE ZERO		 TO W90-VAT(WS-S9) W90-TAXVAL(WS-S9).
+	   IF WS-S9 < 12
+	       ADD 1		 TO WS-S9
+	       GO TO BF108.
+018660	     MOVE ZERO		 TO W90-BDT W90-SALES
+				    W90-BAL W90-LDISC
+018670				    W90-CUR W90-NONTAX
+				    W90-EXCTOT.
+	     PERFORM BF200.
+018580	     DISPLAY CLR-SCREEN.
+018590       DISPLAY S26.
+           IF WS-CR = "C"
+               DISPLAY S027-CNOTE.
+018620       MOVE 8              TO LIN.
+018630	     PERFORM BF198 UNTIL LIN > 18.
+025520	     DISPLAY W90-REF AT 0510
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+018640	     MOVE W20-DTE	 TO W22-DTE2.
+	     MOVE W22-CC2	 TO W22-CC3.
+	     MOVE W22-YY2	 TO W22-YY3.
+	     MOVE W22-MM2	 TO W22-MM3.
+	     MOVE W22-DD2	 TO W22-DD3.
+	     MOVE W22-DTE3	 TO W90-DTE.
+018650	     DISPLAY W90-DTE AT 0570
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+018680       MOVE 1              TO WS-FIRST WS-SALKEY.
+           IF W90-EXP = "E" OR "X"
+               MOVE W05-VATNO    TO W90-TAX
+           ELSE
+               MOVE SPACES       TO W90-TAX.
+             DISPLAY S36 AT 0308.
+019060	     DISPLAY W40-NAME AT 0320
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+019960	     DISPLAY W90-ORD AT 0368
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+020010     IF W10-SMAN NOT = ZERO
+020030         ADD 100 W10-SMAN    GIVING WS-PARKEY
+020040         PERFORM READ-PARAM THRU READ-PARAM-EXIT
+020030	       DISPLAY W10-SMAN AT 0411
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+020160	       DISPLAY PAR-SALESMAN AT 0420
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+               MOVE PAR-SALESMAN TO W40-ASSIST
+           ELSE
+               MOVE SPACES       TO W40-ASSIST.
+	   IF DEB-B-TEL = SPACES
+	       MOVE DEB-H-TEL	 TO W40-TEL
+	   ELSE
+	       MOVE DEB-B-TEL	 TO W40-TEL.
+	    DISPLAY W40-TEL AT 0466
+		    WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			 BACKGROUND-COLOR 0.
+020660	     DISPLAY W90-CONTACT AT 0529
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+020760	     DISPLAY W90-REG AT 0554
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+             MOVE 1              TO WS-SALKEY.
+022610       MOVE W90-DB         TO W90-TOTAL.
+022620       SUBTRACT W90-LDISC  FROM W90-TOTAL.
+022980	     MOVE W90-DB	 TO W100-VAL.
+022990	     DISPLAY W100-VAL AT 2015
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+023000       MULTIPLY -1 BY W90-LDISC 
+023010				 GIVING W100-VAL.
+023020	     DISPLAY W100-VAL AT 2115
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+      *
+      *    ****    C A L C U L A T E   T A X   ( RUNNING TOTAL )
+      *
+022690	   IF W90-TAX = SPACES
+022700	       GO TO BF110.
+022710	   IF W90-TTAX NOT = ZERO
+               MOVE W90-TTAX     TO W25-TOTAL
+023100	       MOVE W25-TOTAL	 TO W100-VAL
+023110	       DISPLAY W100-VAL AT 2215
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+022760         ADD W25-TOTAL     TO W90-TOTAL.
+
+022770 BF110.
+023140	     MOVE W90-TOTAL	 TO W100-VAL.
+023150	     DISPLAY W100-VAL AT 2315
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+      *
+      *    ****    D I S P L A Y   S A L E S   D E T A I L S
+      *
+029120 BF115.
+029130       MOVE 8              TO LIN.
+029140	     PERFORM BF198 UNTIL LIN > 18.
+029150       MOVE 8              TO LIN.
+029160       MOVE 1              TO WS-LINES WS-FIRST.
+
+029170 BF120.
+029180       MOVE WS-FIRST TO WS-SALKEY.
+      *
+      *    ****    H A V E   A L L   T H E   E N T R I E S   B E E N
+      *            D I S P L A Y E D
+      *
+029190 BF125.
+029200	   IF WS-SALKEY > WS-LAST
+029210	       GO TO BF165.
+029220       PERFORM READ-SALE THRU READ-SALE-EXIT.
+      *
+      *    ****    D I S P L A Y   E N T R Y   D E T A I L S
+      *
+029240	   IF SAL-ITEM = SPACES
+	       IF SAL-TYPE = "R"
+029250		   DISPLAY (LIN, 10) SAL-MSER
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+	       ELSE
+		   DISPLAY (LIN, 21) SAL-SDSC
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0
+	       END-IF
+029260	       GO TO BF130.
+029270	     DISPLAY (LIN, 2) SAL-ITEM
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+030090	     DISPLAY ( , 17) "   "
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+029280	     DISPLAY ( , 21) SAL-SDSC
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+029290       MOVE SAL-QNT        TO W10-QUANT.
+029300       DISPLAY S26-QNT AT LINE LIN.
+029310       MOVE SAL-SELL       TO W10-SELL.
+029320       DISPLAY S26-PRC AT LINE LIN.
+029330       MOVE SAL-VAL        TO W100-EXT.
+029340	     DISPLAY ( , 70) W100-EXT
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+      *
+      *    ****    I S   T H E   S C R E E N   F U L L
+      *
+029350 BF130.
+029360     IF LIN < 18
+029370         ADD 1             TO LIN WS-SALKEY WS-LINES
+029380	       GO TO BF125.
+
+       BF135.
+      *    *************************************************************
+      *    ****     If no USER recorded, then skip this routine.    ****
+      *    *************************************************************
+	   IF W10-USER = ZERO
+	       GO TO BF155.
+011010	     DISPLAY "F6" AT 2502
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+		     "=Person responsible for capturing,"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+011070		     "Esc" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+		     "ape"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+
+       BF140.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+		      GO TO BF155
+		 WHEN F6-KEY
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³   Display the name of person who captured the document    ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+		      DISPLAY CLEAR-L25
+		      PERFORM BF150 THRU BF155
+		 WHEN OTHER
+		      GO TO BF140
+	       END-EVALUATE.
+
+       BF145.
+	     GO TO BF155.
+
+       BF150.
+	   IF W10-USER = ZERO
+	       GO TO BF155.
+	     PERFORM SAVE-SCREEN-2.
+	     MOVE 9		 TO SHADE-ROW.
+	     MOVE 16		 TO SHADE-COL.
+	     MOVE 51		 TO SHADE-WIDTH.
+	     MOVE 3		 TO SHADE-LINES.
+	     DISPLAY "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      -		     "ÄÄ" AT 0814 WITH FOREGROUND-COLOR 0
+				       BACKGROUND-COLOR 7
+		     "¿" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "³         Person who captured this document
+      -		     "	" AT 0914 WITH FOREGROUND-COLOR 0
+				       BACKGROUND-COLOR 7
+		     "³" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "³ User No: " AT 1014 WITH FOREGROUND-COLOR 0
+						BACKGROUND-COLOR 7
+		     W10-USNO WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				    BACKGROUND-COLOR 7
+		     " Name: " WITH FOREGROUND-COLOR 0
+				    BACKGROUND-COLOR 7
+		     W10-UNME WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				   BACKGROUND-COLOR 7
+		     " ³" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			       BACKGROUND-COLOR 7.
+	     DISPLAY "À" AT 1114 WITH FOREGROUND-COLOR 0
+				      BACKGROUND-COLOR 7
+		     "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      -		     "ÄÙ" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			       BACKGROUND-COLOR 7.
+	     PERFORM SCREEN-SHADOW.
+	     DISPLAY "Press " AT 2502 WITH FOREGROUND-COLOR 3
+		     "ANY" WITH FOREGROUND-COLOR 6 HIGHLIGHT
+		     " key to continue" WITH FOREGROUND-COLOR 3.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-2.
+
+       BF155.
+	     EXIT.
+
+       BF160.
+	     MOVE "'N'ext page, 'P'rint invoice or 'E'xit [N]"
+				 TO WS-ERR-MES.
+	     MOVE "N"		 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+029730	   IF NOT (WS-OPTION = "E" OR "P" OR "N")
+	       GO TO BF160.
+           IF WS-OPTION = "P"
+	       PERFORM BF36 THRU BF46
+	       GO TO BF199.
+           IF WS-OPTION = "E"
+	       GO TO BF199.
+	     PERFORM BF115.
+	     GO TO BF125.
+
+       BF165.
+	     EXIT.
+
+       BF170.
+	     PERFORM BF135 THRU BF155.
+      *
+      *    ****    D I S P L A Y   O P T I O N S
+      *
+029390 BF180.
+029420	     MOVE "'P'rint invoice or 'E'xit"
+				 TO WS-ERR-MES.
+	     MOVE "P"		 TO WS-OPTION.
+
+029660 BF185.
+	     PERFORM OPT-MESSAGE.
+029730	   IF NOT (WS-OPTION = "E" OR "P")
+029740	       GO TO BF180.
+029750     IF WS-OPTION = "E"
+029760	       GO TO BF199.
+	     PERFORM BF36 THRU BF46.
+	     GO TO BF199.
+
+       BF198.
+023890	     DISPLAY (LIN, 1) WS-MIV1 WITH BACKGROUND-COLOR 0
+					   FOREGROUND-COLOR 3
+			      WS-MIV78 WITH FOREGROUND-COLOR 3
+			      WS-MIV80 WITH BACKGROUND-COLOR 0
+					    FOREGROUND-COLOR 3.
+023900	     ADD 1		 TO LIN.
+
+048630 BF199.
+048640       EXIT.
+      *
+      *    ****   G E T   I N V O I C E  /  C R E D I T   N O T E
+      * 		       D E T A I L S
+      * 	  DOC-TYPE:
+      *
+      * 		   0 = HEADER
+      * 		   1 = ITEM DETAILS
+      * 		   2 = DISCOUNT DETAILS
+      * 		   3 = REMARKS
+      * 		   5 = DELIVERY ADDRESS
+      * 		   6 = REMARKS (ADVANCED) (SERIAL NUMBERS ETC)
+      * 		   9 = TRAILER
+      *
+       BF200		 SECTION 51.
+       BF201.
+	     MOVE ZERO		 TO DOC-TYPE.
+	     MOVE 100		 TO DOC-SQN.
+046270       PERFORM READ-INVOIC THRU READ-INVOIC-EXIT.
+           IF WS-F-ERROR = 12
+	       GO TO BF295.
+             MOVE 1              TO WS-LAST WS-SALKEY.
+	     GO TO BF210.
+
+       BF205.
+             PERFORM READ-INVOIC-NEXT THRU READ-INVOIC-EXIT.
+           IF WS-F-ERROR = 12
+	       GO TO BF295.
+
+       BF210.
+      *                      H E A D E R   R E C O R D
+014780     IF DOC-TYPE = 0
+               MOVE DOC-REF      TO W90-REF
+014860         MOVE DOC-NAME     TO W40-NAME
+	       MOVE DOC-DTE	 TO W20-DTE
+014870         MOVE DOC-ORD      TO W90-ORD
+014880         MOVE DOC-SMAN     TO W10-SMAN
+014850         MOVE DOC-DOC      TO WS-CR
+014850         MOVE DOC-OREF     TO W90-REG
+014890         MOVE DOC-EXP      TO W90-EXP
+014910	       MOVE DOC-PRC	 TO WS-PRC
+	       MOVE DOC-PROF	 TO WS-PROF
+	       MOVE DOC-USER	 TO W10-USER W10-USNO
+	       MOVE DOC-UNME	 TO W15-NAME
+	       PERFORM BB010
+014920	   ELSE
+      *                      I T E M   D E T A I L S
+014930     IF DOC-TYPE = 1
+014940	       INITIALIZE SAL-RECORD1
+	       IF PROF-INV
+		   MOVE DOC-REMKS    TO SAP-DESC
+		   MOVE DOC-PSELL    TO SAP-SELL
+		   MOVE DOC-PVAT     TO SAP-VAT
+		   MOVE DOC-PVAL     TO SAP-VAL
+		   MOVE DOC-PINCTAX  TO SAP-INCTAX
+		   MOVE DOC-PNONTAX  TO SAP-NONTAX
+		   MOVE DOC-PTAXVAL  TO SAP-TAXVAL
+		   MOVE DOC-LEDG     TO SAP-LEDG
+015140		   MOVE DOC-SQN	     TO SAL-SQN
+015080		   PERFORM BF215
+	       ELSE
+		   MOVE "S"	     TO SAL-TYPE
+014950		   MOVE DOC-EXT-ITEM TO SAL-EXT-ITEM
+014960		   MOVE DOC-DESC     TO SAL-DESC
+014970		   MOVE DOC-QNT	     TO SAL-QNT
+		   MOVE DOC-CASES    TO SAL-CASES
+014980		   MOVE DOC-COST     TO SAL-COST
+014990		   MOVE DOC-SELL     TO SAL-SELL
+015000		   MOVE DOC-VAT	     TO SAL-VAT
+015010		   MOVE DOC-VAL	     TO SAL-VAL
+		   MOVE DOC-VAT-SUB  TO SAL-VAT-SUB
+015020		   MOVE DOC-INCTAX   TO SAL-INCTAX
+015030		   MOVE DOC-NONTAX   TO SAL-NONTAX
+015040		   MOVE DOC-TAXVAL   TO SAL-TAXVAL
+015050		   MOVE DOC-DSC	     TO SAL-DSC
+015060		   MOVE DOC-DISC     TO SAL-DISC
+015140		   MOVE DOC-SQN	     TO SAL-SQN
+		   IF NOT (SAL-VAT-SUB = ZERO)
+		       ADD SAL-VAT   TO W90-VAT(SAL-VAT-SUB)
+		       ADD SAL-TAXVAL
+				     TO W90-TAXVAL(SAL-VAT-SUB)
+		   END-IF
+015080		   PERFORM BF215
+	       END-IF
+015090     ELSE
+      *                      D I S C O U N T   D E T A I L S
+015100     IF DOC-TYPE = 2
+015110         INITIALIZE SAL-RECORD1
+015120         MOVE DOC-DSC      TO SAL-DSC
+015130         MOVE DOC-DISC     TO SAL-DISC
+015140         MOVE DOC-SQN      TO SAL-SQN
+015150	       PERFORM BF215
+015160     ELSE
+      *                      R E M A R K S
+015170     IF DOC-TYPE = 3
+015180         INITIALIZE SAL-RECORD1
+015190         MOVE DOC-MSER     TO SAL-MSER
+015140         MOVE DOC-SQN      TO SAL-SQN
+015210	       PERFORM BF215
+015220	   ELSE
+      * 		     D E L I V E R Y   A D D R E S S
+015170	   IF DOC-TYPE = 5
+	       MOVE DOC-AD1	 TO W40-PADD1
+	       MOVE DOC-AD2	 TO W40-PADD2
+	       MOVE DOC-AD3	 TO W40-PADD3
+	       MOVE DOC-AD4	 TO W40-PADD4
+	       MOVE DOC-PC	 TO W40-PC2
+	   ELSE
+      * 		     R E M A R K S     ( A D V A N C E D )
+015170	   IF DOC-TYPE = 6
+015180         INITIALIZE SAL-RECORD1
+	       MOVE "R" 	 TO SAL-TYPE
+015190         MOVE DOC-MSER     TO SAL-MSER
+015140         MOVE DOC-SQN      TO SAL-SQN
+015210	       PERFORM BF215
+015220	   ELSE
+      * 		     T R A I L E R
+015170	   IF DOC-TYPE = 9
+015230         MOVE DOC-SUBTOT   TO W90-DB
+015240         MULTIPLY -1 BY DOC-DSCNT    
+015250                           GIVING W90-TDISC
+015260         MOVE W90-TDISC    TO W90-LDISC
+015270         MOVE DOC-NON-TXBL TO W90-NONTAX
+015280	       MOVE DOC-TAXABLE  TO W90-EXCTOT
+015290         MOVE DOC-TAX      TO W90-TTAX
+015300         MOVE DOC-TOT      TO W90-TOTAL
+015310         MOVE DOC-BAL      TO W90-BAL
+	       MOVE DOC-TERMS	 TO W90-TERMS
+	       MOVE DOC-CONTACT  TO W90-CONTACT
+               SUBTRACT 1        FROM WS-LAST
+015330	       GO TO BF299.
+015340	     GO TO BF205.
+
+015360 BF215.
+015370       MOVE WS-LAST        TO SAL-CODE.
+015380       PERFORM WRITE-SALE THRU WRITE-SALE-EXIT.
+015390       ADD 1               TO WS-LAST WS-SALKEY.
+
+       BF295.
+	     MOVE "Data base corrupted"
+				 TO WS-ERR-STRING.
+003260	     PERFORM ERROR-MESSAGE.
+             MOVE 1              TO WS-ERROR.
+
+       BF299.
+	     EXIT.
+      *
+      *    ****    E X P O R T	 I N V O I C E	 D E T A I L S
+      *
+      * 	       B A R   C O D E
+      * 	       I T E M	 C O D E
+      * 	       I T E M	 D E S C R I P T I O N
+      * 	       Q U A N T I T Y
+      * 	       U N I T	 P R I C E
+      * 	       E X T E N D E D	 V A L U E
+      *
+       BG000		 SECTION 52.
+       BG00.
+	   IF WS-EXP = "N"
+	       PERFORM BG50 THRU BG60
+	       IF W10-NUM = ZERO
+		   GO TO BG199
+	       END-IF
+	       MOVE W10-NUM	 TO DOC-REF.
+	     MOVE ZERO		 TO WS-ERROR.
+	     PERFORM BG200.
+	   IF WS-ERROR = 1
+	       GO TO BG199.
+	     PERFORM BH100.
+	   IF WS-ERROR = 9
+	       GO TO BG199.
+	     PERFORM SAVE-SCREEN-3.
+	     MOVE 12		 TO SHADE-ROW.
+	     MOVE 20		 TO SHADE-COL.
+	     MOVE 43		 TO SHADE-WIDTH.
+	     MOVE 2		 TO SHADE-LINES.
+	     DISPLAY "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"
+		      AT 1118 WITH FOREGROUND-COLOR 5 HIGHLIGHT
+				   BACKGROUND-COLOR 5
+		     "¿" WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 5.
+	     DISPLAY "³ " AT 1218 WITH FOREGROUND-COLOR 5 HIGHLIGHT
+				       BACKGROUND-COLOR 5
+		     "Exporting:                               "
+		      WITH FOREGROUND-COLOR 5 HIGHLIGHT
+			   BACKGROUND-COLOR 5
+		     " ³" WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 5.
+	     DISPLAY "À" AT 1318 WITH FOREGROUND-COLOR 5 HIGHLIGHT
+				      BACKGROUND-COLOR 5
+		     "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 5.
+	     PERFORM SCREEN-SHADOW.
+	     MOVE 1		 TO WS-SALKEY.
+	     MOVE 01		 TO W60-FNO (1).
+	     MOVE 02		 TO W60-FNO (2).
+	     MOVE 03		 TO W60-FNO (3).
+	     MOVE 04		 TO W60-FNO (4).
+	     MOVE 05		 TO W60-FNO (5).
+	     MOVE 06		 TO W60-FNO (6).
+
+029190 BG05.
+029200	   IF WS-SALKEY > WS-LAST
+029210	       GO TO BG10.
+029220	     PERFORM READ-SALE THRU READ-SALE-EXIT.
+	     MOVE SAL-ITEM	 TO STK-CODE.
+011890	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+	     DISPLAY SAL-DESC AT 1231
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 5.
+	     PERFORM BH400.
+	     MOVE W55-EXP-DATA	 TO EXP-REC1.
+	     PERFORM WRITE-INVDET THRU WRITE-INVDET-EXIT.
+	     ADD 1		 TO WS-SALKEY.
+	     GO TO BG05.
+
+       BG10.
+	     CLOSE INVDET.
+029610       CLOSE SALE.
+029600	     OPEN OUTPUT SALE.
+029610       CLOSE SALE.
+             OPEN I-O SALE.
+	     PERFORM RESTORE-SCREEN-3.
+	     GO TO BG199.
+
+       BG50.
+	     PERFORM SAVE-SCREEN-3.
+	     MOVE ZERO		 TO W10-NUM.
+	     MOVE 12		 TO SHADE-ROW.
+	     MOVE 28		 TO SHADE-COL.
+	     MOVE 27		 TO SHADE-WIDTH.
+	     MOVE 2		 TO SHADE-LINES.
+	     DISPLAY "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ" AT 1126
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "¿" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "³ Reference Number          " AT 1226
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "³" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "À" AT 1326
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"
+		      WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			   BACKGROUND-COLOR 7.
+	     PERFORM SCREEN-SHADOW.
+
+       BG55.
+	     ACCEPT S26-REF.
+	     PERFORM RESTORE-SCREEN.
+
+       BG60.
+	     EXIT.
+
+       BG199.
+	     EXIT.
+
+       BG200		 SECTION 52.
+       BG201.
+	     MOVE ZERO		 TO DOC-TYPE.
+	     MOVE 100		 TO DOC-SQN.
+045220	     PERFORM START-AT-INVOIC-REF THRU READ-INVOIC-EXIT.
+	   IF WS-F-ERROR = 12
+	       GO TO BG295.
+	     MOVE 1		 TO WS-LAST WS-SALKEY.
+
+       BG205.
+             PERFORM READ-INVOIC-NEXT THRU READ-INVOIC-EXIT.
+	   IF WS-F-ERROR = 12
+	       GO TO BG295.
+
+       BG210.
+      *                      H E A D E R   R E C O R D
+014780     IF DOC-TYPE = 0
+	       NEXT SENTENCE
+014920	   ELSE
+      *                      I T E M   D E T A I L S
+014930     IF DOC-TYPE = 1
+014940	       INITIALIZE SAL-RECORD1
+	       MOVE "S" 	 TO SAL-TYPE
+014950	       MOVE DOC-EXT-ITEM TO SAL-EXT-ITEM
+014960	       MOVE DOC-DESC	 TO SAL-MSER
+014970	       MOVE DOC-QNT	 TO SAL-QNT
+	       MOVE DOC-CASES	 TO SAL-CASES
+014980	       MOVE DOC-COST	 TO SAL-COST
+014990	       MOVE DOC-SELL	 TO SAL-SELL
+015000	       MOVE DOC-VAT	 TO SAL-VAT
+015010	       MOVE DOC-VAL	 TO SAL-VAL
+	       MOVE DOC-VAT-SUB  TO SAL-VAT-SUB
+015020	       MOVE DOC-INCTAX	 TO SAL-INCTAX
+015030	       MOVE DOC-NONTAX	 TO SAL-NONTAX
+015040	       MOVE DOC-TAXVAL	 TO SAL-TAXVAL
+015050	       MOVE DOC-DSC	 TO SAL-DSC
+015060	       MOVE DOC-DISC	 TO SAL-DISC
+015140	       MOVE DOC-SQN	 TO SAL-SQN
+015080	       PERFORM BG215
+015090     ELSE
+      *                      D I S C O U N T   D E T A I L S
+015100     IF DOC-TYPE = 2
+	       NEXT SENTENCE
+015160	   ELSE
+      *                      R E M A R K S
+015170     IF DOC-TYPE = 3
+	       NEXT SENTENCE
+015220	   ELSE
+      * 		     D E L I V E R Y   A D D R E S S
+015170	   IF DOC-TYPE = 5
+	       NEXT SENTENCE
+	   ELSE
+      * 		     R E M A R K S     ( A D V A N C E D )
+015170	   IF DOC-TYPE = 6
+	       NEXT SENTENCE
+015220	   ELSE
+      * 		     T R A I L E R
+015170	   IF DOC-TYPE = 9
+	       SUBTRACT 1	 FROM WS-LAST
+015330	       GO TO BG299.
+015340	     GO TO BG205.
+
+015360 BG215.
+015370       MOVE WS-LAST        TO SAL-CODE.
+015380       PERFORM WRITE-SALE THRU WRITE-SALE-EXIT.
+015390       ADD 1               TO WS-LAST WS-SALKEY.
+
+       BG295.
+	     MOVE "Data base corrupted"
+				 TO WS-ERR-STRING.
+003260	     PERFORM ERROR-MESSAGE.
+             MOVE 1              TO WS-ERROR.
+
+       BG299.
+	     EXIT.
+      *
+      *    ****    G E T   T H E   E X P O R T   F I L E   I D 
+      *
+       BH100	       SECTION 52.
+       BH101.
+	     PERFORM SAVE-SCREEN-3.
+             DISPLAY "Keyin the <pathname>/<filename> " AT 2202.
+             DISPLAY "EXPORT file :" AT 2302.
+             MOVE ZERO           TO WS-ERROR.
+
+       BH105.
+             ACCEPT W02-EXPORT AT 2316
+		    WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			 BACKGROUND-COLOR 5 UPDATE AUTO.
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+		     MOVE 9	 TO WS-ERROR
+		     GO TO BH190
+		 WHEN OTHER
+		     CALL X"E5"
+		     GO TO BH105
+	       END-EVALUATE.
+	     MOVE 64		 TO WS-LENGTH.
+	     CALL "CBL_TOUPPER" USING W02-EXPORT
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+             MOVE 1              TO WS-LENGTH.
+             DISPLAY W02-EXPORT AT 2316
+		     WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			  BACKGROUND-COLOR 5 UPDATE AUTO.
+	     PERFORM CHECK-CORRECT.
+015980	   IF WS-OPTION = "N"
+	       GO TO BH105.
+	     DISPLAY CLEAR-L25.
+	     OPEN OUTPUT INVDET.
+           IF WS-STATUS = "00"
+	       GO TO BH190.
+	     MOVE "Invalid file name"
+				 TO WS-ERR-STRING.
+003260	     PERFORM ERROR-MESSAGE.
+	     GO TO BH105.
+
+       BH190.
+	     PERFORM RESTORE-SCREEN-3.
+
+       BH199.
+             EXIT.
+      *
+      *    ****    M O V E   F I E L D   T O   E X P O R T   A R E A
+      *
+      *            W50-DATA   : CONTAINS DATA TO BE INSERTED
+      *            W50-LENGTH : LENGTH OF DATA 
+      *            W50-EXP    : FIELD TERMINATION CHARACTER
+      *
+       BH200	       SECTION 52.
+       BH201.
+           IF W50-DATA = SPACES
+	       GO TO BH225.
+             MOVE W50-LENGTH     TO W50-S1.
+      *
+      *    ****    D E T E R M I N E   E N D   O F   F I E L D
+      *
+      *            THIS LOOP EXCLUDES THE TRAILING SPACES
+      *
+       BH205.
+           IF W50-CCHAR (W50-S1) = SPACE
+               SUBTRACT 1        FROM W50-S1
+	       GO TO BH205.
+      *
+      *    ****    R E M O V E   L E A D I N G   S P A C E S
+      *
+       BH210.
+           IF W50-1 = SPACE
+               MOVE W50-D39      TO W50-DATA
+               SUBTRACT 1        FROM W50-S1
+	       GO TO BH210.
+             MOVE W50-S1         TO W50-S2.     
+             MOVE 1              TO W50-S1.
+       BH220.
+             MOVE W50-CCHAR (W50-S1)
+                                 TO W55-EXP (W55-S1).
+             ADD 1               TO W50-S1
+                                    W55-S1.
+           IF W50-S1 NOT > W50-S2
+	       GO TO BH220.
+       BH225.
+             MOVE W50-EXP        TO W55-EXP (W55-S1).
+             ADD 1               TO W55-S1.
+       BH299.
+             EXIT.
+      *
+      *    ****    M O V E   I N D V I D U A L   F I E L D S
+      *
+      *            W50-BIN : FIELD NUMBER TO MOVE
+      *
+       BH300		  SECTION 52.
+       BH301.
+	   IF W50-BIN < 01 OR > 06
+	       GO TO BH399.
+      *
+           IF W50-BIN = 01
+	       MOVE STK-XREF	 TO W50-DATA
+	       MOVE 18		 TO W50-LENGTH
+	       PERFORM BH200
+	       GO TO BH399.
+      *
+           IF W50-BIN = 02
+	       MOVE SAL-EXT-ITEM TO W50-DATA
+	       MOVE 18		 TO W50-LENGTH
+	       PERFORM BH200
+	       GO TO BH399.
+      *
+           IF W50-BIN = 03
+	       MOVE SAL-MSER	 TO W50-DATA
+	       MOVE 30		 TO W50-LENGTH
+	       PERFORM BH200
+	       GO TO BH399.
+      *
+           IF W50-BIN = 04
+	       MOVE SAL-QNT	 TO W100-V1
+	       MOVE W100-S9V2	 TO W50-DATA
+	       MOVE 13		 TO W50-LENGTH
+	       PERFORM BH200
+	       GO TO BH399.
+      *
+           IF W50-BIN = 05
+	       MOVE SAL-SELL	 TO W100-V1
+	       MOVE W100-S9V2	 TO W50-DATA
+	       MOVE 13		 TO W50-LENGTH
+	       PERFORM BH200
+	       GO TO BH399.
+      *
+           IF W50-BIN = 06
+	       MOVE SAL-VAL	 TO W100-V1
+	       MOVE W100-S9V2	 TO W50-DATA
+	       MOVE 13		 TO W50-LENGTH
+	       PERFORM BH200.
+
+       BH399.
+               EXIT.
+      *
+      *    ****    P R O C E S S   T H E   S E L E C T E D   F I E L D S
+      *
+       BH400	       SECTION 52.
+       BH401.
+             MOVE 1              TO W60-S.
+      *
+      *    ****    C L E A R   E X P O R T   D A T A   A R E A
+      *
+             MOVE SPACES         TO W55-EXP-DATA.
+             MOVE 1              TO W55-S1.
+       BH405.
+           IF W60-FNO (W60-S) = ZERO
+	       GO TO BH499.
+             MOVE W60-FNO (W60-S)
+                                 TO W50-BIN.
+	     PERFORM BH300.
+	   IF W60-S < 6
+               ADD 1             TO W60-S
+	       GO TO BH405.
+       BH499.
+             EXIT.
+
+      /
+052700 ZA000-INIT	       SECTION 90.
+052710 ZA000-OPEN.
+055960	     MOVE LS-COMPANY	 TO WS-TOP-COMP.
+	   IF LS-USER = LS-SYS-ID
+	       MOVE "SupervisorÄ"  TO WS-WRKHD
+	   ELSE
+	       MOVE "Workstation"  TO WS-WRKHD
+	       MOVE LS-USER	   TO WS-WRKST.
+	     MOVE LS-PARID	 TO WS-PARID.
+	     MOVE LS-L-OR-N	 TO W02-L-OR-N.
+	     MOVE WS-SYS-ID	 TO W02-SYSID.
+	     MOVE LS-TODAY-DDMMYY
+				 TO TODAY-DDMMYY.
+	     MOVE LS-USUB	 TO WS-USUB.
+052730	     DISPLAY CLR-SCREEN.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³	   S e t   u p	 t h e	 F U N C T I O N   k e y s     ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     MOVE 1		 TO USER-ACTION
+				    USER-SETTING.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³		       ESC, F1 to F10 keys		       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     MOVE ZERO		 TO USER-NUMBER.
+	     MOVE 11		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³		    PAGE-UP and PAGE-DOWN keys		       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     MOVE 53		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³		   A C T I V A T E   M O U S E		       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     MOVE 64		 TO MOUSE-FUNC.
+	     MOVE 1		 TO MOUSE-PARAM.
+	     CALL X"AF" USING MOUSE-FUNC
+			      MOUSE-PARAM.
+	   IF MOUSE-FUNC NOT = 255
+	       MOVE "Y"		 TO MOUSE-ATTACHED
+	       MOVE 66		 TO MOUSE-FUNC
+	       MOVE 0		 TO MOUSE-PARAM
+	       CALL X"AF" USING MOUSE-FUNC
+				MOUSE-PARAM
+	   ELSE
+	       GO TO ZA00A.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³	       Set MOUSE key to act as FUNCTION key	       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     MOVE 3		 TO USER-ACTION.
+	     MOVE 27		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³	    Setup the file ID's including path names           ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      *    *************************************************************
+      *    ****    P A R A M E T E R   F I L E
+      *    *************************************************************
+       ZA00A.
+	     MOVE "PARAM"	 TO AFID-KEY.
+
+       ZA00-READ-APACFIDS.
+000030	     READ APACFIDS WITH IGNORE LOCK
+	       KEY IS AFID-KEY.
+	   IF WS-STATUS = "00"
+	       GO TO ZA00-READ-APACFIDS-EXIT.
+006260	     STRING "Missing " DELIMITED SIZE
+		     AFID-KEY DELIMITED BY " "
+		     " file ID - Status " DELIMITED SIZE
+		     WS-STATUS DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+006370	     STOP RUN.
+
+       ZA00-READ-APACFIDS-EXIT.
+	     EXIT.
+
+       ZA00A-CONTINUE.
+	     MOVE AFID-PATH	 TO W02-PARAM.
+      *    *************************************************************
+      *    **** 	  D E B T O R	M E M O	  F I L E	    ****
+      *    *************************************************************
+	     MOVE "DEBMEM"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-DEBMEM.
+      *    *************************************************************
+      *    ****  D E B T O R   A C C O U N T   ( A / R )   F I L E  ****
+      *    *************************************************************
+	     MOVE "DEBTOR"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-DEBTOR.
+      *    *************************************************************
+      *    ****        D E B T O R   I N V O I C E   F I L E	    ****
+      *    *************************************************************
+	     MOVE "INVOIC"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-INVOIC.
+	     MOVE "INVSAL"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     INSPECT AFID-PATH REPLACING FIRST "XXX"
+			       BY LS-USER.
+	     MOVE AFID-PATH	 TO W02-INVSAL.
+      *    *************************************************************
+      *    **** 	    C O N T R O L   F I L E		    ****
+      *    *************************************************************
+	     MOVE "NETWORK"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-NETWORK.
+      *    *************************************************************
+      *    **** 		S A L E S   F I L E		    ****
+      *    *************************************************************
+	     MOVE "SALE"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     INSPECT AFID-PATH REPLACING FIRST "XXX"
+			       BY LS-USER.
+	     MOVE AFID-PATH	 TO W02-SALE.
+      *    *************************************************************
+      *    **** 	       S T O C K   F I L E		    ****
+      *    *************************************************************
+	     MOVE "STOCKF"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-STOCKF.
+052980	     MOVE 3		 TO WS-PARKEY.
+052990       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+	     MOVE PAR-INV	 TO PRG-NUMBER.
+	   IF NOT (PAR-INV = 1)
+	       MOVE 7		 TO PRG-PNUMBER
+	   ELSE
+	       MOVE PAR-INV	 TO PRG-PNUMBER.
+053550	     MOVE PAR-VAT-REG	 TO W05-VATNO.
+	     MOVE PAR-INVPASS	 TO WS-INVPASS.
+054270	     OPEN OUTPUT SALE.
+054280       CLOSE SALE.
+054290       OPEN I-O SALE.
+054270	     OPEN OUTPUT INVSAL.
+054280	     CLOSE INVSAL.
+054290	     OPEN I-O INVSAL.
+054760       MOVE 1              TO WS-PARKEY.
+054770       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+054780       MOVE PAR-DMY        TO W12-TODAY.
+054790       MOVE PAR-YMD        TO W12-T-YMD.
+             MOVE ","            TO W50-EXP.
+055260	     GO TO ZA999.
+
+056040 ZA205.
+056050       EXIT PROGRAM.
+
+056060 ZA999.
+056070       EXIT.
+
+056090 I-O-ERRORS      SECTION	91.
+056100 OPEN-ERROR.
+056110       DISPLAY CLR-SCREEN.
+056120       DISPLAY "Open error" AT 0812 WITH FOREGROUND-COLOR 14.
+056130       PERFORM DISPLAY-FILE-NAME.
+056140
+056150 READ-ERROR.
+056160       DISPLAY CLR-SCREEN.
+056170       DISPLAY "Read error" AT 0812 WITH FOREGROUND-COLOR 14.
+056180       PERFORM DISPLAY-FILE-NAME.
+056190
+056200 WRITE-ERROR.
+056210       DISPLAY CLR-SCREEN.
+056220       DISPLAY "Write error" AT 0812 WITH FOREGROUND-COLOR 14.
+056230       PERFORM DISPLAY-FILE-NAME.
+056240
+056260 DISPLAY-FILE-NAME.
+056310	   IF WS-F-ERROR = 2
+056320         MOVE W02-NETWORK TO WS-FILE
+056330         MOVE WS-NETKEY TO WS-KEY
+056380     ELSE
+056390     IF WS-F-ERROR = 6
+056400         MOVE W02-DEBTOR TO WS-FILE
+041790         MOVE ZERO         TO WS-KEY
+               MOVE DEB-ACNO     TO WS-KEYX
+056460	   ELSE
+056470     IF WS-F-ERROR = 12
+056480         MOVE W02-INVOIC   TO WS-FILE
+056490         MOVE ZERO         TO WS-KEY
+               MOVE DOC-KEY      TO WS-KEYX
+056500	   ELSE
+056510     IF WS-F-ERROR = 15
+056520         MOVE WS-PARID     TO WS-FILE
+056530         MOVE WS-PARKEY    TO WS-KEY
+056580	   ELSE
+056590     IF WS-F-ERROR = 19
+056600         MOVE W02-SALE TO WS-FILE
+056610         MOVE WS-SALKEY TO WS-KEY
+041840     ELSE
+041850     IF WS-F-ERROR = 27
+041860         MOVE W02-DEBMEM   TO WS-FILE
+041870         MOVE ZERO         TO WS-KEY
+	       MOVE DME-KEY	 TO WS-KEYX
+041840	   ELSE
+041850     IF WS-F-ERROR = 99
+041860	       MOVE W02-INVDET	 TO WS-FILE
+041870	       MOVE ZERO	 TO WS-KEY.
+056740     IF WS-STATUS = "10"
+056750         MOVE "End of FILE" TO WS-STAT-MESSAGE
+056760     ELSE
+056770     IF WS-STATUS = "22"
+056780         MOVE "Duplicate record number" TO WS-STAT-MESSAGE
+056790     ELSE
+056800     IF WS-STATUS = "23"
+056810         MOVE "Invalid record number" TO WS-STAT-MESSAGE
+056820     ELSE
+056830     IF WS-STATUS = "24"
+056840         MOVE "DISK full" TO WS-STAT-MESSAGE
+056850     ELSE
+056860     IF WS-STATUS = "30"
+056870         MOVE "DISK error" TO WS-STAT-MESSAGE
+056880     ELSE
+056890     IF WS-STATUS = "94"
+056900         MOVE "FILE locked" TO WS-STAT-MESSAGE.
+056910       DISPLAY "File - " AT 1012 WS-FILE WITH FOREGROUND-COLOR 11.
+056920       DISPLAY "Status " AT 1212 
+056930                WS-STATUS WITH FOREGROUND-COLOR 11
+056940               ": " WS-STAT-MESSAGE WITH FOREGROUND-COLOR 14.
+056950     IF WS-STATUS NOT = "94" 
+056960         DISPLAY "Key    " AT 1412 
+056970                  WS-KEY WITH FOREGROUND-COLOR 11
+056980         DISPLAY "Reverse backup or contact program Support"
+056990                  AT 1612.
+057000         DISPLAY "Please make a note of these details" AT 1812.
+057010       STOP RUN.

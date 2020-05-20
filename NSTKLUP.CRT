@@ -1,0 +1,55 @@
+008680 01  S-STK.
+008690     03  LINE  2 COLUMN 35 FOREGROUND-COLOR 15
+008700                           VALUE "STOCK LOOKUP".
+008710     03  LINE  3 COLUMN  2 "Start Item Code :".
+008720     03  LINE  4 COLUMN  2 REVERSE-VIDEO VALUE 
+008730	       " Item/Bar Code    Description                    Quantit
+008740-        "y   VAT excl  VAT incl".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "อออออออออออออออออัออออออออออออออ
+      -        "ออออออออออออออออัอออออออออัอออออออออัอออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "อออออออออออออออออฯออออออออออออออ
+      -        "ออออออออออออออออฯอออออออออฯอออออออออฯอออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+008770     03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE 
+008780	    "Key in at least the first character of the code or press ".
+008790     03          COLUMN 59 FOREGROUND-COLOR 14 VALUE "Esc".
+008800	   03	       COLUMN 62 FOREGROUND-COLOR 7 VALUE
+				 " to exit          ".
+008810	   03  LINE 25 COLUMN  2 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 1 VALUE "Pressing '".
+008820	   03	       COLUMN 12 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 14 VALUE "ENTER".
+008830	   03	       COLUMN 17 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 1 VALUE
+008840                           "' key only, will start from the beginn
+008850-                          "ing of the stock file".
+008860 01  S-STKA.
+008870     03  LINE  3 COLUMN  2 "Start Alternate Code :".
+008880 01  S-STKC.
+008890     03  LINE  3 COLUMN  2 "Start XRef Code :".
+008900 01  S-STKD.
+008910     03  LINE  3 COLUMN  2 "Start Description :".
+008920     03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE 
+008930       "Key in at least the first character of the description or 
+008940-      "press".
+008950     03          COLUMN 66 FOREGROUND-COLOR 14 VALUE "Esc".
+008960     03          COLUMN 69 FOREGROUND-COLOR 7 VALUE " to exit".
+008970 01  SA-STK.
+008980	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+008990                           PIC  X(14) USING W10-ITEM AUTO.
+009000 01  SA-STKA.
+009010	   03  LINE  3 COLUMN 25 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009020                           PIC  X(10) USING W10-ACODE AUTO.
+009030 01  SA-STKC.
+009040	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009050                           PIC  X(14) USING W10-CODE2 AUTO.
+009060 01  SA-STKD.
+009070	   03  LINE  3 COLUMN 22 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009080                           PIC  X(30) USING W10-DESC AUTO.

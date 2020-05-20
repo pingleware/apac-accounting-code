@@ -1,0 +1,47 @@
+      /
+      *        M U S T   P R I N T I N G   B E   A B O R T E D
+      *
+      *    This section checks the keyboard buffer to determine if the 
+      *    USER has pressed a key while printing or a processing loop is
+      *    being executed.
+      *
+      *    The system determines this without the program being 
+      *    interrupted.
+      *
+      *    If a key has been pressed, the system will then read this data
+      *    from the buffer and set WS-OPTION to 'Y' if the key that was 
+      *    pressed, was the Escape key.
+      *
+      *    Any other key will result in the character being discarded and
+      *    WS-OPTION will be set to 'N'.
+      *
+       PRINT-ABORT     SECTION.
+      *
+      *    ****    T E S T   I F   K E Y   P R E S S E D
+      *
+       CHECK-IF-KEY-PRESSED.
+             MOVE "N"            TO WS-OPTION.
+	     CALL "CBL_GET_KBD_STATUS" USING WS-STAT2H.
+      *
+      *    ****    WS-STAT2H:  0 = N O	 K E Y	 P R E S S E D
+      *
+	   IF WS-STAT2H = 0
+               GO TO PRINT-ABORT-EXIT.
+      *
+      *    ****    R E A D   T H E   K E Y   T H A T   W A S   P R E S S E D
+      *
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+      *
+      *    ****    I F   N O T   T H E   E S C   K E Y - E X I T
+      *
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+      *
+      *    ****    E S C   K E Y   W A S   P R E S S E D
+      *
+		 MOVE "Y"	 TO WS-OPTION
+	       END-EVALUATE.
+
+       PRINT-ABORT-EXIT.
+           EXIT.

@@ -1,0 +1,40 @@
+      *
+      *     ***  ****  ****  *	 * ***** *   *	***** ***** *	  *****
+      *    *   * *   * *   * ** ** *	 ** **	*	*   *	  *
+      *    *	 *   * *   * * * * *	 * * *	*	*   *	  *
+      *    *	 ****  *   * *	 * ***	 *   *	***	*   *	  ***
+      *    *	 *   * *   * *	 * *	 *   *	*	*   *	  *
+      *    *   * *   * *   * *	 * *	 *   *	*	*   *	  *
+      *     ***  *   * ****  *	 * ***** *   *	*     ***** ***** *****
+      *
+000010 REWRITE-CRDMEM.
+000020	     REWRITE CME-RECORD1.
+000030     IF WS-STAT1 NOT = "0"
+000040	       MOVE 24		 TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060	     GO TO WRITE-CRDMEM-EXIT.
+000070
+000080 REWRITE-CRDMEM-UNLOCK.
+000090	     REWRITE CME-RECORD1.
+000100     IF WS-STAT1 NOT = "0"
+000110	       MOVE 24		 TO WS-F-ERROR
+000120         PERFORM WRITE-ERROR.
+000130	     UNLOCK CRDMEM.
+000140	     GO TO WRITE-CRDMEM-EXIT.
+000150
+000160 DELETE-CRDMEM-REC.
+000170	     DELETE CRDMEM.
+000180     IF WS-STAT1 NOT = "0"
+000190	       MOVE 24		 TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210	     UNLOCK CRDMEM.
+000220	     GO TO WRITE-CRDMEM-EXIT.
+000230
+000240 WRITE-CRDMEM.
+000250	     WRITE CME-RECORD1.
+000260     IF WS-STAT1 NOT = "0"
+000270	       MOVE 24		 TO WS-F-ERROR
+000280         PERFORM WRITE-ERROR.
+000310
+000320 WRITE-CRDMEM-EXIT.
+000330       EXIT.

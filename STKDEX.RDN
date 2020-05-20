@@ -1,0 +1,143 @@
+      *
+      *     ***  ***** *   * ****  ***** *   *	   ***** *** *	   *****
+      *    *   *   *   *  *  *	 * *	 *   *	   *	  *  *	   *
+      *    *	   *   * *   *	 * *	  * *	   *	  *  *	   *
+      *     ***    *   **    *	 * ***	   *	   ***	  *  *	   ***
+      *        *   *   * *   *	 * *	  * *	   *	  *  *	   *
+      *    *   *   *   *  *  *	 * *	 *   *	   *	  *  *	   *
+      *     ***    *   *   * ****  ***** *   *	   *	 *** ***** *****
+      *
+006080 READ-STKDEX.
+006090	     READ STKDEX
+	       KEY IS STX-KEY.
+006100     IF WS-STATUS = "00"
+               MOVE ZERO         TO WS-F-ERROR
+006110	       GO TO READ-STKDEX-EXIT.
+           IF WS-STATUS = "23"
+	       MOVE 46		 TO WS-F-ERROR
+	       GO TO READ-STKDEX-EXIT.
+006120     IF WS-STAT1 = "2" OR "3" OR "4"
+006130	       MOVE 46		 TO WS-F-ERROR
+006140         PERFORM READ-ERROR.
+006150     IF RECORD-LOCKED
+006160         PERFORM LOCKED-RECORD
+006170	       GO TO READ-STKDEX.
+006200	     GO TO READ-STKDEX-EXIT.
+
+006210 READ-STKDEX-LOCK.
+006220	     READ STKDEX WITH KEPT LOCK
+	       KEY IS STX-KEY.
+006230     IF WS-STATUS = "00"
+               MOVE ZERO         TO WS-F-ERROR
+006240	       GO TO READ-STKDEX-EXIT.
+           IF WS-STATUS = "23"
+	       MOVE 46		 TO WS-F-ERROR
+	       GO TO READ-STKDEX-EXIT.
+006250     IF WS-STAT1 = "2" OR "3" OR "4"
+006260	       MOVE 46		 TO WS-F-ERROR
+006270         PERFORM READ-ERROR.
+006280     IF RECORD-LOCKED
+006290         PERFORM LOCKED-RECORD
+006300	       GO TO READ-STKDEX-LOCK.
+006310     IF TOO-MANY-LOCKS
+006320	       UNLOCK STKDEX
+006330	       GO TO READ-STKDEX-LOCK.
+006360	     GO TO READ-STKDEX-EXIT.
+
+006080 READ-STKDEX-NEXT.
+006090	     READ STKDEX NEXT.
+006100     IF WS-STATUS = "00"
+               MOVE ZERO         TO WS-F-ERROR
+006110	       GO TO READ-STKDEX-EXIT.
+           IF (WS-STATUS = "23") OR
+              (WS-STAT1 = "1")
+	       MOVE 46		 TO WS-F-ERROR
+	       GO TO READ-STKDEX-EXIT.
+006120     IF WS-STAT1 = "2" OR "3" OR "4"
+006130	       MOVE 46		 TO WS-F-ERROR
+006140         PERFORM READ-ERROR.
+006150     IF RECORD-LOCKED
+006160         PERFORM LOCKED-RECORD
+006170	       GO TO READ-STKDEX-NEXT.
+006200	     GO TO READ-STKDEX-EXIT.
+
+006080 READ-STKDEX-NEXT-LOCK.
+006090	     READ STKDEX NEXT WITH KEPT LOCK.
+006100     IF WS-STATUS = "00"
+               MOVE ZERO         TO WS-F-ERROR
+006110	       GO TO READ-STKDEX-EXIT.
+           IF (WS-STATUS = "23") OR
+              (WS-STAT1 = "1")
+	       MOVE 46		 TO WS-F-ERROR
+	       GO TO READ-STKDEX-EXIT.
+006120     IF WS-STAT1 = "2" OR "3" OR "4"
+006130	       MOVE 46		 TO WS-F-ERROR
+006140         PERFORM READ-ERROR.
+006150     IF RECORD-LOCKED
+006160         PERFORM LOCKED-RECORD
+006170	       GO TO READ-STKDEX-NEXT-LOCK.
+           IF TOO-MANY-LOCKS
+	       UNLOCK STKDEX
+	       GO TO READ-STKDEX-NEXT-LOCK.
+006200	     GO TO READ-STKDEX-EXIT.
+
+006080 READ-STKDEX-PREV.
+006090	     READ STKDEX PREVIOUS.
+006100     IF WS-STATUS = "00"
+               MOVE ZERO         TO WS-F-ERROR
+006110	       GO TO READ-STKDEX-EXIT.
+           IF (WS-STATUS = "23") OR
+              (WS-STAT1 = "1")
+	       MOVE 46		 TO WS-F-ERROR
+	       GO TO READ-STKDEX-EXIT.
+006120     IF WS-STAT1 = "2" OR "3" OR "4"
+006130	       MOVE 46		 TO WS-F-ERROR
+006140         PERFORM READ-ERROR.
+006150     IF RECORD-LOCKED
+006160         PERFORM LOCKED-RECORD
+006170	       GO TO READ-STKDEX-PREV.
+006200	     GO TO READ-STKDEX-EXIT.
+
+006080 START-AT-STDX-KEY.
+006090	     START STKDEX
+	       KEY >= STX-KEY.
+006100     IF WS-STATUS = "00"
+               MOVE ZERO         TO WS-F-ERROR
+006110	       GO TO READ-STKDEX-EXIT.
+           IF WS-STATUS = "23"
+	       MOVE 46		 TO WS-F-ERROR
+	       GO TO READ-STKDEX-EXIT.
+006120     IF WS-STAT1 = "2" OR "3" OR "4"
+006130	       MOVE 46		 TO WS-F-ERROR
+006140         PERFORM READ-ERROR.
+006200	     GO TO READ-STKDEX-EXIT.
+
+006080 START-AT-STDX-DATE.
+006090	     START STKDEX
+	       KEY >= STX-DSKEY.
+006100     IF WS-STATUS = "00"
+               MOVE ZERO         TO WS-F-ERROR
+006110	       GO TO READ-STKDEX-EXIT.
+           IF WS-STATUS = "23"
+	       MOVE 46		 TO WS-F-ERROR
+	       GO TO READ-STKDEX-EXIT.
+006120     IF WS-STAT1 = "2" OR "3" OR "4"
+006130	       MOVE 46		 TO WS-F-ERROR
+006140         PERFORM READ-ERROR.
+006200	     GO TO READ-STKDEX-EXIT.
+
+006080 START-AT-STDX-DTE-TME.
+006090	     START STKDEX
+	       KEY >= STX-DTSKEY.
+006100     IF WS-STATUS = "00"
+               MOVE ZERO         TO WS-F-ERROR
+006110	       GO TO READ-STKDEX-EXIT.
+           IF WS-STATUS = "23"
+	       MOVE 46		 TO WS-F-ERROR
+	       GO TO READ-STKDEX-EXIT.
+006120     IF WS-STAT1 = "2" OR "3" OR "4"
+006130	       MOVE 46		 TO WS-F-ERROR
+006140         PERFORM READ-ERROR.
+
+006520 READ-STKDEX-EXIT.
+006530       EXIT.

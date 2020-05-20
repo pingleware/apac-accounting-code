@@ -1,0 +1,2659 @@
+      $SET LINKCOUNT"640"
+      ******************************************************************
+      *                                                                *
+      *   ********   ******   *******      ****      ****     ******   *
+      *      **     **    **  **    **    **  **    **  **   **    **  *
+      *      **     **        **    **   **    **  **    **       **   *
+      *      **     **        *******    **    **  **    **     **     *
+      *      **     **        **         **    **  **    **   **       *
+      *   ** **     **    **  **          **  **    **  **   **        *
+      *    ***       ******   **           ****      ****    ********  *
+      *                                                                *
+      *     ENGLISH                                                    *
+      *                                                                *
+      *      A M E N D	 J O B	 D E T A I L S	 P R O G R A M	       *
+      *                                                                *
+      *     VERSION 8.13.07 - March 2008			       *
+      * 							       *
+      ******************************************************************
+      * 							       *
+      *  September 2005 - Details of JOBS introduced. New sort key     *
+      * 		  JOB-DETAILS = JOB-TYPE JOB-EXT-ITEM JOB-REF  *
+      * 							       *
+      *  May 2006	- New sort key (Lookup from Stock Item)        *
+      * 		  JOB-CODE = JOB-EXT-ITEM JOB-REF	       *
+      * 							       *
+      ******************************************************************
+000010 IDENTIFICATION DIVISION.
+000020 PROGRAM-ID.     JCP002.
+000030 AUTHOR.         J.W.LEMMON (APAC).
+000040 DATE-WRITTEN.   AUGUST 1991.
+
+		   COPYRIGHT NOTICE: COPYRIGHT (C) 1991 - 2008
+				     by James William Lemmon.
+				       (Id No. 4412165050082).
+
+		   All rights reserved.
+
+		   e-mail jwlemmon@gmail.com.
+
+000050 SECURITY.
+		   This program is free software; you can redistribute
+		   it and/or modify it under the terms of the GNU General
+		   Public License as published by the Free Software
+		   Foundation; either version 2 of the License, or (at
+		   your option) any later version.
+
+		   This program is distributed in the hope that it will
+		   be useful, but WITHOUT ANY WARRANTY; without even the
+		   implied warranty of MERCHANTABILITY or FITNESS FOR A
+		   PARTICULAR PURPOSE.	See the GNU General Public License
+		   for more details.
+
+		   You should have received a copy of the GNU General
+		   Public License along with this program; if not, write
+		   to the Free Software Foundation, Inc., 59 Temple Place
+		   - Suite 330, Boston, MA 02111-1307, USA.
+
+000050 ENVIRONMENT DIVISION.
+000060 CONFIGURATION SECTION.
+000070 SPECIAL-NAMES.
+000080                 CURSOR IS CSTART
+000090		       CONSOLE IS CRT
+		       CRT STATUS IS KEY-STATUS.
+000100 INPUT-OUTPUT SECTION.
+000110 FILE-CONTROL.
+
+       COPY APACFIDS.SL.
+
+000130 COPY CONTROL.SL.
+
+000170 COPY DEBTOR.ISL.
+
+000210 COPY DEPART.SL.
+
+000270 COPY JOBCST.SL.
+
+000270 COPY JOBHDR.SL.
+
+000210 COPY PARAM.SL.
+
+000230 COPY RECOVER.SL.
+
+000250 COPY SALE.SL.
+
+       COPY SHARED.SL.
+
+000290 COPY SPARTS.SL.
+
+000310 COPY STOCK.SL.
+
+      /
+000330 DATA DIVISION.
+000340 FILE SECTION.
+
+       COPY APACFIDS.FDE.
+
+000360 COPY CONTROL.FDE.
+
+000400 COPY DEBTOR.FDE.
+
+000500 COPY DEPART.FDE.
+
+000500 COPY JOBCST.FDE.
+
+000270 COPY JOBHDR.FDE.
+
+000440 COPY PARAM.FDE.
+
+000460 COPY RECOVER.GFD.
+
+000480 COPY SALE.JFD.
+
+       COPY SHARED.FDE.
+
+000520 COPY SPARTS.FDE.
+
+000540 COPY STOCK.FDE.
+
+      /
+000560 WORKING-STORAGE SECTION.
+       77  WS-CHECK	   PIC	X(18)	 VALUE
+			   "aeWlimemnomLalismJ".
+000570 77  WS-DISC	   PIC	99V99	 COMP-3.
+000580 77  WS-TDISC        PIC  99V99    COMP-3.
+000590 77  WS-CASH-AC      PIC  X(06).
+000600 77  WS-SUB          PIC  9(04)    COMP-5.
+002170 77  WS-SUPER        PIC  9(02)    COMP-5.
+002180 77  WS-P1	   PIC	9(04)	 COMP-5.
+000610 77  WS-S1           PIC  9(04)    COMP-5.
+000620 77  WS-S2           PIC  9(04)    COMP-5.
+000630 77  WS-S3           PIC  9(04)    COMP-5.
+000640 77  WS-S4           PIC  9(04)    COMP-5.
+000650 77  WS-S5           PIC  9(04)    COMP-5.
+000660 77  WS-S6           PIC  9(04)    COMP-5.
+000670 77  WS-S7           PIC  9(04)    COMP-5.
+000680 77  WS-S8           PIC  9(04)    COMP-5.
+000690 77  WS-S9           PIC  9(04)    COMP-5.
+000700 77  WS-IXS          PIC  9(04)    COMP-5.
+000710 77  WS-IXS1         PIC  9(04)    COMP-5.
+000720 77  WS-IXS2         PIC  9(04)    COMP-5.
+000730 77  WS-IXS3         PIC  9(04)    COMP-5.
+000740 77  WS-IXS4         PIC  9(04)    COMP-5.
+000750 77  WS-PARKEY       PIC  9(04)    COMP-5.
+000780 77  WS-KEYSTR	   PIC	9(06)	 COMP-5.
+000800 77  WS-SALSTR	   PIC	9(04)	 COMP-5.
+000810 77  WS-SALKEY       PIC  9(04)    COMP-5.
+001690 77  WS-ENQPOS       PIC  9(06)    COMP-5.
+001700 77  WS-ENQEND       PIC  9(06)    COMP-5.
+000820 77  WS-NETKEY       PIC  9(04)    COMP-5.
+000830 77  WS-AUDKEY       PIC  9(06)    COMP-5.
+000840 77  WS-RECKEY       PIC  9(06)    COMP-5.
+000850 77  WS-RECOVER      PIC  9(06)    COMP-5.
+000820 77  WS-SHARED	   PIC	9(04)	 COMP-5 VALUE 1.
+000820 77  WS-PARTS	   PIC	X(01).
+000820 77  WS-STOCK	   PIC	X(01).
+002440 77  WS-TRANS        PIC  9(06)    COMP-5 VALUE 1.
+000870 77  WS-PRN1	   PIC	9(01) VALUE 0.
+000880 77  WS-PRN2         PIC  9(01) VALUE 0.  
+002190 77  WS-USE-PACKS    PIC	X(01).
+       77  WS-USE-ITM	   PIC	X(01).
+       77  WS-EXT-STK	   PIC	X(01).
+000900 77  WS-START	   PIC	9(08).
+000910 77  WS-END          PIC  9(08).
+000930 77  WS-TME2	   PIC	9(08).
+000940 77  WS-PORT         PIC  9(05) VALUE 1004.
+000950 77  WS-OPEN         PIC  X(01) VALUE X"01".
+000960 77  WS-CLOSE        PIC  X(01) VALUE X"00".
+000970 77  WS-PAR          PIC  9(01) VALUE 0.
+000980 77  WS-INO	   PIC	9(03) VALUE 0.
+000990 77  WS-LINES        PIC  9(02) VALUE 0.
+001000 77  WS-FIRST	   PIC	9(03) VALUE 0.
+001010 77  WS-LAST	   PIC	9(03) VALUE 0.
+       77  WS-SALPOS	   PIC	9(03) VALUE 0.
+001020 77  WS-LASTINV      PIC  9(04)    COMP-5.
+001030 77  WS-LINE         PIC  9(04)    COMP-5.
+001040 77  WS-PAGE         PIC  9(02)    COMP-5.
+001050 77  WS-L1           PIC  9(04)    COMP-5.
+001060 77  WS-OPTION       PIC  X(01).
+001060 77  WS-IN-OPT       PIC  X(01).
+001070 77  WS-MAINT        PIC  X(01).
+001070 77  WS-TME          PIC  X(01).
+001070 77  WS-SKIP         PIC  X(01) VALUE " ".
+001080 77  WS-LOOK         PIC  X(01) VALUE "S".
+001090 77  WS-ETYPE        PIC  X(01) VALUE "I".
+001120 77  WS-ERROR        PIC  9(01).
+001160 77  WS-COMP	   PIC	9(01).
+001170 77  WS-UPDATE       PIC  9(01) VALUE ZERO.
+001180 77  WS-CONREC       PIC  9(01) VALUE ZERO.
+001190 77  WS-HEAD         PIC  X(01).
+001200 77  WS-TYPE         PIC  X(01).
+001210 77  WS-AGE          PIC  X(01).
+001220 77  WS-PRC          PIC  X(01).
+001250 77  WS-BATCH	   PIC	9(05).
+001280 77  WS-A 	   PIC	X(19) VALUE "Any key to continue".
+001290 77  WS-E            PIC  X(15) VALUE "**END** - ENTER".
+001300 77  WS-ERR1         PIC  X(22) VALUE "Invalid Account Number".
+001310 77  WS-ERR2         PIC  X(09) VALUE "No Record".
+001320 77  WS-PER          PIC  Z(02)9.99.
+001330 77  WS-CR	   PIC	X(01).
+       77  WS-PQUANT	   PIC S9(05)V99 COMP-3.
+001340 77  WS-TAXRES	   PIC S9(07)V9(08) COMP-3.
+       77  TODAY-DDMMYY	   PIC	9(08) COMP-5.
+       77  WS-USUB	   PIC	9(04) COMP-5.
+      /
+001350 01  WS-CRT-LINES.
+001380	   03  WS-TOP-LNE2.
+001390	       05  WS-TCR   PIC  X(80) VALUE "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      -        "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿".
+001400     03  WS-TP-LINE2 REDEFINES WS-TOP-LNE2.
+001410         05  FILLER      PIC  X(01).
+001420         05  WS-TOP-COMP PIC  X(40).
+001430	       05  FILLER      PIC  X(23).
+	       05  WS-WRKHD    PIC  X(11).
+001430	       05  FILLER      PIC  X(01).
+	       05  WS-WRKST    PIC  X(03).
+001430	       05  FILLER      PIC  X(01).
+001440	   03  WS-MID-LINE.
+001450	       05  WS-MCHAR PIC  X(80) VALUE "³              ³   ³
+      -        "                       ³        ³         ³          ³".
+	   03  WS-MJOB REDEFINES WS-MID-LINE.
+	       05  WS-JOB1     PIC  X(01).
+	       05  WS-JOB78    PIC  X(78).
+	       05  WS-JOB80    PIC  X(01).
+001460	   03  WS-MID-LNE2.
+	       05  FILLER      PIC  X(01) VALUE "³".
+	       05  WS-BLNK78   PIC  X(78) VALUE SPACES.
+	       05  FILLER      PIC  X(01) VALUE "³".
+001500	   03  WS-BOT-LNE2.
+001510	       05  WS-BCR   PIC  X(80) VALUE "ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      -        "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ".
+003240	   03  WS-B-LINE REDEFINES WS-BOT-LNE2.
+003250         05  FILLER  PIC X(01).
+               05  WS-MEM-LINE.
+003260            07  WS-SRT-LINE
+003270                     PIC X(50).
+                  07  FILLER
+                           PIC X(10).
+003280         05  FILLER  PIC X(19).
+	   03  WS-MM-LINE.
+	       05  FILLER  PIC	X(01) VALUE "³".
+               05  FILLER  PIC  X(60) VALUE SPACES.
+	       05  FILLER  PIC	X(01) VALUE "³".
+	   03  WS-HME-LINE PIC	X(60) VALUE ALL "Í".
+001590	   03  WS-MID-LNE.
+001600	       05  WS-MCHR  PIC  X(80) VALUE "³                ³
+      -        "                      ³          ³         ³         ³".
+	   03  WS-MST-LNE REDEFINES WS-MID-LNE.
+	       05  WS-MST1     PIC  X(01).
+	       05  WS-MST78    PIC  X(78).
+	       05  WS-MST80    PIC  X(01).
+001650	   03  WS-MD-LNE.
+001660	       05  WS-MCH   PIC  X(80) VALUE "³      ³
+      -        "                      ³           ³          ³       ³".
+	   03  WS-MDDT-LNE REDEFINES WS-MD-LNE.
+	       05  WS-MDT1     PIC  X(01).
+	       05  WS-MDT78    PIC  X(78).
+	       05  WS-MDT80    PIC  X(01).
+001710	   03  WS-MD-LINE.
+001720	       05  WS-MCA   PIC  X(80) VALUE "³        ³      ³
+      -        "                     ³          ³        ³           ³".
+	   03  WS-JB78-L REDEFINES WS-MD-LINE.
+	       05  WS-MJB1     PIC  X(01).
+	       05  WS-MJB78    PIC  X(78).
+	       05  WS-MJB80    PIC  X(01).
+001710	   03  WS-MD-LIN.
+001720	       05  WS-MCB   PIC  X(80) VALUE "³   ³        ³
+      -        "³                               ³         ³          ³".
+	   03  WS-RQ78-L REDEFINES WS-MD-LIN.
+	       05  WS-RQ1      PIC  X(01).
+	       05  WS-RQ78     PIC  X(78).
+	       05  WS-RQ80     PIC  X(01).
+
+001840 COPY WS.WS.
+
+       01  WS-HELP.
+	   03  WS-MODULE       PIC  X(03) VALUE "JCP".
+	   03  WS-PROG	       PIC  X(03) VALUE "002".
+
+001900 01  W00-TRAN-CODES.
+001910     03  W00-T-VAT   PIC S9(09)V99 COMP-3.
+001920     03  W00-E-DESC  PIC  X(12).
+001930     03  W00-A-DESC  PIC  X(12).
+001940     03  W00-ACTION  PIC  9(01).
+001950     03  W00-T-CODE  PIC  9(02)    COMP-5.
+001960     03  W00-T-GL    PIC  9(06)    COMP-3.
+001970     03  W00-T-DAY   PIC  9(06)    COMP-5.
+001980     03  W00-T-VAL   PIC S9(09)V99 COMP-3.
+001990     03  W00-T-MTD   PIC  9(06)    COMP-5.
+002000     03  W00-T-MTDV  PIC S9(09)V99 COMP-3.
+002010     03  W00-T-YTD   PIC  9(06)    COMP-5.
+002020     03  W00-T-YTDV  PIC S9(09)V99 COMP-3.
+
+000290 01  WS-PARID.
+000020	   03  WS-SYS-ID       PIC  X(03).
+
+002040 01  W02-FID.
+
+       COPY APACFIDS.ID.
+
+002060 COPY CONTROL.ID.
+
+002100 COPY DEBTOR.ID.
+
+003630 COPY DEPART.ID.
+
+002180 COPY JOBCST.ID.
+
+000270 COPY JOBHDR.ID.
+
+       COPY PARAM.ID.
+
+002140 COPY RECOVER.ID.
+
+002160 COPY SALE.ID.
+
+       COPY SHARED.ID.
+
+002200 COPY SPARTS.ID.
+
+002220 COPY STOCK.ID.
+
+       COPY W05.VAT.
+
+002380 01  W05-INV.
+002390     03  W05-ENTRY       PIC  ZZ9.
+002400     03  FILLER          PIC  X(01) VALUE SPACES.
+002410     03  W05-DATE        PIC  Z9/99/99.
+002420     03  FILLER          PIC  X(01) VALUE SPACES.
+002430     03  W05-TYPE        PIC  X(03).
+002440     03  FILLER          PIC  X(03) VALUE SPACES.
+002450     03  W05-REF         PIC  9(07).
+002460     03  FILLER          PIC  X(01) VALUE SPACES.
+002470     03  W05-VALUE       PIC  Z(06)9.99-.
+
+       COPY W10.JCP.
+
+       01  W10-JOB-TYPE.
+           03  W10-KEY.
+	       05  W10-JREM   PIC  X(06).
+           03  W10-REMK1      PIC  X(30).
+           03  W10-REMK2      PIC  X(30).
+           03  W10-REMK3      PIC  X(30).
+           03  W10-REMK4      PIC  X(30).
+
+       COPY W12.WS.
+
+003390 01  W14-JOB.
+003400     03  W14-REF         PIC Z(08).
+003410     03  W14-AC          PIC X(06).
+003420     03  W14-NAME.
+003430	       05  W14-NME     PIC X(30).
+003440	       05  FILLER      PIC X(10).
+003450	   03  W14-DATE        PIC Z9/99/9999.
+003470     03  W14-DOC         PIC X(01).
+003480     03  W14-DDOC.
+003490         05  W14-INV     PIC Z(08).
+003500     03  W14-VALUE       PIC Z(07)9.99.
+           03  W14-STATUS      PIC X(01).
+
+003510 01  W14-DELETE.
+003520     03  W14-SUB         PIC 9(03)     COMP-3.
+003530     03  W14-SQN         PIC 9(05)     COMP-3 OCCURS 200.
+
+003540 01  W15-DISCOUNT.
+003550     03  W15-DISC        PIC S9(03)V99 COMP-3 OCCURS 10.
+
+       01  W15-ALLOCATIONS.
+           03  W15-DETAIL.
+             05  W15-TRAN OCCURS 15.
+               07  W15-VALUE   PIC  Z(06)9.99- BLANK WHEN ZERO.
+               07  W15-ALLOC   PIC  Z(06)9.99- BLANK WHEN ZERO.
+           03  W15-DISPLAY REDEFINES W15-DETAIL.
+               05  W15-BAL1    PIC  X(11).
+               05  W15-ALL1    PIC  X(11).
+               05  W15-BAL2    PIC  X(11).
+               05  W15-ALL2    PIC  X(11).
+               05  W15-BAL3    PIC  X(11).
+               05  W15-ALL3    PIC  X(11).
+               05  W15-BAL4    PIC  X(11).
+               05  W15-ALL4    PIC  X(11).
+               05  W15-BAL5    PIC  X(11).
+               05  W15-ALL5    PIC  X(11).
+               05  W15-BAL6    PIC  X(11).
+               05  W15-ALL6    PIC  X(11).
+               05  W15-BAL7    PIC  X(11).
+               05  W15-ALL7    PIC  X(11).
+               05  W15-BAL8    PIC  X(11).
+               05  W15-ALL8    PIC  X(11).
+               05  W15-BAL9    PIC  X(11).
+               05  W15-ALL9    PIC  X(11).
+               05  W15-BAL10   PIC  X(11).
+               05  W15-ALL10   PIC  X(11).
+               05  W15-BAL11   PIC  X(11).
+               05  W15-ALL11   PIC  X(11).
+               05  W15-BAL12   PIC  X(11).
+               05  W15-ALL12   PIC  X(11).
+               05  W15-BAL13   PIC  X(11).
+               05  W15-ALL13   PIC  X(11).
+               05  W15-BAL14   PIC  X(11).
+               05  W15-ALL14   PIC  X(11).
+               05  W15-BAL15   PIC  X(11).
+               05  W15-ALL15   PIC  X(11).
+
+       COPY W20.WS.
+
+003650 01  W25-CALCS.
+003660     03  W25-RESULT      PIC 9(02)V99.
+003670     03  W25-RESULT1 REDEFINES W25-RESULT.
+003680         05  W25-WHOLE   PIC 9(02).
+003690         05  W25-DECIMAL PIC 9(02).
+003700     03  W25-TOTAL       PIC 9(07)V99  COMP-3.
+003710     03  W25-VALUE       PIC S9(07)V99 COMP-3.
+003720     03  W25-CREDIT      PIC S9(07)V99 COMP-3.
+
+       01  W35-DETKEY.
+           03  W35-KEY.
+000050       05  W35-REF       PIC  X(08).
+             05  W35-SEQN.
+                 07  W35-SEQ   PIC  9(03).
+                 07  W35-SUB   PIC  9(02).
+             05  W35-SQN REDEFINES W35-SEQN
+                               PIC  9(05).
+
+       COPY W40.DBT.
+
+       COPY W40.WS.
+
+       COPY FUNCTION.WS.
+
+004540 COPY W50.WS.
+
+004560 01  W60-NME-ADD.
+004570     03  W60-NAME.
+004580         05  W60-NCHAR OCCURS 40 PIC X(01).
+003580     03  W60-ADDRESS.
+003590         05  W60-ACHAR OCCURS 70 PIC X(01).
+003580     03  W60-ADDR REDEFINES W60-ADDRESS.
+               05  W60-ADD     PIC X(60).
+               05  FILLER      PIC X(10).
+003600     03  W60-ADDRESS1.
+               05  W60-PAD     PIC X(60).
+               05  FILLER      PIC X(10).
+
+004740 COPY W70DEBT.IWS.
+
+004760 01  W75-KEYS.
+004770     03  W75-S          PIC 9(02) COMP-5.
+004780     03  W75-S1         PIC 9(02) COMP-5.
+           03  W75-S2         PIC 9(02) COMP-5.
+004790     03  W75-DNO        PIC X(06) OCCURS 18.
+	   03  W75-JOBS.
+	       05  W75-JCOST OCCURS 18.
+004810		   07  W75-JCST	 PIC  9(08).
+		   07  W75-IDESC PIC  X(30).
+           03  W75-TYPES REDEFINES W75-JOBS.
+	       05  W75-JREM   PIC  X(06) OCCURS 18.
+	       05  FILLER     PIC  X(576).
+
+004820 01  W75-TITLES.
+004830     03  W75-DESCRIP.
+004840         05  FILLER      PIC X(28)      VALUE
+004850                     "Mr     Mnr    Mrs    Mev    ".
+004860         05  FILLER      PIC X(28)      VALUE
+004870                     "Miss   Mej    Ms     Ms     ".
+004880         05  FILLER      PIC X(28)      VALUE
+004890                     "Dr     Dr     Rev    Ds     ".
+004900         05  FILLER      PIC X(28)      VALUE
+004910                     "Prof   Prof   The HonSy Edel".
+004920         05  FILLER      PIC X(28)      VALUE
+004930                     "                            ".
+004940     03  W75-CODES REDEFINES W75-DESCRIP.
+004950         05  W75-TITLE  OCCURS 10.
+004960             07  W75-ETITLE PIC X(07).
+004970             07  W75-ATITLE PIC X(07).
+
+004980 01  W80-ACCOUNT.
+004990     03  W80-ACNO        PIC X(06).
+005000     03  W80-CRED REDEFINES W80-ACNO.
+005010         05  W80-CNO     PIC 9(05).
+005020         05  W80-CAC REDEFINES W80-CNO.
+005030             07  W80-CTYPE PIC 9(01).
+005040             07  W80-SER   PIC 9(04).
+005050         05  FILLER        PIC 9(01).
+005060     03  W80-TYPE        PIC 9(01).
+
+       COPY W90.JCP.
+
+005680 01  W95-STM.
+005690	   03  W95-COMP        PIC  X(40).
+005700	   03  W95-ADD1        PIC  X(30).
+005710	   03  W95-ADD2        PIC  X(30).
+005720	   03  W95-ADD3        PIC  X(30).
+005730	   03  W95-ADD4        PIC  X(30).
+005740     03  W95-PC.
+005750	       05  W95-POST    PIC  9(04).
+005760	   03  W95-TEL	       PIC  X(14).
+005770     03  W95-V1.
+005780	       05  W95-T       PIC  Z(04)9.99.
+005790     03  W95-V2.
+005800	       05  W95-B       PIC  Z(06)9.99-.
+005810     03  W95-D.
+005820	       05  W95-DTE     PIC  Z9/99/9999.
+
+005830 01  W100-EDIT.
+005840	   03  W100-LBAL       PIC  Z(06)9.99-.
+005850	   03  W100-LARR       PIC  Z(06)9.99.
+005860	   03  W100-BAL        PIC  Z(08)9.99-.
+005870	   03  W100-CUR        PIC  Z(08)9.99-.
+005880	   03  W100-30	       PIC  Z(08)9.99-.
+005890	   03  W100-60	       PIC  Z(08)9.99-.
+005900	   03  W100-90	       PIC  Z(08)9.99-.
+005910	   03  W100-120        PIC  Z(08)9.99-.
+005920	   03  W100-INT        PIC  Z(08)9.99-.
+005930	   03  W100-CRL        PIC  Z(06)9.
+005940     03  W100-V2.
+005950	       05  W100-S6V2   PIC  Z(05)9.99-.
+005960     03  W100-V3 REDEFINES W100-V2.
+005970	       05  W100-PRICE  PIC  X(09).
+005980	       05  FILLER      PIC  X(01).
+005990     03  W100-V4 REDEFINES W100-V2.
+006000	       05  W100-EXT    PIC  Z(06)9.99.
+           03  W100-V5 REDEFINES W100-V2.
+               05  W100-QNT    PIC Z(08)9-.
+
+       01  W200-MEMO.
+           03  W200-MEM-FLDS. 
+               05  W200-MEM1   PIC  X(60).
+               05  W200-MEM2   PIC  X(60).
+               05  W200-MEM3   PIC  X(60).
+               05  W200-MEM4   PIC  X(60).
+               05  W200-MEM5   PIC  X(60).
+               05  W200-MEM6   PIC  X(60).
+               05  W200-MEM7   PIC  X(60).
+               05  W200-MEM8   PIC  X(60).
+               05  W200-MEM9   PIC  X(60).
+               05  W200-MEM10  PIC  X(60).
+               05  W200-MEM11  PIC  X(60).
+               05  W200-MEM12  PIC  X(60).
+           03  W200-MEM-FOC REDEFINES W200-MEM-FLDS.
+               05  W200-MEM    PIC  X(60) OCCURS 12.
+
+       LINKAGE SECTION.
+
+       COPY CHAIN.LS.
+
+      /
+006010 SCREEN SECTION.
+
+       COPY BLANK.CRT.
+
+006620 01  S05.
+006630	   03  LINE 12 COLUMN 12 VALUE "Enter Password".
+
+006640 01  S06.
+006650	   03  LINE 12 COLUMN 28 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5 PIC	X(06)
+006660                           USING W40-CSHPASS AUTO SECURE.
+
+       COPY JOBLUP.CRT.
+
+007910 01  S07.
+007920	   03	       COLUMN  2 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+				 PIC X(14) USING W10-ITEM AUTO.
+
+       01  S07-ITM.
+005540	   03	       COLUMN  2 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+005550				 PIC X(14) USING W10-ITEM AUTO.
+	   03	       COLUMN 17 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+005550				 PIC X(03) USING W10-ITM AUTO.
+
+005530 01  S07-EXT.
+005540	   03	       COLUMN  2 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+005550				 PIC X(18) USING W10-EXT-ITEM AUTO.
+
+009840 01  S26-QNT.
+009850	   03	       COLUMN 51 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+009860                           PIC Z(04)9.99 USING W10-QUANT AUTO.
+
+009870 01  S26-PRC.
+009880	   03	       COLUMN 60 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+009890                           PIC Z(05)9.99 USING W10-SELL AUTO.
+
+010020 01  S30.
+010270	   03  LINE  2 COLUMN 32 FOREGROUND-COLOR 15
+010280                           VALUE "AMEND JOB RECORD".
+010050	   03  LINE  3 COLUMN  2 VALUE "Ac No".
+010060     03          COLUMN 15 VALUE "Name".
+010070	   03	       COLUMN 61 VALUE "Ord No°°°°°°°°°°°°°".
+010080     03  LINE  4 COLUMN  2 VALUE "Tech.".
+           03          COLUMN 61 VALUE "Tel.".
+010090     03  LINE  5 COLUMN  2 VALUE "Job No".
+           03          COLUMN 20 VALUE "Contact".
+010100	   03	       COLUMN 65 VALUE "Date".
+009370	   03  LINE  6 COLUMN  2 REVERSE-VIDEO VALUE "Item Code      I".
+009380	   03	       COLUMN 18 REVERSE-VIDEO VALUE "TM Description  ".
+009390     03          COLUMN 33 REVERSE-VIDEO VALUE "                ".
+009400     03          COLUMN 49 REVERSE-VIDEO VALUE "  Quantity ".
+009410     03          COLUMN 60 REVERSE-VIDEO VALUE "Unit Price  ".
+009420     03          COLUMN 72 REVERSE-VIDEO VALUE "Extended".
+009160	   03  LINE  7 COLUMN  1 BACKGROUND-COLOR 0 VALUE "Æ".
+009160	   03	       COLUMN  2 VALUE "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÑÍÍÍÍÍÍÍÍÍÍÍÍÍ
+      -        "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÑÍÍÍÍÍÍÍÍÍÍ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "µ".
+009160	   03  LINE 19 COLUMN  1 BACKGROUND-COLOR 0 VALUE "Æ".
+009170	   03	       COLUMN  2 VALUE "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÏÍÍÍÍÍÍÍÍÍÍÍÍÍ
+      -        "ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÏÍÍÍÍÍÍÍÍÍÍ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "µ".
+010190	   03  LINE 20 COLUMN  3 VALUE "Sub Total ".
+010200	   03  LINE 21 COLUMN  3 VALUE "Discount  ".
+010210     03  LINE 22 COLUMN  3 VALUE "T A X -VAT".
+010230     03  LINE 23 COLUMN  3 VALUE "AMOUNT DUE".
+
+010240 01  S30A.
+010250	   03  FOREGROUND-COLOR 7 HIGHLIGHT BACKGROUND-COLOR 0
+				  PIC Z(08) USING W10-JCST AUTO.
+
+010400 01  S36.
+010410	   03  FOREGROUND-COLOR 7 HIGHLIGHT BACKGROUND-COLOR 0
+				  PIC X(06) USING W80-ACNO AUTO.
+
+       COPY S99.CRT.
+
+       COPY ERROR.CRT.
+
+       COPY OPT.CRT.
+
+      /
+001230 PROCEDURE DIVISION
+		 USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY.
+010580 AA000-MAIN      SECTION.
+010590 AA000-INIT.
+003240	   IF LS0-JBLEV < 2
+	       MOVE "Not Authorised"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+	       GO TO AA49.
+010600	     PERFORM ZA000-INIT.
+	     PERFORM BD000.
+	     CLOSE RECOVER
+		   SALE.
+       AA49.
+	     EXIT PROGRAM.
+
+       AA50-LOOKUP     SECTION.
+010910 AA50.
+011050	     PERFORM SAVE-SCREEN.
+011080       MOVE 4              TO W44-FUNCTION.
+011090	     PERFORM SCREEN-CONTENTS.
+011210	     PERFORM JOBHDR-LOOKUP.
+011320	     PERFORM RESTORE-SCREEN.
+011360 AA99.
+011370       EXIT.
+
+       COPY FUNCTION.CRT.
+
+011390 COPY LOCKED.RC2.
+
+       COPY OPTION.CRT.
+
+011410 COPY CLEAR.CRT.
+
+      *
+      *    ****   D I S P L A Y   L O O K U P   O P T I O N S 
+      *
+011570 AA400              SECTION.
+011580 AA401.
+011590	     DISPLAY "F1" AT 2502 WITH FOREGROUND-COLOR 6 HIGHLIGHT
+				       BACKGROUND-COLOR 3
+		     "=Help,"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     "F2" WITH BACKGROUND-COLOR 3
+			       FOREGROUND-COLOR 6 HIGHLIGHT
+011600		     "=Job no," WITH FOREGROUND-COLOR 1
+				     BACKGROUND-COLOR 3
+011610		     "F3" WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			       BACKGROUND-COLOR 3
+011620		     "=Acnt no," WITH FOREGROUND-COLOR 1
+				      BACKGROUND-COLOR 3
+		     "F4" WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			       BACKGROUND-COLOR 3
+		     "=Item desc," WITH FOREGROUND-COLOR 1
+					BACKGROUND-COLOR 3
+		     "F5" WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			       BACKGROUND-COLOR 3
+		     "=Client name," WITH FOREGROUND-COLOR 1
+					  BACKGROUND-COLOR 3
+		     "F6" WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			       BACKGROUND-COLOR 3
+		     "=Contact," WITH FOREGROUND-COLOR 1
+				      BACKGROUND-COLOR 3
+		     "F7" WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			       BACKGROUND-COLOR 3
+		     "=Date Lookup" WITH FOREGROUND-COLOR 1
+					 BACKGROUND-COLOR 3.
+011630 AA405.
+011640       EXIT.
+      /
+      *    ****    READ FILES ROUTINES
+      *
+011650 AC000              SECTION.
+
+011670 COPY CONTROL.RD.
+
+011710 COPY DEBTOR.RD.
+
+011230 COPY DEPART.RD.
+
+011790 COPY JOBCST.RD.
+
+011790 COPY JOBHDR.RD.
+
+011750 COPY PARAM.RD.
+
+011770 COPY SALE.RD.
+
+       COPY SHARED.RD.
+
+011810 COPY SPARTS.RD.
+
+011830 COPY STOCK.RD.
+
+      /
+011850 AD000-WRITE             SECTION.
+
+011870 COPY CONTROL.WR.
+
+011930 COPY JOBCST.WR.
+
+011930 COPY JOBHDR.WR.
+
+011890 COPY PARAM.WR.
+
+011910 COPY SALE.WR.
+
+011910 COPY STOCK.WR.
+
+011990 COPY JOBCST.LUP.
+
+       COPY APAC.HLP.
+
+      /
+      *    THIS ROUTINE GENERATES THE RECOVERY FILE RECORDS
+      *
+012010 AY000           SECTION.
+011790 AY05.
+011860       MOVE 05             TO REC-FILE.
+011870       MOVE ZERO           TO REC-KEY.
+             MOVE WS-ACTION      TO REC-TYPE
+           IF WS-ACTION = 0 OR 2
+011890	       PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+011900       MOVE STK-RECORD1    TO REC-STOCKF.
+011830       GO TO AY50.
+012020 AY21.
+012030	     MOVE 21		 TO REC-FILE.
+012040       MOVE ZERO           TO REC-KEY.
+012050       MOVE WS-ACTION      TO REC-TYPE.
+012060	     MOVE JHD-REC1	 TO REC-JOBHDR.
+012070       GO TO AY50.
+012020 AY25.
+012030	     MOVE 25		 TO REC-FILE.
+012040       MOVE ZERO           TO REC-KEY.
+012050       MOVE WS-ACTION      TO REC-TYPE.
+012060       MOVE JOB-REC1       TO REC-JOBCST.
+012070       GO TO AY50.
+012080 AY39.
+012090       MOVE 39             TO REC-FILE.
+012100       MOVE WS-NETKEY      TO REC-KEY.
+012110       MOVE NET-RECORD     TO REC-NETWORK.
+012120       GO TO AY50.
+012130 AY40.
+012140       MOVE 99             TO REC-FILE.
+012150       MOVE ZERO           TO REC-KEY.
+012160       MOVE SPACES         TO REC-DETAIL.
+012170       PERFORM AY50.
+012180       ADD 1               TO WS-TRANS.
+012190     IF WS-RECOVER > 95
+012200         CLOSE RECOVER
+012210	       OPEN OUTPUT RECOVER
+012220         CLOSE RECOVER
+012230         OPEN I-O RECOVER
+012240         MOVE ZERO         TO WS-RECOVER.
+012250       GO TO AY59.
+012260 AY50.
+012270       ADD 1               TO WS-RECOVER.
+012280       MOVE WS-RECOVER     TO WS-RECKEY.
+012290       MOVE WS-TRANS       TO REC-TRAN.
+012300       WRITE REC-RECORD.
+012310     IF WS-STATUS NOT = "00"
+012320         DISPLAY "Write error Recovery file - Status " AT 2212
+012330                  WITH FOREGROUND-COLOR 14
+012340                  WS-STATUS WITH FOREGROUND-COLOR 15
+012350         STOP RUN.
+012380 AY59.
+012390       EXIT.
+      *
+      *    ****    Start processing transaction
+      *
+012470 AY60.
+012480	   IF WS-SKIP = "Y" OR "A"
+012490         GO TO AY999.
+012690	     MOVE 1		 TO WS-COUNT.
+012690	     MOVE 5		 TO WS-SHARED.
+012700	     PERFORM READ-SHARED-LOCK THRU READ-SHARED-EXIT.
+	     MOVE SHR-STOCK	 TO WS-STOCK.
+      *
+      *    ****    Read PARAM record 4 - Lock record and start recovery
+      *            file procedure.
+      *
+012500	     MOVE 4		 TO WS-PARKEY.
+012510       PERFORM READ-PARAM-LOCK THRU READ-PARAM-EXIT.
+012520     IF PAR-USERS < 24
+012530         MOVE 1            TO WS-SUB
+	       MOVE ZERO	 TO WS-WAIT
+012540         GO TO AY62.
+      *
+      *    ****   Q   F U L L  -  W A I T   F O R   4	S E C O N D S
+      *
+012550	     DISPLAY "WAITING" AT 2551
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 12.
+012560	     COMMIT.
+	     ACCEPT WS-STIME FROM TIME.
+	     MOVE 400		 TO WS-WAIT.
+012580	     PERFORM LOCK-REC-LOOP.
+012590	     DISPLAY SPACE AT 2551
+		     WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 3.
+012600       GO TO AY60.
+
+012610 AY61.
+012620	     MOVE "DS"		 TO PAR-PROG(WS-USUB).
+012630	     MOVE LS-USER	 TO PAR-USR(WS-USUB).
+012640       PERFORM REWRITE-PARAM-UNLOCK THRU WRITE-PARAM-EXIT.
+      *
+      *    ****    Read the DEBTOR control record in the NETWORK file
+      *            and lock it. Log details to the RECOVERY file.
+      *
+012670	     MOVE 1		 TO WS-NETKEY.
+012680       PERFORM READ-CONTROL-LOCK THRU READ-CONTROL-EXIT.
+012690       PERFORM AY39 THRU AY59.
+012700       MOVE NET-DEBTOR     TO W70-DEBT.
+012740	     GO TO AY999.
+      *
+      *    ****   A R E   A N Y   U P D A T E S   I N	P R O G R E S S
+      *
+012750 AY62.
+	   IF NOT (PAR-PROG(WS-SUB) = SPACES OR
+		   PAR-USR(WS-SUB) = SPACES)
+      *
+      *    ****   A R E   D E B T O R	O R   S T O C K   F I L E S
+      * 	  B E I N G   U P D A T E D
+      *
+	       IF NOT (PAR-PROG(WS-SUB) = SPACES)
+012760		   IF PAR-PROG(WS-SUB) = "DB" OR "DS" OR "CS" OR "ST"
+      *
+      *    ****   Y E S   -   S E T   W A I T	P E R I O D
+      *
+		       GO TO AY62-WAIT
+		   ELSE
+		       ADD 1	 TO WS-SUB
+		       GO TO AY62
+		   END-IF
+	       ELSE
+      *
+      *    ****   I S	T H I S   P R O G R A M   I N	T H E  Q
+      *
+	       IF PAR-USR(WS-SUB) = LS-USER
+      *
+      *    ****   I S	I T   N E X T	I N   L I N E	T O   P R O C E S S
+      *
+		   IF WS-WAIT = ZERO
+		       GO TO AY63
+		   ELSE
+		       GO TO AY62-WAIT
+		   END-IF
+	       ELSE
+		   GO TO AY62-WAIT
+	       END-IF
+	   END-IF.
+	     MOVE LS-USER	 TO PAR-USR(WS-SUB).
+	     MOVE WS-SUB	 TO PAR-USERS.
+	     PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+	     GO TO AY62-CHECK.
+      *
+      *    ****   S E T   W A I T   P E R I O D
+      *
+       AY62-WAIT.
+	     MOVE 300		 TO WS-WAIT.
+	   IF NOT (PAR-USR(WS-SUB) = LS-USER)
+	       IF WS-SUB < 24
+		   ADD 1	 TO WS-SUB
+		   GO TO AY62.
+
+       AY62-CHECK.
+	   IF WS-WAIT > ZERO
+	       COMMIT
+	       DISPLAY "Waiting" AT 2572
+			WITH BACKGROUND-COLOR 3
+			     FOREGROUND-COLOR 14 BLINK
+	       ACCEPT WS-STIME FROM TIME
+	       PERFORM LOCK-REC-LOOP
+	       DISPLAY "Waiting" AT 2572
+			WITH BACKGROUND-COLOR 3
+			     FOREGROUND-COLOR 14 BLINK
+	       GO TO AY60.
+012880	     DISPLAY SPACE AT 2572
+		     WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 3.
+
+012900 AY63.
+012920	     MOVE WS-SUB	 TO WS-USUB.
+012940	     GO TO AY61.
+
+012970 AY70.
+013030	     MOVE 4		 TO WS-PARKEY.
+013040       PERFORM READ-PARAM-LOCK-END THRU READ-PARAM-EXIT.
+      *
+      *    ****    Write links back and unlock PARAM record 4 and
+      *            NETWORK record 1.
+      *
+012990	     MOVE 1		 TO WS-NETKEY.
+013000       MOVE W70-DEBT       TO NET-DEBTOR.
+013010	     PERFORM REWRITE-CONTROL THRU WRITE-CONTROL-EXIT.
+013020	     PERFORM AY40 THRU AY59.
+	     MOVE 1		 TO WS-USUB.
+
+       AY72.
+	   IF NOT (PAR-USR(WS-USUB) = LS-USER)
+	       ADD 1		 TO WS-USUB
+	       GO TO AY72.
+
+       AY75.
+013050	     MOVE SPACES	 TO PAR-PROG(WS-USUB)
+013060				    PAR-USR(WS-USUB).
+	   IF WS-USUB < 24
+	       ADD 1 WS-USUB	 GIVING WS-SUB
+	   ELSE
+	       GO TO AY80.
+	   IF NOT (PAR-PROG(WS-SUB) = SPACES)
+	       MOVE PAR-PROG(WS-SUB)
+				 TO PAR-PROG(WS-USUB)
+	       MOVE PAR-USR(WS-SUB)
+				 TO PAR-USR(WS-USUB)
+	       ADD 1		 TO WS-USUB
+	       GO TO AY75.
+
+       AY80.
+013070	     SUBTRACT 1 FROM WS-USUB
+				 GIVING PAR-USERS.
+013080	     PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+	   IF LS0-POS NOT = 2
+012430         CLOSE RECOVER
+012440         OPEN I-O RECOVER.
+013090       COMMIT.
+
+013000 AY999.
+013010       EXIT.
+
+       COPY CA000X.STK.
+
+      *
+      *    ****    Read debtor record - using account number.
+      *
+013610 CA155-GET-DEBTOR  SECTION 2.
+013620 CA155.
+013630       MOVE W80-ACNO       TO DEB-ACNO.
+013640       PERFORM READ-DEBTOR THRU READ-DEBTOR-EXIT.
+013650     IF WS-F-ERROR = 6
+013660         MOVE 1            TO WS-ERROR
+013670     ELSE
+013680     IF DEB-ACNO NOT = W80-ACNO
+013690         MOVE 2            TO WS-ERROR
+013700     ELSE
+013710         MOVE 0            TO WS-ERROR
+013720         MOVE DEB-TYPE     TO W80-TYPE.
+013730 CA160-EXIT.
+013740       EXIT.
+      *
+013750 CA165-NAME        SECTION 2.
+013760 CA165.
+013770       UNSTRING W60-NAME DELIMITED BY "*" OR "!"
+013780                           INTO W40-SURNAME 
+013790                                W40-FNAME 
+013800                                W40-SNAME
+013810       OVERFLOW
+013820           MOVE 1          TO WS-ERROR.
+013830 CA170-EXIT.
+013840       EXIT.
+
+	COPY CA500.STK.
+
+      *
+      *    ****   G E T   J O B C S T	R E C O R D   U S I N G   JOB-KEY.
+      *
+      *           WS-ERROR:
+      *
+      *                    1 = NO RECORD
+      *                    2 = NOT JOB RECORD (INVOICE)
+      *                    3 = JOB DETAILS INCOMPLETE
+      *                    4 = INVALID ACCOUNT NUMBER
+      *
+014550 GET-JOBCST	    SECTION 2.
+
+014570 GET-JCST-JOBNO.
+             INITIALIZE W14-DELETE.
+             MOVE 1              TO W14-SUB.
+             MOVE SPACES         TO W40-NM1 W40-AD1 W40-AD2
+                                    W40-AD3 W40-AD4 W40-PC.
+014580	     MOVE W10-JCST	 TO JHD-REF.
+014600       MOVE ZERO           TO WS-ERROR.
+014610	     PERFORM READ-JOBHDR THRU READ-JOBHDR-EXIT.
+014620	   IF WS-F-ERROR = 14
+014630         MOVE 1            TO WS-ERROR
+014640         GO TO GET-JOBCST-EXIT.
+014650	   IF JHD-DOC NOT = "J"
+014660         MOVE 2            TO WS-ERROR
+014670         GO TO GET-JOBCST-EXIT.
+014680       MOVE 1              TO WS-LAST WS-SALKEY.
+014790	     MOVE JHD-AC	 TO W80-ACNO DEB-ACNO.
+014800	     PERFORM CA155-GET-DEBTOR.
+014810	   IF WS-ERROR NOT = ZERO
+014820	       MOVE 4		 TO WS-ERROR
+014830	       GO TO GET-JOBCST-EXIT.
+	     MOVE JHD-DTE	 TO W40-DTE.
+	     MOVE JHD-ITEM	 TO W10-IDESC.
+014860	     MOVE JHD-NAME	 TO W40-NAME.
+	     MOVE JHD-AD1	 TO W40-AD1.
+	     MOVE JHD-AD2	 TO W40-AD2.
+	     MOVE JHD-AD3	 TO W40-AD3.
+	     MOVE JHD-AD4	 TO W40-AD4.
+	     MOVE JHD-PC	 TO W40-PC.
+	     MOVE JHD-TEL	 TO W40-TEL.
+	     MOVE JHD-HTEL	 TO W40-HTEL.
+	     MOVE JHD-CONTACT	 TO W40-CONTACT.
+	     MOVE JHD-ID	 TO W40-ID.
+014870	     MOVE JHD-ORD	 TO W90-ORD.
+014850	     MOVE JHD-OREF	 TO W90-REG.
+014890	     MOVE JHD-EXP	 TO W90-EXP.
+014910	     MOVE JHD-PRC	 TO WS-PRC.
+014880	     MOVE JHD-SMAN	 TO W10-SMAN.
+	     MOVE JHD-STATUS	 TO W90-STATUS.
+	     MOVE JHD-COMMENT	 TO W10-COMMENT.
+	     MOVE JHD-START	 TO W90-START.
+015230	     MOVE JHD-SUBTOT	 TO W90-DB.
+015240	     MULTIPLY -1 BY JHD-DSCNT
+015250				 GIVING W90-TDISC.
+015260	     MOVE W90-TDISC	 TO W90-LDISC.
+015270	     MOVE JHD-NON-TXBL	 TO W90-NONTAX.
+015280	     MOVE JHD-TAXABLE	 TO W90-EXCTOT.
+015290	     MOVE JHD-TAX	 TO W90-TTAX.
+015300	     MOVE JHD-TOT	 TO W90-TOTAL.
+015310	     MOVE JHD-BAL	 TO W90-BAL.
+	     MOVE JHD-INSTRUCT	 TO W90-INSTRUCT.
+	     MOVE JHD-PMETH	 TO W90-PMETH.
+      *
+014580	     MOVE W10-JCST	 TO JOB-REF.
+022140       MOVE 100            TO JOB-SQN.
+014610	     PERFORM START-AT-JOB-NO THRU READ-JOBCST-EXIT.
+014680	     MOVE 1		 TO WS-LAST WS-SALKEY.
+014620	   IF WS-F-ERROR = 13
+014640         GO TO GET-JOBCST-EXIT.
+
+014710 GET-JCST-NEXT.
+014720       PERFORM READ-JOBCST-NEXT THRU READ-JOBCST-EXIT.
+014730     IF WS-F-ERROR = 13
+014750         GO TO GET-JOBCST-EXIT.
+	   IF JOB-REF NOT = W10-JCST
+	       MOVE W10-JCST   TO JOB-REF
+	       GO TO GET-JOBCST-TEST-EXIT.
+
+014770 GET-JCST-TEST-TYPE.
+      * 		     I T E M   D E T A I L S
+014930     IF JOB-TYPE = 1
+               PERFORM GET-CHECK-STOCK-FILE
+               IF WS-F-ERROR = 0
+014940             INITIALIZE SAL-RECORD1
+		   MOVE "S"	 TO SAL-TYPE
+014950		   MOVE JOB-EXT-ITEM
+				 TO SAL-EXT-ITEM
+014960             MOVE JOB-DESC TO SAL-DESC
+014970		   MOVE JOB-QNT	 TO SAL-QNT
+014980             MOVE JOB-COST TO SAL-COST
+014990             MOVE JOB-SELL TO SAL-SELL
+015000             MOVE JOB-VAT  TO SAL-VAT
+015000		   MOVE JOB-VAT-SUB
+				 TO SAL-VAT-SUB
+015010             MOVE JOB-VAL  TO SAL-VAL
+015020             MOVE JOB-INCTAX
+                                 TO SAL-INCTAX
+015030             MOVE JOB-NONTAX
+                                 TO SAL-NONTAX
+015040             MOVE JOB-TAXVAL   
+                                 TO SAL-TAXVAL
+015050             MOVE JOB-DSC  TO SAL-DSC
+015060             MOVE JOB-DISC TO SAL-DISC
+015070             MOVE JOB-SQN  TO SAL-SQN
+                   MOVE JOB-TECH TO SAL-TECH
+		   IF SAL-VAT-SUB > ZERO
+		       ADD JOB-TAXVAL
+				 TO W90-TAXVAL(SAL-VAT-SUB)
+023060		       MOVE W05-VAT(SAL-VAT-SUB)
+023060				 TO W05-RATE
+023080		       COMPUTE W90-VAT(SAL-VAT-SUB) ROUNDED =
+			      (W90-TAXVAL(SAL-VAT-SUB) * W05-RTE)
+		   END-IF
+015080		   PERFORM GET-JCST-WRITE-SALE
+               ELSE
+                   PERFORM GET-CHANGE-TO-REMKS
+015090     ELSE
+      *                      P A R T S   D E T A I L S
+015100     IF JOB-TYPE = 2
+015110         INITIALIZE SAL-RECORD1
+	       MOVE "T" 	 TO SAL-TYPE
+014950	       MOVE JOB-EXT-ITEM TO SAL-EXT-ITEM
+014960         MOVE JOB-DESC     TO SAL-DESC
+014970         MOVE JOB-QNT      TO SAL-QNT
+015140         MOVE JOB-SQN      TO SAL-SQN
+015160	   ELSE
+      *                      R E M A R K S
+015170     IF JOB-TYPE = 3
+015180         INITIALIZE SAL-RECORD1
+	       MOVE "R" 	 TO SAL-TYPE
+015190         MOVE JOB-SERIAL   TO SAL-DESC
+015200         MOVE JOB-SQN      TO SAL-SQN
+015210         PERFORM GET-JCST-WRITE-SALE
+           ELSE
+      *                      I N T E R N A L   N O T E S
+           IF JOB-TYPE = 4 
+               INITIALIZE SAL-RECORD1
+	       MOVE "I" 	 TO SAL-TYPE
+               MOVE JOB-DESC     TO SAL-DESC
+               MOVE JOB-SQN      TO SAL-SQN
+               MOVE 1            TO SAL-SUPER
+	       PERFORM GET-JCST-WRITE-SALE.
+015340	     GO TO GET-JCST-NEXT.
+
+015360 GET-JCST-WRITE-SALE.
+015370       MOVE WS-LAST        TO SAL-CODE.
+015380       PERFORM WRITE-SALE THRU WRITE-SALE-EXIT.
+015390       ADD 1               TO WS-LAST WS-SALKEY.
+015400 
+       GET-CHECK-STOCK-FILE.
+	     MOVE JOB-EXT-ITEM	 TO STK-CODE.
+013560       PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+
+       GET-CHANGE-TO-REMKS.
+             INITIALIZE SAL-RECORD1.
+	     STRING JOB-EXT-ITEM DELIMITED BY SIZE
+                    JOB-DESC DELIMITED BY SIZE
+                                 INTO SAL-DESC.
+	     MOVE JOB-SQN	 TO SAL-SQN W14-SQN(W14-SUB).
+             ADD 1               TO W14-SUB.
+             PERFORM GET-JCST-WRITE-SALE.
+
+       GET-CH-TO-RMK-EXIT.
+             GO TO GET-JCST-NEXT.
+
+       GET-JOBCST-TEST-EXIT.
+	   IF NOT (W14-SUB > 1)
+015330	       GO TO GET-JOBCST-EXIT.
+
+       GET-ADJUST-TOTALS.
+             SUBTRACT 1 FROM W14-SUB
+                                 GIVING WS-SUB.
+             MOVE 1              TO W14-SUB.
+
+       GET-ADJUST-TOTALS-LOOP.
+	     MOVE W14-SQN(W14-SUB)
+                                 TO JOB-SQN.
+             PERFORM READ-JOBCST-LOCK THRU READ-JOBCST-EXIT.
+025000       SUBTRACT JOB-VAL    FROM W90-DB.
+025010       SUBTRACT JOB-DISC   FROM W90-LDISC.
+025020       SUBTRACT JOB-NONTAX FROM W90-NONTAX.
+025030	     SUBTRACT JOB-TAXVAL FROM W90-EXCTOT.
+025050       COMPUTE W90-BAL = W90-BAL - (JOB-COST * JOB-QNT).
+             MOVE 3              TO JOB-TYPE.
+	     STRING JOB-EXT-ITEM DELIMITED BY SIZE
+                    JOB-DESC DELIMITED BY SIZE
+                                 INTO JOB-DESC.
+	     MOVE SPACES	 TO JOB-EXT-ITEM JOB-SERNO.
+             MOVE ZERO           TO JOB-QNT JOB-COST JOB-INCTAX
+                                    JOB-VAT JOB-SELL JOB-NONTAX
+                                    JOB-VAL JOB-DISC JOB-TAXVAL
+                                    JOB-DSC.
+             PERFORM REWRITE-JOBCST-UNLOCK THRU WRITE-JOBCST-EXIT.
+           IF W14-SUB < WS-SUB
+               ADD 1             TO W14-SUB
+               GO TO GET-ADJUST-TOTALS-LOOP.
+
+015410 GET-JOBCST-EXIT.
+015420       EXIT.
+      /
+      *    ****    A M E N D   J O B
+      *
+025640 BD000	     SECTION 51.
+      *
+      *    ****    J O B   C O S T I N G   S C R E E N
+      *
+025690 BD05.
+025700       DISPLAY CLR-SCREEN.
+025710       DISPLAY S30.
+025730       MOVE 8              TO LIN.
+025740       PERFORM BD115 UNTIL LIN > 18.
+025750       MOVE W12-TODAY      TO W90-DTE.
+025760	     DISPLAY W90-DTE AT 0570
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+025770       MOVE ZERO           TO W90-BDT W90-NONTAX W90-LDISC 
+025780				    W90-BAL W90-SALES
+025790				    W90-CUR W90-EXCTOT.
+025800	     MOVE 1		 TO WS-FIRST WS-SALPOS WS-LAST.
+025810       MOVE ZERO           TO W10-JCST.
+	     MOVE SPACE		 TO WS-IN-OPT.
+	     MOVE 1		 TO WS-S9.
+
+       BD08.
+018660	     MOVE ZERO		 TO W90-VAT(WS-S9) W90-TAXVAL(WS-S9).
+	   IF WS-S9 < 12
+	       ADD 1		 TO WS-S9
+	       GO TO BD08.
+
+025830 BD10.
+025840       PERFORM AA400.
+025850       ACCEPT S30A AT 0510.
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+		     MOVE ZERO	 TO W10-JCST
+		     GO TO BD269
+		 WHEN F1-KEY
+		     PERFORM HELP-ROUTINE
+		 WHEN F2-KEY
+		     MOVE "J"	 TO WS-ETYPE
+		 WHEN F3-KEY
+		     MOVE "A"	 TO WS-ETYPE
+		 WHEN F4-KEY
+		     MOVE "I"	 TO WS-ETYPE
+		 WHEN F5-KEY
+		     MOVE "N"	 TO WS-ETYPE
+		 WHEN F6-KEY
+		     MOVE "C"	 TO WS-ETYPE
+		 WHEN F7-KEY
+		     MOVE "D"	 TO WS-ETYPE
+		 WHEN OTHER
+		     CALL X"E5"
+		     GO TO BD10
+	       END-EVALUATE
+016560	       PERFORM AA50
+016570	       DISPLAY S30A AT 0510
+016580	       IF W10-JCST = ZERO
+016590		   GO TO BD10.
+025910	     DISPLAY CLEAR-L25.
+025920     IF W10-JCST = ZERO
+025930	       GO TO BD269.
+025940       MOVE W10-JCST       TO W90-REF.
+
+025950 BD12.
+025960       PERFORM GET-JOBCST.
+025970	   IF WS-ERROR = 1
+033670	       MOVE WS-ERR2	 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+025990	       GO TO BD25.
+026000     IF WS-ERROR = 2
+033700	       MOVE "Not a job"  TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+026020	       GO TO BD25.
+026030     IF WS-ERROR = 3
+033730	       MOVE "Job corrupted"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+026060	       GO TO BD25.
+026070     IF WS-ERROR = 4
+033770	       MOVE "Invalid a/c no"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+026090	       GO TO BD25.
+025820       INITIALIZE W14-DELETE.
+           IF W90-EXP = "E" OR "X"
+               MOVE W05-VATNO    TO W90-TAX
+           ELSE
+               MOVE SPACES       TO W90-TAX.
+026100       DISPLAY S36 AT 0308
+026110	     DISPLAY W40-NAME AT 0320
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+026120	     DISPLAY W90-ORD AT 0368
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+026130	     DISPLAY W10-SMAN AT 0411
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+026140     IF W10-SMAN NOT = ZERO
+026150         ADD 200 W10-SMAN    GIVING WS-PARKEY
+026160         PERFORM READ-PARAM THRU READ-PARAM-EXIT
+026170	       DISPLAY PAR-TECHNICIAN AT 0420
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 0.
+	     DISPLAY W40-TEL AT 0466
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+	     DISPLAY W40-CONTACT AT 0528
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+	   IF NOT (W10-IDESC = SPACES)
+	       DISPLAY "¸" AT 0720
+			W10-IDISP WITH FOREGROUND-COLOR 6 HIGHLIGHT
+		       "Õ" AT 0750 WITH FOREGROUND-COLOR 3
+					BACKGROUND-COLOR 1.
+026180	     MOVE 1		 TO WS-FIRST WS-SALKEY.
+026190       SUBTRACT 1          FROM WS-LAST.
+026200       PERFORM BD100 THRU BD102.
+
+026210 BD15.
+	   IF WS-LAST > ZERO
+026220	       PERFORM BD270A
+	   ELSE
+031010	       MOVE 8		 TO LIN.
+026230	     DISPLAY CLEAR-L25.
+
+026240 BD20.
+	     ADD 1		 TO WS-LAST.
+026300	     GO TO BD112.
+
+       BD25.
+	     MOVE "Press any key to continue"
+				 TO WS-ERR-MES.
+	     MOVE SPACE 	 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+	     GO TO BD10.
+      *
+      *    ****    A C C U M U L A T E   TOTAL COST / TOTAL DISCOUNT /
+      *            VALUES SUBJECT TO TAX AND NON-TAX.
+      *
+027610 BD95.
+019830	   IF (STK-IND < 2) OR (STK-IND = 3)
+027630         COMPUTE W90-BAL = W90-BAL + (W10-QUANT * W10-COST).
+027640       ADD W90-CDISC       TO W90-LDISC.
+027650       SUBTRACT W90-CDISC FROM W25-VALUE 
+027660                           GIVING W90-VALUE.
+027670	   IF (STK-TAX = 0) OR (W90-EXP = "X" OR "C")
+027680         ADD W90-VALUE     TO W90-NONTAX
+027690         MOVE W90-VALUE    TO SAL-NONTAX
+	       MOVE ZERO	 TO SAL-VAT-SUB
+027700     ELSE
+027710         MOVE W90-VALUE    TO SAL-TAXVAL
+027720	       ADD W90-VALUE	 TO W90-EXCTOT
+	       MOVE WS-VAT-SUB	 TO SAL-VAT-SUB.
+019940	   IF (W90-TAX NOT = SPACES) AND
+	      (W90-EXP NOT = "C" AND "X")
+022920	       COMPUTE SAL-VAT ROUNDED =
+		       SAL-TAXVAL * W05-RTE
+	       ADD SAL-TAXVAL	 TO W90-TAXVAL(WS-VAT-SUB).
+	   IF (W90-EXP = "I") AND (STK-TAX NOT = 0)
+	       COMPUTE SAL-VAT ROUNDED = (SAL-TAXVAL /
+		      (100.0000 + W05-RATE)) * W05-RATE
+	       ADD SAL-TAXVAL	 TO W90-TAXVAL(WS-VAT-SUB).
+	   IF SAL-VAT-SUB > 0
+	       ADD SAL-VAT	 TO W90-VAT(SAL-VAT-SUB).
+      *
+      *    ****    A C C U M U L A T E   T O T A L   S A L E
+      *
+027760       ADD W25-VALUE       TO W90-DB.
+
+027770 BD100.
+027780       MOVE W90-DB         TO W90-TOTAL.
+027790       SUBTRACT W90-LDISC  FROM W90-TOTAL.
+027800       MOVE W90-DB         TO W100-BAL.
+027810	     DISPLAY W100-BAL AT 2015
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+027820       MULTIPLY -1 BY W90-LDISC 
+027830                           GIVING W100-BAL.
+027840	     DISPLAY W100-BAL AT 2115
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+      *
+      *    ****    C A L C U L A T E   T A X   ( RUNNING TOTAL )
+      *
+023040	   IF (W90-TAX = SPACES) OR
+	      (W90-EXP = "C" OR "X")
+027890	       GO TO BD102.
+	     MOVE 1		 TO WS-S1.
+	     MOVE ZERO		 TO W25-TOTAL.
+
+       BD101.
+023070	   IF W90-TAXVAL(WS-S1) NOT = ZERO
+023060	       MOVE W05-VAT(WS-S1)
+023060				 TO W05-RATE
+023080	       COMPUTE W25-TOTAL ROUNDED = W25-TOTAL +
+		      (W90-TAXVAL(WS-S1) * W05-RTE).
+	   IF WS-S1 < 6
+	       ADD 1		 TO WS-S1
+	       GO TO BD101.
+027940	     MOVE W25-TOTAL	 TO W100-BAL.
+023120	     ADD W25-TOTAL	 TO W90-TOTAL.
+027950	     DISPLAY W100-BAL AT 2215
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+
+027970 BD102.
+028020	     MOVE W90-TOTAL	 TO W100-BAL.
+028030	     DISPLAY W100-BAL AT 2315
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+
+028040 BD105.
+036100	     MOVE "'A'ccept or 'C'ancel  [A]"
+				 TO WS-ERR-MES.
+023210	     MOVE "A"		 TO WS-OPTION.
+      *
+      *    ****    M U S T   T H E   L A S T   E N T R Y   B E  
+      *            A C C E P T E D.
+      *
+028100 BD110.
+	     PERFORM OPT-MESSAGE.
+028180	   IF NOT (WS-OPTION = "A" OR "C")
+028190	       GO TO BD105.
+028210     IF WS-OPTION = "C"
+028220	       DISPLAY (LIN, 2) WS-JOB78
+			WITH FOREGROUND-COLOR 3 BACKGROUND-COLOR 1
+028230         PERFORM BD114
+028240         PERFORM BD100 THRU BD102
+028250	       GO TO BD112.
+
+028260 BD111.
+028270       PERFORM WRITE-SALE THRU WRITE-SALE-EXIT.
+028280       ADD 1               TO WS-LAST.
+      *
+      *    ****    T E S T   I F   S C R E E N   F U L L
+      *
+028290     IF LIN < 18
+028300         ADD 1             TO LIN
+028310         GO TO BD112.
+	     PERFORM SAVE-SCREEN-2.
+	     MOVE 8		 TO WS-S7.
+      *
+      *    ****    S C R O L L	 D E T A I L   L I N E S   U P
+      *
+       BD111-SHIFT.
+	     ADD 1 WS-S7	 GIVING WS-S8.
+	     MOVE W42-LINES (WS-S8)
+				 TO W42-LINES (WS-S7).
+	     MOVE W43-LINE (WS-S8)
+				 TO W43-LINE (WS-S7).
+	   IF WS-S8 < 18
+	       ADD 1		 TO WS-S7
+	       GO TO BD111-SHIFT.
+	     PERFORM RESTORE-SCREEN-2.
+      *
+      *    ****    C L E A R   L A S T	 D E T A I L   L I N E
+      *
+023890	     DISPLAY (LIN, 1) WS-JOB1 WITH BACKGROUND-COLOR 0
+					   FOREGROUND-COLOR 3
+			      WS-JOB78 WITH FOREGROUND-COLOR 3
+			      WS-JOB80 WITH BACKGROUND-COLOR 0
+					    FOREGROUND-COLOR 3.
+	     ADD 1		 TO WS-SALPOS.
+
+028350 BD112.
+	     MOVE SPACES	 TO WS-ERR-MES.
+036410	     STRING "'I'nternal notes,'R'emarks or 'E'nd  ["
+		    DELIMITED SIZE
+		    WS-IN-OPT DELIMITED SIZE
+		    "]" DELIMITED SIZE
+				 INTO WS-ERR-MES.
+023180	     MOVE WS-IN-OPT	 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+028500	   IF NOT (WS-OPTION = "R" OR "I" OR "E")
+028510         GO TO BD112.
+             MOVE WS-OPTION      TO WS-IN-OPT.
+028550     IF WS-OPTION = "E"
+028560         SUBTRACT 1        FROM WS-LAST
+028570         GO TO BD120.
+028580       MOVE SPACES         TO W10-REMKS.
+028590	     ACCEPT (LIN, 21) W10-REMKS
+		     WITH FOREGROUND-COLOR 7 HIGHLIGHT
+028600			  BACKGROUND-COLOR 0 UPDATE AUTO.
+028610     IF W10-REMKS = SPACES
+028620         GO TO BD112.
+028640	     MOVE WS-LAST	 TO WS-SALKEY.
+028650       INITIALIZE SAL-RECORD1.
+	     MOVE "X"		 TO SAL-AGE.
+	     MOVE WS-OPTION	 TO SAL-TYPE.
+028660       MOVE WS-LAST        TO SAL-CODE.
+028670       MOVE W10-REMKS      TO SAL-DESC.
+	     DISPLAY (LIN, 9) "(" WITH FOREGROUND-COLOR 3 HIGHLIGHT
+				       BACKGROUND-COLOR 0
+			       SAL-TYPE
+			       WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				    BACKGROUND-COLOR 0
+			      ")" WITH FOREGROUND-COLOR 3 HIGHLIGHT
+				       BACKGROUND-COLOR 0.
+028680       GO TO BD111.
+
+028690 BD114.
+028700       SUBTRACT W25-VALUE  FROM W90-DB.
+028710       SUBTRACT W90-CDISC  FROM W90-LDISC.
+028720       SUBTRACT SAL-NONTAX FROM W90-NONTAX.
+028730	     SUBTRACT SAL-TAXVAL FROM W90-EXCTOT.
+019830     IF (STK-IND < 2) OR (STK-IND = 3)
+028750         COMPUTE W90-BAL = W90-BAL - (W10-COST * W10-QUANT).
+
+028760 BD115.
+028770	     DISPLAY (LIN, 1) WS-JOB1 WITH BACKGROUND-COLOR 0
+					   FOREGROUND-COLOR 3
+			      WS-JOB78 WITH FOREGROUND-COLOR 3
+			      WS-JOB80 WITH BACKGROUND-COLOR 0
+					    FOREGROUND-COLOR 3.
+028780	     ADD 1		 TO LIN.
+      *
+      *    ****    W A S   T H E R E   A N   E N T R Y
+      *
+028790 BD120.
+028800     IF WS-LAST = ZERO
+028810         GO TO BD05.
+      *
+      *    ****    P R O C E S S   T H E   J O B   ? ? ?
+      *
+028820 BD125.
+028840	     MOVE "'U'pdate, 'A'mend, 'C'ancel or 'M'ore items"
+				 TO WS-ERR-MES.
+	     MOVE SPACE 	 TO WS-OPTION.
+
+028920 BD130.
+	     PERFORM OPT-MESSAGE.
+028990	   IF NOT (WS-OPTION = "U" OR "A" OR "C" OR "M")
+029000	      GO TO BD125.
+029020     IF WS-OPTION = "M"
+029030         ADD 1             TO WS-LAST
+029040         GO TO BD112.
+029050     IF WS-OPTION = "A"
+029060	       PERFORM BD270A
+029070         GO TO BD125.
+029080     IF WS-OPTION = "C"
+029090	       GO TO BD269.
+029100       MOVE ZERO           TO W90-STOTAL WS-TDISC W90-TDISC.
+029110     IF W90-LDISC NOT = ZERO
+029120         MOVE W90-LDISC    TO W90-TDISC
+029130         GO TO BD140.
+029140       MOVE W90-DB         TO W90-DVAL.
+
+029150 BD140.
+029160       SUBTRACT W90-TDISC FROM W90-DB 
+029170                           GIVING W90-TSELL W90-TOTAL.
+029180       MULTIPLY -1 BY W90-TDISC 
+029190                           GIVING W100-BAL.
+029200	     DISPLAY W100-BAL AT 2115
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+029240	     MOVE ZERO		 TO W90-TTAX.
+	     MOVE 1		 TO WS-P1.
+037540	   IF (W90-TAX = SPACES) OR (W90-EXP = "C" OR "X")
+024430	       GO TO BD185.
+      *
+      *    ****    C A L C U L A T E   T O T A L   V A T
+      *
+       BD141.
+037540	   IF (W90-TAXVAL(WS-P1) = ZERO)
+024430	       GO TO BD142.
+024440	     MOVE W05-VAT(WS-P1) TO W05-RATE.
+021490	     COMPUTE W90-TTAX ROUNDED = (W90-TTAX +
+		    (W90-TAXVAL(WS-P1) * W05-RTE)).
+      *
+      *    ****    C H E C K   I F   A L L   V A T   R A T E S
+      * 	   H A V E   B E E N   C A L C U L A T E D
+      *
+       BD142.
+	   IF WS-P1 < 6
+	       ADD 1		 TO WS-P1
+	       GO TO BD141.
+024470	     MOVE W90-TTAX	 TO W100-BAL.
+024480	     DISPLAY W100-BAL AT 2215
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+024490       ADD W90-TTAX        TO W90-TOTAL.
+
+029330 BD185.
+029380	     MOVE W90-TOTAL	 TO W100-BAL.
+029390	     DISPLAY W100-BAL AT 2315
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+029400	     DISPLAY CLEAR-L25.
+      *
+      *    ****    P R O C E S S   T H E   J O B 
+      *
+029410 BD188.
+029420	     DISPLAY "Updating Job" AT 2520 WITH
+029430		     BACKGROUND-COLOR 3 FOREGROUND-COLOR 14 BLINK.
+029440       MOVE ZERO           TO WS-SALKEY.
+029450       PERFORM AY60 THRU AY999.
+      *
+      *    ****    U P D A T E   J O B   F I L E 
+      *
+029460 BD190.
+029470	     MOVE W90-REF	 TO JOB-REF.
+029480     IF W14-SUB = ZERO
+029490	       GO TO BD205.
+      *
+      *    ****    D E L E T E   R E D U N D A N T   R E C O R D S
+      *
+029500       MOVE 1              TO WS-S1.
+
+029510 BD195.
+	   IF W14-SQN(WS-S1) NOT = ZERO
+029520	       MOVE W14-SQN(WS-S1)
+029530				 TO JOB-SQN
+029540	       PERFORM READ-JOBCST THRU READ-JOBCST-EXIT
+	       IF WS-F-ERROR = 0
+029550		   MOVE 2	 TO WS-ACTION
+029560		   PERFORM AY25 THRU AY59
+029570		   PERFORM DELETE-JOBCST-REC THRU WRITE-JOBCST-EXIT
+		   IF JOB-TYPE = 1
+		       PERFORM BD196 THRU BD199.
+029580     IF WS-S1 < W14-SUB
+029590         ADD 1             TO WS-S1
+029600         GO TO BD195.
+             GO TO BD205.
+
+       BD196.
+	     MOVE JOB-EXT-ITEM	 TO STK-CODE PRT-EXT-ITEM.
+             MOVE 0              TO WS-ACTION.
+             PERFORM AY05 THRU AY59.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ Update the quantities on the stock record (Reduce quantity³
+      *    ³ on Jobs and increase stock quantity)		       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     SUBTRACT JOB-QNT	 FROM STK-QJOB.
+	     ADD JOB-QNT	 TO STK-QUANT.
+	     PERFORM REWRITE-STOCK THRU WRITE-STOCK-EXIT.
+
+       BD199.
+             EXIT.
+
+029610 BD200.
+029620       PERFORM REWRITE-JOBCST THRU WRITE-JOBCST-EXIT.
+      *
+      *    ****    R E A D   T H E   S A L E   F I L E   A N D
+      *            L O G   T O   J O B   F I L E
+      *
+029630 BD205.
+029640	     ADD 1		 TO WS-SALKEY.
+029650     IF WS-SALKEY > WS-LAST
+029660         GO TO BD255.
+029670       PERFORM READ-SALE THRU READ-SALE-EXIT.
+029680     IF SAL-SQN = ZERO
+029690         SUBTRACT 1        FROM WS-SALKEY
+029700         GO TO BD235.
+029710       MOVE SAL-SQN        TO JOB-SQN.
+029720       PERFORM READ-JOBCST THRU READ-JOBCST-EXIT.
+029730       MOVE 0              TO WS-ACTION.
+029740	     PERFORM AY25 THRU AY59.
+029750     IF JOB-TYPE NOT = 1
+029760         GO TO BD210.
+	     MOVE JOB-EXT-ITEM	 TO STK-CODE.
+             MOVE 0              TO WS-ACTION.
+             PERFORM AY05 THRU AY59.
+	   IF NOT (SAL-QNT = JOB-QNT)
+	       SUBTRACT JOB-QNT	 FROM STK-QJOB
+	       ADD JOB-QNT	 TO STK-QUANT
+	       SUBTRACT SAL-QNT	 FROM STK-QUANT
+	       ADD SAL-QNT	 TO STK-QJOB.
+	     PERFORM REWRITE-STOCK THRU WRITE-STOCK-EXIT.
+029770       MOVE SAL-QNT        TO JOB-QNT.
+029780       MOVE SAL-COST       TO JOB-COST.
+029790       MOVE SAL-VAT        TO JOB-VAT.
+	     MOVE SAL-VAT-SUB	 TO JOB-VAT-SUB.
+029800       MOVE SAL-SELL       TO JOB-SELL.
+029810       MOVE SAL-VAL        TO JOB-VAL.
+029820       MOVE SAL-DISC       TO JOB-DISC.
+029830       MOVE SAL-DSC        TO JOB-DSC.
+029840       MOVE SAL-INCTAX     TO JOB-INCTAX.
+029850       MOVE SAL-NONTAX     TO JOB-NONTAX.
+029860       MOVE SAL-TAXVAL     TO JOB-TAXVAL.
+029870       GO TO BD200.
+
+029880 BD210.
+029890       MOVE SAL-DESC       TO JOB-DESC.
+029900       GO TO BD200.
+      *
+      *    ****    L O G   R E C O R D   T O   J O B   F I L E
+      *
+029920 BD225.
+029930       PERFORM WRITE-JOBCST THRU WRITE-JOBCST-EXIT.
+029940       MOVE 1              TO WS-ACTION.
+029950	     PERFORM AY25 THRU AY59.
+      *
+      *    ****    R E A D   T H E   S A L E   F I L E   A N D
+      *            L O G   T O   J O B   F I L E
+      *
+029960 BD235.
+029970	     ADD 1		 TO WS-SALKEY.
+029980     IF WS-SALKEY > WS-LAST
+029990         GO TO BD255.
+030000       PERFORM READ-SALE THRU READ-SALE-EXIT.
+030030	   IF SAL-TYPE = "I" OR "R"
+030040         GO TO BD247.
+      *
+      *    ****    I T E M   /	 L A B O U R   D E T A I L S
+      *
+030050	     MOVE 1		 TO JOB-TYPE.
+030060	     MOVE SAL-EXT-ITEM	 TO JOB-EXT-ITEM.
+030070       MOVE SAL-DESC       TO JOB-DESC.
+030080       MOVE SAL-QNT        TO JOB-QNT.
+030090       MOVE SAL-COST       TO JOB-COST.
+030100       MOVE SAL-VAT        TO JOB-VAT.
+	     MOVE SAL-VAT-SUB	 TO JOB-VAT-SUB.
+030110       MOVE SAL-SELL       TO JOB-SELL.
+030120       MOVE SAL-VAL        TO JOB-VAL.
+030130       MOVE SAL-DISC       TO JOB-DISC.
+030140       MOVE SAL-DSC        TO JOB-DSC.
+030150       MOVE SAL-INCTAX     TO JOB-INCTAX.
+030160       MOVE SAL-NONTAX     TO JOB-NONTAX.
+030170       MOVE SAL-TAXVAL     TO JOB-TAXVAL.
+	     MOVE SAL-TECH	 TO JOB-TECH.
+030180	     MOVE SPACES	 TO JOB-SERNO.
+030190       ADD 1               TO JOB-SEQ.
+             MOVE ZERO           TO JOB-SUB.
+             PERFORM BD225.
+             PERFORM BD248 THRU BD254.
+030200       GO TO BD235.
+      *
+      *    ****   R E M A R K S   /   I N T E R N A L	N O T E S
+      *
+030210 BD247.
+	   IF SAL-TYPE = "I"
+	       MOVE 4		 TO JOB-TYPE
+	   ELSE
+030220	       MOVE 3		 TO JOB-TYPE.
+030230	     INITIALIZE JOB-DETAIL.
+030240       MOVE SAL-DESC       TO JOB-DESC.
+030250       ADD 1               TO JOB-SEQ.
+             MOVE ZERO           TO JOB-SUB.
+030260       GO TO BD225.
+      *
+      *    ****   U P D A T E	S T O C K   R E C O R D
+      *
+       BD248.
+	     MOVE JOB-EXT-ITEM	 TO PRT-EXT-ITEM STK-CODE.
+	     MOVE 0		 TO WS-ACTION.
+             PERFORM AY05 THRU AY59.
+	     MOVE "N"		 TO WS-PARTS.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ If the quantity is less than required and the item is     ³
+      *    ³ produced then draw parts from production template.	       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	   IF STK-QUANT < SAL-QNT
+	       PERFORM READ-SPARTS THRU READ-SPARTS-EXIT
+	       IF NOT(WS-F-ERROR = 21)
+		   SUBTRACT STK-QUANT FROM SAL-QNT
+				 GIVING WS-PQUANT
+		   ADD WS-PQUANT TO STK-QUANT
+		   MOVE "Y"	 TO WS-PARTS.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ Update the quantities on the stock record (Reduce quantity³
+      *    ³ on Jobs and increase stock quantity)		       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     SUBTRACT SAL-QNT	 FROM STK-QUANT.
+	     ADD SAL-QNT	 TO STK-QJOB.
+	     PERFORM REWRITE-STOCK THRU WRITE-STOCK-EXIT.
+	   IF WS-PARTS = "N"
+	       GO TO BD254.
+020530	     PERFORM READ-SPARTS THRU READ-SPARTS-EXIT.
+020510     IF WS-F-ERROR = 21
+               GO TO BD254.
+      *
+      *    ****  P R O D U C T I O N   D E T A I L S
+      *
+021370       MOVE 1              TO WS-S6.
+
+021420 BD249.
+021430	   IF PRT-EXT-CODE(WS-S6) = SPACES
+021440         ADD 1             TO WS-S6
+021450         GO TO BD250.
+021470	     MOVE PRT-EXT-CODE(WS-S6)
+				 TO W10-EXT-ITEM.
+021490       PERFORM CA000.
+021500     IF WS-F-ERROR = 22
+021510         ADD 1             TO WS-S6
+021520         GO TO BD250.
+022580       MOVE 2              TO JOB-TYPE.
+022590	     INITIALIZE JOB-DETAIL.
+	     MOVE STK-CODE	 TO JOB-EXT-ITEM.
+021540       MOVE STK-DESC       TO JOB-DESC.
+	     MULTIPLY WS-PQUANT BY PRT-QUANT (WS-S6)
+                                 GIVING JOB-QNT.
+022610       ADD 1               TO JOB-SEQ.
+             MOVE ZERO           TO JOB-SUB.
+	     MOVE 0		 TO WS-ACTION.
+             PERFORM AY05 THRU AY59.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ Update the quantities on the stock record (Reduce quantity³
+      *    ³ on stock record)					       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     SUBTRACT JOB-QNT	 FROM STK-QUANT.
+      *	     ADD JOB-QNT	 TO STK-QJOB.
+	     PERFORM REWRITE-STOCK THRU WRITE-STOCK-EXIT.
+	     PERFORM BD225.
+021600	     ADD 1		 TO WS-S6.
+
+021660 BD250.
+021670     IF WS-S6 < 31
+021680         GO TO BD249.
+
+       BD254.
+             EXIT.
+      *
+      *    ****    J O B   T O T A L S
+      *
+030270 BD255.
+014610	     PERFORM READ-JOBHDR-LOCK THRU READ-JOBHDR-EXIT.
+030300       MOVE 0              TO WS-ACTION.
+030310	     PERFORM AY21 THRU AY59.
+030320	     MOVE W90-DB	 TO JHD-SUBTOT.
+030330       MULTIPLY -1 BY W90-TDISC 
+030340				 GIVING JHD-DSCNT
+030350	     MOVE W90-EXCTOT	 TO JHD-TAXABLE.
+030360	     MOVE W90-NONTAX	 TO JHD-NON-TXBL.
+030370	     MOVE W90-TTAX	 TO JHD-TAX.
+030380	     MOVE W90-TOTAL	 TO JHD-TOT.
+030390	     MOVE W90-BAL	 TO JHD-BAL.
+	     MOVE W10-COMMENT	 TO JHD-COMMENT.
+	   IF W10-SMAN > ZERO
+	       MOVE W10-SMAN	 TO JHD-SMAN.
+030410	     PERFORM REWRITE-JOBHDR-UNLOCK THRU WRITE-JOBHDR-EXIT.
+      *
+      *    ****    E N D   O F F   T H E   R E C O V E R Y   L O G
+      *
+030420       PERFORM AY70 THRU AY999.
+      *
+      *    ****    U S E R   O P T I O N   T O	 P R I N T
+      *
+030540 BD260.
+022810	     MOVE "Print job details (Y/N)?  [ ]"
+				 TO WS-ERR-MES.
+022870	     MOVE "Y"		 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+030620	   IF NOT (WS-OPTION = "Y" OR "N")
+030630         GO TO BD260.
+      *
+      *    ****    C L O S E   F I L E
+      *            ( FORCE SYSTEM TO WRITE DETAILS TO DISK )
+      *
+030700	     CLOSE SALE.
+030640     IF WS-OPTION = "Y"
+030650         DISPLAY CLR-SCREEN
+030660         DISPLAY "AMEND JOB" AT 0235 WITH FOREGROUND-COLOR 15
+030670         DISPLAY "Printing job details" AT 1212
+030680                  WITH FOREGROUND-COLOR 14
+030690	       MOVE W90-REF	 TO LS-SLS-JOBNO
+030750	       CALL "JCP\JCPPRN"
+		     USING LS-PARID LS-USER-ID LS0-PROGRAMS
+			   LS0-SECURITY
+030770	       CANCEL "JCP\JCPPRN".
+030830       OPEN OUTPUT SALE.
+030840       CLOSE SALE.
+030450	     OPEN I-O SALE.
+029700	     MOVE "ENTER to continue - E to exit"
+				 TO WS-ERR-MES.
+	     MOVE SPACE 	 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+030970	   IF NOT (WS-OPTION = "E")
+030990	       GO TO BD05.
+
+       BD269.
+	     EXIT.
+      *
+      *    ****    A M E N D   J O B   D E T A I L S
+      * 	   ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+      * 	   This routine reads the existing entries for the selected
+      * 	   job and in addition to displaying them, will allow the
+      * 	   user to amend or delete selected entries.
+      *
+       BD270A	       SECTION 52.
+031000 BD270.
+031010       MOVE 8              TO LIN.
+031020       PERFORM BD115 UNTIL LIN > 18.
+031030       MOVE 8              TO LIN.
+031040       MOVE 1              TO WS-LINES WS-FIRST.
+
+031050 BD275.
+031060	     MOVE WS-FIRST	 TO WS-SALKEY WS-SALPOS.
+      *
+      *    ****    H A V E   A L L   T H E   E N T R I E S   B E E N
+      *            D I S P L A Y E D
+      *
+031070 BD280.
+031080	   IF WS-SALKEY > WS-LAST
+	       SUBTRACT 1	 FROM WS-SALKEY
+031090	       GO TO BD284.
+031100       PERFORM READ-SALE THRU READ-SALE-EXIT.
+	     MOVE SAL-EXT-ITEM	 TO W10-EXT-ITEM.
+      *
+      *    ****    D I S P L A Y   E N T R Y   D E T A I L S
+      *
+031120	   IF SAL-TYPE = "I" OR "R"
+031130	       DISPLAY (LIN, 21) SAL-SDSC
+			WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			     BACKGROUND-COLOR 0
+	       DISPLAY (LIN, 9) "("
+			WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			     BACKGROUND-COLOR 0
+			SAL-TYPE WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				      BACKGROUND-COLOR 0
+			")" WITH FOREGROUND-COLOR 3 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+031140	       GO TO BD282.
+      *
+      *        *****   E X T E N D E D	 C O D E   *****
+      *
+	   IF WS-EXT-STK = "Y"
+	       DISPLAY S07-EXT AT LINE LIN
+	   ELSE
+      *
+      *    *****   A L P H A - N U M E R I C   C O D E	 *****
+      *
+	   IF W10-STCK = "A"
+	       IF WS-USE-ITM = "Y"
+		   DISPLAY S07-ITM AT LINE LIN
+	       ELSE
+021070		   DISPLAY S07 AT LINE LIN.
+029280	     DISPLAY (LIN, 21) SAL-SDSC
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+031170	     MOVE SAL-QNT	 TO W10-QUANT.
+031180       DISPLAY S26-QNT AT LINE LIN.
+031190       MOVE SAL-SELL       TO W10-SELL.
+031200       DISPLAY S26-PRC AT LINE LIN.
+031210       MOVE SAL-VAL        TO W100-EXT.
+031220	     DISPLAY ( , 70) W100-EXT
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+      *
+      *    ****    I S   T H E   S C R E E N   F U L L
+      *
+031230 BD282.
+031240     IF LIN < 18
+031250         ADD 1             TO LIN WS-SALKEY WS-LINES
+031260         GO TO BD280.
+
+       BD284.
+	     MOVE 7		 TO LIN.
+	     DISPLAY CLEAR-L25.
+      *
+      *    ****    D I S P L A Y   O P T I O N S
+      *
+029390 BD285.
+001020	     DISPLAY " " AT 2503 WITH FOREGROUND-COLOR 14
+					BACKGROUND-COLOR 3
+001030		     " highlight," WITH FOREGROUND-COLOR 1
+					  BACKGROUND-COLOR 3
+		     "PgUp" WITH FOREGROUND-COLOR 14
+				 BACKGROUND-COLOR 3
+		     "/" WITH FOREGROUND-COLOR 1
+			      BACKGROUND-COLOR 3
+		     "PgDn" WITH FOREGROUND-COLOR 14
+				 BACKGROUND-COLOR 3
+		     "," WITH FOREGROUND-COLOR 1
+				BACKGROUND-COLOR 3
+001040		     "A" WITH FOREGROUND-COLOR 14
+				  BACKGROUND-COLOR 3
+001050		     "mend," WITH FOREGROUND-COLOR 1
+				       BACKGROUND-COLOR 3
+001040		     "D" WITH FOREGROUND-COLOR 14
+				  BACKGROUND-COLOR 3
+001050		     "elete or " WITH FOREGROUND-COLOR 1
+				       BACKGROUND-COLOR 3
+001170		     "Esc" WITH FOREGROUND-COLOR 14
+				BACKGROUND-COLOR 3
+		     "ape" WITH FOREGROUND-COLOR 1
+				BACKGROUND-COLOR 3.
+      *
+      *    ****    S A V E   C U R R E N T   P A G E
+      *
+	     PERFORM SAVE-SCREEN-2.
+      *
+      *    ****    R E S T O R E   S C R E E N	 A T T R I B U T E S
+      *
+       BD289.
+             MOVE 1920           TO W41-LENGTH.
+	     CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS
+					      W42-ATTRIB2
+					      W41-LENGTH
+					RETURNING WS-STATUS.
+	     MOVE 2000		 TO W41-LENGTH.
+      *
+      *    ****    G E T   U S E R   O P T I O N
+      *
+029660 BD290.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	   IF ADIS-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN UP-KEY
+		     GO TO BD292
+		 WHEN DOWN-KEY
+001340		     GO TO BD293
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO BD290
+	   ELSE
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+		     DISPLAY CLEAR-L25
+		     GO TO BD582
+      *
+      *    ****    I S   N E X T   S C R E E N   R E Q U I R E D
+      *
+		 WHEN PAGE-DOWN
+001340		     GO TO BD305
+      *
+      *    ****    I S   P R E V I O U S   S C R E E N   R E Q U I R E D
+      *
+		 WHEN PAGE-UP
+001340		     GO TO BD300
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO BD290
+	   ELSE
+	   IF DATA-8BIT
+	       MOVE KEY-CODE-1X  TO WS-OPTION
+	       CALL "CBL_TOUPPER" USING WS-OPTION
+				  BY VALUE WS-LENGTH
+				  RETURNING WS-STATUS
+	       IF (WS-OPTION = "A" OR "D") AND
+		  (LIN > 7)
+		   DISPLAY CLEAR-L25
+		   GO TO BD310.
+	     CALL X"E5".
+001280	     GO TO BD290.
+      *
+      *    ****    U P	 K E Y	 ( M O V E   H I G H L I G H T	 U P )
+      *
+       BD292.
+	   IF (WS-SALPOS = 1) OR (LIN < 8)
+	       GO TO BD294.
+	     SUBTRACT 1 	 FROM WS-SALPOS.
+	   IF LIN > 8
+	       SUBTRACT 1	 FROM LIN
+	       GO TO BD294.
+	     MOVE 18		 TO WS-S7.
+      *
+      *    ****     M O V E   T H E   D E T A I L S   D O W N
+      * 	    O N E   L I N E
+      *
+       BD292-LOOP.
+	     SUBTRACT 1 FROM WS-S7
+				 GIVING WS-S8.
+	     MOVE W42-LINES (WS-S8)
+				 TO W42-LINES (WS-S7).
+	     MOVE W43-LINE (WS-S8)
+				 TO W43-LINE (WS-S7).
+	   IF WS-S7 > 9
+	       SUBTRACT 1	 FROM WS-S7
+	       GO TO BD292-LOOP.
+	     MOVE WS-SALPOS	 TO WS-SALKEY WS-FIRST.
+      *
+      *    ****    C L E A R   F I R S T   O R	 L A S T
+      * 	   D E T A I L	 L I N E.
+      *
+       BD292-DISPLAY.
+	     PERFORM RESTORE-SCREEN-2.
+023890	     DISPLAY (LIN, 1) WS-JOB1 WITH BACKGROUND-COLOR 0
+					   FOREGROUND-COLOR 3
+			      WS-JOB78 WITH FOREGROUND-COLOR 3
+			      WS-JOB80 WITH BACKGROUND-COLOR 0
+					    FOREGROUND-COLOR 3.
+      *
+      *    ****    G E T   N E X T   O R   P R E V I O U S
+      * 	   D E T A I L	 L I N E.
+      *
+030080	     PERFORM READ-SALE THRU READ-SALE-EXIT.
+	     MOVE SAL-EXT-ITEM	 TO W10-EXT-ITEM.
+      *
+      *    ****    D I S P L A Y   E N T R Y   D E T A I L S
+      *
+031120	   IF SAL-TYPE = "I" OR "R"
+031130	       DISPLAY (LIN, 21) SAL-SDSC
+			WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			     BACKGROUND-COLOR 0
+	       DISPLAY (LIN, 9) "("
+			WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			     BACKGROUND-COLOR 0
+			SAL-TYPE WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				      BACKGROUND-COLOR 0
+			")" WITH FOREGROUND-COLOR 3 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+030120	       GO TO BD292-END-DISP.
+      *
+      *        *****   E X T E N D E D	 C O D E   *****
+      *
+	   IF WS-EXT-STK = "Y"
+	       DISPLAY S07-EXT AT LINE LIN
+	   ELSE
+      *
+      *    *****   A L P H A - N U M E R I C   C O D E	 *****
+      *
+	   IF W10-STCK = "A"
+	       IF WS-USE-ITM = "Y"
+		   DISPLAY S07-ITM AT LINE LIN
+	       ELSE
+021070		   DISPLAY S07 AT LINE LIN.
+030140	     DISPLAY (LIN, 21) SAL-SDSC
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+030150       MOVE SAL-QNT        TO W10-QUANT.
+030160       DISPLAY S26-QNT AT LINE LIN.
+030170       MOVE SAL-SELL       TO W10-SELL.
+030180       DISPLAY S26-PRC AT LINE LIN.
+030190       MOVE SAL-VAL        TO W100-EXT.
+030200	     DISPLAY ( , 70) W100-EXT
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+
+       BD292-END-DISP.
+	     PERFORM SAVE-SCREEN-2.
+	     GO TO BD294.
+      *
+      *    ****    D O W N   K E Y   ( M O V E	 H I G H L I G H T
+      * 			       D O W N )
+      *
+       BD293.
+	   IF (WS-SALPOS = WS-LAST) AND (LIN > 7)
+	       GO TO BD294.
+      *
+      *    ****    WS-SALPOS CONTAINS KEY OF HIGHLIGHTED ITEM
+      *
+	   IF LIN > 7
+	       ADD 1		 TO WS-SALPOS.
+	   IF LIN < 18
+	       ADD 1		 TO LIN
+	       GO TO BD294.
+	     MOVE 8		 TO WS-S7.
+      *
+      *    ****     M O V E   T H E   D E T A I L S   U P   O N E
+      * 	    L I N E
+      *
+       BD293-LOOP.
+	     ADD 1 WS-S7	 GIVING WS-S8.
+	     MOVE W42-LINES (WS-S8)
+				 TO W42-LINES (WS-S7).
+	     MOVE W43-LINE (WS-S8)
+				 TO W43-LINE (WS-S7).
+	   IF WS-S8 < 18
+	       ADD 1		 TO WS-S7
+	       GO TO BD293-LOOP.
+	     ADD 1		 TO WS-FIRST.
+	     MOVE WS-SALPOS	 TO WS-SALKEY.
+	     GO TO BD292-DISPLAY.
+      *
+      *    ****    H I G H L I G H T   C U R R E N T   L I N E
+      *
+001980 BD294.
+001990	     PERFORM BD289.
+	   IF LIN > 7
+002000	       DISPLAY (LIN, 1) W43-DET (LIN)
+			WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7.
+002010	     GO TO BD290.
+      *
+      *    ****    C L E A R   S C R E E N
+      *
+032090 BD295.
+032100	     MOVE 8		 TO LIN.
+032110       PERFORM BD115 UNTIL LIN > 18.
+032120       MOVE 8              TO LIN.
+032130       MOVE 1              TO WS-LINES.
+      *
+      *    ****   P R E V I O U S   S C R E E N	  R E Q U I R E D
+      *
+       BD300.
+	   IF WS-FIRST = 1
+	       GO TO BD290.
+	   IF WS-FIRST > 11
+	       SUBTRACT 11	 FROM WS-FIRST
+	   ELSE
+	       MOVE 1		 TO WS-FIRST.
+	     PERFORM BD295.
+	     GO TO BD275.
+      *
+      *    ****    N E X T   S C R E E N   R E Q U I R E D
+      *
+       BD305.
+	   IF (WS-FIRST + 11) > WS-LAST
+	       GO TO BD290.
+	     ADD 11		 TO WS-FIRST.
+	     PERFORM BD295.
+	     GO TO BD275.
+      *
+      *    ****    M U S T   A N   I T E M   B E   A M E N D E D
+      *
+032140 BD310.
+032150	   IF WS-OPTION = "A"
+032160	       GO TO BD320.
+      *
+      *    ****    M A K E   S U R E   T H A T   A N   I T E M 
+      *            M U S T   B E   D E L E T E D
+      *
+032200 BD315.
+043780	     MOVE "Are you sure Y/N?  [N]"
+				 TO WS-ERR-MES.
+030880	     MOVE "N"		 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+032280	   IF NOT (WS-OPTION = "N" OR "Y")
+032290	       GO TO BD315.
+032310     IF WS-OPTION = "N"
+032320         MOVE WS-LINE      TO WS-LINES
+032330         GO TO BD285.
+032340       MOVE "D"            TO WS-OPTION.
+      *
+      *    ****    R E A D   T H E   D E T A I L S   F R O M   T H E
+      *            S A L E   F I L E
+      *
+       BD320.
+031220	     MOVE WS-SALPOS	 TO WS-SALKEY.
+032560	     PERFORM READ-SALE THRU READ-SALE-EXIT.
+032570	   IF SAL-TYPE = "I" OR "R"
+032580	       GO TO BD322.
+032590	     MOVE SAL-EXT-ITEM	 TO W10-EXT-ITEM STK-CODE.
+032600       PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+032610       MOVE SAL-QNT        TO W10-QUANT.
+032620       MOVE SAL-COST       TO W10-COST.
+032630       MOVE SAL-SELL       TO W10-SELL.
+032640       MOVE SAL-DISC       TO W90-CDISC.
+032650       MOVE SAL-DSC        TO WS-DISC.
+032660       MOVE SAL-VAL        TO W25-VALUE.
+	     MOVE SAL-VAT-SUB	 TO WS-VAT-SUB.
+      *
+      *    ****    R E D U C E   T O T A L S 
+      *
+032670       SUBTRACT W25-VALUE  FROM W90-DB.
+032680       SUBTRACT W90-CDISC  FROM W90-LDISC.
+032690       SUBTRACT SAL-NONTAX FROM W90-NONTAX.
+	   IF WS-VAT-SUB > ZERO
+031370	       SUBTRACT SAL-TAXVAL FROM W90-TAXVAL(WS-VAT-SUB)
+					W90-EXCTOT
+	       SUBTRACT SAL-VAT	 FROM W90-VAT(SAL-VAT-SUB).
+019830	   IF (STK-IND < 2) OR (STK-IND = 3)
+032720         COMPUTE W90-BAL = W90-BAL - (W10-COST * W10-QUANT).
+      *
+      *    ****    I S   I T   A N   A M E N D M E N T
+      *
+032730 BD322.
+	     PERFORM BD289.
+032740     IF WS-OPTION = "A"
+032750         GO TO BD325.
+      *
+      *    ****    R E - D I S P L A Y   T O T A L S
+      *
+032760	   IF SAL-TYPE = "S" OR "L"
+032770         PERFORM BD100 THRU BD102.
+      *
+      *    ****    D E L E T E   I T E M   F R O M   O R D E R   F I L E 
+      *
+030580 BD324.
+032780	     ADD 1		 TO W14-SUB.
+032790	     MOVE SAL-SQN	 TO W14-SQN(W14-SUB).
+      *
+      *    ****    D E L E T E   I T E M   F R O M   S A L E   F I L E
+      *
+032800 BD324A.
+032810	     MOVE WS-SALKEY	 TO WS-SALSTR.
+032820       ADD 1               TO WS-SALKEY.
+032830     IF WS-SALKEY > WS-LAST
+032840         SUBTRACT 1        FROM WS-LAST
+032850         GO TO BD270.
+032860       PERFORM READ-SALE THRU READ-SALE-EXIT.
+032870       SUBTRACT 1          FROM SAL-CODE.
+032880       MOVE WS-SALSTR      TO WS-SALKEY.
+032890       PERFORM REWRITE-SALE THRU WRITE-SALE-EXIT.
+032900       ADD 1               TO WS-SALKEY.
+032910	     GO TO BD324A.
+
+032920 BD325.
+	     PERFORM BD289.
+032930	   IF SAL-TYPE = "I" OR "R"
+032940	       ACCEPT (LIN, 21) SAL-SDSC
+		       WITH FOREGROUND-COLOR 7 HIGHLIGHT
+032950			    BACKGROUND-COLOR 0 UPDATE AUTO
+032960         GO TO BD332.
+      *
+      *    ****    A M E N D   Q U A N T I T Y
+      *
+032970       ACCEPT S26-QNT AT LINE LIN.
+032980	     DISPLAY CLEAR-L25.
+032990     IF W10-QUANT = ZERO
+025310	       MOVE "Quantity MAY NOT be zero"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+033020	       MOVE SAL-QNT	 TO W10-QUANT
+033030         GO TO BD325.
+      *
+      *    ****    R E C A L C U L A T E   V A L U E S
+      *
+033040       MULTIPLY W10-SELL BY W10-QUANT 
+033050                           GIVING W25-VALUE.
+033060       MOVE W25-VALUE      TO W100-EXT.
+033070	     DISPLAY (LIN, 70) W100-EXT
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+	     PERFORM CHECK-CORRECT.
+033160	   IF WS-OPTION = "N"
+033170         GO TO BD325.
+      *
+      *    ****    U P D A T E   S A L E   F I L E   R E C O R D
+      *
+033180       MOVE W10-QUANT      TO SAL-QNT.
+033190       MOVE W25-VALUE      TO SAL-VAL.
+033200     IF WS-DISC = ZERO
+033210         GO TO BD330.
+033220       COMPUTE W90-CDISC = (W25-VALUE * WS-DISC) / 100.
+033230       MOVE W90-CDISC      TO SAL-DISC.
+      *
+      *    ****    R E - C A L C U L A T E   &   D I S P L A Y
+      *            T O T A L S
+      *
+033240 BD330.
+033250	     PERFORM BD95 THRU BD102.
+
+033260 BD332.
+033280       PERFORM REWRITE-SALE THRU WRITE-SALE-EXIT.
+033290       GO TO BD270.
+      *
+      *    ****    C L E A R   D E T A I L   L I N E S
+      *
+031940 BD582.
+	     PERFORM BD295.
+      *
+      *    ****    D I S P L A Y   L A S T   P A G E
+      *
+	   IF WS-LAST > 10
+	       SUBTRACT 9 FROM WS-LAST
+				 GIVING WS-SALKEY
+	   ELSE
+	       MOVE 1		 TO WS-SALKEY.
+
+030050 BD583.
+030080	     PERFORM READ-SALE THRU READ-SALE-EXIT.
+	     MOVE SAL-EXT-ITEM	 TO W10-EXT-ITEM.
+      *
+      *    ****    D I S P L A Y   E N T R Y   D E T A I L S
+      *
+031120	   IF SAL-TYPE = "I" OR "R"
+031130	       DISPLAY (LIN, 21) SAL-SDSC
+			WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			     BACKGROUND-COLOR 0
+	       DISPLAY (LIN, 9) "("
+			WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			     BACKGROUND-COLOR 0
+			SAL-TYPE WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				      BACKGROUND-COLOR 0
+			")" WITH FOREGROUND-COLOR 3 HIGHLIGHT
+				 BACKGROUND-COLOR 0
+030120	       GO TO BD584.
+      *
+      *        *****   E X T E N D E D	 C O D E   *****
+      *
+	   IF WS-EXT-STK = "Y"
+	       DISPLAY S07-EXT AT LINE LIN
+	   ELSE
+      *
+      *    *****   A L P H A - N U M E R I C   C O D E	 *****
+      *
+	   IF W10-STCK = "A"
+	       IF WS-USE-ITM = "Y"
+		   DISPLAY S07-ITM AT LINE LIN
+	       ELSE
+021070		   DISPLAY S07 AT LINE LIN.
+030140	     DISPLAY (LIN, 21) SAL-SDSC
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+030150	     MOVE SAL-QNT	 TO W10-QUANT.
+030160       DISPLAY S26-QNT AT LINE LIN.
+030170       MOVE SAL-SELL       TO W10-SELL.
+030180       DISPLAY S26-PRC AT LINE LIN.
+030190       MOVE SAL-VAL        TO W100-EXT.
+030200	     DISPLAY ( , 70) W100-EXT
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 0.
+
+       BD584.
+	     ADD 1		 TO LIN.
+030060	   IF WS-SALKEY < WS-LAST
+	       ADD 1		 TO WS-SALKEY
+030070	       GO TO BD583.
+
+033320 BD599.
+033330       EXIT.
+      /
+038140 ZA000-INIT	       SECTION 90.
+038150 ZA000-OPEN.
+038160	     PERFORM ZA60.
+	     MOVE LS-PARID	 TO WS-PARID.
+	     MOVE LS-L-OR-N	 TO W02-L-OR-N.
+	     MOVE WS-SYS-ID	 TO W02-SYSID.
+	     MOVE LS-TODAY-DDMMYY
+				 TO TODAY-DDMMYY.
+	     MOVE LS-USUB	 TO WS-USUB.
+      *
+      *    ****    S E T   U P   T H E   F U N C T I O N   K E Y S
+      *
+	     MOVE 1		 TO USER-ACTION
+				    USER-SETTING.
+      *
+      *    ESC, F1 to F10 keys
+      *
+	     MOVE ZERO		 TO USER-NUMBER.
+	     MOVE 11		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *
+      *    PAGE-UP AND PAGE-DOWN KEYS
+      *
+	     MOVE 53		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *
+      *    ****    A C T I V A T E   M O U S E
+      *
+	     MOVE 64		 TO MOUSE-FUNC.
+	     MOVE 1		 TO MOUSE-PARAM.
+	     CALL X"AF" USING MOUSE-FUNC
+			      MOUSE-PARAM.
+	   IF MOUSE-FUNC NOT = 255
+	       MOVE "Y"		 TO MOUSE-ATTACHED
+	       MOVE 66		 TO MOUSE-FUNC
+	       MOVE 0		 TO MOUSE-PARAM
+	       CALL X"AF" USING MOUSE-FUNC
+				MOUSE-PARAM
+	   ELSE
+	       GO TO ZA00A.
+      *
+      *    ****    S E T   M O U S E   K E Y   T O   A C T
+      * 	   A S	 F U N C T I O N   K E Y
+      *
+	     MOVE 3		 TO USER-ACTION.
+	     MOVE 27		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *      CALL CBL_INIT_MOUSE USING MOUSE-HANDLE
+      *				       MOUSE-BUTTONS
+      *				 RETURNING MOUSE-STATUS.
+      *    IF MOUSE-STATUS = ZERO
+      *        MOVE "Y"		 TO MOUSE-ATTACHED.
+      *
+      *    ****    P A R A M E T E R   F I L E
+      *
+       ZA00A.
+	     MOVE "PARAM"	 TO AFID-KEY.
+
+       ZA00-READ-APACFIDS.
+000030	     READ APACFIDS WITH IGNORE LOCK
+	       KEY IS AFID-KEY.
+	   IF WS-STATUS = "00"
+	       GO TO ZA00-READ-APACFIDS-EXIT.
+006260	     STRING "Missing " DELIMITED SIZE
+		     AFID-KEY DELIMITED BY " "
+		     " file ID - Status " DELIMITED SIZE
+		     WS-STATUS DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+006370	     STOP RUN.
+
+       ZA00-READ-APACFIDS-EXIT.
+	     EXIT.
+
+       ZA00A-CONTINUE.
+	     MOVE AFID-PATH	 TO W02-PARAM.
+	     MOVE "DEPART"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-DEPART.
+	     MOVE "JOBCST"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-JOBCST.
+	     MOVE "JOBHDR"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-JOBHDR.
+	     MOVE "NETWORK"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-NETWORK.
+	     MOVE "RECOVER"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     INSPECT AFID-PATH REPLACING FIRST "XXX"
+			       BY LS-USER.
+	     MOVE AFID-PATH	 TO W02-RECOVER.
+	     MOVE "SALEJ"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     INSPECT AFID-PATH REPLACING FIRST "XXX"
+			       BY LS-USER.
+	     MOVE AFID-PATH	 TO W02-SALE.
+	     MOVE "SHARED"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-SHARED.
+	     MOVE "SPARTS"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-SPARTS.
+	     MOVE "STOCKF"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-STOCKF.
+038300	     MOVE 3		 TO WS-PARKEY.
+038310       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+	   IF NOT (PAR-STOCK = "A" OR "N")
+	       MOVE "A" 	 TO PAR-STOCK.
+	     MOVE PAR-STOCK	 TO W10-STCK.
+038430	     MOVE PAR-VAT-REG	 TO W05-VATNO.
+	     MOVE PAR-PACKS	 TO WS-USE-PACKS.
+	     MOVE PAR-USE-ITM	 TO WS-USE-ITM.
+	     MOVE PAR-EXT-STK	 TO WS-EXT-STK.
+038440	     OPEN OUTPUT RECOVER.
+038450       CLOSE RECOVER.
+038460       OPEN I-O RECOVER.
+038940	     OPEN OUTPUT SALE.
+038950       CLOSE SALE.
+038960       OPEN I-O SALE.
+039390	     MOVE 5		 TO WS-PARKEY.
+039400       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+039430	     MOVE PAR-DISCOUNT	 TO W15-DISCOUNT.
+	     MOVE 1		 TO W05-V-RATE.
+
+       ZA05-VAT.
+	     MOVE W05-VAT-CODE	 TO DPT-CODE.
+	     PERFORM READ-DEPART THRU READ-DEPART-EXIT.
+	     MOVE DPT-R-DATE	 TO WS-VAT-DATE(W05-V-RATE).
+	     MOVE DPT-RATE	 TO W05-VAT(W05-V-RATE).
+	     ADD 6 W05-V-RATE	 GIVING WS-S1.
+	     MOVE DPT-P-RATE	 TO W05-VAT(WS-S1).
+	   IF W05-V-RATE < 6
+	       ADD 1		 TO W05-V-RATE
+	       GO TO ZA05-VAT.
+039440	     MOVE 1		 TO WS-PARKEY.
+039450       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+039460       MOVE PAR-DMY        TO W12-TODAY.
+039470       MOVE PAR-YMD        TO W12-T-YMD.
+039480       MOVE PAR-COMPANY    TO W95-COMP.
+039500       MOVE PAR-TELEPHONE  TO W95-TEL.
+039740	     MOVE 7		 TO WS-PARKEY.
+039750       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+039760       MOVE PAR-CASH-AC    TO WS-CASH-AC.
+039770       GO TO ZA999.
+039780 ZA49.
+039790       DISPLAY "Too many files OPEN" AT 0812
+039800                WITH FOREGROUND-COLOR 14.
+039810       DISPLAY "Check the FILES option in CONFIG.SYS" AT 1012.
+039820       DISPLAY "Press any key to continue" AT 1212.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+039840	     GO TO ZA205.
+      *
+      *    ****    S E T U P   T H E   S C R E E N   G R A P H I C S
+      *
+040090 ZA60.
+040650	     MOVE LS-COMPANY	 TO WS-TOP-COMP.
+	   IF LS-USER = LS-SYS-ID
+	       MOVE "SupervisorÄ"  TO WS-WRKHD
+	   ELSE
+	       MOVE "Workstation"  TO WS-WRKHD
+	       MOVE LS-USER	   TO WS-WRKST.
+040660 ZA200.
+040670       DISPLAY "Files locked - Try later" AT 2312
+040680                WITH FOREGROUND-COLOR 14
+040690               " " WS-STATUS WITH FOREGROUND-COLOR 15.
+040700       DISPLAY "Press any key" AT 2512 
+040710		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+040730 ZA205.
+040740       EXIT PROGRAM.
+040750 ZA999.
+040760       EXIT.
+
+040780 I-O-ERRORS      SECTION	91.
+040790 OPEN-ERROR.
+040800	     DISPLAY CLR-SCREEN.
+040810       DISPLAY "Open error" AT 0812 WITH FOREGROUND-COLOR 14.
+040820       PERFORM DISPLAY-FILE-NAME.
+040830
+040840 READ-ERROR.
+040850       DISPLAY CLR-SCREEN.
+040860       DISPLAY "Read error" AT 0812 WITH FOREGROUND-COLOR 14.
+040870       PERFORM DISPLAY-FILE-NAME.
+040880
+040890 WRITE-ERROR.
+040900	     DISPLAY CLR-SCREEN.
+040910       DISPLAY "Write error" AT 0812 WITH FOREGROUND-COLOR 14.
+040920       PERFORM DISPLAY-FILE-NAME.
+040930
+
+040950 DISPLAY-FILE-NAME.
+040960     IF WS-F-ERROR = 2
+040970         MOVE W02-NETWORK TO WS-FILE
+040980         MOVE WS-NETKEY TO WS-KEY
+051950	   ELSE
+051960     IF WS-F-ERROR = 7
+041820	       MOVE W02-DEPART	 TO WS-FILE
+041870	       MOVE ZERO	 TO WS-KEY
+041830	       MOVE DPT-CODE	 TO WS-KEYX
+041230	   ELSE
+041240     IF WS-F-ERROR = 13
+041250         MOVE W02-JOBCST   TO WS-FILE
+041260         MOVE ZERO         TO WS-KEY
+               MOVE JOB-KEY      TO WS-KEYX
+041110	   ELSE
+041240	   IF WS-F-ERROR = 14
+041250	       MOVE W02-JOBHDR	 TO WS-FILE
+041260         MOVE ZERO         TO WS-KEY
+	       MOVE JHD-KEY2	 TO WS-KEYX
+041110	   ELSE
+041120     IF WS-F-ERROR = 15
+041130         MOVE WS-PARID     TO WS-FILE
+041140         MOVE WS-PARKEY    TO WS-KEY
+041150     ELSE
+041160     IF WS-F-ERROR = 18
+041170         MOVE W02-RECOVER  TO WS-FILE
+041180         MOVE WS-RECKEY    TO WS-KEY
+041190     ELSE
+041200     IF WS-F-ERROR = 19
+041210         MOVE W02-SALE TO WS-FILE
+041220         MOVE WS-SALKEY TO WS-KEY
+041270     ELSE
+041280     IF WS-F-ERROR = 21
+041290         MOVE W02-SPARTS   TO WS-FILE
+041300         MOVE ZERO         TO WS-KEY
+	       MOVE PRT-EXT-ITEM TO WS-KEYX
+041310     ELSE
+041320     IF WS-F-ERROR = 22
+041330         MOVE W02-STOCKF   TO WS-FILE
+041340         MOVE ZERO         TO WS-KEY
+	       MOVE STK-CODE	 TO WS-KEYX
+041840	   ELSE
+041850	   IF WS-F-ERROR = 37
+041860	       MOVE W02-SHARED	 TO WS-FILE
+041870	       MOVE WS-SHARED	 TO WS-KEY.
+041350	   IF WS-STATUS = "10"
+041360         MOVE "End of FILE" TO WS-STAT-MESSAGE
+041370     ELSE
+041380     IF WS-STATUS = "22"
+041390         MOVE "Duplicate record number" TO WS-STAT-MESSAGE
+041400     ELSE
+041410     IF WS-STATUS = "23"
+041420         MOVE "Invalid record number" TO WS-STAT-MESSAGE
+041430     ELSE
+041440     IF WS-STATUS = "24"
+041450         MOVE "DISK full" TO WS-STAT-MESSAGE
+041460     ELSE
+041470     IF WS-STATUS = "30"
+041480         MOVE "DISK error" TO WS-STAT-MESSAGE
+041490     ELSE
+041500     IF WS-STATUS = "94"
+041510         MOVE "FILE locked" TO WS-STAT-MESSAGE.
+041520       DISPLAY "File - " AT 1012 WS-FILE WITH FOREGROUND-COLOR 11.
+041530       DISPLAY "Status " AT 1212 
+041540                WS-STATUS WITH FOREGROUND-COLOR 11
+041550               ": " WS-STAT-MESSAGE WITH FOREGROUND-COLOR 14.
+041560     IF WS-STATUS NOT = "94" 
+041570         DISPLAY "Key    " AT 1412 
+041580                  WS-KEY WITH FOREGROUND-COLOR 11
+                        " " WS-KEYX WITH FOREGROUND-COLOR 11
+041590         DISPLAY "Reverse backup or contact program Support"
+041600                  AT 1612.
+041610         DISPLAY "Please make a note of these details" AT 1812.
+041620       STOP RUN.

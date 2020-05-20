@@ -1,0 +1,31 @@
+000010 FD  JCPHST    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JCPHST.
+000030 01  HST-RECORD1.
+	   03  HST-REF	       PIC  X(08).
+	   03  HST-INV	       PIC  X(08).
+	   03  HST-KEY.
+000360	       05  HST-MODEL   PIC  X(24).
+000040	       05  HST-SERIAL  PIC  X(15).
+      *
+      *    R E P A I R	 T Y P E :
+      * 			   1 = NORMAL REPAIR
+      * 			   2 = WARRANTY REPAIR
+      * 			   3 = REPEAT
+      *
+	   03  HST-TYPE        PIC  9(01).
+000060	   03  HST-DESC        PIC  X(40).
+	   03  HST-AC	       PIC  X(06).
+	   03  HST-NAME.
+	       05  HST-NKEY    PIC  X(12).
+               05  FILLER      PIC  X(28).
+	   03  HST-DATE        PIC  9(08)  COMP.
+	   03  HST-REMKS1      PIC  X(40).
+	   03  HST-REMKS2      PIC  X(40).
+	   03  HST-REMKS3      PIC  X(40).
+	   03  HST-REMKS4      PIC  X(40).
+	   03  HST-EXCLUSIVE   PIC S9(09)V99 COMP-3.
+	   03  HST-COST        PIC S9(09)V99 COMP-3.
+	   03  HST-TECH        PIC  9(04)    COMP-5.
+	   03  HST-WCOMP       PIC  X(06).
+	   03  HST-GROUP       PIC  X(06).

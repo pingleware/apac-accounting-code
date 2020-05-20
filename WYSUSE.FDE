@@ -1,0 +1,36 @@
+      /
+000010 FD  WYSUSER   IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-WYSUSER.
+       01  WSE-RECORD.
+	   03  WSE-NO	       PIC  X(03).
+	   03  WSE-STATION.
+	       05  WSE-TERM    PIC  9(03).
+	   03  WSE-NAME.
+	       05  WSE-NKEY    PIC  X(14).
+	       05  WSE-NREST   PIC  X(16).
+	   03  WSE-PASS        PIC  X(08).
+	   03  WSE-DATE        PIC  9(08) COMP-3.
+	   03  FILLER	       PIC  X(01).
+	   03  WSE-GL	       PIC  X(01).
+	   03  WSE-GLLEV       PIC  9(01).
+	   03  WSE-STOCK       PIC  X(01).
+	   03  WSE-STLEV       PIC  9(01).
+	   03  WSE-DEBT        PIC  X(01).
+	   03  WSE-DBLEV       PIC  9(01).
+	   03  WSE-CRED        PIC  X(01).
+	   03  WSE-CRLEV       PIC  9(01).
+	   03  WSE-PARM        PIC  X(01).
+	   03  WSE-PALEV       PIC  9(01).
+	   03  WSE-SALES       PIC  X(01).
+	   03  WSE-SALEV       PIC  9(01).
+	   03  WSE-JOBS        PIC  X(01).
+	   03  WSE-JBLEV       PIC  9(01).
+	   03  WSE-WAGES       PIC  X(01).
+	   03  WSE-WGLEV       PIC  9(01).
+	   03  WSE-ADM	       PIC  X(01).
+	   03  WSE-DIV	       PIC  9(03).
+	   03  WSE-SP	       PIC  9(02).
+	   03  WSE-ORD	       PIC  9(06) COMP-5.
+	   03  WSE-SEQ	       PIC  9(01).
+	   03  FILLER	       PIC  X(02).

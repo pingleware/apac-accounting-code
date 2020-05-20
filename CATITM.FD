@@ -1,0 +1,12 @@
+000010 FD  CATITM    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-CATITM.
+000030 01  CAI-RECORD1.
+	   03  CAI-KEY.
+	       05  CAI-ABREV   PIC  X(12).
+	       05  CAI-CODE    PIC  9(02).
+	       05  CAI-SEQ     PIC  9(04).
+	   03  CAI-EXT-ITEM.
+	       05  CAI-ITEM    PIC  X(14).
+	       05  CAI-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  CAI-QTY	       PIC  9(07)V999 COMP-3.

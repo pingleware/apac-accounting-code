@@ -1,0 +1,31 @@
+      /
+000890 FD  CHEQUE    LABEL RECORD STANDARD
+000900               VALUE OF FILE-ID W02-CHEQUE.
+000910 01  CHQ-RECORD1.
+000920     03  CHQ-CONTROL     PIC  9(06)    COMP.
+000930	   03  CHQ-DYMD        PIC  9(08).
+           03  CHQ-NEXT        PIC  9(06).
+000980	   03  FILLER	       PIC  X(52).
+000990 01  CHQ-RECORD2.
+001000     03  CHQ-TR-NUMBER   PIC  9(06)    COMP.
+	   03  CHQ-YMD	       PIC  9(08).
+           03  CHQ-RYMD REDEFINES CHQ-YMD.
+	       05  CHQ-CN      PIC  9(02).
+               05  CHQ-YR      PIC  9(02).
+               05  CHQ-MT      PIC  9(02).
+               05  CHQ-DY      PIC  9(02).
+001050     03  CHQ-NAME        PIC  X(24).
+001060     03  CHQ-TEL         PIC  X(14).
+           03  CHQ-RECEIVED REDEFINES CHQ-TEL.
+               05  CHQ-REC.
+		07 CHQ-DTE-REC PIC  9(08).
+	       05  FILLER      PIC  X(06).
+001070	   03  CHQ-DTE	       PIC  9(08).
+           03  CHQ-RDTE REDEFINES CHQ-DTE.
+               05  CHQ-DD      PIC  9(02).
+               05  CHQ-MM      PIC  9(02).
+	       05  CHQ-CC      PIC  9(02).
+               05  CHQ-YY      PIC  9(02).
+001080	   03  CHQ-VALUE       PIC S9(09)V99 COMP-3.
+	   03  CHQ-DEL	       PIC  X(01).
+	   03  FILLER	       PIC  X(05).

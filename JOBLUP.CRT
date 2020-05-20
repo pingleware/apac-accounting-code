@@ -1,0 +1,82 @@
+009090 01  S-JOB.
+009100     03  LINE  2 COLUMN 36 FOREGROUND-COLOR 15
+009110                           VALUE "JOB LOOKUP".
+009120     03  LINE  3 COLUMN  2 "Start Job No. :".
+009130     03  LINE  4 COLUMN  2 REVERSE-VIDEO VALUE 
+009140         "Job No   Ac No  Client Name (Account name)         Date 
+009150-        "  Document       Value".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออออัออออออัออออออออออออออออ
+      -        "ออออออออออออออัออออออออออัออออออออัอออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออออฯออออออฯออออออออออออออออ
+      -        "ออออออออออออออฯออออออออออฯออออออออฯอออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009180     03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE 
+009190       "Key in at least the first character of the order no. or pr
+009200-      "ess".
+009210     03          COLUMN 64 FOREGROUND-COLOR 14 VALUE "Esc".
+009220     03          COLUMN 67 FOREGROUND-COLOR 7 VALUE " to exit".
+009230	   03  LINE 25 COLUMN  2 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 14 VALUE
+009240                           "Pressing 'ENTER' key only, will start 
+009250- 			 "from the beginning of the order file".
+
+009260 01  S-JOBA.
+009270	   03  LINE  3 COLUMN  2 "Start Account No :".
+
+009260 01  S-JOBI.
+009270	   03  LINE  3 COLUMN  2 "Start Item Desc. :".
+
+009260 01  S-JOBN.
+009270	   03  LINE  3 COLUMN  2 "Start Cust. Name :".
+
+009260 01  S-JOBC.
+009270	   03  LINE  3 COLUMN  2 "Start Cont. Name :".
+
+       01  S-JOBD.
+009270	   03  LINE  3 COLUMN  2 "Start Date YYMMDD:".
+
+009280 01  SA-JOB.
+009290	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009300				 PIC  Z(08) USING W10-JCST AUTO.
+
+009310 01  SA-JOBA.
+009320	   03  LINE  3 COLUMN 21 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009330				 PIC  X(06) USING W80-ACNO AUTO.
+
+009310 01  SA-JOBI.
+009320	   03  LINE  3 COLUMN 21 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009330				 PIC  X(30) USING W10-IDESC AUTO.
+
+009310 01  SA-JOBN.
+009320	   03  LINE  3 COLUMN 21 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009330				 PIC  X(40) USING W40-NAME AUTO.
+
+009310 01  SA-JOBC.
+009320	   03  LINE  3 COLUMN 21 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009330				 PIC  X(30) USING W40-CONTACT AUTO.
+
+009310 01  SA-JOBD.
+009320	   03  LINE  3 COLUMN 21 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009330				 PIC  Z9/99/9999 USING W40-DTE AUTO.
+
+       01  S-DESC.
+008720	   03  LINE  4 COLUMN 02 REVERSE-VIDEO VALUE
+009140	       "Job No   Ac No  Client Name (Account name)      Item Des
+009150-        "cription (Comment)    ".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออออัออออออัออออออออออออออออ
+      -        "อออออออออออออออัออออออออออออออออออออออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออออฯออออออฯออออออออออออออออ
+      -        "อออออออออออออออฯออออออออออออออออออออออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".

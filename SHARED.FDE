@@ -1,0 +1,29 @@
+000010 FD  SHARED    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-SHARED.
+000030 01  SHR-RECORD.
+000040	   03  FILLER	       PIC  X(190).
+
+       01  SHR-RECORD5.
+000950	   03  SHR-RECORDS     PIC  9(06)    COMP-5.
+000960	   03  SHR-TOTAL       PIC S9(11)V99 COMP-3.
+000970	   03  SHR-BALANCE     PIC S9(11)V99 COMP-3.
+000980	   03  SHR-TODAY       PIC S9(11)V99 COMP-3.
+000990	   03  SHR-VAT-DUE     PIC S9(11)V99 COMP-3.
+001000	   03  SHR-LAYBUY      PIC  9(06)    COMP-5.
+001010	   03  SHR-LAYMAX      PIC  9(06)    COMP-5.
+001020	   03  SHR-AINDEX      PIC  9(06)    COMP-5.
+001030	   03  FILLER	       PIC  X(80).
+	   03  FILLER	       PIC  X(52).
+      *
+      *    ****    Inserted to help if lockup occurs
+      *
+      *	   03  FILLER	       PIC  X(60).
+	   03  SHR-UPDATE-SEQ  PIC  9(06)    COMP-5.
+	   03  SHR-RUN-DATE    PIC  9(08)    COMP-3.
+	   03  SHR-DEBT        PIC  X(01).
+	   03  SHR-CRED        PIC  X(01).
+	   03  SHR-STOCK       PIC  X(01).
+	   03  SHR-GLED        PIC  X(01).
+	   03  SHR-LAY	       PIC  X(01).
+001040	   03  SHR-CHECK       PIC  9(08)    COMP-3.

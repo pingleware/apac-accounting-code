@@ -1,0 +1,27 @@
+      /
+      *     ******   ******** **    **	      ******  **     **
+      *    **	 **	**    **   **		**    ***    **
+      *    **		**    **  **		**    ** *   **
+      *     ******	**    *****    ******	**    **  *  **
+      * 	 **	**    **  **		**    **   * **
+      *    **	 **	**    **   **		**    **    ***
+      *     ******	**    **    **	      ******  **     **
+      *
+000010 FD  TRFRIN    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-TRFRIN.
+000030 01  SIN-RECORD1.
+	   03  SIN-KEY.
+	       05  SIN-BR-CODE PIC  X(03).
+	       05  SIN-REF     PIC  X(07).
+	   03  SIN-DATE        PIC  9(08)     COMP.
+	   03  SIN-USER        PIC  X(03).
+	   03  SIN-WS.
+	       05  SOT-WSNO    PIC  9(03).
+	   03  SIN-USER-NAME   PIC  X(30).
+	   03  SIN-BR-FROM     PIC  X(38).
+	   03  SIN-BR-TO       PIC  X(38).
+	   03  SIN-LINES       PIC  9(07)     COMP-3.
+	   03  SIN-VALUE       PIC S9(10)V999 COMP-3.
+	   03  SIN-TO-CDE      PIC  X(03).
+	   03  FILLER	       PIC  X(04).

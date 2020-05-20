@@ -1,0 +1,16 @@
+       01  W05-PR-ROUND.
+           03  W05-ROUND       PIC  X(01).
+           03  W05-ROUND-VAL   PIC  9V9(02).
+           03  W05-RVAL REDEFINES W05-ROUND-VAL.
+               05  W05-RAND    PIC  9(01).
+               05  W05-CENTS   PIC  9(02).
+           03  W05-RVAL2 REDEFINES W05-ROUND-VAL.
+               05  FILLER      PIC  9(01).
+               05  W05-RVC1    PIC  9(01).
+               05  W05-RVC2    PIC  9(01).
+           03  W05-HLF-VAL     PIC  9V99.
+           03  W05-TQTR-VAL    PIC  9V99.
+           03  W05-CALC-VAL    PIC  9(02)V99.
+           03  W05-CALC-RRCC REDEFINES W05-CALC-VAL.
+               05  W05-RVR1    PIC  9(01).
+               05  W05-RVRCC   PIC  9(01)V99.

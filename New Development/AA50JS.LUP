@@ -1,0 +1,32 @@
+       AA50-LOOKUP     SECTION.
+       AA50J.
+             PERFORM SAVE-SCREEN.
+             MOVE 4                TO W44-FUNCTION.
+             PERFORM SCREEN-CONTENTS.
+             PERFORM JOBHDR-LOOKUP.
+             GO TO AA58.
+
+       AA50.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё          Save the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM SAVE-SCREEN.
+             MOVE PRG-STOCK-LUP      TO PRG-NAME.
+             CALL PRG-NAME USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY W10-STOCK ON EXCEPTION GO TO AA55
+             END-CALL.
+             CANCEL PRG-NAME.
+             GO TO AA58.
+
+       AA55.
+             MOVE SPACE            TO WS-ERR-MES.
+             STRING "Program- " DELIMITED SIZE PRG-NAME DELIMITED " " " not on disk, press ANY key" DELIMITED SIZE INTO WS-ERR-MES.
+             PERFORM ERROR-MESSAGE.
+
+       AA58.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё       Restore the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM RESTORE-SCREEN.
+
+       AA59.
+             EXIT.

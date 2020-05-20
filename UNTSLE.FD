@@ -1,0 +1,9 @@
+      /
+000010 FD  UNTSLE    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-UNTSLE.
+000030 01  UNT-RECORD1.
+           03  UNT-KEY.
+               05  UNT-LEDG    PIC  9(03).
+           03  FILLER          PIC  X(01).
+           03  UNT-DESC        PIC  X(30).
+           03  UNT-QTY         PIC S9(09)V99 COMP-3.

@@ -1,0 +1,23 @@
+      /*****************************************************************
+      *                                                                *
+      *      C A S H   B O O K   A C C O U N T   L A Y O U T           *
+      *                                                                *
+      *      VALUE FIELDS ALLOW FOR 9 WHOLE NUMBERS.                   *
+      *                                                                *
+      ******************************************************************
+000010 FD  CSBOOK    LABEL RECORD IS STANDARD
+000020               VALUE OF FILE-ID IS W02-CSBOOK.
+000030 01  CSB-REC.
+000220     03  CSB-MOVE.
+000230         05  CSB-VAL     PIC S9(09)V99 COMP-3 OCCURS 12.
+000240     03  CSB-DT          PIC S9(09)V99 COMP-3.
+000250     03  CSB-CR          PIC S9(09)V99 COMP-3.
+000260     03  CSB-BAL         PIC S9(09)V99 COMP-3.
+000270     03  CSB-LNK         PIC  9(06)    COMP-5.
+000280     03  CSB-LST         PIC  9(06)    COMP-5.
+      *
+      *    ****   Monthly Balance for each month of the previous year.
+      *
+000290     03  CSB-LSTY.
+000300         05  CSB-LVAL    PIC S9(09)V99 COMP-3 OCCURS 12.
+

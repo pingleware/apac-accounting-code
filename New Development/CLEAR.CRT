@@ -1,0 +1,87 @@
+      *
+      *        This COPY routine is used by programs with 'CHAIN.LS'
+      *
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё                 HEADING-AND-CLEAR-SCREEN                  Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *
+      *        C L E A R   T H E   E N T I R E   S C R E E N   A N D
+      *            D I S P L A Y   P R O G R A M / R O U T I N E
+      *                           H E A D I N G S
+      *
+       HEADING-AND-CLEAR-SCREEN       SECTION.
+       HEADING-AND-CLEAR-SCREEN-CALL.
+             MOVE "S"              TO CRT-TYPE.
+             CALL "UTP\CRTHEAD" USING CRT-HEADINGS LS-USER-ID.
+
+       HEADING-AND-CLEAR-SCREEN-EXIT.
+             EXIT.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё                      CHANGE-HEADING                       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *    
+      *         C H A N G E   T H E   S C R E E N   H E A D I N G S
+      *
+       CHANGE-HEADING       SECTION.
+       CHANGE-HEADING-CALL.
+             MOVE "H"              TO CRT-TYPE.
+             CALL "UTP\CRTHEAD" USING CRT-HEADINGS LS-USER-ID.
+
+       CHANGE-HEADING-EXIT.
+             EXIT.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё                       ERASE-SCREEN                        Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *
+      *        E R A S E   S C R E E N   F R O M   S P E C I F I E D
+      *                           L O C A T I O N
+      *
+       ERASE-SCREEN       SECTION.
+       ERASE-SCREEN-CALL.
+             MOVE "E"              TO CRT-TYPE.
+             CALL "UTP\CRTHEAD" USING CRT-HEADINGS LS-USER-ID.
+
+       ERASE-SCREEN-EXIT.
+             EXIT.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё                        CHANGE-TIME                        Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *
+      *           T H I S   R O U T I N E   I S   U S E D   T O
+      *      C H A N G E   T H E   T I M E   O N   T H E   S C R E E N
+      *
+       CHANGE-TIME        SECTION.
+       CHANGE-SETUP.
+             MOVE "T"              TO CRT-TYPE.
+             CALL "UTP\CRTHEAD" USING CRT-HEADINGS LS-USER-ID.
+
+       CHANGE-TIME-EXIT.
+             EXIT.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё                    CLEAR-L46-AND-50                         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *
+      *           T H I S   R O U T I N E   I S   U S E D   T O
+      *     C L E A R   L I N E   46 AND 50   O N   T H E   S C R E E N
+      *
+       CLEAR-L46-AND-50   SECTION.
+       CLEAR-46-50.
+             MOVE "4"            TO CRT-TYPE.
+             CALL "UTP\CRTHEAD" USING CRT-HEADINGS LS-USER-ID.
+
+       CLEAR-46-50-EXIT.
+             EXIT.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё                         CLEAR-L50                         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *
+      *           T H I S   R O U T I N E   I S   U S E D   T O
+      *       C L E A R   L I N E   50   O N   T H E   S C R E E N
+      *
+       CLEAR-L50   SECTION.
+       CLEAR-SETUP.
+             MOVE "C"            TO CRT-TYPE.
+             CALL "UTP\CRTHEAD" USING CRT-HEADINGS LS-USER-ID.
+
+       CLEAR-EXIT.
+             EXIT.

@@ -1,0 +1,24 @@
+      *
+      *    ****    A P A C   H E L P   ( C A L L   P R O C E D U R E )
+      *
+       HELP-ROUTINE    SECTION.
+011050       PERFORM SAVE-SCREEN.
+             CALL "HLP\APACHLP" USING WS-HELP ON EXCEPTION GO TO HELP-NO-PRG
+             END-CALL.
+             CANCEL "APACHLP".
+       HELP-RESTORE.
+011320       PERFORM RESTORE-SCREEN.
+             GO TO HELP-EXIT.
+
+       HELP-NO-PRG.
+             PERFORM CLEAR-L50.
+             DISPLAY "Program : " AT 2502   WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+     		              "APACHLP"              WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+     		              " not on disk, press " WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+     		              "ANY"                  WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+     		              " key to continue"     WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue.
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+             GO TO HELP-RESTORE.
+
+       HELP-EXIT.
+             EXIT.

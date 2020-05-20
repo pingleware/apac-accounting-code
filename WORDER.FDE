@@ -1,0 +1,97 @@
+      /
+000010 FD  WORDER    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-WORDER.
+000030 01  WOR-REC1.
+	   03  WOR-KEY.
+000050	     05  WOR-REF       PIC  X(08).
+	     05  WOR-SEQN.
+		 07  WOR-SEQ   PIC  9(03).
+		 07  WOR-SUB   PIC  9(02).
+	     05  WOR-SQN REDEFINES WOR-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 0  -  HEADER RECORD
+      *                 : 1  -  ITEM DETAILS
+      *                 : 2  -  PARTS DETAILS
+      *                 : 3  -  REMARKS
+      *                 : 4  -  INTERNAL NOTES FOR PICKING SLIP 
+      *                 : 5  -  ADDRESS
+      *                 : 9  -  TRAILER
+      *
+	   03  WOR-TYPE        PIC  9(01).
+	   03  WOR-AC	       PIC  X(06).
+	   03  WOR-DETAIL.
+	     05  WOR-NAME      PIC  X(40).
+000070	     05  WOR-DTE       PIC  9(08)    COMP-3.
+	     05  WOR-PICNO     PIC  9(02)    COMP-5.
+000090	     05  WOR-ORD       PIC  X(12).
+000130	     05  WOR-SMAN      PIC  9(04)    COMP-5.
+	     05  WOR-DOC       PIC  X(01).
+	       88  WOR-DELIV   VALUE "D".
+	       88  WOR-INVOIC  VALUE "I".
+	       88  WOR-ORDER   VALUE "O".
+	       88  WOR-QUOTE   VALUE "Q".
+	     05  WOR-PAGE      PIC  9(02).
+	     05  WOR-OREF      PIC  X(09).
+	     05  WOR-EXP       PIC  X(01).
+	     05  WOR-PRC       PIC  X(01).
+	     05  WOR-ADV       PIC  X(01).
+	     05  WOR-TEL       PIC  X(14).
+	     05  WOR-CONTACT   PIC  X(19).
+	     05  WOR-BIN       PIC  X(06).
+000140	   03  WOR-DET2 REDEFINES WOR-DETAIL.
+	     05  WOR-EXT-ITEM.
+000190	       07  WOR-ITEM    PIC  X(14).
+	       07  WOR-ITM     PIC  X(03).
+	       07  FILLER      PIC  X(01).
+000210	     05  WOR-DESC      PIC  X(40).
+	     05  WOR-SERIAL REDEFINES WOR-DESC.
+                 07  FILLER    PIC X(01).
+		 07  WOR-SNUM OCCURS 2.
+		     09  WOR-SNO
+			       PIC X(18).
+                     09  FILLER
+                               PIC X(01).
+                 07  FILLER    PIC X(01).
+000160	     05  WOR-QNT       PIC S9(05)V99 COMP-3.
+	     05  WOR-COST      PIC S9(06)V999 COMP-3.
+	     05  WOR-SELL      PIC S9(08)V999 COMP-3.
+	     05  WOR-VAT       PIC S9(07)V99 COMP-3.
+000280	     05  WOR-VAL       PIC S9(09)V99 COMP-3.
+000270	     05  WOR-INCTAX    PIC S9(09)V99 COMP-3.
+000270	     05  WOR-NONTAX    PIC S9(09)V99 COMP-3.
+000270	     05  WOR-TAXVAL    PIC S9(09)V99 COMP-3.
+	     05  WOR-DSC       PIC S9(02)V99 COMP-3.
+	     05  WOR-DISC      PIC S9(07)V99 COMP-3.
+	     05  WOR-SERNO     PIC  X(01).
+	     05  WOR-PER       PIC  X(07).
+	     05  WOR-VAT-SUB   PIC  9(01).
+	     05  WOR-PACK      PIC  9(01)    COMP-0.
+000140	   03  WOR-DET3 REDEFINES WOR-DETAIL.
+000290	     05  WOR-SUBTOT    PIC S9(09)V99 COMP-3.
+000300	     05  WOR-DSCNT     PIC S9(07)V99 COMP-3.
+	     05  WOR-NON-TXBL  PIC S9(09)V99 COMP-3.
+	     05  WOR-TAXABLE   PIC S9(09)V99 COMP-3.
+000310	     05  WOR-TAX       PIC S9(07)V99 COMP-3.
+000320	     05  WOR-TOT       PIC S9(09)V99 COMP-3.
+	     05  WOR-INVOICE   PIC  X(08).
+	     05  WOR-BAL       PIC S9(09)V99 COMP-3.
+000310	     05  WOR-ADVTAX    PIC S9(07)V99 COMP-3.
+	     05  WOR-INSTRUCT  PIC  X(09).
+	     05  WOR-PMETH     PIC  9(01).
+	     05  WOR-STATUS    PIC  9(03)    COMP-3.
+	     05  WOR-HTEL      PIC  X(14).
+	     05  WOR-ID        PIC  X(14).
+	     05  WOR-COMMENT   PIC  X(29).
+000140	   03  WOR-DET4 REDEFINES WOR-DETAIL.
+	     05  WOR-AD1       PIC  X(30).
+	     05  WOR-AD2       PIC  X(26).
+	     05  WOR-AD3       PIC  X(26).
+	     05  WOR-AD4       PIC  X(26).
+	     05  WOR-PC        PIC  X(04).
+	     05  FILLER        PIC  X(02).
+000140	   03  WOR-DET5 REDEFINES WOR-DETAIL.
+	     05  WOR-TEXT      PIC  X(63).
+	     05  WOR-SIGN      PIC  X(20).
+	     05  FILLER        PIC  X(31).

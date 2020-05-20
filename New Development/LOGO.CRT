@@ -1,0 +1,118 @@
+004360 01  APAC.
+004370     03  BLANK SCREEN FOREGROUND-COLOR Grey BACKGROUND-COLOR Grey.
+004380     03  LINE 10 COLUMN  2 VALUE "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"  FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "¿"                        HIGHLIGHT.
+004380     03  LINE 11 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ"                            HIGHLIGHT.
+           03          COLUMN 76 VALUE                                                                           "¿  "  FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+004410     03  LINE 12 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+004420     03          COLUMN 25 VALUE                        "ß"                                                       FOREGROUND-COLOR Blue  HIGHLIGHT.
+004440     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+004450     03  LINE 13 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+004460     03          COLUMN 24 VALUE                       "ßßß"                                                      FOREGROUND-COLOR Blue  HIGHLIGHT.
+004480     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+004490     03  LINE 14 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+004500     03          COLUMN 23 VALUE                      "ßßßßß"                                                     FOREGROUND-COLOR Blue  HIGHLIGHT.
+004520     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+004530     03  LINE 15 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+004540     03          COLUMN 22 VALUE                     "ßßß ßßß"                                                    FOREGROUND-COLOR Blue  HIGHLIGHT.
+004580     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+004590     03  LINE 16 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+004600     03          COLUMN 21 VALUE                    "ßßß   ßßß"                                                   FOREGROUND-COLOR Blue  HIGHLIGHT.
+004640     03          COLUMN 34 VALUE                                 "ßßß ßßß    ßß          ßß ßß"                   FOREGROUND-COLOR Black.
+004740     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+004750     03  LINE 17 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+004760     03          COLUMN 20 VALUE                   "ßßß     ßßß"                                                  FOREGROUND-COLOR Blue  HIGHLIGHT.
+004800     03          COLUMN 35 VALUE                                  "ßß  ßßß   ßßß        ßß   ßß"                  FOREGROUND-COLOR Black.
+004900     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+004910     03  LINE 18 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+004920     03          COLUMN 20 VALUE                   "ßßßßßßßßßßß"                                                  FOREGROUND-COLOR Blue  HIGHLIGHT.
+004940     03          COLUMN 35 VALUE                                  "ßß  ßßß   ß ßß      ßßß"                       FOREGROUND-COLOR Black.
+005040     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005050     03  LINE 19 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005060     03          COLUMN 20 VALUE                   "ßßßßßßßßßßß"                                                  FOREGROUND-COLOR Blue  HIGHLIGHT.
+005080     03          COLUMN 35 VALUE                                  "ßß  ßßß   ß  ßß     ßßß"                       FOREGROUND-COLOR Black.
+005180     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005190     03  LINE 20 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005200     03          COLUMN 20 VALUE                   "ßßß     ßßß"                                                  FOREGROUND-COLOR Blue  HIGHLIGHT.
+005240     03          COLUMN 35 VALUE                                  "ßß ßßß    ß ßßßß    ßßß"                       FOREGROUND-COLOR Black.
+005340     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005350     03  LINE 21 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005360     03          COLUMN 20 VALUE                   "ßßß     ßßß"                                                  FOREGROUND-COLOR Blue  HIGHLIGHT.
+005400     03          COLUMN 35 VALUE                                  "ßß        ß    ßß   ßßß"                       FOREGROUND-COLOR Black.
+005480     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005490     03  LINE 22 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005500     03          COLUMN 20 VALUE                   "ßßß     ßßß"                                                  FOREGROUND-COLOR Blue  HIGHLIGHT.
+005540     03          COLUMN 35 VALUE                                  "ßß        ß     ßß   ßß   ßß"                  FOREGROUND-COLOR Black.
+005640     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005650     03  LINE 23 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005660     03          COLUMN 20 VALUE                   "ßßß     ßßß"                                                  FOREGROUND-COLOR Blue  HIGHLIGHT.
+005700     03          COLUMN 34 VALUE                                 "ßßßß      ßßß   ßßßß   ßß ßß"                   FOREGROUND-COLOR Black.
+005800     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005810     03  LINE 24 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005820     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005870     03  LINE 25 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005840     03          COLUMN 14 VALUE             "APAC - Accounting system (Version 9.04.04 - 2018)."                 FOREGROUND-COLOR Cyan.
+005900     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005910     03  LINE 26 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005860     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005930     03  LINE 27 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005880     03          COLUMN 14 VALUE             "Copyright (C) 1982 to 2018 - James William Lemmon."                 FOREGROUND-COLOR Cyan.
+005960     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005970     03  LINE 28 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005980     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+005990     03  LINE 29 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+005880     03          COLUMN 14 VALUE             "Distributed by:"                                                    FOREGROUND-COLOR Grey HIGHLIGHT.
+006000     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+006010     03  LINE 30 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+           03          COLUMN 32 VALUE                                "James Lemmon T/A J W L   S o f t w a r e ."      FOREGROUND-COLOR Black.
+006020     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+006030     03  LINE 31 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "³                                                                         "                         HIGHLIGHT.
+006040     03          COLUMN 76 VALUE                                                                           "³"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+006050     03  LINE 32 COLUMN  2 VALUE "³  "                                                                            FOREGROUND-COLOR Black HIGHLIGHT.
+004380     03          COLUMN  5 VALUE    "À"                                                                                                  HIGHLIGHT.
+           03          COLUMN  6 VALUE     "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"    FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN 79 VALUE                                                                              "³"                        HIGHLIGHT.
+006050     03  LINE 33 COLUMN  2 VALUE "À"                                                                              FOREGROUND-COLOR Black HIGHLIGHT.
+           03          COLUMN  3 VALUE  "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ"                        HIGHLIGHT.

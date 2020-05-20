@@ -1,0 +1,36 @@
+      /
+000010 FD  CRTOLD    LABEL RECORD IS STANDARD
+000020		     VALUE OF FILE-ID IS W02-CRTOLD
+000220		     RECORDING MODE IS VARIABLE.
+000030 01  CTO-REC.
+	   03  CTO-KEY.
+000150	       05  CTO-CRED    PIC  X(06).
+000050	       05  CTO-SDTE    PIC  9(08)    COMP.
+000040	       05  CTO-CODE    PIC  9(02).
+000060	       05  CTO-SINV.
+		   07  CTO-SINN PIC  9(08).
+	       05  CTO-SEQ     PIC  9(02)    COMP-X.
+      *
+      *    TYPE: "U" = Unpaid.         \
+      * 	 "P" = Paid.		>  CREDIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      * 	 "A" = Allocated.	>  DEBIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050	   03  CTO-TYPE	       PIC  X(01).
+	   03  CTO-PJ	       PIC  X(01).
+000070	   03  CTO-REF.
+	       05  CTO-REFNO   PIC  9(08).
+000080	   03  CTO-DTE	       PIC  9(08)    COMP-3.
+000090	   03  CTO-ORD	       PIC  X(07).
+000100	   03  CTO-COST	       PIC S9(09)V99 COMP-3.
+	   03  CTO-TAXFREE     PIC S9(09)V99 COMP-3.
+000110	   03  CTO-SELL	       PIC S9(09)V99 COMP-3.
+	   03  CTO-TAX	       PIC S9(07)V99 COMP-3.
+000120	   03  CTO-AGE	       PIC  9(04)    COMP-5.
+	   03  CTO-PAID	       PIC S9(09)V99 COMP-3.
+	   03  CTO-ALLOCATED REDEFINES CTO-PAID
+                               PIC S9(09)V99 COMP-3.
+	   03  CTO-DREF	       PIC  X(08).

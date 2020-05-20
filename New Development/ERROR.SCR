@@ -1,0 +1,23 @@
+      *    *************************************************************
+      *    ****   T H I S   R O U T I N E   I S   U S E D   T O
+      *            D I S P L A Y   E R R O R   M E S S A G E S
+      *    *************************************************************
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³                       ERROR-MESSAGE                       ³
+      *    ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+       ERROR-MESSAGE   SECTION.
+       ERROR-SETUP.
+           CALL "UTP\ERRORMES" USING WS-OPTION WS-ERR-MES WS-MES-LINE LS-USER-ID.
+
+       ERROR-EXIT.
+           EXIT.
+
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³                  ERROR-MESSAGE (2 LINES)                  ³
+      *    ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+       ERROR-MESSAGE-2 SECTION.
+       ERROR-SETUP-2.
+           CALL "UTP\ERRORMS2" USING WS-OPTION WS-ERR-MES WS-ERR-MES-2 WS-MES-LINE LS-USER-ID.
+
+       ERROR-EXIT-2.
+           EXIT.

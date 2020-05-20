@@ -1,0 +1,26 @@
+      /
+000010 FD  SALE      IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-SALE.
+000030 01  SAL-RECORD1.
+000040	   03  SAL-CODE        PIC  9(03).
+000090	   03  SAL-DESC.
+	       05  SAL-QTE     PIC  X(07).
+	       05  FILLER      PIC  X(01).
+	       05  SAL-SDSC    PIC  X(52).
+000110	   03  SAL-LEDG	       PIC  X(04).
+000120	   03  SAL-SELL        PIC S9(09)V99 COMP-3.
+000130	   03  SAL-VAT	       PIC S9(09)V99 COMP-3.
+000140	   03  SAL-VAL	       PIC S9(09)V99 COMP-3.
+000150	   03  SAL-INCTAX      PIC S9(09)V99 COMP-3.
+000160	   03  SAL-NONTAX      PIC S9(09)V99 COMP-3.
+000170	   03  SAL-TAXVAL      PIC S9(09)V99 COMP-3.
+000180     03  SAL-DSC         PIC S9(02)V99 COMP-3.
+000190	   03  SAL-DISC        PIC S9(07)V99 COMP-3.
+	   03  SAL-SEQN.
+               05  SAL-SEQ     PIC  9(03).
+               05  SAL-SUB     PIC  9(02).
+           03  SAL-SQN REDEFINES SAL-SEQN
+                               PIC  9(05).
+           03  SAL-TECH        PIC  9(02)    COMP-3.
+	   03  FILLER	       PIC  X(38).

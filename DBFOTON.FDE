@@ -1,0 +1,70 @@
+      /
+000010 FD  DBFOTO    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DBFOTO.
+000030 01  DBF-RECORD1.
+	   03  DBF-KEY.
+000170	       05  DBF-AC      PIC  X(06).
+	       05  DBF-CONT    PIC  X(08).
+	   03  DBF-DESC        PIC  X(30).
+000060	   03  DBF-DATE        PIC  9(08)     COMP-3.
+	   03  DBF-RENTAL      PIC S9(07)V99  COMP-3.
+	   03  DBF-TYPE        PIC  X(01).
+	       88  ELECTRICITY VALUE "E".
+	       88  CONTRACT    VALUE "C".
+	       88  OTHER       VALUE "O".
+	       88  RENTAL      VALUE "R".
+	       88  SERVICE     VALUE "S".
+	       88  TENANT      VALUE "T".
+	       88  WATER       VALUE "W".
+      *
+      * 	   M A N A G E M E N T	 F E E
+      *		       A P P L I C A B L E
+      *	   T E N A N T	 -   S H O P   ( C E N T R E )
+      *    ===========================================
+	   03  DBF-MFEE        PIC S9(07)V99  COMP-3.
+      *    ===========================================
+      *
+      * 		 T U R N O V E R
+      * 	       A P P L I C A B L E
+      *    T E N A N T	 -   S H O P   ( C E N T R E )
+      *    ===========================================
+	   03  DBF-TURNOVER    PIC S9(13)V99  COMP-3.
+	   03  DBF-TURNRATE    PIC S9(03)V99  COMP-3.
+      *    ===========================================
+	   03  DBF-FREQ        PIC  X(01).
+	   03  DBF-ADATE       PIC  9(08)     COMP-3.
+	   03  DBF-ESC	       PIC  9(03)V99  COMP-3.
+	   03  DBF-RATE        PIC S9(06)V999 COMP-3.
+      *
+      * 	  V A R I A B L E   R A T E S
+      * 	      A P P L I C A B L E
+      *     W H E N E V E R   C O N S U M P T I O N
+      *    I S	 O N   A   S L I D I N G   S C A L E
+      *    =========================================
+	   03  DBF-TO	       PIC  9(08)     COMP-5.
+	   03  DBF-RATE2       PIC S9(06)V999 COMP-3.
+	   03  DBF-TO2	       PIC  9(08)     COMP-5.
+	   03  DBF-RATE3       PIC S9(06)V999 COMP-3.
+	   03  DBF-TO3	       PIC  9(08)     COMP-5.
+      *    =========================================
+000110	   03  DBF-RDTE        PIC  9(08)     COMP-3.
+000100	   03  DBF-STRDNG      PIC  9(08)     COMP-5.
+000100	   03  DBF-LSTRDNG     PIC  9(08)     COMP-5.
+000100	   03  DBF-READING     PIC  9(08)     COMP-5.
+      *
+      * 	 A D D I T I O N A L   R E A D I N G S
+      * 		  A P P L I C A B L E
+      *    E L E C T R I C I T Y   -   T H R E E   P H A S E
+      *    =================================================
+000100	   03  DBF-STRDNG2     PIC  9(08)     COMP-5.
+000100	   03  DBF-LSTRDNG2    PIC  9(08)     COMP-5.
+000100	   03  DBF-READING2    PIC  9(08)     COMP-5.
+000100	   03  DBF-STRDNG3     PIC  9(08)     COMP-5.
+000100	   03  DBF-LSTRDNG3    PIC  9(08)     COMP-5.
+000100	   03  DBF-READING3    PIC  9(08)     COMP-5.
+      *    =================================================
+000120	   03  DBF-VALUE       PIC S9(07)V99  COMP-3.
+000120	   03  DBF-TAX	       PIC S9(05)V99  COMP-3.
+	   03  DBF-TCODE       PIC  X(01)     COMP-X.
+	   03  DBF-VAT	       PIC  9(01).

@@ -1,0 +1,42 @@
+       OPEN-PRINTER    SECTION.
+       OPEN-PRINT-FILE.
+      *
+      *    ****   O P E N   P R I N T E R   F I L E
+      *
+	     MOVE "O"		 TO WS-COMMAND.
+	     MOVE "S"		 TO WS-PRINTER.
+	     MOVE ZERO		 TO WS-ADVANCE
+				    WS-REPORT
+				    WS-SCREEN.
+	   IF LS-USER NUMERIC
+	       IF LS-USE > ZERO AND < 110
+		   MOVE LS-USE	 TO WS-USUB
+	       END-IF
+	   ELSE
+	       MOVE 110		 TO WS-USUB.
+014240       ADD 2549 WS-USUB    GIVING W25-RESULT.
+             MOVE W25-KEY        TO WS-PARKEY.
+             ADD 1 W25-SUB       GIVING WS-S6.
+014250       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+	   IF TRM-STDP(WS-S6) = 8
+	       MOVE "UTP\PRINTUSB"
+				 to PRG-PRINTUTL.
+	     MOVE 6		 TO WS-REPORT.
+
+       CALL-PRINTUTL.
+      *
+      *    ****   C A L L   T H E   P R I N T / S P O O L   U T I L I T Y
+      *
+	     CALL PRG-PRINTUTL USING WS-PARID
+				     LS-USER-ID
+				     WS-SCREEN-PRINT
+				     W02-PRINTER-DETAILS
+		  ON EXCEPTION
+		      MOVE "Print/Spool Utility problem"
+			       TO WS-ERR-STRING
+003260		      PERFORM ERROR-MESSAGE
+		      MOVE 8   TO WS-ERROR
+	     END-CALL.
+
+       OPEN-PRINTER-EXIT.
+	     EXIT.

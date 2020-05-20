@@ -1,0 +1,39 @@
+      /
+000010 FD  CRETRN    IS EXTERNAL
+		     LABEL RECORD IS STANDARD
+000020		     VALUE OF FILE-ID IS W02-CRETRN.
+000030 01  CRT-REC.
+	   02  CRT-CT.
+	   03  CRT-KEY.
+000150	       05  CRT-CRED	PIC  X(06).
+000050	       05  CRT-SDTE	PIC  9(08)    COMP.
+000040	       05  CRT-CODE	PIC  9(02).
+000060	       05  CRT-SINV	PIC  X(08).
+	       05  CRT-SEQ	PIC  9(02)    COMP-X.
+      *
+      *    TYPE: "U" = Unpaid.         \
+      * 	 "P" = Paid.		>  CREDIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      * 	 "A" = Allocated.	>  DEBIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050	   03  CRT-TYPE	       PIC  X(01).
+	   03  CRT-PJ	       PIC  X(01).
+000070	   03  CRT-REF	       PIC  X(08).
+000080	   03  CRT-DTE	       PIC  9(08)    COMP-3.
+000090	   03  CRT-ORD	       PIC  X(07).
+000100	   03  CRT-VALUE       PIC S9(09)V99 COMP-3.
+	   03  CRT-TAXFREE     PIC S9(09)V99 COMP-3.
+000110	   03  CRT-SELL	       PIC S9(09)V99 COMP-3.
+	   03  CRT-TAX	       PIC S9(07)V99 COMP-3.
+000120	   03  CRT-AGE	       PIC  9(04)    COMP-5.
+	   03  CRT-PAID	       PIC S9(09)V99 COMP-3.
+	   03  CRT-ALLOCATED REDEFINES CRT-PAID
+                               PIC S9(09)V99 COMP-3.
+	   03  CRT-DREF	       PIC  X(08).
+	   02  CRT-CRT.
+	   03  CRT-UPDATE      PIC  X(01).
+	   03  CRT-OUTSTD      PIC S9(09)V99 COMP-3.
+	   03  CRT-ALLOC       PIC S9(09)V99 COMP-3.

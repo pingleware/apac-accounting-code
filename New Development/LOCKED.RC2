@@ -1,0 +1,33 @@
+      *
+      *    ****    D I S P L A Y   R E C O R D   L O C K E D
+      *            M E S S A G E   -   D E L A Y   F O R
+      *            M I N I M U M   O F   2   S E C O N D S
+      *
+       LOCKED-RECORD      SECTION.
+       LOCK-REC.
+             DISPLAY SPACE AT 5050.
+             DISPLAY "LOCKED - waiting " AT 5050 WITH FOREGROUND-COLOR Brown HIGHLIGHT WS-SHRT-FN WITH FOREGROUND-COLOR Grey HIGHLIGHT " " WS-KEY WITH FOREGROUND-COLOR Brown HIGHLIGHT.
+             GO TO TWO-SECOND-DELAY.
+      
+       LOCK-USERS-REC.
+             DISPLAY SPACE AT 5050.
+             DISPLAY "waiting" AT 5051 WITH FOREGROUND-COLOR Brown HIGHLIGHT BLINK.
+             GO TO TWO-SECOND-DELAY.
+      
+       NETWORK-ERROR.
+             DISPLAY SPACE AT 5050.
+      	      DISPLAY "NET ERROR - Wait " AT 5050 WITH FOREGROUND-COLOR Brown HIGHLIGHT.
+      
+       TWO-SECOND-DELAY.
+             MOVE 200                TO WS-WAIT.
+             ACCEPT WS-STIME FROM TIME.
+      
+       LOCK-REC-LOOP.
+             ACCEPT WS-TIME FROM TIME.
+             SUBTRACT WS-STIME       FROM WS-TIME.
+           IF WS-TIME < WS-WAIT
+               GO TO LOCK-REC-LOOP.
+             DISPLAY SPACE AT 5050.
+      
+       LOCK-REC-EXIT.
+             EXIT.

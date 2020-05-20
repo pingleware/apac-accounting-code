@@ -1,0 +1,1931 @@
+      $SET LINKCOUNT"512"
+      ******************************************************************
+      *                                                                *
+      *    ******   ********  *******	********  **	**   ******    *
+      *   **	**     **     **    **	**	  ***	**  **	  **   *
+      *   **	       **     **    **	**	  ****	**  **	  **   *
+      *    ******      **     *******	****	  ** **	**  **	  **   *
+      * 	**     **     **	**	  **  ****  **	 ***   *
+      *   **	**     **     **	**	  **   ***   ******    *
+      *    ******      **     **	********  **	**	  **   *
+      *                                                                *
+      *     ENGLISH                                                    *
+      *                                                                *
+      *     S T O C K	E N Q U I R Y	P R O G R A M		       *
+      *                                                                *
+      *     VERSION 8.13.08 - August 2008			       *
+      * 							       *
+      ******************************************************************
+      * 							       *
+      *  September 2005 - F8 function introduced to view both the      *
+      * 		  last supplier as well as the alternate       *
+      * 		  supplier.				       *
+      * 		- See also STP006: Amend Supplier	       *
+      * 							       *
+      *  September 2005 - Details of JOBS introduced. New sort key     *
+      * 		  JOB-DETAILS = JOB-TYPE JOB-EXT-ITEM JOB-REF  *
+      * 							       *
+      *  May 2006	- New sort key (Lookup from Stock Item)        *
+      * 		  JOB-CODE = JOB-EXT-ITEM JOB-REF	       *
+      * 							       *
+      *  Aug 2008	- New file (STKALT) - Stock alternate index    *
+      * 		  included for lookups, using any word con-    *
+      * 		  tained in the Stock description.	       *
+      * 							       *
+      ******************************************************************
+000010 IDENTIFICATION DIVISION.
+000020 PROGRAM-ID.     STPENQ.
+000030 AUTHOR.         J W LEMMON (APAC).
+000040 DATE-WRITTEN.   OCTOBER 1982.
+
+		   COPYRIGHT NOTICE: COPYRIGHT (C) 1982 - 2008
+				     by James William Lemmon.
+				       (Id No. 4412165050082).
+
+		   All rights reserved.
+
+		   e-mail jwlemmon@gmail.com.
+
+000050 SECURITY.
+		   This program is free software; you can redistribute
+		   it and/or modify it under the terms of the GNU General
+		   Public License as published by the Free Software
+		   Foundation; either version 2 of the License, or (at
+		   your option) any later version.
+
+		   This program is distributed in the hope that it will
+		   be useful, but WITHOUT ANY WARRANTY; without even the
+		   implied warranty of MERCHANTABILITY or FITNESS FOR A
+		   PARTICULAR PURPOSE.	See the GNU General Public License
+		   for more details.
+
+		   You should have received a copy of the GNU General
+		   Public License along with this program; if not, write
+		   to the Free Software Foundation, Inc., 59 Temple Place
+		   - Suite 330, Boston, MA 02111-1307, USA.
+
+000050 ENVIRONMENT DIVISION.
+000060 CONFIGURATION SECTION.
+000070 SPECIAL-NAMES.  
+000080		       CURSOR IS CSTART
+000090		       CONSOLE IS CRT
+		       CRT STATUS IS KEY-STATUS.
+000090 INPUT-OUTPUT SECTION.
+000100 FILE-CONTROL.
+
+       COPY APACFIDS.SL.
+
+000120 COPY CONTROL.SL.
+
+000160 COPY CREDIT.SL.
+
+000120 COPY DEPART.SL.
+
+000120 COPY PARAM.SL.
+
+000200 COPY SPARTS.SL.
+
+000140 COPY STKMEM.SL.
+
+000140 COPY STOCK.SL.
+
+       COPY WARHSE.SL.
+
+       COPY WSTOCK.SL.
+
+000250 DATA DIVISION.
+000260 FILE SECTION.
+
+       COPY APACFIDS.FDE.
+
+000360 COPY CONTROL.FDE.
+
+000160 COPY CREDIT.FDE.
+
+000420 COPY DEPART.FDE.
+
+       COPY PARAM.FDE.
+
+000520 COPY SPARTS.FDE.
+
+000140 COPY STKMEM.FDE.
+
+000540 COPY STOCK.FDE.
+
+000280 COPY WARHSE.FDE.
+
+000280 COPY WSTOCK.FDE.
+
+      /
+001690 WORKING-STORAGE SECTION.
+       77  WS-CHECK	   PIC	X(18)	 VALUE
+			   "aeWlimemnomLalismJ".
+001700 77  WS-DISC	   PIC 999V99	 COMP-3.
+001710 77  WS-SUB	   PIC 9(04)	 COMP-5.
+001710 77  WS-S1	   PIC 9(04)	 COMP-5.
+001720 77  WS-S2	   PIC 9(04)	 COMP-5.
+001730 77  WS-S3	   PIC 9(04)	 COMP-5.
+001740 77  WS-S4	   PIC 9(04)	 COMP-5.
+001750 77  WS-S5	   PIC 9(04)	 COMP-5.
+001760 77  WS-S6	   PIC 9(04)	 COMP-5.
+001770 77  WS-S7	   PIC 9(04)	 COMP-5.
+001780 77  WS-S8	   PIC 9(04)	 COMP-5.
+001790 77  WS-IXS	   PIC 9(04)	 COMP-5.
+001800 77  WS-IXS1	   PIC 9(04)	 COMP-5.
+001810 77  WS-IXS2	   PIC 9(04)	 COMP-5.
+001820 77  WS-IXS3	   PIC 9(04)	 COMP-5.
+001830 77  WS-IXS4	   PIC 9(04)	 COMP-5.
+001860 77  WS-PARKEY	   PIC 9(06)	 COMP-5.
+001870 77  WS-NETKEY	   PIC 9(06)	 COMP-5.
+001920 77  WS-KEYSTR	   PIC 9(04)	 COMP-5.
+001930 77  WS-GST-RATE	   PIC S9(03)V99 COMP-3.
+001940 77  WS-MONTHS	   PIC S9(01)V99 COMP-3.
+001960 77  WS-KEY1	   PIC 9(04)	 COMP-5.
+001970 77  WS-KSTORE	   PIC 9(04)	 COMP-5.
+       77  WS-ETYPE	   PIC X(01).
+       77  WS-VAT-GST	   PIC X(01).
+002020 77  WS-OPTION	   PIC X(01).
+002020 77  WS-SKIP	   PIC X(01).
+002040 77  WS-ADJ	   PIC X(01).
+002070 77  WS-ERROR	   PIC 9(01).
+002120 77  WS-AMEND	   PIC 9(01)	 VALUE 0.
+002140 77  WS-CONREC	   PIC 9(01)	 VALUE ZERO.
+002200 77  WS-COMP	   PIC 9(01).
+002210 77  WS-WEEK	   PIC 9(01).
+002220 77  WS-TYPE	   PIC X(01).
+002180 77  WS-USE-CASES    PIC	X(01).
+002190 77  WS-USE-PACKS    PIC	X(01).
+       77  WS-USE-ITM	   PIC	X(01).
+       77  WS-EXT-STK	   PIC	X(01).
+002260 77  WS-BATCH	   PIC 9(05).
+002270 77  WS-PASSWORD	   PIC X(08).
+       77  WS-PRINT	   PIC 9(01).
+       77  WS-WH-QUANT	   PIC S9(08)V999 COMP-3.
+002280 77  WS-PASS	   PIC X(08).
+001330 77  WS-DESC-H1	   PIC	X(14) VALUE "Description".
+       77  WS-DESC-H2	   PIC	X(14) VALUE "Description 2".
+       77  WS-RT-HD	   PIC	X(10) VALUE "-Retail   ".
+       77  WS-WS-HD	   PIC	X(10) VALUE "-Wholesale".
+       77  WS-CS-HD	   PIC	X(10) VALUE "-Cash sale".
+       77  WS-NODEP	   PIC	X(30) VALUE
+			   "NO SUCH   D E P A R T M E N T".
+       77  PRG-NAME	   PIC	X(12) VALUE "STP\STPLOOK".
+       77  PRG-NAME2	   PIC	X(12) VALUE "STP\STPMOVE".
+       77  TODAY-DDMMYY	   PIC	9(08) COMP-5.
+       77  WS-USUB	   PIC	9(04) COMP-5.
+      /
+002420 01  WS-DB-LINE.
+002430     03  WS-TOP-LNE.
+002440         05  WS-TCHR PIC X(01) OCCURS 80.
+           03  WS-T-LINE REDEFINES WS-TOP-LNE.
+               05  FILLER  PIC X(01).
+               05  WS-H-LINE
+                           PIC X(78).
+               05  FILLER  PIC X(01).
+003080	   03  WS-TOP-LNE2.
+001390	       05  WS-TCR   PIC  X(80) VALUE "зддддддддддддддддддддддддд
+      -        "ддддддддддддддддддддддддддддддддддддддддддддддддддддд©".
+	   03  WS-TP-LINE2 REDEFINES WS-TOP-LNE2.
+               05  FILLER      PIC  X(01).
+               05  WS-TOP-COMP PIC  X(40).
+001430	       05  FILLER      PIC  X(23).
+	       05  WS-WRKHD    PIC  X(11).
+001430	       05  FILLER      PIC  X(01).
+	       05  WS-WRKST    PIC  X(03).
+001430	       05  FILLER      PIC  X(01).
+002450	   03  WS-MID-LNE.
+002460         05  WS-MCHR PIC X(01) OCCURS 80.
+	   03  WS-MST-LNE REDEFINES WS-MID-LNE.
+	       05  WS-MST1     PIC  X(01).
+	       05  WS-MST78    PIC  X(78).
+	       05  WS-MST80    PIC  X(01).
+002450	   03  WS-MID-LNE2.
+	       05  FILLER      PIC  X(01) VALUE "Ё".
+	       05  WS-BLNK78   PIC  X(78) VALUE ALL "╟".
+	       05  FILLER      PIC  X(01) VALUE "Ё".
+002470	   03  WS-BOT-LNE.
+002480         05  WS-BCHR PIC X(01) OCCURS 80.
+           03  WS-B-LINE REDEFINES WS-BOT-LNE.
+               05  FILLER  PIC X(01).
+               05  WS-F-LINE
+                           PIC X(78).
+               05  FILLER  PIC X(01).
+002470     03  WS-BOT-LNE2.
+002480         05  WS-BCH  PIC X(01) OCCURS 80.
+003240     03  WS-B-LINE REDEFINES WS-BOT-LNE2.
+003250         05  FILLER  PIC X(01).
+               05  WS-MEM-LINE.
+003260            07  WS-SRT-LINE
+003270                     PIC X(50).
+                  07  FILLER
+                           PIC X(10).
+003280         05  FILLER  PIC X(19).
+           03  WS-MM-LINE.
+               05  FILLER  PIC  X(01) VALUE X"B3".
+               05  FILLER  PIC  X(60) VALUE SPACES.
+               05  FILLER  PIC  X(01) VALUE X"B3".
+           03  WS-HME-LINE PIC  X(60) VALUE ALL X"CD".
+
+002330 COPY WS.WS.
+
+       01  WS-HELP.
+	   03  WS-MODULE       PIC  X(03) VALUE "STP".
+	   03  WS-PROG	       PIC  X(03) VALUE "ENQ".
+
+000290 01  WS-PARID.
+000020	   03  WS-SYS-ID       PIC  X(03).
+
+002350 01  W02-FID.
+
+       COPY APACFIDS.ID.
+
+       COPY CONTROL.ID.
+
+000160 COPY CREDIT.ID.
+
+       COPY DEPART.ID.
+
+       COPY PARAM.ID.
+
+000360 COPY SPARTS.ID.
+
+000140 COPY STKMEM.ID.
+
+000300 COPY STOCK.ID.
+
+000360 COPY WARHSE.ID.
+
+000360 COPY WSTOCK.ID.
+
+       01  W02-FILE-IDS.
+           03  W02-PRINTER.
+	       05  W02-REPORT PIC X(07) VALUE "STPENQ.".
+               05  W02-USER   PIC X(05) VALUE SPACES.
+
+       COPY W05.VAT.
+
+       01  W05-EXTRA.
+	   03  W05-ROUND       PIC  X(01).
+           03  W05-ROUND-VAL   PIC  9V9(02).
+           03  W05-RVAL REDEFINES W05-ROUND-VAL.
+               05  W05-RAND    PIC  9(01).
+               05  W05-CENTS   PIC  9(02).
+           03  W05-RVAL2 REDEFINES W05-ROUND-VAL.
+               05  FILLER      PIC  9(01).
+               05  W05-RVC1    PIC  9(01).
+               05  W05-RVC2    PIC  9(01).
+           03  W05-HLF-VAL     PIC  9V99.
+           03  W05-TQTR-VAL    PIC  9V99.
+           03  W05-CALC-VAL    PIC  9(02)V99.
+           03  W05-CALC-RRCC REDEFINES W05-CALC-VAL.
+               05  W05-RVR1    PIC  9(01).
+               05  W05-RVRCC   PIC  9(01)V99.
+
+       01  W09-STOCK.
+	   03  W09-S-MARKUPS.
+002780	     05  W09-MARKUP	PIC S9(03)V9999  COMP-3.
+002790	     05  W09-CMARKUP	PIC S9(03)V9999  COMP-3.
+002790	     05  W09-WMARKUP	PIC S9(03)V9999  COMP-3.
+002780	     05  W09-MARKUP-2	PIC S9(03)V9999  COMP-3.
+002790	     05  W09-CMARKUP-2	PIC S9(03)V9999  COMP-3.
+002790	     05  W09-WMARKUP-2	PIC S9(03)V9999  COMP-3.
+002780	     05  W09-MARKUP-3	PIC S9(03)V9999  COMP-3.
+002790	     05  W09-CMARKUP-3	PIC S9(03)V9999  COMP-3.
+002790	     05  W09-WMARKUP-3	PIC S9(03)V9999  COMP-3.
+002780	     05  W09-MARKUP-4	PIC S9(03)V9999  COMP-3.
+002790	     05  W09-CMARKUP-4	PIC S9(03)V9999  COMP-3.
+002790	     05  W09-WMARKUP-4	PIC S9(03)V9999  COMP-3.
+	   03  W09-ST-MARKUPS REDEFINES W09-S-MARKUPS.
+	       05  W09-STK-MARK OCCURS 4.
+000300		   07  W09-MKUP  PIC S9(03)V9999  COMP-3.
+000300		   07  W09-CMKUP PIC S9(03)V9999  COMP-3.
+000300		   07  W09-WMKUP PIC S9(03)V9999  COMP-3.
+
+       COPY W10.STK.
+
+       COPY W12.WS.
+
+       COPY W15.STK.
+
+       01  W16-CALL.
+	   03  W16-EXT-ITEM.
+	       05  W16-ITEM  PIC  X(14).
+	       05  W16-ITM   PIC  X(03).
+	       05  FILLER    PIC  X(01).
+	   03  W16-CRED      PIC  X(06).
+	   03  W16-COST      PIC S9(07)V99 COMP-3.
+	   03  W16-CANCEL    PIC  X(01).
+
+       COPY W20.WS.
+
+004310 01  W25-CALCS.
+005040     03  W25-RESULT      PIC 9(05)V99.
+004330     03  W25-RESULT1 REDEFINES W25-RESULT.
+004340         05  W25-WHOLE   PIC 9(05).
+004350         05  W25-DECIMAL PIC 9(02).
+           03  W25-RESULT2 REDEFINES W25-RESULT.
+               05  W25-KEY     PIC 9(04).
+               05  W25-SUB     PIC 9(01).
+               05  FILLER      PIC 9(02).
+003750     03  W25-SCOST      PIC S9(09)V99 COMP-3.
+003760     03  W25-PCOST      PIC S9(09)V99 COMP-3.
+003760     03  W25-PCST       PIC S9(09)V99 COMP-3.
+003760     03  W25-PTOT       PIC S9(09)V99 COMP-3.
+003770     03  W25-TSELL      PIC S9(09)V99 COMP-3.
+003770     03  W25-TOTAL      PIC S9(09)V99 COMP-3.
+003780     03  W25-VALUE      PIC S9(09)V99 COMP-3.
+003780     03  W25-ADJUST     PIC S9(09)V99 COMP-3.
+
+       COPY W40.WS.
+
+       COPY FUNCTION.WS.
+
+003800 COPY W50.WS.
+
+       COPY W75.STK.
+
+003930 01  W80-EDIT.
+003950     03  W80-Q1.
+003960         05  W80-S7V4   PIC Z(06)9.9999-.
+
+004120 01  W95-COMP	       PIC X(40).
+
+005120 01  W100-EDIT.
+003970     03  W100-V2.
+003980         05  W100-S6V2   PIC Z(05)9.99-.
+           03  W100-V3 REDEFINES W100-V2.
+               05  W100-PRICE  PIC X(09).
+               05  FILLER      PIC X(01).
+           03  W100-V5 REDEFINES W100-V2.
+	       05  W100-QNT    PIC Z(05)9.99-.
+	   03  W100-V6.
+	       05  W100-S7V3   PIC Z(06)9.999-.
+
+       01  W200-MEMO.
+           03  W200-MEM-FLDS. 
+               05  W200-MEM1   PIC  X(60).
+               05  W200-MEM2   PIC  X(60).
+               05  W200-MEM3   PIC  X(60).
+               05  W200-MEM4   PIC  X(60).
+               05  W200-MEM5   PIC  X(60).
+               05  W200-MEM6   PIC  X(60).
+               05  W200-MEM7   PIC  X(60).
+               05  W200-MEM8   PIC  X(60).
+               05  W200-MEM9   PIC  X(60).
+               05  W200-MEM10  PIC  X(60).
+               05  W200-MEM11  PIC  X(60).
+               05  W200-MEM12  PIC  X(60).
+           03  W200-MEM-FOC REDEFINES W200-MEM-FLDS.
+               05  W200-MEM    PIC  X(60) OCCURS 12.
+
+       LINKAGE SECTION.
+
+       COPY CHAIN.LS.
+
+      /
+004130 SCREEN SECTION.
+
+       COPY BLANK.CRT.
+
+004850 01  S04C.
+004860	   03  LINE  2 COLUMN 34 FOREGROUND-COLOR 7 HIGHLIGHT
+004870                           VALUE "STOCK ENQUIRY".
+
+       COPY STOCK.CRT.
+
+006430 01  S15.
+006440     03  LINE  2 COLUMN 33 FOREGROUND-COLOR 15
+006450                           VALUE "STOCK PRODUCTION".
+006460     03  LINE  4 COLUMN  2 VALUE "Item Code/Description".
+006480     03          COLUMN 36 VALUE "Quantity".
+006490     03          COLUMN 47 VALUE "Unit cost".
+006500     03          COLUMN 59 VALUE "Unit sell".
+006510     03          COLUMN 70 VALUE "Total cost".
+
+      *
+      *    ****    PRODUCTION DETAILS DISPLAY SCREEN
+      *
+007450 01  S32.
+007460     03  LINE 5 COLUMN 21 FOREGROUND-COLOR 15 VALUE 
+007470                       "Details of Manufacture (Include Labour)".
+007480	   03  LINE 6 COLUMN  8 VALUE "Comments".
+007500     03  LINE 7 COLUMN  8 VALUE "Item code".
+007510     03         COLUMN 28 VALUE "Description".
+007520     03         COLUMN 66 VALUE "Quantity".
+
+       01  S38.
+	   03  FOREGROUND-COLOR 3 HIGHLIGHT BACKGROUND-COLOR 5
+				  PIC ZZZZ9.9999 USING W10-MQNT AUTO.
+
+       01  S-PACKS.
+	   03  LINE  7 COLUMN 11 FOREGROUND-COLOR 0
+				 BACKGROUND-COLOR 7 VALUE
+		       "зддддддддддддддддддддддддддддддддддддддддддддддд
+      -		       "ддддддддддд".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "©".
+	   03  LINE  8 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE
+		       "          P A C K S :   S A L E S   D E T A I L
+      -		       "S          ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE  9 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "ц".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "ддддддддддддддддддддд╢Pack 1цддддд╢Pack 2ц
+      -			     "ддддд╢Pack 3цддд".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "╢".
+	   03  LINE 10 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 VALUE " Priced per        ".
+	   03	       COLUMN 31 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "                                       ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE 11 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 VALUE " Units per pack    ".
+	   03	       COLUMN 31 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "                                       ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE 12 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 VALUE " Markup ".
+	   03	       COLUMN 20 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 PIC  X(11) FROM WS-RT-HD.
+	   03	       COLUMN 31 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "                                       ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE 13 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 VALUE "        ".
+	   03	       COLUMN 20 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 PIC  X(11) FROM WS-CS-HD.
+	   03	       COLUMN 31 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "                                       ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE 14 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 VALUE "        ".
+	   03	       COLUMN 20 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 PIC  X(11) FROM WS-WS-HD.
+	   03	       COLUMN 31 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "                                       ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE 15 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 VALUE " Price  ".
+	   03	       COLUMN 20 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 PIC  X(11) FROM WS-RT-HD.
+	   03	       COLUMN 31 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "                                       ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE 16 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 VALUE "        ".
+	   03	       COLUMN 20 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 PIC  X(11) FROM WS-CS-HD.
+	   03	       COLUMN 31 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "                                       ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE 17 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "Ё".
+	   03	       COLUMN 12 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 VALUE "        ".
+	   03	       COLUMN 20 FOREGROUND-COLOR 4 HIGHLIGHT
+				 BACKGROUND-COLOR 7
+				 PIC  X(11) FROM WS-WS-HD.
+	   03	       COLUMN 31 FOREGROUND-COLOR 4 BACKGROUND-COLOR 7
+		       VALUE "                                       ".
+	   03	       COLUMN 70 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE "Ё".
+	   03  LINE 18 COLUMN 11 FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+				 VALUE "ю".
+	   03	       COLUMN 12 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 7 VALUE
+		       "дддддддддддддддддддддддддддддддддддддддддддддддд
+      -		       "дддддддддды".
+
+       01  SA-PACKS.
+	   02  SA-PACK-1.
+	   03  LINE 10 COLUMN 34 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC X(08) USING W10-PER-2 AUTO.
+	   03  LINE 11 COLUMN 34 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZ9.999 USING W10-UNIT-2 AUTO.
+	   03  LINE 12 COLUMN 36 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-MARKUP-2 AUTO.
+	   03  LINE 13 COLUMN 36 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-CMARKUP-2 AUTO.
+	   03  LINE 14 COLUMN 36 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-WMARKUP-2 AUTO.
+	   03  LINE 15 COLUMN 31 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-SELL-2 AUTO.
+	   03  LINE 16 COLUMN 31 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-CASH-2 AUTO.
+	   03  LINE 17 COLUMN 31 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-WSALE-2 AUTO.
+	   02  SA-PACK-2.
+	   03  LINE 10 COLUMN 47 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC X(08) USING W10-PER-3 AUTO.
+	   03  LINE 11 COLUMN 47 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZ9.999 USING W10-UNIT-3 AUTO.
+	   03  LINE 12 COLUMN 49 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-MARKUP-3 AUTO.
+	   03  LINE 13 COLUMN 49 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-CMARKUP-3 AUTO.
+	   03  LINE 14 COLUMN 49 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-WMARKUP-3 AUTO.
+	   03  LINE 15 COLUMN 44 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-SELL-3 AUTO.
+	   03  LINE 16 COLUMN 44 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-CASH-3 AUTO.
+	   03  LINE 17 COLUMN 44 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-WSALE-3 AUTO.
+	   02  SA-PACK-3.
+	   03  LINE 10 COLUMN 60 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC X(08) USING W10-PER-4 AUTO.
+	   03  LINE 11 COLUMN 60 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZ9.999 USING W10-UNIT-4 AUTO.
+	   03  LINE 12 COLUMN 62 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-MARKUP-4 AUTO.
+	   03  LINE 13 COLUMN 62 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-CMARKUP-4 AUTO.
+	   03  LINE 14 COLUMN 62 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZ9.99 USING W09-WMARKUP-4 AUTO.
+	   03  LINE 15 COLUMN 57 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-SELL-4 AUTO.
+	   03  LINE 16 COLUMN 57 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-CASH-4 AUTO.
+	   03  LINE 17 COLUMN 57 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC ZZZZZZZ9.99 USING W10-WSALE-4 AUTO.
+
+       01  S-MEM.
+           03  LINE  6 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G9.
+           03          COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING WS-MEM-LINE.
+           03          COLUMN 78 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G10.
+           03  LINE  7 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G3.
+           03          COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7 VALUE 
+           "   M E M O / R E M A R K S / S P E C I F I C A T I O N S    
+      -    "".
+           03          COLUMN 78 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G3.
+           03  LINE  8 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G14.
+           03          COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING WS-HME-LINE.
+           03          COLUMN 78 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G13.
+           03  LINE  9 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 10 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 11 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 12 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 13 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 14 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 15 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 16 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 17 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 18 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 19 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 20 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(62) USING WS-MM-LINE.
+           03  LINE 21 COLUMN 17 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G11.
+           03          COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING WS-MEM-LINE.
+           03          COLUMN 78 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(01) USING WS-G12.
+       01  SA-MEM.
+           03  LINE  9 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM1 AUTO.
+           03  LINE 10 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM2 AUTO.
+           03  LINE 11 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM3 AUTO.
+           03  LINE 12 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM4 AUTO.
+           03  LINE 13 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM5 AUTO.
+           03  LINE 14 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM6 AUTO.
+           03  LINE 15 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM7 AUTO.
+           03  LINE 16 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM8 AUTO.
+           03  LINE 17 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM9 AUTO.
+           03  LINE 18 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM10 AUTO.
+           03  LINE 19 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM11 AUTO.
+           03  LINE 20 COLUMN 18 FOREGROUND-COLOR 0
+                                 BACKGROUND-COLOR 7
+                                 PIC X(60) USING W200-MEM12 AUTO.
+
+       COPY ERROR.CRT.
+
+       COPY OPT.CRT.
+
+      /
+001230 PROCEDURE DIVISION
+		 USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY.
+007740 AA000-MAIN	       SECTION.
+007750 AA00.
+007760       PERFORM ZA000-INIT.
+	     MOVE "N"		 TO W16-CANCEL.
+	     PERFORM BD000.
+	   IF W16-CANCEL = "Y"
+	       CANCEL "STP\STPPOR".
+
+       AA49.
+	     EXIT PROGRAM.
+
+       COPY AA50.LUP.
+
+      /    *************************************************************
+      *    ****    ROUTINES TO HANDLE VARIOUS FUNCTIONS FOR THE
+      * 	   S C R E E N ,   K E Y B O A R D   &	 M O U S E
+      *    *************************************************************
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	   SAVE-SCREEN /-2/-3  and  RESTORE-SCREEN /-2/-3      Ё
+      *    фммммммммммммммммммммммммммммммммммммммммммммммммммммммммммм╣
+      *    Ё			  SCREEN-SHADOW 		       Ё
+      *    цддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+      *    Ё To routine is used to display a shadow down the right and Ё
+      *    Ё along the bottom of a pop-up box. The parameters that are Ё
+      *    Ё required:						       Ё
+      *	   Ё	       SHADE-ROW   - Top line of the box + 1.	       Ё
+      *	   Ё	       SHADE-COL   - Left line of box + 2.	       Ё
+      *	   Ё	       SHADE-WIDTH - Width of the box - 2.	       Ё
+      *	   Ё	       SHADE-LINES - Hight of box - 1.		       Ё
+      *    фммммммммммммммммммммммммммммммммммммммммммммммммммммммммммм╣
+      *    Ё			  ERROR-MESSAGE 		       Ё
+      *    цддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+      *    Ё To display an error message with " - Press ANY key" at    Ё
+      *    Ё the end; use PERFORM ERROR-MESSAGE.		       Ё
+      *    Ё							       Ё
+      *    Ё To display just the error message; use PERFORM	       Ё
+      *    Ё ERROR-LENGTH THRU ERROR-EXIT.			       Ё
+      *    Ё							       Ё
+      *    Ё To display the error message higher or lower (default is  Ё
+      *    Ё line 13) firstly use PERFORM ERROR-SETUP THRU ERROR-POS   Ё
+      *    Ё or PERFORM ERROR-LENGTH THRU ERROR-POS. Move the line     Ё
+      *    Ё number to be used to SLIN and then PERFORM ERROR-DISPLAY  Ё
+      *    Ё THRU ERROR-EXIT.					       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY FUNCTION.SCR.
+
+      *    *************************************************************
+      *    ****   T H I S   R O U T I N E   I S   U S E D   T O
+      * 	  D I S P L A Y   E R R O R   M E S S A G E S
+      *    *************************************************************
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё			  ERROR-MESSAGE 		       Ё
+      *    цддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+      *    Ё To display an error message with " - Press ANY key" at    Ё
+      *    Ё the end; use PERFORM ERROR-MESSAGE.		       Ё
+      *    Ё							       Ё
+      *    Ё To display just the error message; use PERFORM	       Ё
+      *    Ё ERROR-LENGTH THRU ERROR-EXIT.			       Ё
+      *    Ё							       Ё
+      *    Ё To display the error message higher or lower (default is  Ё
+      *    Ё line 13) firstly use PERFORM ERROR-SETUP THRU ERROR-POS   Ё
+      *    Ё or PERFORM ERROR-LENGTH THRU ERROR-POS. Move the line     Ё
+      *    Ё number to be used to SLIN and then PERFORM ERROR-DISPLAY  Ё
+      *    Ё THRU ERROR-EXIT.					       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY ERROR.SCR.
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё			  OPT-MESSAGE			       Ё
+      *    цддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+      *    Ё This routine is used to allow the OPERATOR to respond to  Ё
+      *    Ё a request for an option, so that the correct action can   Ё
+      *    Ё be performed by the program. The routine will display the Ё
+      *    Ё message in a pop-up window and allow the OPERATOR to      Ё
+      *    Ё respond to the 'question'. 			       Ё
+      *    Ё							       Ё
+      *    Ё The option request must be placed in WS-ERR-MES and may   Ё
+      *    Ё not exceed 48 characters. The message will be centred in  Ё
+      *    Ё the window. An example of a message request follows:      Ё
+      *    Ё							       Ё
+      *    Ё   MOVE "Print transactions (Y/N) [ ]" TO WS-ERR-MES.      Ё
+      *    Ё   PERFORM OPT-MESSAGE.				       Ё
+      *    Ё							       Ё
+      *    Ё This would be displayed as:			       Ё
+      *    Ё	здддддддддддддддддддддддддддддддддддддддддддддддд©     Ё
+      *    Ё	Ё	   Print transactions (Y/N) [ ] 	 Ё╟╟   Ё
+      *    Ё	юдддддддддддддддддддддддддддддддддддддддддддддддды╟╟   Ё
+      *    Ё	  ╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟╟   Ё
+      *    Ё							       Ё
+      *    Ё The response is returned in WS-OPTION (in upper case).    Ё
+      *    Ё							       Ё
+      *    Ё To display the request message higher or lower (default   Ё
+      *    Ё is line 13) move the line number to be used to SLIN and   Ё
+      *    Ё then PEFORM OPT-SETUP THRU OPT-EXIT.		       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY OPTION.CRT.
+
+       COPY LOCKED.RC2.
+
+       COPY DATE.CNV.
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	      ERASE SCREEN FROM SPECIFIED LOCATION	       Ё
+      *    цддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+      *    Ё Uses CPOS (CLIN,CCOL) as starting position and increases  Ё
+      *    Ё CLIN by 1 until CLIN reaches the line allocated to exit.  Ё
+      *    Ё The screen is cleared with Column 1 and 80 containing "Ё" Ё
+      *    Ё and columns 2 to 79 containing spaces.		       Ё
+      *    Ё  eg.						       Ё
+      *    Ё	  MOVE 0801	 TO CPOS.			       Ё
+      *    Ё	  PERFORM ERASE-SCREEN-LOOP UNTIL CLIN > 19.	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY CLEAR.CRT.
+
+       COPY AA300.STK.
+
+      *    *************************************************************
+      *    ****    D I S P L A Y   D E P A R T M E N T	 N A M E
+      *    *************************************************************
+       AA400              SECTION.
+       AA401.
+	     MOVE W10-LEDG	 TO DPT-CODE.
+	     PERFORM READ-DEPART THRU READ-DEPART-EXIT.
+	   IF (WS-F-ERROR = 7) OR
+	      (DPT-DESC = SPACES)
+	       MOVE WS-NODEP	 TO W10-DEPT
+	   ELSE
+	       MOVE DPT-DESC	 TO W10-DEPT.
+	     DISPLAY W10-DEPT AT 0623
+		     WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			  BACKGROUND-COLOR 5.
+       AA405.
+             EXIT.
+
+      /    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	       R E A D	 F I L E S   R O U T I N E S	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+008180 AC000-READ	       SECTION.
+
+       COPY CONTROL.RD.
+
+       COPY CREDIT.RD.
+
+       COPY DEPART.RD.
+
+       COPY PARAM.RD.
+
+000140 COPY STKMEM.RD.
+
+       COPY STOCK.RD.
+
+       COPY SPARTS.RD.
+
+       COPY WARHSE.RD.
+
+       COPY WSTOCK.RD.
+
+      /    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	Get the FIRST STOCK RECORD via the ITEM CODE INDEX     Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY STOCK.1ST.
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		View Warehouse CODES and QUANTITIES	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY WHQUANT.LUP.
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	   View the APAC HELP details for this procedure       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY APAC.HLP.
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	    Retrieve a STOCK RECORD using the Item Code        Ё
+      *    Ё	    No record - Check				       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY CA000.STK.
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	 Retrieve a STOCK RECORD using the ALTERNATE CODE      Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY CA100.STK.
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	 Retrieve a STOCK RECORD using the X-REF/BAR CODE      Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY CA200.STK.
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	      Calculate the STOCK INCLUSIVE PRICES	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+
+       COPY CA500.STK.
+
+      /    *************************************************************
+      *    * E N Q U I R Y   U S I N G	 S T O C K   I T E M   C O D E *
+      *    *************************************************************
+021000 BD000		       SECTION 50.
+021010 BD000-ENQUIRY.
+021020       DISPLAY CLR-SCREEN.
+021030       DISPLAY S04C.
+021040       DISPLAY S04.
+	   IF WS-USE-ITM = "Y"
+	       DISPLAY "/ITM" AT 0312
+		       "/" AT 0332.
+	   IF W10-ART11 = "Y"
+	       DISPLAY "VAT - Article 11/1g" AT 0849.
+021050	     MOVE SPACE 	 TO W10-EXT-ITEM.
+	   IF W10-STCK = "N"
+	       IF W10-SLNGTH = 3
+		   MOVE ZERO	 TO W10-I3
+	       ELSE
+	       IF W10-SLNGTH = 4
+		   MOVE ZERO	 TO W10-I4
+	       ELSE
+	       IF W10-SLNGTH = 5
+		   MOVE ZERO	 TO W10-I5
+	       ELSE
+	       IF W10-SLNGTH = 6
+		   MOVE ZERO	 TO W10-I6
+	       ELSE
+	       IF W10-SLNGTH = 7
+		   MOVE ZERO	 TO W10-I7
+	       ELSE
+	       IF W10-SLNGTH = 8
+		   MOVE ZERO	 TO W10-I8
+	       ELSE
+	       IF W10-SLNGTH = 9
+		   MOVE ZERO	 TO W10-I9
+	       ELSE
+	       IF W10-SLNGTH = 10
+		   MOVE ZERO	 TO W10-I10
+	       ELSE
+	       IF W10-SLNGTH = 11
+		   MOVE ZERO	 TO W10-I11
+	       ELSE
+	       IF W10-SLNGTH = 12
+		   MOVE ZERO	 TO W10-I12
+	       ELSE
+	       IF W10-SLNGTH = 13
+		   MOVE ZERO	 TO W10-I13
+	       ELSE
+		   MOVE ZERO	 TO W10-I14.
+
+021060 BD005.
+             PERFORM AA300.
+      *    *************************************************************
+      *    ** Check if the extended (18 character) ITEM CODE is used. **
+      *    *************************************************************
+	   IF WS-EXT-STK = "Y"
+	       ACCEPT S05-EXT
+	   ELSE
+      *    *************************************************************
+      *    ** Check if the ITEM CODE is alpha-numeric or numeric only **
+      *    *************************************************************
+	   IF W10-STCK = "A"
+	       IF WS-USE-ITM = "Y"
+		   ACCEPT S05-ITM
+	       ELSE
+021070		   ACCEPT S05
+	       END-IF
+	   ELSE
+      *    *************************************************************
+      *    ** Numeric codes may be various lengths, check length used **
+      *    *************************************************************
+	   IF W10-SLNGTH = 3
+	       ACCEPT S05-3
+	   ELSE
+	   IF W10-SLNGTH = 4
+	       ACCEPT S05-4
+	   ELSE
+	   IF W10-SLNGTH = 5
+	       ACCEPT S05-5
+	   ELSE
+	   IF W10-SLNGTH = 6
+	       ACCEPT S05-6
+	   ELSE
+	   IF W10-SLNGTH = 7
+	       ACCEPT S05-7
+	   ELSE
+	   IF W10-SLNGTH = 8
+	       ACCEPT S05-8
+	   ELSE
+	   IF W10-SLNGTH = 9
+	       ACCEPT S05-9
+	   ELSE
+	   IF W10-SLNGTH = 10
+	       ACCEPT S05-10
+	   ELSE
+	   IF W10-SLNGTH = 11
+	       ACCEPT S05-11
+	   ELSE
+	   IF W10-SLNGTH = 12
+	       ACCEPT S05-12
+	   ELSE
+	   IF W10-SLNGTH = 13
+	       ACCEPT S05-13
+	   ELSE
+	   IF W10-SLNGTH = 14
+	       ACCEPT S05-14.
+      *    *************************************************************
+      *    ** Check if the USER has pressed a function key and if so  **
+      *    ** determine which key was selected. 		      **
+      *    *************************************************************
+	   IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY
+		     MOVE SPACES TO W10-EXT-ITEM
+                     GO TO BD999
+                 WHEN F1-KEY
+		     PERFORM HELP-ROUTINE
+		     GO TO BD005
+		 WHEN F2-KEY
+		     MOVE "I"	 TO W10-ETYPE
+		 WHEN F3-KEY
+		     MOVE "A"	 TO W10-ETYPE
+		 WHEN F4-KEY
+		     MOVE "D"	 TO W10-ETYPE
+		 WHEN F5-KEY
+		     MOVE "2"	 TO W10-ETYPE
+		 WHEN F6-KEY
+		     MOVE "X"	 TO W10-ETYPE
+		 WHEN F9-KEY
+		     MOVE "W"	 TO W10-ETYPE
+		 WHEN OTHER
+                     CALL X"E5"
+                     GO TO BD005
+               END-EVALUATE
+	       PERFORM AA50-LOOKUP
+      *    *************************************************************
+      *        *****	      E X T E N D E D	C O D E	       *****
+      *    *************************************************************
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Is an 18 character stock/inventory item code being used?  Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	       IF WS-EXT-STK = "Y"
+		   DISPLAY S05-EXT
+	       ELSE
+      *    *************************************************************
+      *        *****   A L P H A - N U M E R I C   C O D E   *****
+      *    *************************************************************
+	       IF W10-STCK = "A"
+		   IF WS-USE-ITM = "Y"
+		       DISPLAY S05-ITM
+		   ELSE
+021070		       DISPLAY S05
+		   END-IF
+	       END-IF
+	       IF W10-EXT-ITEM = SPACES
+                   GO TO BD005.
+019250	     DISPLAY CLEAR-L25.
+021080	   IF W10-EXT-ITEM = SPACE
+021090         GO TO BD999.
+
+       BD05.
+021100       PERFORM CA000.
+	     DISPLAY S05.
+021110     IF WS-F-ERROR = 22
+	       MOVE "Z"		 TO W10-ETYPE
+018620	       PERFORM AA50-LOOKUP
+018630         DISPLAY S05
+018640	       IF W10-EXT-ITEM = SPACES
+018720             GO TO BD005
+               ELSE
+                   GO TO BD05.
+	     MOVE ZERO		 TO WS-WH-QUANT.
+037200	     MOVE STK-CODE	 TO W10-EXT-ITEM
+				    W10-EXT-CODE1.
+	   IF LS0-WHS = 2
+	       PERFORM BD30 THRU BD40.
+037210	     MOVE STK-XREF	 TO W10-EXT-CODE2.
+037220       MOVE STK-BIN        TO W10-BIN.
+037230       MOVE STK-DESC       TO W10-DESC.
+037230	     MOVE STK-DESC2	 TO W10-DESC2.
+037240       MOVE STK-TAX        TO W10-TAX.
+037240	     MOVE STK-EXEMPT	 TO W10-EXEMPT.
+037250       MOVE STK-MARKUP     TO W10-MARKUP.
+037260       MOVE STK-CMARKUP    TO W10-CMARKUP.
+037270       MOVE STK-WMARKUP    TO W10-WMARKUP.
+037280       MOVE STK-IND        TO W10-IND.
+037290       MOVE STK-QUANT      TO W10-QUANT.
+	     MOVE STK-PER	 TO W10-PER.
+	   IF W10-PER = SPACES OR LOW-VALUES
+	       MOVE "Each"	 TO W10-PER.
+	     MOVE STK-PRC	 TO W10-PRC.
+037300       MOVE STK-LEVEL      TO W10-REORD.
+037310       MOVE STK-LTIME      TO W10-LTIME.
+037320       MOVE STK-COST       TO W10-COST.
+037330       MOVE STK-SELL       TO W10-SELL.
+037340       MOVE STK-CASH       TO W10-CASH.
+037350       MOVE STK-WSALE      TO W10-WSALE.
+037360	     MOVE STK-LDG	 TO W10-LEDG.
+037370       MOVE STK-GUAR       TO W10-GUAR.
+037380       MOVE STK-ORD        TO W10-ORDER.
+019730	     MOVE STK-DTE	 TO W22-DTE2.
+	     PERFORM SWITCH-DATE-TO-DMCY THRU SWITCH-DATE-EXIT.
+             MOVE W22-DTE3       TO W10-ODTE.
+037400	     MOVE STK-PUR	 TO W22-DTE2.
+	     PERFORM SWITCH-DATE-TO-DMCY THRU SWITCH-DATE-EXIT.
+	     MOVE W22-DTE3	 TO W10-PURCH.
+	   IF STK-IND < 2
+016950	       IF STK-AVGE = ZERO
+016960		   MOVE STK-COST TO STK-AVGE.
+037410	     MOVE STK-AVGE	 TO W10-AVRG.
+037420       MOVE STK-ACODE      TO W10-ACODE.
+	     MOVE 1		 TO WS-S1.
+
+       BD05-MKUPS.
+	     MOVE STK-UNT(WS-S1) TO W10-QNT.
+	   IF WS-S1 = 1
+	       MOVE W10-COST	 TO W10-ICOST
+	   ELSE
+	       COMPUTE W10-ICOST ROUNDED = W10-COST * W10-QNT.
+010310	     COMPUTE W09-WMKUP(WS-S1) ROUNDED =
+		   ((STK-WSL(WS-S1) - W10-ICOST) * 100.000) / W10-ICOST.
+010310	     COMPUTE W09-MKUP(WS-S1) ROUNDED =
+		   ((STK-SL(WS-S1) - W10-ICOST) * 100.000) / W10-ICOST.
+010330	     COMPUTE W09-CMKUP(WS-S1) ROUNDED =
+		   ((STK-CSH(WS-S1) - W10-ICOST) * 100.000) / W10-ICOST.
+	   IF WS-S1 < 4
+	       ADD 1		 TO WS-S1
+	       GO TO BD05-MKUPS.
+	     DISPLAY S06C.
+021150	   IF STK-ACT = ZERO
+021160	       MOVE SPACE	 TO W10-ACTIVE
+021170     ELSE
+021180	       MOVE STK-ACT	 TO W22-DTE2
+	       PERFORM SWITCH-DATE-TO-DMCY THRU SWITCH-DATE-EXIT
+	       MOVE W22-DTE3	 TO W10-ADATE.
+021220	     MOVE STK-MTDC	 TO W10-MTDC.
+021230	     MOVE STK-YTDC	 TO W10-YTDC.
+021240	   IF LS-OK = "N"
+021250         MOVE ZERO         TO W10-COST W10-MARKUP  
+021260                              W10-AVRG W10-CMARKUP 
+                                    W10-MTDC W10-WMARKUP 
+				    W10-YTDC
+	   ELSE
+	       MOVE W09-MARKUP	 TO W10-MARKUP
+	       MOVE W09-CMARKUP	 TO W10-CMARKUP
+	       MOVE W09-WMARKUP	 TO W10-WMARKUP.
+	   IF LS0-STLEV < 1
+	       DISPLAY S06A
+	       DISPLAY S06C
+	   ELSE
+021270	       DISPLAY S06.
+	   IF W10-ART11 = "Y"
+	       DISPLAY W10-EXEMPT AT 0869
+		       WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			    BACKGROUND-COLOR 5.
+             PERFORM AA400.
+      *    *************************************************************
+      *    ** As the F8 function has been introduced to view the last **
+      *    ** Supplier and the Alternate Supplier, the following code **
+      *    ** has been commented out. If there should again be a need **
+      *    ** to view the last Supplier without using a function key, **
+      *    ** then this code can be reintroduced.		      **
+      *    *************************************************************
+      *    IF NOT (STK-SUPP = SPACES OR LOW-VALUES)
+      *	       MOVE STK-SUPP	  TO P-NUMBER
+      *        PERFORM READ-CREDIT THRU READ-CREDIT-EXIT
+      *        IF WS-F-ERROR = ZERO
+      *		   DISPLAY "Supplier      " AT 2303
+      *			    P-NAME AT 2318
+      *			    WITH FOREGROUND-COLOR 3 HIGHLIGHT
+      *				 BACKGROUND-COLOR 5.
+	   IF NOT (WS-WH-QUANT = ZERO)
+	       ADD W10-QUANT WS-WH-QUANT
+				 GIVING W100-S7V3
+	       DISPLAY "зддддддддддддддддддддддд" AT 2054
+			WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 4
+		       "©" WITH FOREGROUND-COLOR 4 HIGHLIGHT
+				BACKGROUND-COLOR 4
+	       DISPLAY "Ё" AT 2154
+			WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 4
+		       "Including all warehouse"
+			WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			     BACKGROUND-COLOR 4
+		       "Ё" WITH FOREGROUND-COLOR 4 HIGHLIGHT
+				BACKGROUND-COLOR 4
+	       DISPLAY "Ё" AT 2254
+			WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 4
+		       "quantities "
+			WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			     BACKGROUND-COLOR 4
+			W100-V6 WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				     BACKGROUND-COLOR 4
+		       "Ё" WITH FOREGROUND-COLOR 4 HIGHLIGHT
+				BACKGROUND-COLOR 4
+	       DISPLAY "ю" AT 2354
+			WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 4
+		       "ддддддддддддддддддддддды"
+			WITH FOREGROUND-COLOR 4 HIGHLIGHT
+			     BACKGROUND-COLOR 4.
+	   IF STK-USE-CASES = "Y"
+	       MOVE STK-CASES	 TO W10-CASES
+	       DISPLAY S06F.
+
+       BD06.
+	     DISPLAY "" AT 2502
+		      WITH BACKGROUND-COLOR 3
+			   FOREGROUND-COLOR 6 HIGHLIGHT
+		     "," WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+		     "F5" WITH BACKGROUND-COLOR 3
+			       FOREGROUND-COLOR 6 HIGHLIGHT
+		     "=Job Det," WITH BACKGROUND-COLOR 3
+				      FOREGROUND-COLOR 1
+		     "F6" WITH BACKGROUND-COLOR 3
+			       FOREGROUND-COLOR 6 HIGHLIGHT
+		     "=W/H Qnt," WITH BACKGROUND-COLOR 3
+				      FOREGROUND-COLOR 1
+		     "F7" WITH BACKGROUND-COLOR 3
+			       FOREGROUND-COLOR 6 HIGHLIGHT
+		     "=Packs,"	WITH BACKGROUND-COLOR 3
+				     FOREGROUND-COLOR 1
+		     "F8" WITH BACKGROUND-COLOR 3
+			       FOREGROUND-COLOR 6 HIGHLIGHT
+		     "=Suppl," WITH BACKGROUND-COLOR 3
+				   FOREGROUND-COLOR 1
+		     "F9" WITH BACKGROUND-COLOR 3
+			       FOREGROUND-COLOR 6 HIGHLIGHT
+		     "=Memo," WITH BACKGROUND-COLOR 3
+				   FOREGROUND-COLOR 1
+		     "F10" WITH BACKGROUND-COLOR 3
+				FOREGROUND-COLOR 6 HIGHLIGHT
+		     "=P.Hist," WITH BACKGROUND-COLOR 3
+				       FOREGROUND-COLOR 1
+021280		     "ANY" WITH BACKGROUND-COLOR 3
+				FOREGROUND-COLOR 6 HIGHLIGHT
+		     "other key=cont"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	   IF ADIS-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN UP-KEY
+001320		     GO TO BD45
+		 WHEN DOWN-KEY
+001340		     GO TO BD50
+		 WHEN OTHER GO TO BD08
+	       END-EVALUATE
+	   ELSE
+	   IF USER-FUNC
+               EVALUATE KEY-CODE-1
+		 WHEN F5-KEY
+002070		      MOVE STK-CODE
+				 TO W16-EXT-ITEM
+		      PERFORM SAVE-SCREEN-3
+		      CALL "STP\STPJOB" USING
+			    LS-PARID LS-USER-ID LS0-PROGRAMS
+			    LS0-SECURITY W16-CALL
+		      PERFORM RESTORE-SCREEN-3
+		      GO TO BD06
+		 WHEN F6-KEY
+                      PERFORM WH-VIEW-QUANT
+                      GO TO BD06
+		 WHEN F7-KEY
+		      PERFORM DA000
+		      GO TO BD06
+		 WHEN F8-KEY
+		      PERFORM DB000
+		      GO TO BD06
+		 WHEN F9-KEY GO TO BD06A
+		 WHEN F10-KEY
+002070		      MOVE STK-CODE
+				 TO W16-EXT-ITEM
+		      PERFORM SAVE-SCREEN-3
+		      CALL "STP\STPPOR" USING
+			    LS-PARID LS-USER-ID LS0-PROGRAMS
+			    LS0-SECURITY W16-CALL
+		      PERFORM RESTORE-SCREEN-3
+		      GO TO BD06
+		 WHEN OTHER GO TO BD08
+	       END-EVALUATE
+	   ELSE
+	       GO TO BD08.
+
+       BD06A.
+	     INITIALIZE SME-RECORD1.
+	     MOVE STK-CODE	 TO SME-CODE.
+             MOVE 1              TO SME-SEQ.
+             PERFORM READ-STKMEM-LOCK THRU READ-STKMEM-EXIT.
+           IF WS-F-ERROR NOT = ZERO
+	       MOVE "No additional specifications"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+               GO TO BD06.
+             INITIALIZE W200-MEM-FLDS.
+
+       BD07. 
+             MOVE SME-SEQ        TO WS-S1.
+	     MOVE SME-DATA	 TO W200-MEM(WS-S1).
+             PERFORM READ-STKMEM-NEXT-LOCK THRU READ-STKMEM-EXIT.
+           IF WS-F-ERROR = ZERO
+               IF SME-CODE = STK-CODE
+                   GO TO BD07.
+	     PERFORM SAVE-SCREEN.
+             MOVE 7              TO SHADE-ROW.
+	     MOVE 19		 TO SHADE-COL.
+	     MOVE 60		 TO SHADE-WIDTH.
+             MOVE 15             TO SHADE-LINES.
+             DISPLAY S-MEM.
+             PERFORM SCREEN-SHADOW.
+	     DISPLAY SA-MEM.
+021280       DISPLAY "ENTER to continue" AT 2324
+                      WITH FOREGROUND-COLOR 14.
+021290	     ACCEPT WS-OPTION AT 2342
+		    WITH FOREGROUND-COLOR 15 BACKGROUND-COLOR 5 AUTO.
+	     PERFORM RESTORE-SCREEN.
+	     GO TO BD06.
+
+       BD08.
+	     MOVE STK-CODE	 TO PRT-EXT-ITEM.
+020530       PERFORM READ-SPARTS THRU READ-SPARTS-EXIT.
+020510     IF WS-F-ERROR = 21
+021310         GO TO BD000-ENQUIRY.
+      *
+      *    ****  P R O D U C T I O N   D E T A I L S
+      *
+             MOVE 0501           TO CPOS.
+             PERFORM ERASE-SCREEN-LOOP UNTIL CLIN = 24.
+021350       DISPLAY S32.
+021360	     DISPLAY PRT-COMMENT AT 0618
+		     WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			  BACKGROUND-COLOR 5.
+021370       MOVE 1              TO WS-S6.
+
+021390 BD10.
+021380       MOVE 8              TO LIN.
+021400       MOVE 64             TO COL.
+
+021420 BD15.
+021430	   IF PRT-EXT-CODE(WS-S6) = SPACES
+021440         ADD 1             TO WS-S6
+021450         GO TO BD20.
+021470	     MOVE PRT-EXT-CODE(WS-S6)
+				 TO W10-EXT-CODE2 W10-EXT-ITEM.
+021480	     MOVE PRT-QUANT(WS-S6)
+                                 TO W10-MQNT.
+021490       PERFORM CA000.
+021500     IF WS-F-ERROR = 22
+021510         ADD 1             TO WS-S6
+021520         GO TO BD20.
+021530	     DISPLAY (LIN, 8) W10-EXT-CODE2
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 5.
+021560	     DISPLAY (LIN, 28) STK-DESC
+		      WITH FOREGROUND-COLOR 3 HIGHLIGHT
+			   BACKGROUND-COLOR 5.
+018340       DISPLAY S38 AT LINE LIN COLUMN COL.
+021600       ADD 1 TO WS-S6.
+           IF LIN < 22
+021650         ADD 1 TO LIN
+           ELSE
+               GO TO BD25.
+      *
+      *    ****   C H E C K   F O R   E N D   O F   P R O D U C T I O N
+      * 	  D E T A I L S
+      *
+021660 BD20.
+021670     IF WS-S6 < 31
+021680         GO TO BD15.
+021690	     MOVE "ENTER to continue"
+				 TO WS-ERR-MES.
+	     MOVE SPACE 	 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+021710	     GO TO BD000-ENQUIRY.
+
+       BD25.
+021690	     MOVE "ENTER to continue"
+				 TO WS-ERR-MES.
+	     MOVE SPACE 	 TO WS-OPTION.
+	     PERFORM OPT-MESSAGE.
+	   IF PRT-EXT-CODE(WS-S6) = SPACES
+021710         GO TO BD000-ENQUIRY.
+             MOVE 0801           TO CPOS.
+             PERFORM ERASE-SCREEN-LOOP UNTIL CLIN = 24.
+             GO TO BD10.
+
+       BD30.
+	     MOVE W10-EXT-ITEM	 TO WST-EXT-CODE.
+	     MOVE SPACES	 TO WST-WAR.
+	     PERFORM START-AT-WH-ITEM THRU READ-WSTOCK-EXIT.
+	   IF WS-F-ERROR = 52
+	       GO TO BD40.
+
+       BD35.
+	     PERFORM READ-WSTOCK-NEXT THRU READ-WSTOCK-EXIT.
+	   IF WS-F-ERROR = 52
+	       GO TO BD40.
+	   IF NOT (W10-EXT-ITEM = WST-EXT-CODE)
+	       GO TO BD40.
+	     ADD WST-QUANT	 TO WS-WH-QUANT.
+	     GO TO BD35.
+
+       BD40.
+	     EXIT.
+      *
+      *	   ****	  P R E V I O U S   I T E M
+      *
+       BD45.
+	     MOVE W10-EXT-CODE1	 TO STK-CODE.
+	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+021020	     DISPLAY CLR-SCREEN.
+021030       DISPLAY S04C.
+021040       DISPLAY S04.
+	   IF WS-USE-ITM = "Y"
+	       DISPLAY "/ITM" AT 0312
+		       "/" AT 0332.
+	     PERFORM READ-STOCK-PREV THRU READ-STOCK-EXIT.
+	   IF WS-F-ERROR = 22
+	       GO TO BD55.
+	     GO TO BD60.
+      *
+      *    ****    N E X T   I T E M
+      *
+       BD50.
+	     MOVE W10-EXT-CODE1	 TO STK-CODE.
+	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+021020	     DISPLAY CLR-SCREEN.
+021030       DISPLAY S04C.
+021040       DISPLAY S04.
+	   IF WS-USE-ITM = "Y"
+	       DISPLAY "/ITM" AT 0312
+		       "/" AT 0332.
+	     PERFORM READ-STOCK-NEXT THRU READ-STOCK-EXIT.
+	   IF WS-F-ERROR = 22
+	       GO TO BD55.
+	     GO TO BD60.
+
+       BD55.
+	     MOVE W10-EXT-CODE1	 TO STK-CODE.
+	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+
+       BD60.
+	     MOVE STK-CODE	 TO W10-EXT-ITEM.
+	   IF WS-EXT-STK = "Y"
+	       DISPLAY S05-EXT
+	   ELSE
+	   IF WS-USE-ITM = "Y"
+	       DISPLAY S05-ITM
+	   ELSE
+021070	       DISPLAY S05.
+	     GO TO BD05.
+
+021720 BD999.
+021730       EXIT.
+      /
+      *    ****   D I S P L A Y   P A C K S
+      *
+       DA000	       SECTION 51.
+       DA00.
+	     PERFORM SAVE-SCREEN-3.
+019250	     DISPLAY CLEAR-L25.
+	     MOVE 8		 TO SHADE-ROW.
+	     MOVE 13		 TO SHADE-COL.
+	     MOVE 58		 TO SHADE-WIDTH.
+	     MOVE 11		 TO SHADE-LINES.
+	     DISPLAY S-PACKS.
+	     PERFORM SCREEN-SHADOW.
+	     MOVE 1		 TO WS-S1.
+
+       DA05.
+	     MOVE STK-UNT(WS-S1) TO W10-UNT(WS-S1).
+	     MOVE STK-PR(WS-S1)  TO W10-PR(WS-S1).
+	     MOVE STK-MKUP(WS-S1)
+				 TO W10-MKUP(WS-S1).
+	     MOVE STK-CMKUP(WS-S1)
+				 TO W10-CMKUP(WS-S1).
+	     MOVE STK-WMKUP(WS-S1)
+				 TO W10-WMKUP(WS-S1).
+	     MOVE STK-SL(WS-S1)  TO W10-SL(WS-S1).
+000150	     MOVE STK-CSH(WS-S1) TO W10-CSH(WS-S1).
+000160	     MOVE STK-WSL(WS-S1) TO W10-WSL(WS-S1).
+	   IF WS-S1 < 4
+	       ADD 1		 TO WS-S1
+	       GO TO DA05.
+	     DISPLAY SA-PACKS.
+	     DISPLAY "Press any key to continue" AT 2512
+		      WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			   BACKGROUND-COLOR 3.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-3.
+
+       DA999.
+	     EXIT.
+      /
+      *    ****   D I S P L A Y   S U P P L I E R S
+      *
+      *	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *	Ё Supplier     XXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ё
+      *	Ё Alt Supplier XXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ё
+      *	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       DB000	       SECTION 52.
+       DB00.
+	     PERFORM SAVE-SCREEN-3.
+019250	     DISPLAY CLEAR-L25.
+	     MOVE 13		 TO SHADE-ROW.
+	     MOVE 11		 TO SHADE-COL.
+	     MOVE 62		 TO SHADE-WIDTH.
+	     MOVE 3		 TO SHADE-LINES.
+	     DISPLAY "зддддддддддддддддддддддддддддддддддддддддддддддддд
+      - 	     "ддддддддддддд" AT 1209
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "©" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "Ё Supplier
+      -		     "             " AT 1309
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "Ё" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "Ё Alt Supplier
+      - 	     "             " AT 1409
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "Ё" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "ю" AT 1509
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "дддддддддддддддддддддддддддддддддддддддддддддддддд
+      -		     "дддддддддддды"
+		      WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			   BACKGROUND-COLOR 7.
+	     PERFORM SCREEN-SHADOW.
+
+       DB05.
+	   IF NOT (STK-SUPP = SPACES OR LOW-VALUES)
+               MOVE STK-SUPP     TO P-NUMBER
+               PERFORM READ-CREDIT THRU READ-CREDIT-EXIT
+               IF WS-F-ERROR = ZERO
+		   DISPLAY P-NUMBER AT 1324
+			   WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				BACKGROUND-COLOR 0
+		   DISPLAY P-NAME AT 1331
+			   WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				BACKGROUND-COLOR 0
+	       END-IF
+	   ELSE
+	       DISPLAY "No Supplier recorded for this Item" AT 1331
+			WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			     BACKGROUND-COLOR 0.
+	   IF NOT (STK-PSUPP = SPACES OR LOW-VALUES)
+	       MOVE STK-PSUPP	 TO P-NUMBER
+               PERFORM READ-CREDIT THRU READ-CREDIT-EXIT
+	       IF WS-F-ERROR = ZERO
+		   DISPLAY P-NUMBER AT 1424
+			   WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				BACKGROUND-COLOR 0
+		   DISPLAY P-NAME AT 1431
+			   WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				BACKGROUND-COLOR 0
+	       END-IF
+	   ELSE
+	       DISPLAY "No Alt Supplier recorded for this Item" AT 1331
+			WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			     BACKGROUND-COLOR 0.
+	     DISPLAY "Press any key to continue" AT 2512
+		      WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			   BACKGROUND-COLOR 3.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-3.
+
+       DB999.
+	     EXIT.
+
+      /
+044130 ZA000-INIT	       SECTION 90.
+044140 ZA000-OPEN.
+             PERFORM ZA55 THRU ZA60.
+	     MOVE LS-PARID	 TO WS-PARID.
+	     MOVE LS-L-OR-N	 TO W02-L-OR-N.
+	     MOVE WS-SYS-ID	 TO W02-SYSID.
+	     MOVE LS-TODAY-DDMMYY
+				 TO TODAY-DDMMYY.
+	     MOVE LS-USUB	 TO WS-USUB.
+044150	     DISPLAY CLR-SCREEN.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	   S e t   u p	 t h e	 F U N C T I O N   k e y s     Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     MOVE 1		 TO USER-ACTION
+				    USER-SETTING.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		       ESC, F1 to F10 keys		       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     MOVE ZERO		 TO USER-NUMBER.
+	     MOVE 11		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		    PAGE-UP and PAGE-DOWN keys		       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     MOVE 53		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		   A C T I V A T E   M O U S E		       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     MOVE 64		 TO MOUSE-FUNC.
+	     MOVE 1		 TO MOUSE-PARAM.
+	     CALL X"AF" USING MOUSE-FUNC
+			      MOUSE-PARAM.
+	   IF MOUSE-FUNC NOT = 255
+	       MOVE "Y"		 TO MOUSE-ATTACHED
+	       MOVE 66		 TO MOUSE-FUNC
+	       MOVE 0		 TO MOUSE-PARAM
+	       CALL X"AF" USING MOUSE-FUNC
+				MOUSE-PARAM
+	   ELSE
+	       GO TO ZA00A.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	       Set MOUSE key to act as FUNCTION key	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     MOVE 3		 TO USER-ACTION.
+	     MOVE 27		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *      CALL CBL_INIT_MOUSE USING MOUSE-HANDLE
+      *				       MOUSE-BUTTONS
+      *				 RETURNING MOUSE-STATUS.
+      *    IF MOUSE-STATUS = ZERO
+      *        MOVE "Y"		 TO MOUSE-ATTACHED.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	    Setup the file ID's including path names           Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *    *************************************************************
+      *    **** 	  P A R A M E T E R   F I L E		    ****
+      *    *************************************************************
+       ZA00A.
+	     MOVE "PARAM"	 TO AFID-KEY.
+
+       ZA00-READ-APACFIDS.
+000030	     READ APACFIDS WITH IGNORE LOCK
+	       KEY IS AFID-KEY.
+	   IF WS-STATUS = "00"
+	       GO TO ZA00-READ-APACFIDS-EXIT.
+006260	     STRING "Missing " DELIMITED SIZE
+		     AFID-KEY DELIMITED BY " "
+		     " file ID - Status " DELIMITED SIZE
+		     WS-STATUS DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+006370	     STOP RUN.
+
+       ZA00-READ-APACFIDS-EXIT.
+	     EXIT.
+
+       ZA00A-CONTINUE.
+	     MOVE AFID-PATH	 TO W02-PARAM.
+      *    *************************************************************
+      *    *** C R E D I T O R	 A C C O U N T	 ( A / P )   F I L E ***
+      *    *************************************************************
+	     MOVE "CREDIT"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-CREDIT.
+      *    *************************************************************
+      *    **** 	   D E P A R T M E N T	 F I L E	    ****
+      *    *************************************************************
+	     MOVE "DEPART"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-DEPART.
+      *    *************************************************************
+      *    **** 	    C O N T R O L   F I L E		    ****
+      *    *************************************************************
+	     MOVE "NETWORK"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-NETWORK.
+      *	   *************************************************************
+      *    **** 	  S T O C K   P A R T S   F I L E	    ****
+      *    *************************************************************
+	     MOVE "SPARTS"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-SPARTS.
+      *    *************************************************************
+      *    **** 	   S T O C K   M E M O	 F I L E	    ****
+      *    *************************************************************
+	     MOVE "STKMEM"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-STKMEM.
+      *    *************************************************************
+      *    **** 	       S T O C K   F I L E		    ****
+      *    *************************************************************
+	     MOVE "STOCKF"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-STOCKF.
+      *    *************************************************************
+      *    **** 	    W A R E H O U S E	F I L E		    ****
+      *    *************************************************************
+	     MOVE "WARHSE"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-WARHSE.
+      *    *************************************************************
+      *    ****       W A R E H O U S E	  S T O C K   F I L E	    ****
+      *    *************************************************************
+	     MOVE "WSTOCK"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-WSTOCK.
+044230	     MOVE 3		 TO WS-PARKEY.
+044240       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+	   IF NOT (PAR-STOCK = "A" OR "N")
+	       MOVE "A" 	 TO PAR-STOCK.
+	     MOVE PAR-STOCK	 TO W10-STCK.
+	   IF PAR-STOCK = "N"
+	       MOVE PAR-SLNGTH	 TO W10-SLNGTH
+	   ELSE
+	       MOVE 14		 TO W10-SLNGTH.
+	   IF W10-SLNGTH < 3
+	       MOVE 3		 TO W10-SLNGTH
+	   ELSE
+	   IF W10-SLNGTH > 14
+	       MOVE 14		 TO W10-SLNGTH.
+	     MOVE PAR-CASES	 TO WS-USE-CASES.
+	     MOVE PAR-PACKS	 TO WS-USE-PACKS.
+	     MOVE PAR-USE-ITM	 TO WS-USE-ITM.
+	     MOVE PAR-EXT-STK	 TO WS-EXT-STK.
+	   IF NOT (PAR-ART11 = "Y" OR "N")
+	       MOVE "N" 	 TO PAR-ART11.
+	     MOVE PAR-ART11	 TO W10-ART11.
+044580	     MOVE 1		 TO WS-PARKEY.
+044590       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+044600       MOVE PAR-DMY        TO W12-TODAY.
+044610       MOVE PAR-YMD        TO W12-T-YMD.
+044620       MOVE PAR-COMPANY    TO W95-COMP.
+044650       MOVE 3              TO WS-NETKEY.
+044660       PERFORM READ-CONTROL THRU READ-CONTROL-EXIT.
+044750       MOVE STK-WEEK       TO WS-WEEK.
+044760       MOVE STK-PASSWORD   TO WS-PASSWORD.
+	     MOVE 1		 TO W05-V-RATE.
+
+       ZA05-VAT.
+	     MOVE W05-VAT-CODE	 TO DPT-CODE.
+	     PERFORM READ-DEPART THRU READ-DEPART-EXIT.
+	     MOVE DPT-R-DATE	 TO WS-VAT-DATE(W05-V-RATE).
+	     MOVE DPT-RATE	 TO W05-VAT(W05-V-RATE).
+	     ADD 6 W05-V-RATE	 GIVING WS-S1.
+	     MOVE DPT-P-RATE	 TO W05-VAT(WS-S1).
+	   IF W05-V-RATE < 6
+	       ADD 1		 TO W05-V-RATE
+	       GO TO ZA05-VAT.
+042520	     MOVE 8		 TO WS-PARKEY.
+042550       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+	   IF NOT (PAR-DESC-H1 = X"0000000000000000000000000000")
+	       MOVE PAR-DESC-H1  TO WS-DESC-H1.
+	   IF NOT (PAR-DESC-H2 = X"0000000000000000000000000000")
+	       MOVE PAR-DESC-H2  TO WS-DESC-H2.
+	   IF NOT (PAR-WS-HD = X"00000000000000000000")
+	       MOVE PAR-WS-HD	 TO WS-WS-HD.
+	   IF NOT (PAR-CS-HD = X"00000000000000000000")
+	       MOVE PAR-CS-HD	 TO WS-CS-HD.
+	   IF NOT (PAR-RT-HD = X"00000000000000000000")
+	       MOVE PAR-RT-HD	 TO WS-RT-HD.
+	     GO TO ZA999-EXIT.
+
+       ZA49.
+             DISPLAY "Too many files OPEN" AT 0812
+                      WITH FOREGROUND-COLOR 14.
+             DISPLAY "Check the FILES option in CONFIG.SYS" AT 1012.
+             DISPLAY "Press any key to continue" AT 1212.
+             ACCEPT WS-OPTION AT 1238 WITH FOREGROUND-COLOR 15.
+             GO TO ZA205.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Setup the Screen Graphics Characters: Ё д з © ю ы б а etc Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       ZA55.
+041220       MOVE 1              TO WS-S1.
+021870	     MOVE SPACES	 TO WS-MID-LNE.
+
+041240 ZA60.
+041250	     MOVE WS-G1 	 TO WS-TCHR(WS-S1) WS-BCHR(WS-S1).
+	     MOVE WS-G8 	 TO WS-BCH(WS-S1).
+041260     IF WS-S1 < 80
+041270	       ADD 1		 TO WS-S1
+041280         GO TO ZA60.
+	     MOVE WS-G11	 TO WS-BCH(1).
+	     MOVE WS-G12	 TO WS-BCH(80).
+	     MOVE WS-G14	 TO WS-TCHR(1)	WS-BCHR(1).
+	     MOVE WS-G13	 TO WS-TCHR(80) WS-BCHR(80).
+021930	     MOVE WS-G2 	 TO WS-TCHR(18) WS-TCHR(49)
+021940				    WS-TCHR(60) WS-TCHR(70).
+021950	     MOVE WS-G3 	 TO WS-MCHR(18) WS-MCHR(49)
+021960				    WS-MCHR(60) WS-MCHR(70)
+				    WS-MCHR(1)	WS-MCHR(80).
+021970	     MOVE WS-G4 	 TO WS-BCHR(18) WS-BCHR(49)
+021980				    WS-BCHR(60) WS-BCHR(70).
+	     MOVE LS-COMPANY	 TO WS-TOP-COMP.
+	   IF LS-USER = LS-SYS-ID
+	       MOVE "Supervisorд"  TO WS-WRKHD
+	   ELSE
+	       MOVE "Workstation"  TO WS-WRKHD
+	       MOVE LS-USER	   TO WS-WRKST.
+044790 ZA200.
+044800       DISPLAY "Files locked - Try later" AT 2312
+044810                WITH FOREGROUND-COLOR 14
+                     " " WS-STATUS WITH FOREGROUND-COLOR 15.
+044820       DISPLAY "Press any key" AT 2512 
+044830		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+044840	     ACCEPT WS-OPTION AT 2526
+		    WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15 AUTO.
+       ZA205.
+             EXIT PROGRAM.
+044870 ZA999-EXIT.
+044880       EXIT.
+      /
+044890 ZB000-ERROR	       SECTION 91.
+      
+041480 OPEN-ERROR.
+041490       DISPLAY CLR-SCREEN.
+041500       DISPLAY "Open error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       GO TO DISPLAY-FILE-NAME.
+      
+041480 READ-ERROR.
+041490       DISPLAY CLR-SCREEN.
+041500       DISPLAY "Read error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       GO TO DISPLAY-FILE-NAME.
+      
+041520 WRITE-ERROR.
+041530       DISPLAY CLR-SCREEN.
+041540       DISPLAY "Write error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041560 DISPLAY-FILE-NAME.
+041610     IF WS-F-ERROR = 2
+041620         MOVE W02-NETWORK  TO WS-FILE
+041630         MOVE WS-NETKEY    TO WS-KEY
+041800	   ELSE
+041650	   IF WS-F-ERROR = 3
+041660         MOVE W02-CREDIT   TO WS-FILE
+041670         MOVE ZERO         TO WS-KEY
+               MOVE P-NUMBER     TO WS-KEYX
+041800     ELSE
+041810	   IF WS-F-ERROR = 7
+041820	       MOVE W02-DEPART	 TO WS-FILE
+041870	       MOVE ZERO	 TO WS-KEY
+041830	       MOVE DPT-CODE	 TO WS-KEYX
+041840	   ELSE
+041850     IF WS-F-ERROR = 15
+041860         MOVE WS-PARID     TO WS-FILE
+041870         MOVE WS-PARKEY    TO WS-KEY
+041840	   ELSE
+041850     IF WS-F-ERROR = 21
+041860         MOVE W02-SPARTS   TO WS-FILE
+041870         MOVE ZERO         TO WS-KEY
+	       MOVE PRT-EXT-ITEM TO WS-KEYX
+041840     ELSE
+041850     IF WS-F-ERROR = 22
+041860         MOVE W02-STOCKF   TO WS-FILE
+041870         MOVE ZERO         TO WS-KEY
+               MOVE STK-CODE     TO WS-KEYX
+041840     ELSE
+041850     IF WS-F-ERROR = 25
+041860         MOVE W02-STKMEM   TO WS-FILE
+041870         MOVE ZERO         TO WS-KEY
+	       MOVE SME-KEY	 TO WS-KEYX
+041840	   ELSE
+041770     IF WS-F-ERROR = 51
+041780	       MOVE W02-WARHSE	 TO WS-FILE
+041790         MOVE ZERO         TO WS-KEY
+               MOVE WAR-CODE     TO WS-KEYX
+041840     ELSE
+041770     IF WS-F-ERROR = 52
+041780	       MOVE W02-WSTOCK	 TO WS-FILE
+041790         MOVE ZERO         TO WS-KEY
+	       MOVE WST-KEY	 TO WS-KEYX.
+041880	   IF WS-STATUS = "10"
+041890         MOVE "End of FILE" TO WS-STAT-MESSAGE
+041900     ELSE
+041910     IF WS-STATUS = "22"
+041920         MOVE "Duplicate record number" TO WS-STAT-MESSAGE
+041930     ELSE
+041940     IF WS-STATUS = "23"
+041950         MOVE "Invalid record number" TO WS-STAT-MESSAGE
+041960     ELSE
+041970     IF WS-STATUS = "24"
+041980         MOVE "DISK full" TO WS-STAT-MESSAGE
+041990     ELSE
+042000     IF WS-STATUS = "30"
+042010         MOVE "DISK error" TO WS-STAT-MESSAGE
+042020     ELSE
+042030     IF WS-STATUS = "94"
+042040         MOVE "FILE locked" TO WS-STAT-MESSAGE.
+045380       DISPLAY "File - " AT 1012 WS-FILE WITH FOREGROUND-COLOR 11.
+045390       DISPLAY "Status " AT 1212 
+                      WS-STATUS WITH FOREGROUND-COLOR 11
+                     ": " WS-STAT-MESSAGE WITH FOREGROUND-COLOR 14.
+045400     IF WS-STATUS NOT = "94" 
+045410         DISPLAY "Key    " AT 1412 
+                        WS-KEY WITH FOREGROUND-COLOR 11
+                        " " WS-KEYX WITH FOREGROUND-COLOR 11
+045420         DISPLAY "Reverse backup or contact program Support"
+                        AT 1612.
+045440         DISPLAY "Please make a note of these details" AT 1812.
+042170       STOP RUN.

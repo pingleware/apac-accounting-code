@@ -1,0 +1,154 @@
+003280 01  W15-RECORD1.
+	   03  W15-CODE.
+000040	       05  W15-ITEM	 PIC  X(14).
+	       05  W15-PLU REDEFINES W15-ITEM
+				 PIC  9(14).
+000060	       05  W15-ITM	 PIC  X(03).
+	       05  FILLER	 PIC  X(01).
+	   03  W15-LDG.
+000070	       05  W15-LEDGN	 PIC  9(04).
+	   03  W15-LG REDEFINES W15-LDG.
+	       05  FILLER	 PIC  X(01).
+	       05  W15-LEDG	 PIC  9(03).
+	   03  W15-BIN		 PIC  X(06).
+000050	   03  W15-ACODE	 PIC  X(10).
+000080	   03  W15-DESC.
+000090	       05 W15-DKEY	 PIC  X(14).
+000100	       05 FILLER	 PIC  X(16).
+	   03  W15-DESC2.
+000090	       05 W15-DKEY2	 PIC  X(14).
+000100	       05 FILLER	 PIC  X(16).
+000110	   03  W15-QUANT	 PIC S9(09)V9(04) COMP-3.
+000120	   03  W15-LEVEL	 PIC S9(07)V99	COMP-3.
+000130	   03  W15-COST 	 PIC S9(07)V9999 COMP-3.
+	   03  W15-SALES-FIELDS.
+	       05  W15-UNIT	 PIC S9(04)V999 COMP-3.
+	       05  W15-PER	 PIC  X(08).
+000300	       05  W15-MARKUP	 PIC S9(03)V99	COMP-3.
+000310	       05  W15-CMARKUP	 PIC S9(03)V99	COMP-3.
+000320	       05  W15-WMARKUP	 PIC S9(03)V99	COMP-3.
+000140	       05  W15-SELL	 PIC S9(08)V999 COMP-3.
+000150	       05  W15-CASH	 PIC S9(08)V999 COMP-3.
+000160	       05  W15-WSALE	 PIC S9(08)V999 COMP-3.
+	       05  W15-UNIT-2	 PIC S9(04)V999 COMP-3.
+	       05  W15-PER-2	 PIC  X(08).
+000300	       05  W15-MARKUP-2  PIC S9(03)V99	COMP-3.
+000300	       05  W15-CMARKUP-2 PIC S9(03)V99	COMP-3.
+000300	       05  W15-WMARKUP-2 PIC S9(03)V99	COMP-3.
+000140	       05  W15-SELL-2	 PIC S9(08)V999 COMP-3.
+000150	       05  W15-CASH-2	 PIC S9(08)V999 COMP-3.
+000160	       05  W15-WSALE-2	 PIC S9(08)V999 COMP-3.
+	       05  W15-UNIT-3	 PIC S9(04)V999 COMP-3.
+	       05  W15-PER-3	 PIC  X(08).
+000300	       05  W15-MARKUP-3  PIC S9(03)V99	COMP-3.
+000300	       05  W15-CMARKUP-3 PIC S9(03)V99	COMP-3.
+000300	       05  W15-WMARKUP-3 PIC S9(03)V99	COMP-3.
+000140	       05  W15-SELL-3	 PIC S9(08)V999 COMP-3.
+000150	       05  W15-CASH-3	 PIC S9(08)V999 COMP-3.
+000160	       05  W15-WSALE-3	 PIC S9(08)V999 COMP-3.
+	       05  W15-UNIT-4	 PIC S9(04)V999 COMP-3.
+	       05  W15-PER-4	 PIC  X(08).
+000300	       05  W15-MARKUP-4  PIC S9(03)V99	COMP-3.
+000300	       05  W15-CMARKUP-4 PIC S9(03)V99	COMP-3.
+000300	       05  W15-WMARKUP-4 PIC S9(03)V99	COMP-3.
+000140	       05  W15-SELL-4	 PIC S9(08)V999 COMP-3.
+000150	       05  W15-CASH-4	 PIC S9(08)V999 COMP-3.
+000160	       05  W15-WSALE-4	 PIC S9(08)V999 COMP-3.
+	   03  W15-SELLING REDEFINES W15-SALES-FIELDS.
+	       05  W15-BREAK-DOWNS OCCURS 4.
+		   07  W15-UNT	 PIC S9(04)V999 COMP-3.
+		   07  W15-PR	 PIC  X(08).
+000300		   07  W15-MKUP  PIC S9(03)V99	COMP-3.
+000300		   07  W15-CMKUP PIC S9(03)V99	COMP-3.
+000300		   07  W15-WMKUP PIC S9(03)V99	COMP-3.
+000140		   07  W15-SL	 PIC S9(08)V999 COMP-3.
+000150		   07  W15-CSH	 PIC S9(08)V999 COMP-3.
+000160		   07  W15-WSL	 PIC S9(08)V999 COMP-3.
+000160	   03  W15-PCOST	 PIC S9(08)V999 COMP-3.
+000160	   03  W15-SELL4 REDEFINES W15-PCOST
+				 PIC S9(08)V999 COMP-3.
+000170	   03  W15-AVGE 	 PIC S9(07)V9999 COMP-3.
+	   03  W15-O-AVGE REDEFINES W15-AVGE
+				 PIC S9(08)V999 COMP-3.
+000180	   03  W15-ORD		 PIC S9(07)V99	COMP-3.
+000190	   03  W15-LTIME	 PIC  9(01)V99	COMP-3.
+000200	   03  W15-MTD		 PIC S9(09)V99	COMP-3.
+000210	   03  W15-MTDC 	 PIC S9(09)V99	COMP-3.
+000220	   03  W15-MTDV 	 PIC S9(09)V99	COMP-3.
+000230	   03  W15-YTD		 PIC S9(09)V99	COMP-3.
+000240	   03  W15-YTDC 	 PIC S9(09)V99	COMP-3.
+000250	   03  W15-YTDV 	 PIC S9(09)V99	COMP-3.
+000260	   03  W15-WK1		 PIC S9(09)V99	COMP-3.
+000270	   03  W15-WK2		 PIC S9(09)V99	COMP-3.
+000280	   03  W15-WK3		 PIC S9(09)V99	COMP-3.
+000290	   03  W15-WK4		 PIC S9(09)V99	COMP-3.
+000260	   03  W15-MTH1 	 PIC S9(09)V99	COMP-3.
+000270	   03  W15-MTH2 	 PIC S9(09)V99	COMP-3.
+000280	   03  W15-MTH3 	 PIC S9(09)V99	COMP-3.
+000290	   03  W15-MAVG 	 PIC S9(09)V99	COMP-3.
+000330	   03  W15-ACT		 PIC  9(08)	COMP-3.
+000340	   03  W15-PUR		 PIC  9(08)	COMP-3.
+000350	   03  W15-DTE		 PIC  9(08)	COMP-3.
+000360	   03  W15-DISC 	 PIC  X(01).
+000370	   03  W15-IND		 PIC  9(01).
+000380	   03  W15-SUPP 	 PIC  X(06).
+000380	   03  W15-PSUPP	 PIC  X(06).
+      *
+      *    SELLING UNITS PER PURCHASE UNIT (KILO/LITRE ETC)
+      *
+	   03  W15-PACK.
+000390	       05  W15-PRC	 PIC  9(04)V999 COMP-3.
+000400	   03  W15-GUAR 	 PIC  9(02)	COMP-5.
+000410	   03  W15-TAX		 PIC  9(01).
+000420	   03  W15-XREF 	 PIC  X(18).
+	   03  W15-PLIST	 PIC  X(01).
+000110	   03  W15-QPIC 	 PIC S9(07)V99	COMP-3.
+000110	   03  W15-QJOB 	 PIC S9(07)V99	COMP-3.
+	   03  W15-PROC 	 PIC  X(01).
+	   03  W15-PRO-START	 PIC  9(08)	COMP-3.
+	   03  W15-PRO-START-T	 PIC  9(04)	COMP-5.
+	   03  W15-PRO-END	 PIC  9(08)	COMP-3.
+	   03  W15-PRO-END-T	 PIC  9(04)	COMP-5.
+	   03  W15-PRO-PRICE	 PIC S9(08)V999 COMP-3.
+	   03  W15-PRO-PRICE-2	 PIC S9(08)V999 COMP-3.
+	   03  W15-PRO-PRICE-3	 PIC S9(08)V999 COMP-3.
+	   03  W15-PRO-PRICE-4	 PIC S9(08)V999 COMP-3.
+	   03  W15-LINK		 PIC  X(13).
+	   03  W15-USE-CASES	 PIC  X(01).
+	   03  W15-CASES	 PIC S9(09)	COMP-3.
+	   03  W15-USE-PACKS	 PIC  X(01).
+	   03  W15-SR-TRCK	 PIC  X(01).
+	   03  W15-EXEMPT	 PIC  X(01).
+	       88  TAX-CERT	 VALUE "Y".
+	   03  W15-FACT 	 PIC  9(06)V999 COMP-3.
+      ******************************************************************
+      *								       *
+      *  Jan 2010 - Allow for two discounts for a Debtor on the same   *
+      * 	    Sales Ledger code. Included two additional Debtor  *
+      * 	    discount codes (11 and 12) each with a field to    *
+      * 	    define which debtor discount code uses this as an  *
+      * 	    alternate discount. The relevant Stock Item will   *
+      * 	    have an indicator field to instruct the system to  *
+      * 	    use the alternate discount. The alternate discount *
+      * 	    is only applicable if the discount code for which  *
+      * 	    this alternate discount is applicable is the code  *
+      * 	    on the Debtor account record.		       *
+      * 							       *
+      ******************************************************************
+	   03  W15-ALT-DISC	 PIC  X(01).
+      ******************************************************************
+      * 							       *
+      *  Nov 2010 - When placing an order the system checks the stock  *
+      * 	    available and if the quantity required is more the *
+      * 	    system only allows for the quantity available to   *
+      * 	    be ordered. To allow for stock descrepencies the   *
+      * 	    system has allowed for an override allowing the    *
+      * 	    quantity requested to be ordered.		       *
+      * 	    If an override is requested the person who has the *
+      * 	    authority may set the override indicator. If this  *
+      * 	    indicator is set the system allows the order to be *
+      * 	    placed and turns the indicator off. 	       *
+      * 							       *
+      ******************************************************************
+	   03  W15-QNT-OVER	 PIC  X(01).
+	   03  FILLER		 PIC  X(05).

@@ -1,0 +1,59 @@
+      /
+000010 FD  JHDOLD    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JHDOLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  JHD-REC1.
+	   03  JHD-KEY.
+	       05  JHD-DTE     PIC  9(08).
+	       05  JHD-KEY2.
+000050		 07  JHD-REF   PIC  X(08).
+	   03  JHD-ITEM.
+	       05  JHD-KEY3    PIC  X(10).
+	       05  FILLER      PIC  X(20).
+	   03  JHD-KEY4.
+	       05  JHD-AC      PIC  X(06).
+	   03  JHD-NAME.
+	       05  JHD-KEY5    PIC  X(10).
+	       05  FILLER      PIC  X(30).
+	   03  JHD-AD1	       PIC  X(30).
+	   03  JHD-AD2	       PIC  X(30).
+	   03  JHD-AD3	       PIC  X(30).
+	   03  JHD-AD4	       PIC  X(30).
+	   03  JHD-PC	       PIC  X(04).
+	   03  JHD-HTEL	       PIC  X(14).
+	   03  JHD-TEL	       PIC  X(14).
+	   03  JHD-CONTACT     PIC  X(30).
+	   03  JHD-ID	       PIC  X(14).
+	   03  JHD-ORD	       PIC  X(12).
+	   03  JHD-OREF        PIC  X(09).
+	   03  JHD-EXP	       PIC  X(01).
+	   03  JHD-PRC	       PIC  X(01).
+	   03  JHD-ADV	       PIC  X(01).
+	   03  JHD-SMAN        PIC  9(04)    COMP-5.
+	   03  JHD-DOC	       PIC  X(01).
+	       88  JHD-QUOTE   VALUE "Q".
+	       88  JHD-INVOIC  VALUE "I".
+	       88  JHD-JOB     VALUE "J".
+	   03  JHD-STATUS      PIC  X(01).
+	       88  JHD-UNASSIGNED
+                               VALUE " " "U".
+	       88  JHD-ASSIGNED
+                               VALUE "A".
+	       88  JHD-WAITING VALUE "W".
+	       88  JHD-COMPLETE
+                               VALUE "C".
+	   03  JHD-COMMENT     PIC  X(30).
+	   03  JHD-START       PIC  9(08).
+000290	   03  JHD-SUBTOT      PIC S9(09)V99 COMP-3.
+000300	   03  JHD-DSCNT       PIC S9(07)V99 COMP-3.
+	   03  JHD-NON-TXBL    PIC S9(09)V99 COMP-3.
+	   03  JHD-TAXABLE     PIC S9(09)V99 COMP-3.
+000310	   03  JHD-TAX	       PIC S9(07)V99 COMP-3.
+000320	   03  JHD-TOT	       PIC S9(09)V99 COMP-3.
+	   03  JHD-INVOICE     PIC  X(08).
+	   03  JHD-BAL	       PIC S9(09)V99 COMP-3.
+000310	   03  JHD-ADVTAX      PIC S9(07)V99 COMP-3.
+	   03  JHD-INSTRUCT    PIC  X(09).
+	   03  JHD-PMETH       PIC  9(01).
+	   03  JHD-STAT	       PIC  9(03)    COMP-3.
+	   03  FILLER	       PIC  X(05).

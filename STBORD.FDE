@@ -1,0 +1,21 @@
+      /
+000010 FD  STBORD    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-STBORD.
+000030 01  SBO-RECORD1.
+	   03  SBO-EXT-ITEM.
+000040	       05  SBO-ITEM    PIC  X(14).
+	       05  SBO-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+000200	   03  SBO-DEBT        PIC  X(06).
+	   03  SBO-KEY.
+000050	       05  SBO-ORD     PIC  9(08)    COMP.
+	       05  SBO-LINE    PIC  9(02)    COMP.
+000060	   03  SBO-DATE        PIC  9(08)    COMP-3.
+000070	   03  SBO-QUANT       PIC S9(05)V99 COMP-3.
+	   03  SBO-QNT REDEFINES SBO-QUANT
+                               PIC S9(07)    COMP-3.
+	   03  SBO-INST        PIC  X(08).
+	   03  SBO-CONTACT     PIC  X(30).
+	   03  SBO-TEL	       PIC  X(14).
+	   03  SBO-FAX	       PIC  X(14).

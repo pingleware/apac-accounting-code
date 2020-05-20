@@ -1,0 +1,94 @@
+006240 01  S-GAR.
+006250     03  LINE  2 COLUMN 33 FOREGROUND-COLOR 15
+                                 VALUE "GUARANTEE LOOKUP".
+           03  LINE  3 COLUMN  2 "Start Item Code :".
+	   03	       COLUMN 40 "Serial Number :".
+           03  LINE  4 COLUMN  2 REVERSE-VIDEO VALUE 
+	       "Item/Bar Code      Serial No.         Description
+      -        "   ClientName Inv. No.".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออออออออออออออัอออออออออออออ
+      -        "อออออัออออออออออออออออออออัออออออออออัออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออออออออออออออฯอออออออออออออ
+      -        "อออออฯออออออออออออออออออออฯออออออออออฯออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+           03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE 
+             "Key in at least the first character of the code or press".
+           03          COLUMN 59 FOREGROUND-COLOR 14 VALUE "Esc".
+           03          COLUMN 62 FOREGROUND-COLOR 7 VALUE " to exit".
+	   03  LINE 25 COLUMN  2 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 7 VALUE "Pressing '".
+	   03	       COLUMN 12 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 14 VALUE "ENTER".
+	   03	       COLUMN 17 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 7 VALUE
+                                 "' key only, will start from the beginn
+      -                          "ing of the guarantee file".
+       01  S-GARA.
+           03  LINE  3 COLUMN  2 "Start Serial Number :".
+       01  S-GARB.
+           03  LINE  3 COLUMN  2 "Start Item Code :".
+	   03	       COLUMN 40 "               ".
+       01  S-GARC.
+           03  LINE  3 COLUMN  2 "Start Client Name :".
+           03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE 
+             "Key in at least the first character of the client name or 
+      -      "press".
+           03          COLUMN 66 FOREGROUND-COLOR 14 VALUE "Esc".
+           03          COLUMN 69 FOREGROUND-COLOR 7 VALUE " to exit".
+
+       01  SA-GAR.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(14) USING W10-ITEM AUTO.
+	   03	       COLUMN 56 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(18) USING W10-SERNO AUTO.
+
+       01  SA-GAR-ITM.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(14) USING W10-ITEM AUTO.
+	   03	       COLUMN 35 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(03) USING W10-ITM AUTO.
+	   03	       COLUMN 56 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(18) USING W10-SERNO AUTO.
+
+       01  SA-GAR-EXT.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(18) USING W10-EXT-ITEM AUTO.
+	   03	       COLUMN 56 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(18) USING W10-SERNO AUTO.
+
+       01  SA-GARA.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(14) USING W10-ITEM AUTO.
+
+       01  SA-GARA-ITM.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(14) USING W10-ITEM AUTO.
+	   03	       COLUMN 35 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(03) USING W10-ITM AUTO.
+
+       01  SA-GARA-EXT.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(18) USING W10-EXT-ITEM AUTO.
+
+       01  SA-GARB.
+	   03  LINE  3 COLUMN 24 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  X(18) USING W10-SERNO AUTO.
+       01  SA-GARC.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+                                 PIC  X(40) USING W10-NAME AUTO.

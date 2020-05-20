@@ -1,0 +1,6 @@
+000010	   03  W02-ASSETT.
+000020	       05  W02-PTH50   PIC  X(03).
+000030	       05  FILLER      PIC  X(06) VALUE "\AUDT_".
+000040	       05  W02-EXT50   PIC  X(03).
+000050         05  FILLER      PIC  X(04) VALUE ".APC".
+               05  FILLER      PIC  X(01) VALUE X"00".

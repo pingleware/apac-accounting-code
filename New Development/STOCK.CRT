@@ -1,0 +1,282 @@
+       01  S04.
+
+      *=====================================================================================================
+      *                          1         2         3         4         5         6         7         8
+      *                 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+      *
+      *               5                                 STOCK DETAILS
+      *               6   Item code         XXXXXXXXXXXXXXXXXX
+      *               7   Bin               XXXXXX
+      *               8   X-Ref/Equiv       XXXXXXXXXXXXXXXXXX
+      *               9   Alternate Code    XXXXXXXXXX
+      *              10   Description       XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      *               1   Description 2     XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      *               2   Sales ledger      XXXX xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        
+      *               3   Type indicator    9 : 0=Controlled,1=Priced,2=Labour,3=Text,4=Heading
+      *               4   Tax indicator     9 : 0=No VAT, 1 to 6=VAT Rate
+      *               5   Markup-Retail     ZZ9.99
+      *               6          Cash       ZZ9.99
+      *               7          Wholesale  ZZ9.99
+      *               8   Quantity          ZZZZZZ9.9999-
+      *               9   Priced per        XXXXXXXX (e.g. Each,Dozen,Etc)
+      *              20   Reorder level     ZZZZZZ9.99                
+      *               1   Lead time         9.99     (Months)
+      *               2   Cost price        ZZZZZ9.999
+      *               3   Guarantee period  Z9       (Months. 0=No Guarantee)
+      *               4   Price -Retail     ZZZZZZZ9.999 Exclusive ZZZZZZZ9.99 Inclusive
+      *               5          Cash       ZZZZZZZ9.999 Exclusive ZZZZZZZ9.99 Inclusive
+      *               6          Wholesale  ZZZZZZZ9.999 Exclusive ZZZZZZZ9.99 Inclusive
+      *               7   Quantity ordered  ZZZZZZ9.99 
+      *               8   Packed -Sell Unit ZZ9.99   (e.g. 6,12,24)
+      *               9   Date ordered      Z9/99/9999
+      *              30   Date received     Z9/99/9999
+      *               1   Average cost      ZZZZZ9.999
+      *               2   Use Alt Debt Disc X        (Y or N)
+      *               3   Last active       XXXXXXXXXX
+      *               4   Movement MTD      ZZZZZZZ9.99
+      *               5            Month 1  ZZZZZZZ9.99
+      *               6            Month 2  ZZZZZZZ9.99
+      *               7            Month 3  ZZZZZZZ9.99 
+      *               8            Average  ZZZZZZZ9.99
+      *               9   Movement YTD      ZZZZZZZ9.99
+      *              40   Value MTD         ZZZZZZZZ9.99
+      *               1         YTD         ZZZZZZZZ9.99
+      *               2   Cost MTD          ZZZZZZZZ9.99
+      *               3        YTD          ZZZZZZZZ9.99
+      *               4   P/S Quantity      ZZZZZZ9.99-
+      *               5   Job Quantity      ZZZZZZ9.99-
+      *
+      *=====================================================================================================
+       
+           03  S04-N.
+               05  LINE  6 COLUMN  3 VALUE "Item code        ".
+               05  LINE  7 COLUMN  3 VALUE "Bin              ".
+               05  LINE  8 COLUMN  3 VALUE "X-Ref/Equiv      ".
+               05  LINE  9 COLUMN  3 VALUE "Alternate Code   ".
+               05  LINE 10 COLUMN  3 PIC  X(17) FROM WS-DESC-H1.
+               05  LINE 11 COLUMN  3 PIC  X(17) FROM WS-DESC-H2.
+               05  LINE 12 COLUMN  3 VALUE "Sales ledger     ".
+               05  LINE 13 COLUMN  3 VALUE "Type indicator   ".
+               05          COLUMN 20 VALUE ": ".
+               05          COLUMN 22 VALUE "0"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 23 VALUE "=Controlled,".
+               05          COLUMN 35 VALUE "1"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 36 VALUE "=Price only,".
+               05          COLUMN 48 VALUE "2"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 49 VALUE "=Labour,".
+               05          COLUMN 57 VALUE "3"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 58 VALUE "=Text,".
+               05          COLUMN 64 VALUE "4"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 65 VALUE "=Heading".
+               05  LINE 14 COLUMN  3 VALUE "Tax indicator    ".
+               05          COLUMN 20 VALUE ": ".
+               05          COLUMN 22 VALUE "0"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 23 VALUE "=No VAT, ".
+               05          COLUMN 32 VALUE "1"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 33 VALUE " to ".
+               05          COLUMN 37 VALUE "6"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 38 VALUE "=VAT Rate".
+               05  LINE 15 COLUMN  3 VALUE "Markup-          ".
+               05          COLUMN 10 PIC X(08) FROM WS-RT-HD.
+               05  LINE 16 COLUMN  3 VALUE "                 ".
+               05          COLUMN 10 PIC X(10) FROM WS-CS-HD.
+               05  LINE 17 COLUMN  3 VALUE "                 ".
+               05          COLUMN 10 PIC X(10) FROM WS-WS-HD.
+               05  LINE 18 COLUMN  3 VALUE "Quantity         ".
+               05  LINE 19 COLUMN  3 VALUE "Priced per       ".
+               05          COLUMN 30 VALUE "(e.g. ".
+               05          COLUMN 36 VALUE "Each"             FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 40 VALUE ",".
+               05          COLUMN 41 VALUE "Dozen"            FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 46 VALUE ",".
+               05          COLUMN 47 VALUE "Etc"              FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 50 VALUE ")".
+               05  LINE 20 COLUMN  3 VALUE "Reorder level    ".
+               05  LINE 21 COLUMN  3 VALUE "Lead time        ".
+               05          COLUMN 30 VALUE "(".
+               05          COLUMN 31 VALUE "Months"           FOREGROUND-COLOR Grey.
+               05          COLUMN 38 VALUE ")".
+               05  LINE 22 COLUMN  3 VALUE "Cost price       ".
+               05  LINE 23 COLUMN  3 VALUE "Guarantee period ".
+               05          COLUMN 30 VALUE "(".
+               05          COLUMN 31 VALUE "Months"           FOREGROUND-COLOR Grey.
+               05          COLUMN 37 VALUE ".".
+               05          COLUMN 39 VALUE "0"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 40 VALUE "=No guarantee)".
+               05  LINE 24 COLUMN  3 VALUE "Price -       ".
+               05          COLUMN 10 PIC X(08) FROM WS-RT-HD.
+               05          COLUMN 34 VALUE "Exclusive".
+               05          COLUMN 56 VALUE "Inclusive".
+               05  LINE 25 COLUMN  3 VALUE "                 ".
+               05          COLUMN 10 PIC X(10) FROM WS-CS-HD.
+               05          COLUMN 34 VALUE "Exclusive".
+               05          COLUMN 56 VALUE "Inclusive".
+               05  LINE 26 COLUMN  3 VALUE "                 ".
+               05          COLUMN 10 PIC X(10) FROM WS-WS-HD.
+               05          COLUMN 34 VALUE "Exclusive".
+               05          COLUMN 56 VALUE "Inclusive".
+               05  LINE 27 COLUMN  3 VALUE "Quant ordered    ".
+               05  LINE 28 COLUMN  3 VALUE "Packed -Sell Unit".
+               05          COLUMN 30 VALUE "(e.g. ".
+               05          COLUMN 36 VALUE "6"                FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 37 VALUE ",".
+               05          COLUMN 38 VALUE "12"               FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 40 VALUE ",".
+               05          COLUMN 41 VALUE "24"               FOREGROUND-COLOR Brown HIGHLIGHT.
+               05          COLUMN 43 VALUE ")".
+               05  LINE 29 COLUMN  3 VALUE "Date ordered     ".
+               05  LINE 30 COLUMN  3 VALUE "Date received    ".
+               05  LINE 31 COLUMN  3 VALUE "Average cost     ".
+               05  LINE 32 COLUMN  3 VALUE "Use Alt Debt Disc".
+               05          COLUMN 30 VALUE "(Y or N)".
+
+           03  S04-ENQ.
+               05  LINE 33 COLUMN  3 VALUE "Last active      ".
+               05  LINE 34 COLUMN  3 VALUE "Movement MTD     ".
+               05  LINE 35 COLUMN  3 VALUE "         Month 1 ".
+               05  LINE 36 COLUMN  3 VALUE "         Month 2 ".
+               05  LINE 37 COLUMN  3 VALUE "         Month 3 ".
+               05  LINE 38 COLUMN  3 VALUE "         Average ".
+               05  LINE 39 COLUMN  3 VALUE "         YTD     ".
+               05  LINE 40 COLUMN  3 VALUE "Value MTD        ".
+               05  LINE 41 COLUMN  3 VALUE "      YTD        ".
+               05  LINE 42 COLUMN  3 VALUE "Cost MTD         ".
+               05  LINE 43 COLUMN  3 VALUE "     YTD         ".
+               05  LINE 44 COLUMN  3 VALUE "P/S Quantity     ".
+               05  LINE 45 COLUMN  3 VALUE "Job Quantity     ".
+      *
+      *    The following group level is only used to specify the colours
+      *    The 05 levels are used to ACCEPT/DISPLAY data.
+      *
+       01  S05-DATA.
+           03  BACKGROUND-COLOR Magenta FOREGROUND-COLOR Grey HIGHLIGHT.
+               05  S05.
+                   07  LINE  6 COLUMN 21 PIC X(14) USING W10-ITEM AUTO.
+               
+               05  S05-ITM.
+                   07  LINE  6 COLUMN 21 PIC X(14) USING W10-ITEM AUTO.
+                   07          COLUMN 36 PIC X(03) USING W10-ITM AUTO.
+               
+               05  S05-EXT.
+                   07  LINE  6 COLUMN 21 PIC X(18) USING W10-EXT-ITEM AUTO.
+               
+               05  S05-3.
+                   07  LINE  6 COLUMN 21 PIC Z(03) USING W10-I3 AUTO.
+               
+               05  S05-4.
+                   07  LINE  6 COLUMN 21 PIC Z(04) USING W10-I4 AUTO.
+               
+               05  S05-5.
+                   07  LINE  6 COLUMN 21 PIC Z(05) USING W10-I5 AUTO.
+               
+               05  S05-6.
+                   07  LINE  6 COLUMN 21 PIC Z(06) USING W10-I6 AUTO.
+               
+               05  S05-7.
+                   07  LINE  6 COLUMN 21 PIC Z(07) USING W10-I7 AUTO.
+               
+               05  S05-8.
+                   07  LINE  6 COLUMN 21 PIC Z(08) USING W10-I8 AUTO.
+               
+               05  S05-9.
+                   07  LINE  6 COLUMN 21 PIC Z(09) USING W10-I9 AUTO.
+               
+               05  S05-10.
+                   07  LINE  6 COLUMN 21 PIC Z(10) USING W10-I10 AUTO.
+               
+               05  S05-11.
+                   07  LINE  6 COLUMN 21 PIC Z(11) USING W10-I11 AUTO.
+               
+               05  S05-12.
+                   07  LINE  6 COLUMN 21 PIC Z(12) USING W10-I12 AUTO.
+               
+               05  S05-13.
+                   07  LINE  6 COLUMN 21 PIC Z(13) USING W10-I13 AUTO.
+               
+               05  S05-14.
+                   07  LINE  6 COLUMN 21 PIC Z(14) USING W10-I14 AUTO.
+
+       01  S06.
+           03  S06A.
+               05  S06A-A.
+                   07  BACKGROUND-COLOR Magenta FOREGROUND-COLOR Grey HIGHLIGHT.
+                       09  LINE  7 COLUMN 21 PIC X(06) USING W10-BIN AUTO.
+                       09  LINE  8 COLUMN 21 PIC X(18) USING W10-EXT-CODE2 AUTO.
+                       09  LINE  9 COLUMN 21 PIC X(10) USING W10-ACODE AUTO.
+                       09  LINE 10 COLUMN 21 PIC X(30) USING W10-DESC AUTO.
+                       09  LINE 11 COLUMN 21 PIC X(30) USING W10-DESC2 AUTO.
+                       09  LINE 12 COLUMN 21 PIC X(04) USING W10-LEDG AUTO.
+      *                09  LINE  5 COLUMN 21 PIC X(01) USING W10-USE-PACKS AUTO.
+      *                09  LINE  6 COLUMN 21 PIC X(01) USING W10-USE-CASES AUTO.
+                       09  LINE 13 COLUMN 21 PIC 9(01) USING W10-IND AUTO.
+                       09  LINE 14 COLUMN 21 PIC 9(01) USING W10-TAX AUTO.
+      *                09          COLUMN 21 PIC X(01) USING W10-EXEMPT AUTO.
+
+               05  S06A-B.
+                   07  BACKGROUND-COLOR Magenta FOREGROUND-COLOR Grey HIGHLIGHT.
+                       09  LINE 15 COLUMN 21 PIC ZZ9.99 BLANK WHEN ZERO USING W10-MARKUP AUTO.
+                       09  LINE 16 COLUMN 21 PIC ZZ9.99 BLANK WHEN ZERO USING W10-CMARKUP AUTO.
+                       09  LINE 17 COLUMN 21 PIC ZZ9.99 BLANK WHEN ZERO USING W10-WMARKUP AUTO.
+
+               05  S06A-C.
+                   07  BACKGROUND-COLOR Magenta FOREGROUND-COLOR Grey HIGHLIGHT.
+                       09  LINE 18 COLUMN 21 PIC Z(06)9.9(04)- USING W10-QUANT AUTO.
+                       09  LINE 19 COLUMN 21 PIC X(08)         USING W10-PER AUTO.
+                       09  LINE 20 COLUMN 21 PIC Z(06)9.99     USING W10-REORD AUTO.
+                       09  LINE 21 COLUMN 21 PIC 9.99          USING W10-LTIME AUTO.
+                       09  LINE 22 COLUMN 21 PIC Z(05)9.999    BLANK WHEN ZERO USING W10-COST AUTO.
+                       09  LINE 23 COLUMN 21 PIC Z9            USING W10-GUAR AUTO.
+                       09  LINE 24 COLUMN 21 PIC Z(07)9.999    USING W10-SELL AUTO.
+                       09  LINE 25 COLUMN 21 PIC Z(07)9.999    USING W10-CASH AUTO.
+                       09  LINE 26 COLUMN 21 PIC Z(07)9.999    USING W10-WSALE AUTO.
+                       09  LINE 27 COLUMN 21 PIC Z(06)9.99     USING W10-ORDER AUTO.
+                       09  LINE 28 COLUMN 21 PIC ZZ9.99        USING W10-PRC AUTO.
+                       09  LINE 29 COLUMN 21 PIC Z9/99/9999    USING W10-ODTE AUTO.
+                       09  LINE 30 COLUMN 21 PIC Z9/99/9999    USING W10-PURCH AUTO.
+                       09  LINE 31 COLUMN 21 PIC Z(05)9.999    BLANK WHEN ZERO USING W10-AVGE AUTO.
+                       09  LINE 32 COLUMN 21 PIC X(01)         USING W10-ALT-DISC AUTO.
+                       09  LINE 33 COLUMN 21 PIC X(10)         USING W10-ACTIVE AUTO.
+
+           03  S06B.
+               05  BACKGROUND-COLOR Magenta FOREGROUND-COLOR Grey HIGHLIGHT.
+                   07  LINE 34 COLUMN 21 PIC Z(07)9.99  USING STK-MTD AUTO.
+                   07  LINE 35 COLUMN 21 PIC Z(07)9.99  USING STK-MTH1 AUTO.
+                   07  LINE 36 COLUMN 21 PIC Z(07)9.99  USING STK-MTH2 AUTO.
+                   07  LINE 37 COLUMN 21 PIC Z(07)9.99  USING STK-MTH3 AUTO.
+                   07  LINE 38 COLUMN 21 PIC Z(07)9.99  USING STK-MAVG AUTO.
+                   07  LINE 39 COLUMN 21 PIC Z(07)9.99  USING STK-YTD AUTO.
+                   07  LINE 40 COLUMN 21 PIC Z(08)9.99  USING STK-MTDV AUTO.
+                   07  LINE 41 COLUMN 21 PIC Z(08)9.99  USING STK-YTDV AUTO.
+                   07  LINE 42 COLUMN 21 PIC Z(08)9.99  BLANK WHEN ZERO USING W10-MTDC AUTO.
+                   07  LINE 43 COLUMN 21 PIC Z(08)9.99  BLANK WHEN ZERO USING W10-YTDC AUTO.
+                   07  LINE 44 COLUMN 21 PIC Z(06)9.99- BLANK WHEN ZERO USING STK-QPIC AUTO.
+                   07  LINE 45 COLUMN 21 PIC Z(06)9.99- BLANK WHEN ZERO USING STK-QJOB AUTO.
+
+           03  S06C.
+               05  BACKGROUND-COLOR Magenta FOREGROUND-COLOR Brown HIGHLIGHT.
+                   07  LINE 24 COLUMN 44 PIC Z(07)9.99 USING W10-VSELL AUTO.
+                   07  LINE 25 COLUMN 44 PIC Z(07)9.99 USING W10-VCASH AUTO.
+                   07  LINE 26 COLUMN 44 PIC Z(07)9.99 USING W10-VWSALE AUTO.
+       01  S06D.
+           03  BACKGROUND-COLOR Magenta FOREGROUND-COLOR Grey HIGHLIGHT.
+               05  LINE 12 COLUMN 18 PIC Z(05)9.999 BLANK WHEN ZERO USING W10-COST AUTO.
+
+       01  S06E.
+           03  BACKGROUND-COLOR Magenta FOREGROUND-COLOR Grey HIGHLIGHT.
+               05  LINE 24 COLUMN 21 PIC Z(07)9.999 USING W10-SELL AUTO.
+               05  LINE 25 COLUMN 21 PIC Z(07)9.999 USING W10-CASH AUTO.
+               05  LINE 26 COLUMN 21 PIC Z(07)9.999 USING W10-WSALE AUTO.
+
+       01  S06F.
+           03  LINE 17 COLUMN 33 VALUE "Cases".
+           03          COLUMN 43 PIC Z(08)9 FROM W10-CASES FOREGROUND-COLOR Cyan HIGHLIGHT BACKGROUND-COLOR Magenta.
+
+       01  S-ART11.
+           03  BACKGROUND-COLOR Green.
+               05  LINE 11 COLUMN 15 VALUE "旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴"  FOREGROUND-COLOR Black.
+               05          COLUMN 65 VALUE                                                   "�" FOREGROUND-COLOR Green HIGHLIGHT.
+               05  LINE 12 COLUMN 15 VALUE "�"                                                   FOREGROUND-COLOR Black.
+               05          COLUMN 16 VALUE  " Does this item qualify for VAT article 11/1g:   "  FOREGROUND-COLOR Grey.
+               05          COLUMN 65 VALUE                                                   "�" FOREGROUND-COLOR Green.
+               05  LINE 13 COLUMN 15 VALUE "�"                                                   FOREGROUND-COLOR Black.
+               05          COLUMN 16 VALUE  "컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴켸" FOREGROUND-COLOR Green HIGHLIGHT.

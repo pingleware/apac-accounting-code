@@ -1,0 +1,20 @@
+      /
+002000 FD  GLBTCH    LABEL RECORD IS STANDARD
+002010		     VALUE OF FILE-ID IS W02-GLCHEQ.
+002020 01  GLB-REC.
+           03  GLB-KEY.
+	       05  GLB-REFER   PIC  X(07).
+	       05  GLB-REF REDEFINES GLB-REFER
+			       PIC  9(07).
+               05  GLB-SEQ     PIC  9(02).
+002030	   03  GLB-DATE        PIC  9(08).
+002040     03  GLB-DTE REDEFINES GLB-DATE.
+002050	       05  GLB-CC      PIC  9(02).
+002050         05  GLB-YY      PIC  9(02).
+002060         05  GLB-MM      PIC  9(02).
+002070         05  GLB-DD      PIC  9(02).
+002160     03  GLB-AC          PIC  9(06).
+002080     03  GLB-NAR         PIC  X(40).
+	   03  GLB-PAY	       PIC  X(40).
+002130     03  GLB-VALUE       PIC S9(09)V99 COMP-3.
+	   03  FILLER	       PIC  X(03).

@@ -1,0 +1,70 @@
+      ******************************************************************
+      *                                                                *
+      *    GENERAL LEDGER:                                             *
+      *                                                                *
+      *    THIS ROUTINE IS USED TO UPDATE THE INTEGRATION RECORDS      *
+      *    FOR POSTING TO THE G/L ACCOUNTS.                            *
+      *                                                                *
+      *    THE KEY FOR EACH OF THE RECORDS IS:                         *
+      *                                                                *
+      *        RUN DATE (CCYYMMDD)  -  WX-YMD			       *
+      *                                                                *
+      *        TYPE -  WX-TYPE                                         *
+      *                01 : DEBTORS                                    *
+      *                02 : CREDITORS                                  *
+      *                03 : BAD DEBTS                                  *
+      *                04 : SALES                                      *
+      *                05 : SALES (RETURNS)                            *
+      *                06 : PURCHASES                                  *
+      *                07 : PURCHASES (RETURNS)                        *
+      *                08 : COST-OF-SALES                              *
+      *                09 : COST-OF-SALES (RETURNS)                    *
+      *                10 : OUTPUT VAT (DEBTORS)                       *
+      *                11 : INPUT VAT (DEBTORS)                        *
+      *                12 : OUTPUT VAT (CREDITORS)                     *
+      *                13 : INPUT VAT (CREDITORS)                      *
+      *                14 : DEBTOR TRANSACTIONS                        *
+      *                                                                *
+      *        TRANSACTION CODE / SALES LEDGER NO - WX-LEDG            *
+      *                                                                *
+      *    OTHER DETAILS ARE:                                          *
+      *                                                                *
+      *         ACCOUNT NUMBER -  WX-AC                                *
+      *                                                                *
+      *         NARRATIVE - WX-NAR                                     *
+      *                                                                *
+      *         TRANSACTION VALUE - WX-VAL                             *
+      *                                                                *
+      *    THE ROUTINE WILL FIRST READ THE FILE USING THE DETAILS      *
+      *    ABOVE AS THE KEY. IT THE RECORD EXISTS THE ROUTINE WILL     *
+      *    UPDATE THE RECORD. IF NO RECORD EXISTS A NEW RECORD WILL    *
+      *    BE CREATED.                                                 *
+      *                                                                *
+      ******************************************************************
+       GL-TRF-UPDATE   SECTION.
+       GL-TRF-KEY.
+             INITIALIZE XFR-REC.
+             MOVE WX-DATE        TO XFR-DATE.
+             MOVE WX-TYPE        TO XFR-TYPE.
+             MOVE WX-LEDG        TO XFR-LEDG.
+             PERFORM READ-LEDTRF THRU READ-LEDTRF-EXIT.
+           IF WS-F-ERROR = 40
+               GO TO GL-TRF-CREATE.
+             MOVE 0              TO WS-ACTION.
+             PERFORM AY40 THRU AY59. 
+             ADD WX-VALUE        TO XFR-VALUE.
+	   IF XFR-AC = ZERO
+	      MOVE WX-AC	 TO XFR-AC.
+	     PERFORM REWRITE-LEDTRF THRU WRITE-LEDTRF-EXIT.
+             GO TO GL-TRF-EXIT.
+
+       GL-TRF-CREATE.
+             MOVE WX-AC          TO XFR-AC.
+             MOVE WX-NAR         TO XFR-NAR.
+             MOVE WX-VALUE       TO XFR-VALUE.
+             PERFORM WRITE-LEDTRF THRU WRITE-LEDTRF-EXIT.
+             MOVE 1              TO WS-ACTION.
+             PERFORM AY40 THRU AY59. 
+
+       GL-TRF-EXIT.
+             EXIT.

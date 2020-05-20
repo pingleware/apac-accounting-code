@@ -1,0 +1,20 @@
+      /
+000010 FD  RECTRN    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-RECTRN.
+000030 01  RTD-RECORD1.
+	   03  RTD-AC	       PIC  X(06).
+      *
+      *    M = Monthly
+      *    B = Bi Monthly
+      *    Q = Quarterly
+      *    F = Four Monthly
+      *    S = Six Monthly
+      *    A = Annually
+      *
+000060	   03  RTD-FREQ        PIC  X(01).
+000040	   03  RTD-CODE        PIC  9(02).
+000080	   03  RTD-DATE        PIC  9(08)    COMP-3.
+	   03  RTD-REG	       PIC  X(09).
+000090	   03  RTD-ORD	       PIC  X(12).
+000100	   03  RTD-VALUE       PIC S9(09)V99 COMP-3.

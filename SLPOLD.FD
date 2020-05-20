@@ -1,0 +1,79 @@
+      /
+000010 FD  SLPOLD    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-SLPOLD
+000220		     RECORDING MODE IS VARIABLE.
+000030 01  SLO-RECORD1.
+	   03  SLO-KEY.
+	       05  SLO-REF     PIC  9(08).
+	       05  SLO-SEQ     PIC  9(03).
+      *
+      *        H = Header
+      *        I = Item
+      *        T = Total
+      *
+	   03  SLO-TYPE        PIC  X(01).
+	   03  SLO-DRAW        PIC  9(02).
+000040	   03  SLO-CODE        PIC  9(03).
+	   03  SLO-EXT-ITEM.
+000050	       05  SLO-ITEM    PIC  X(14).
+	       05  SLO-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  SLO-MSER.
+000090	       05  SLO-DESC.
+		   07  SLO-SDSC
+			       PIC  X(29).
+	       05  FILLER      PIC  X(10).
+	       05  SLO-SCALE   PIC  X(01).
+	   03  SLO-SERIALS REDEFINES SLO-MSER.
+               05  FILLER      PIC  X(01).
+	       05  SLO-SNUM OCCURS 2.
+		   07  SLO-SNO PIC  X(18).
+                   07  FILLER  PIC  X(01).
+               05  FILLER      PIC  X(01).
+	   03  SLO-SERNO       PIC  X(18).
+000100	   03  SLO-QNT	       PIC S9(05)V99 COMP-3.
+	   03  SLO-WEIGHT REDEFINES SLO-QNT
+			       PIC S9(04)V999 COMP-3.
+000110	   03  SLO-COST        PIC S9(06)V999 COMP-3.
+000120	   03  SLO-SELL        PIC S9(08)V999 COMP-3.
+000130	   03  SLO-VAT	       PIC S9(07)V99 COMP-3.
+000140	   03  SLO-VAL	       PIC S9(09)V99 COMP-3.
+000150	   03  SLO-INCTAX      PIC S9(09)V99 COMP-3.
+000160	   03  SLO-NONTAX      PIC S9(09)V99 COMP-3.
+000170	   03  SLO-TAXVAL      PIC S9(09)V99 COMP-3.
+000180	   03  SLO-DSC	       PIC S9(02)V99 COMP-3.
+000190	   03  SLO-DISC        PIC S9(07)V99 COMP-3.
+	   03  SLO-SUPER       PIC  9(02)    COMP-3.
+	   03  SLO-PACK	       PIC  9(01).
+	   03  SLO-VAT-SUB     PIC  9(01).
+	   03  SLO-ART11       PIC  X(01).
+	   03  SLO-SPEC        PIC  X(01).
+	   03  FILLER	       PIC  X(11).
+000030 01  SLO-RECORD2.
+	   03  FILLER	       PIC  X(14).
+	   03  SLO-SMAN        PIC  9(02).
+	   03  SLO-SNAME       PIC  X(21).
+	   03  SLO-DATE        PIC  9(08).
+	   03  SLO-TIME        PIC  X(08).
+	   03  SLO-VATNO       PIC  X(14).
+	   03  FILLER	       PIC  X(95).
+000030 01  SLO-RECORD3.
+	   03  FILLER	       PIC  X(14).
+	   03  SLO-TIME2       PIC  X(08).
+	   03  SLO-TOTAL       PIC S9(09)V99 COMP-3.
+	   03  SLO-DISCOUNT    PIC S9(09)V99 COMP-3.
+	   03  SLO-TAX-DET OCCURS 6.
+	       05  SLO-TAXABLE PIC S9(09)V99 COMP-3.
+	       05  SLO-VATVAL  PIC S9(07)V99 COMP-3.
+	   03  SLO-EXCTAX      PIC S9(09)V99 COMP-3.
+	   03  SLO-DUE	       PIC S9(09)V99 COMP-3.
+	   03  SLO-CASH	       PIC S9(07)V99 COMP-3.
+	   03  SLO-CHQ	       PIC S9(07)V99 COMP-3.
+	   03  SLO-CARD	       PIC S9(07)V99 COMP-3.
+	   03  SLO-SPEED       PIC S9(07)V99 COMP-3.
+	   03  SLO-VOUCH       PIC S9(07)V99 COMP-3.
+	   03  SLO-CHANGE      PIC S9(07)V99 COMP-3.
+	   03  SLO-ROUND       PIC S9(01)V99 COMP-3.
+	   03  SLO-RTVAL       PIC S9(01)V99 COMP-3.
+	   03  SLO-RTTAX       PIC S9(01)V99 COMP-3.
+	   03  SLO-TAX	       PIC  X(14).

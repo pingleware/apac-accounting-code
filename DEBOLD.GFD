@@ -1,0 +1,84 @@
+      /
+000010 FD  DEBOLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-DEBOLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  DBO-RECORD1.
+000040	   03  DBO-ACNO        PIC  X(06).
+000050	   03  DBO-TYPE        PIC  9(01).
+000060	   03  DBO-CATEGORY.
+000070	       05  DBO-CAT     PIC  9(02).
+000150	   03  DBO-TITLE       PIC  9(02)    COMP-5.
+000080	   03  DBO-NAME.
+000090	       05  DBO-NKEY.
+		 07  DBO-NCASH PIC  X(09).
+                 07  FILLER    PIC  X(03).
+000100         05  FILLER      PIC  X(28).
+000110	   03  DBO-ADDRESS.
+	       05  DBO-ADD     PIC  X(60).
+               05  FILLER      PIC  X(10).
+000120	   03  DBO-PADDR.
+	       05  DBO-PAD     PIC  X(60).
+               05  FILLER      PIC  X(10).
+000130	   03  DBO-POST        PIC  X(08).
+000140	   03  DBO-PPOST       PIC  X(08).
+000160	   03  DBO-H-TEL       PIC  X(14).
+000170	   03  DBO-B-TEL       PIC  X(14).
+000170	   03  DBO-FAX	       PIC  X(14).
+000180	   03  DBO-ID	       PIC  X(14).
+000190	   03  DBO-TAX	       PIC  X(14).
+	   03  DBO-CONTACT     PIC  X(30).
+000200	   03  DBO-ACTIVE      PIC  9(08)    COMP-3.
+000210	   03  DBO-STM	       PIC S9(09)V99 COMP-3.
+000220	   03  DBO-BAL	       PIC S9(09)V99 COMP-3.
+000230	   03  DBO-CUR	       PIC S9(09)V99 COMP-3.
+000240	   03  DBO-30	       PIC S9(09)V99 COMP-3.
+000250	   03  DBO-60	       PIC S9(09)V99 COMP-3.
+000260	   03  DBO-90	       PIC S9(09)V99 COMP-3.
+000270	   03  DBO-120	       PIC S9(09)V99 COMP-3.
+000280	   03  DBO-DEBT        PIC S9(09)V99 COMP-3.
+000290	   03  DBO-CRED        PIC S9(09)V99 COMP-3.
+000300	   03  DBO-PURYTD      PIC S9(09)V99 COMP-3.
+000310	   03  DBO-PURPRV      PIC S9(09)V99 COMP-3.
+000320	   03  DBO-INT	       PIC S9(05)V99 COMP-3.
+000320	   03  DBO-VAT	       PIC S9(05)V99 COMP-3.
+000330	   03  DBO-CRL	       PIC  9(07)    COMP-3.
+000340	   03  DBO-FINANCE.
+000350	       05  DBO-FIN     PIC  9(01).
+000360	   03  DBO-TERMS       PIC  X(01).
+000370	   03  DBO-BDT	       PIC  9(01).
+000380	   03  DBO-LANG        PIC  X(01).
+000390	   03  DBO-PMT	       PIC  9(08)    COMP-3.
+	   03  DBO-INV-TYPE    PIC  X(01).
+	   03  DBO-LAST-PMT    PIC S9(09)V99 COMP-3.
+	   03  DBO-LAB	       PIC  X(01).
+	   03  DBO-OI	       PIC  X(01).
+	   03  DBO-PRICE       PIC  X(01).
+	   03  DBO-ART11       PIC  X(01).
+000400	   03  DBO-SDISC       PIC  9(02)    COMP-5.
+000410	   03  DBO-DISC        PIC  9(02)    COMP-5.
+000420	   03  DBO-SMAN        PIC  9(02)    COMP-5.
+	   03  DBO-CONAC       PIC  X(06).
+	   03  DBO-PURMTH.
+	       05  DBO-MTHPUR  PIC S9(09)V99 COMP-3 OCCURS 12.
+	   03  DBO-AREA.
+	       05  DBO-GROUP   PIC  X(04).
+	       05  FILLER      PIC  X(04).
+	   03  DBO-PMTMTH.
+	       05  DBO-PMTS OCCURS 12.
+		   07  DBO-MTHPMT  PIC S9(09)V99 COMP-3.
+      *
+      *    ****   INDICATOR
+      * 	  C = STATEMENT BALANCE
+      * 	  S = SHORT PAID
+      * 	  1 = 30 DAYS
+      * 	  2 = 60 DAYS
+      * 	  3 = 90 DAYS
+      * 	  4 = 120 + DAYS
+      *
+		   07  DBO-MTHPRF  PIC	X(01).
+		   07  DBO-MTHDTE  PIC	9(08)	 COMP-5.
+      *
+      *    ****   Number of outstanding Jobs
+      *
+	   03  DBO-JOBS	       PIC  9(02)    COMP-5.
+	   03  FILLER	       PIC  X(15).

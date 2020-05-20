@@ -1,0 +1,13 @@
+      /
+000010 FD  WORKSTAT  IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-WORKSTAT.
+000220 01  TRM-REC1.
+000230	   03  TRM-REF.
+	       05  TRM-WS      PIC  X(02).
+	       05  TRM-REF     PIC  9(06).
+	   03  TRM-DATE        PIC  9(08) COMP.
+000250	   03  TRM-BTCH        PIC  X(01).
+	   03  TRM-POST	       PIC  X(01).
+	   03  TRM-LOCAL       PIC  X(52).
+	   03  TRM-ONLINE      PIC  X(52).

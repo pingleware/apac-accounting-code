@@ -1,0 +1,75 @@
+      /*****************************************************************
+      *                                                                *
+      *      G E N E R A L   L E D G E R   F I L E   L A Y O U T       *
+      *                                                                *
+      *      VALUE FIELDS ALLOW FOR 9 WHOLE NUMBERS.                   *
+      *                                                                *
+      * G-TYPE has been included to indicate into which section of the *
+      * Balance Sheet or other reports the account must be included.   *
+      * The sections will be indicated as follows: 1=Income, 2=Costs,  *
+      * 3=Expenses, 4=Capital,5=Assets, 6=Liabilities. The inititial   *
+      * values will be set to the first digit of the account number    *
+      * for accounts that start with 1 to 4, other accounts will have  *
+      * to be set by the User, after which the system will amend them  *
+      * as the balance (bank accounts) moves them between assets and   *
+      * liabilities. (The relevant code is being written)	       *
+      *                                                                *
+      ******************************************************************
+000010 FD  GACCNT    LABEL RECORD IS STANDARD
+000020               VALUE OF FILE-ID IS W02-GACCNT.
+000030 01  G-REC.
+000040     03  G-AC            PIC  9(06).
+000050     03  G-ACR           REDEFINES G-AC.
+000060         05  G-GR        PIC  9(02).
+000070         05  G-SR        PIC  9(04).
+000080         05  G-SER       REDEFINES G-SR.
+000090             07  G-SGR   PIC  9(02).
+000100             07  G-ASER  PIC  9(02).
+000110     03  G-ACR2          REDEFINES G-AC.
+000120         05  G-GRP       PIC  9(01).
+000130         05  FILLER      PIC  9(05).
+000140     03  G-AC2           REDEFINES G-AC.
+000150         05  G-ACNO      PIC  9(04).
+000160         05  FILLER      PIC  9(02).
+000170	   03  G-NAME.
+	       05  G-NKEY	PIC  X(12).
+	       05  FILLER	PIC  X(18).
+      *
+      *    ****   This indicator informs the system of the type of
+      *           budget on this account.
+      *           0 = Manual figures entered.
+      *           1 = Percentage of Total income.
+      *           2 = Percentage of Group income.
+      *           3 = Percentage of Group/Subgroup income.
+      *        
+000180     03  G-IND           PIC  9(01).
+      *
+      *    ****   This is the percentage for calculating the budget
+      *           figures based on G-IND.
+      *
+000190     03  G-BPER          PIC S9(02)V99  COMP-3.
+      *
+      *    ****   Budget figures for 12 months (Jan to Dec).
+      *
+000200     03  G-BUD.
+000210         05  G-BVAL      PIC S9(09)    COMP-3 OCCURS 12.
+      *
+      *    ****   Monthly Balance for each month of the current year.
+      *
+000220     03  G-MOVE.
+000230         05  G-VAL       PIC S9(09)V99 COMP-3 OCCURS 12.
+000240     03  G-DT            PIC S9(09)V99 COMP-3.
+000250     03  G-CR            PIC S9(09)V99 COMP-3.
+000260     03  G-BAL           PIC S9(09)V99 COMP-3.
+	   03  G-OBAL	       PIC S9(09)V99 COMP-3.
+      *
+      *    ****   Monthly Balance for each month of the previous year.
+      *
+000290     03  G-LSTY.
+000300         05  G-LVAL      PIC S9(09)V99 COMP-3 OCCURS 12.
+      *
+      *    ****   1 = Income,  2 = Costs,  3 = Expenses.
+      * 	  4 = Capital, 5 = Assets, 6 = Liabilities.
+      *
+	   03  G-TYPE	       PIC  X(01).
+	   03  G-SEC	       PIC  X(01).

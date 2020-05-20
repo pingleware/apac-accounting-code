@@ -1,0 +1,42 @@
+      *
+      *  *** *   * *   *  ***  ***  ***  ****     **** *** *    ****  
+      *   *  *   * *   * *   *  *  *   * *        *     *  *    *     
+      *   *  **  * *   * *   *  *  *     *        *     *  *    *     
+      *   *  * * * *   * *   *  *  *     ***      ***   *  *    ***   
+      *   *  *  ** *   * *   *  *  *     *        *     *  *    *     
+      *   *  *   *  * *  *   *  *  *   * *        *     *  *    *     
+      *  *** *   *   *    ***  ***  ***  ****     *    *** **** ****  
+      *
+000010 REWRITE-INVOIC.
+000020       REWRITE DOC-REC1.
+000030     IF WS-STAT1 NOT = "0"
+000040         MOVE 12           TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060       GO TO WRITE-INVOIC-EXIT.
+000070
+000080 REWRITE-INVOIC-UNLOCK.
+000090       REWRITE DOC-REC1.
+000100     IF WS-STAT1 NOT = "0"
+000110         MOVE 12           TO WS-F-ERROR
+000120         PERFORM WRITE-ERROR.
+000130       UNLOCK INVOICE.
+000140       GO TO WRITE-INVOIC-EXIT.
+000150
+000160 DELETE-INVOIC-REC.
+000170       DELETE INVOICE.
+000180     IF WS-STAT1 NOT = "0"
+000190         MOVE 12           TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210       GO TO WRITE-INVOIC-EXIT.
+000220
+000230 WRITE-INVOIC.
+000240       WRITE DOC-REC1.
+000250     IF WS-STATUS = "22"
+000260         DELETE INVOICE
+000270         GO TO WRITE-INVOIC.
+000280     IF WS-STAT1 NOT = "0"
+000290         MOVE 12           TO WS-F-ERROR
+000300         PERFORM WRITE-ERROR.
+
+000340 WRITE-INVOIC-EXIT.
+000350       EXIT.

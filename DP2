@@ -1,0 +1,97 @@
+	   03  DP2-L1 REDEFINES W02-PRN-LINE.
+	       05  DP2-H1      PIC  X(19).
+	       05  DP2-H2      PIC  X(07).
+	       05  DP2-H3      PIC  X(32).
+	       05  DP2-H4      PIC  X(10).
+	       05  DP2-H5      PIC  X(14).
+	       05  DP2-H6      PIC  X(11).
+	       05  DP2-H7      PIC  X(08).
+	       05  DP2-H8.
+		   07  FILLER  PIC  X(01).
+		   07  DP2-H8A PIC  X(06).
+	       05  DP2-H9.
+		   07  FILLER  PIC  X(02).
+		   07  DP2-H9A PIC  X(04).
+	       05  DP2-H10.
+		   07  DP2-H10A PIC X(08).
+	       05  FILLER      PIC  X(02).
+	       05  DP2-H11     PIC  X(08).
+      *	       05  DP2-H12     PIC  X(05).
+	   03  DP2-L2 REDEFINES W02-PRN-LINE.
+	       05  DP2-EXT-ITEM.
+		   07  DP2-ITEM
+			       PIC  X(14).
+		   07  DP2-SL  PIC  X(01).
+		   07  DP2-ITM PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	       05  DP2-BIN     PIC  X(06).
+	       05  FILLER      PIC  X(01).
+	       05  DP2-DESC    PIC  X(28).
+	       05  FILLER      PIC  X(01).
+	       05  DP2-QNT     PIC  Z(06)9.999-.
+	       05  DP2-COST    PIC  Z(06)9.999.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-AVG     PIC  Z(05)9.999.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-RET     PIC  Z(06)9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-MWS     PIC  ZZ9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-MCSH    PIC  ZZ9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-MRET    PIC  ZZ9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-ACT     PIC  Z9/99/9999 BLANK WHEN ZERO.
+
+Item Code	   Description			Bin	Quantity   Cost-Price	Average    Retail   ______ Markup ______   Active
+XXXXXXXXXXXXXXXXXX DDDDDDDDDDDDDDDDDDDDDDDDDDDD BBBBBB QQQQQQ.QQQ-CCCCCCC.CCC AAAAAA.AAA SSSSSSS.SS WWW.WW CCC.CC RRR.RR DD/DD/DDDD
+
+DP2-H1	  PIC  X(19).
+DP2-H2	  PIC  X(30).
+DP2-H3	  PIC  X(07).
+DP2-H4	  PIC  X(11).
+DP2-H5	  PIC  X(10).
+DP2-H6	  PIC  X(12).
+DP2-H7	  PIC  X(17).
+DP2-H8	  PIC  X(17).
+
+Item Code	   Description			 Quant. Cst-Price  Average   Selling	 Actual Markup	  System Markup    Active
+		 /			      /	      /		/	  /	     /	 Value	   %	  Value     %
+XXXXXXXXXXXXXXXXXX DDDDDDDDDDDDDDDDDDDDDDDDDDDD QQQQQQQ-CCCCCC.CC AAAAAA.AA SSSSSSS.SS VVVVVV.VV %%%.%% MMMMMM.MM %%%.%% DD/DD/DDDD
+
+	   03  DP2-L1 REDEFINES W02-PRN-LINE.
+	       05  DP2-H1    PIC  X(19).
+	       05  DP2-H2    PIC  X(30).
+	       05  DP2-H3    PIC  X(07).
+	       05  DP2-H4    PIC  X(11).
+	       05  DP2-H5    PIC  X(10).
+	       05  DP2-H6    PIC  X(12).
+	       05  DP2-H7    PIC  X(17).
+	       05  DP2-H8    PIC  X(17).
+	       05  DP2-H9    PIC  X(08).
+
+	   03  DP2-L2 REDEFINES W02-PRN-LINE.
+	       05  DP2-EXT-ITEM.
+		   07  DP2-ITEM
+			       PIC  X(14).
+		   07  DP2-SL  PIC  X(01).
+		   07  DP2-ITM PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	       05  DP2-DESC    PIC  X(28).
+	       05  FILLER      PIC  X(01).
+	       05  DP2-QNT     PIC  Z(06)9-.
+	       05  DP2-COST    PIC  Z(05)9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-AVG     PIC  Z(05)9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-RET     PIC  Z(06)9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-MRKV    PIC  Z(05)9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-MRKP    PIC  ZZ9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-SYSV    PIC  Z(05)9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-SYSP    PIC  ZZ9.99.
+	       05  FILLER      PIC  X(01).
+	       05  DP2-ACT     PIC  Z9/99/9999 BLANK WHEN ZERO.

@@ -1,0 +1,25 @@
+      /
+000010 FD  ASSETT    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-ASSETT.
+000030 01  ASS-RECORD1.
+	   03  ASS-CODE        PIC  X(10).
+	   03  ASS-LOCATION    PIC  X(20).
+	   03  ASS-GROUP       PIC  X(20).
+	   03  ASS-DESC.
+	       05  ASS-DKEY    PIC  X(16).
+	       05  FILLER      PIC  X(24).
+000060	   03  ASS-DATE        PIC  9(08)     COMP-3.
+	   03  ASS-VALUE       PIC S9(09)V99  COMP-3.
+000120	   03  ASS-CUR-VAL     PIC S9(09)V99  COMP-3.
+	   03  ASS-D-TYPE      PIC  X(01).
+	   03  ASS-PERIOD      PIC  9(02)     COMP-X.
+	   03  ASS-DEP	       PIC  9(03)V99  COMP-3.
+	   03  ASS-MTH-VAL     PIC S9(07)V99  COMP-3.
+	   03  ASS-YTD-VAL     PIC S9(07)V99  COMP-3.
+000120	   03  ASS-ASSGL       PIC  9(06)     COMP-5.
+	   03  ASS-ACCGL       PIC  9(06)     COMP-5.
+	   03  ASS-DEPGL       PIC  9(06)     COMP-5.
+	   03  ASS-SDATE       PIC  9(06)     COMP-3.
+	   03  ASS-SOLD        PIC S9(09)V99  COMP-3.
+	   03  ASS-WOFF        PIC S9(09)V99  COMP-3.

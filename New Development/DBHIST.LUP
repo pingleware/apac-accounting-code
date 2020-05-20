@@ -1,0 +1,298 @@
+      /    *************************************************************
+      *    ****            D B H I S T   L O O K U P
+      *    *************************************************************
+       DBHIST-LOOKUP             SECTION.
+      
+       DEBH-LUP-SCREEN.
+             DISPLAY CLR-SCREEN.
+             DISPLAY S-DEB.
+             MOVE SPACE              TO WS-OPTION.
+      
+       DEBH-LUP-CLR-SCREEN.
+             MOVE 0601               TO CPOS.
+             PERFORM DEBH-CRT-EDGE UNTIL CLIN = 22.
+             MOVE SPACES             TO W40-NAME.
+      
+       DEBH-LUP-NAME.
+             ACCEPT SA-DEB.
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY     MOVE SPACES TO W80-ACNO
+                                  GO TO DBHIST-LOOKUP-EXIT
+                 WHEN OTHER       CALL X"E5"
+               END-EVALUATE
+               GO TO DEBH-LUP-NAME.
+             DISPLAY WS-BLNK78 AT 2302 WITH FOREGROUND-COLOR 3.
+             PERFORM CLEAR-L50.
+             MOVE 6                  TO CLIN.
+             MOVE 1                  TO W75-S W75-S1.
+
+       DEBH-LUP-TAB-LOOP.
+             MOVE SPACES             TO W75-DNO(W75-S1).
+           IF W75-S1 < 18
+               ADD 1                 TO W75-S1
+             GO TO DEBH-LUP-TAB-LOOP.
+             MOVE ZERO               TO W75-S1.
+
+       DEBH-LUP-ENTRY-TYPE.
+      *
+      *    ****    A C C O U N T   N A M E   S E Q U E N C E
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ If no characters entered set to start from the first name ³
+      *    ³ in the file. (First account name in sort sequence)        ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+           IF W40-NAME = SPACES
+               MOVE " !"             TO W40-NAME.
+             MOVE 40                 TO WS-LENGTH.
+             CALL "CBL_TOUPPER" USING W40-NAME BY VALUE WS-LENGTH RETURNING WS-STATUS.
+             MOVE 1                  TO WS-LENGTH.
+             MOVE W40-NAME           TO DBH-NAME.
+             PERFORM START-AT-DEBH-NAME THRU READ-DBHIST-EXIT.
+           IF WS-F-ERROR = 56
+               GO TO DEBH-NO-RECORD.
+
+       DEBH-GET-DBHIST-REC.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³        Must the READ-DBHIST-NEXT statement be skipped?      ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+           IF WS-OPTION = "J"
+               MOVE SPACE            TO WS-OPTION
+               GO TO DEBH-SKIP-DEBH-READ.
+             PERFORM READ-DBHIST-NEXT THRU READ-DBHIST-EXIT.
+           IF WS-F-ERROR = 56
+               SUBTRACT 1            FROM W75-S
+             GO TO DEBH-FULL-SCREEN.
+      
+       DEBH-SKIP-DEBH-READ.
+             MOVE DBH-ACNO       TO W75-DNO(W75-S).
+             MOVE DBH-NAME       TO W40-NAME.
+               IF DBH-TYPE = 1
+               INSPECT W40-NAME REPLACING ALL "*" BY " "
+               INSPECT W40-NAME REPLACING FIRST "!" BY " ".
+                 DISPLAY (CLIN, 2) DBH-ACNO WITH FOREGROUND-COLOR 11.
+             DISPLAY ( , 9) W40-NAME WITH FOREGROUND-COLOR 11.
+                 MOVE DBH-BAL       TO W100-LBAL.
+             DISPLAY ( , 50) W100-LBAL WITH FOREGROUND-COLOR 11.
+                 COMPUTE W100-LARR = DBH-30 + DBH-60 + DBH-90 + DBH-120.
+             DISPLAY ( , 62) W100-LARR WITH FOREGROUND-COLOR 11.
+                 MOVE DBH-CRL       TO W100-CRL.
+             DISPLAY ( , 73) W100-CRL WITH FOREGROUND-COLOR 11.
+           IF CLIN < 21
+               ADD 1             TO CLIN W75-S
+                   GO TO DEBH-GET-DBHIST-REC.
+      *
+      *    ****   U S E R   O P T I O N S
+      *
+       DEBH-FULL-SCREEN.
+                 DISPLAY " " AT 2303 WITH FOREGROUND-COLOR 14
+                       " highlight - " WITH FOREGROUND-COLOR 7
+                 "PgUp" WITH FOREGROUND-COLOR 14
+                     "/" WITH FOREGROUND-COLOR 7
+                 "PgDn" WITH FOREGROUND-COLOR 14
+                 " - " WITH FOREGROUND-COLOR 7
+                       "ENTER" WITH FOREGROUND-COLOR 14
+                       " select - " WITH FOREGROUND-COLOR 7
+                       "Esc" WITH FOREGROUND-COLOR 14
+                 "ape - " WITH FOREGROUND-COLOR 7
+                 "F9" WITH FOREGROUND-COLOR 14
+                 " memo/remarks"
+                  WITH FOREGROUND-COLOR 7.
+      
+       DEBH-SAVE-FULL-SCREEN.
+           PERFORM SAVE-SCREEN-2.
+                 MOVE 0             TO W75-S1.
+             MOVE 0601           TO CPOS.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³              Restore the screen attributes.             ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+       DEBH-CRT-ATTRIB.
+           MOVE 3920             TO W41-LENGTH.
+           CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS
+                                    W42-ATTRIB2
+                                    W41-LENGTH
+                              RETURNING WS-STATUS.
+                 MOVE 4000             TO W41-LENGTH.
+      
+       DEBH-GET-USER-OPT.
+           CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+           PERFORM CLEAR-L50.
+         IF ADIS-FUNC
+             EVALUATE KEY-CODE-1
+             WHEN UP-KEY
+                       GO TO DEBH-ADJ-NO-KEYS
+             WHEN DOWN-KEY
+                       GO TO DEBH-CHK-NO-KEYS
+             WHEN ENTER-KEY
+             WHEN CR-KEY
+                 GO TO DEBH-CHK-SELECT
+             WHEN OTHER       CALL X"E5"
+             END-EVALUATE
+             GO TO DEBH-GET-USER-OPT
+         ELSE
+         IF USER-FUNC
+             EVALUATE KEY-CODE-1
+             WHEN ESC-KEY
+                 MOVE SPACES TO W80-ACNO
+                 GO TO DBHIST-LOOKUP-EXIT
+             WHEN PAGE-DOWN
+                       GO TO DEBH-GET-NEXT-PAGE
+             WHEN PAGE-UP
+                       GO TO DEBH-GET-PREV-PAGE
+             WHEN F9-KEY
+                 PERFORM DEBH-ADD-SPECS THRU DEBH-ADD-EXIT
+                 PERFORM DEBH-FULL-SCREEN
+                       GO TO DEBH-GET-USER-OPT
+             WHEN OTHER       CALL X"E5"
+             END-EVALUATE
+             GO TO DEBH-GET-USER-OPT.
+           CALL X"E5".
+                 GO TO DEBH-GET-USER-OPT.
+      
+       DEBH-GET-NEXT-PAGE.
+           IF W75-S < 16
+                   GO TO DEBH-GET-USER-OPT.
+      
+       DEBH-NEW-PAGE.
+             MOVE 0601           TO CPOS.
+                 PERFORM DEBH-CRT-EDGE UNTIL CLIN = 22.
+             MOVE 6              TO CLIN.
+             MOVE LOW-VALUES     TO W75-KEYS.
+             MOVE 1              TO W75-S W75-S1.
+           PERFORM DEBH-LUP-TAB-LOOP.
+                 GO TO DEBH-GET-DBHIST-REC.
+      
+       DEBH-GET-PREV-PAGE.
+             MOVE 1              TO WS-IXS1.
+      *    *************************************************************
+      *    ****    SET OPTION TO BYPASS THE READ NEXT
+      *    *************************************************************
+             MOVE "J"            TO WS-OPTION.
+      
+       DEBH-GET-PREV-LOOP.
+           PERFORM READ-DBHIST-PREV THRU READ-DBHIST-EXIT.
+         IF WS-F-ERROR = 56
+             MOVE SPACE       TO WS-OPTION
+             GO TO DEBH-NEW-PAGE.
+         IF WS-IXS1 < 31
+               ADD 1             TO WS-IXS1
+             GO TO DEBH-GET-PREV-LOOP.
+           GO TO DEBH-NEW-PAGE.
+      
+       DEBH-NO-RECORD.
+                 DISPLAY "No record - " AT 2512
+                  WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+                       "N" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+                       "ext or "
+                  WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+                       "Q" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+                       "uit > <"
+                  WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+      
+       DEBH-GET-USER-OPT-2.
+                 ACCEPT WS-OPTION AT 2538
+                WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15 AUTO.
+           CALL "CBL_TOUPPER" USING WS-OPTION
+                        BY VALUE WS-LENGTH
+                        RETURNING WS-STATUS.
+               IF NOT (WS-OPTION = "N" OR "Q")
+                   GO TO DEBH-GET-USER-OPT-2.
+           IF WS-OPTION = "N"
+                   GO TO DEBH-LUP-SCREEN.
+             MOVE SPACES         TO W80-ACNO.
+                 GO TO DBHIST-LOOKUP-EXIT.
+      
+       DEBH-ADJ-NO-KEYS.
+           IF W75-S1 > 1
+               SUBTRACT 1        FROM W75-S1 CLIN.
+                 GO TO DEBH-HIGHLIGHT.
+      
+       DEBH-CHK-NO-KEYS.
+           IF W75-S1 = ZERO
+               MOVE 1            TO W75-S1
+                   GO TO DEBH-HIGHLIGHT.
+           IF W75-S1 < W75-S
+               ADD 1             TO W75-S1 CLIN.
+      
+       DEBH-HIGHLIGHT.
+                 PERFORM DEBH-CRT-ATTRIB.
+             DISPLAY W43-DET (CLIN) AT CPOS WITH REVERSE-VIDEO.
+                 GO TO DEBH-GET-USER-OPT.
+      
+       DEBH-CHK-SELECT.
+           IF W75-S1 = ZERO
+                   GO TO DEBH-GET-USER-OPT.
+             MOVE CSTART         TO WS1-CURSOR.
+             MOVE W75-DNO (W75-S1)
+                               TO DBH-ACNO.
+                 PERFORM READ-DBHIST THRU READ-DBHIST-EXIT.
+             MOVE ZERO           TO COL-AND-LINE.
+                 MOVE DBH-ACNO       TO W80-ACNO.
+                 GO TO DBHIST-LOOKUP-EXIT.
+      
+       DEBH-ADD-SPECS.
+           IF W75-S1 = ZERO
+                   GO TO DEBH-ADD-EXIT.
+             MOVE W75-DNO (W75-S1)
+                                 TO DME-AC W80-ACNO.
+             MOVE 1              TO DME-SEQ.
+             PERFORM READ-DEBMEM THRU READ-DEBMEM-EXIT.
+           IF WS-F-ERROR NOT = ZERO
+             DISPLAY "No Memo or remarks" AT 2502
+                  WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS
+             GO TO DEBH-ADD-EXIT.
+             INITIALIZE W200-MEM-FLDS.
+           MOVE 1             TO WS-S1.
+      
+       DEBH-ADD-LOOP.
+           MOVE DME-DATA       TO W200-MEM(WS-S1).
+         IF WS-S1 > 11
+             GO TO DEBH-DISP-ADD.
+      
+       DEBH-ADD-READ.
+           PERFORM READ-DEBMEM-NEXT THRU READ-DEBMEM-EXIT.
+           IF WS-F-ERROR = ZERO
+               IF DME-AC = W80-ACNO
+               ADD 1       TO WS-S1
+               GO TO DEBH-ADD-LOOP.
+         IF WS-S1 = ZERO
+             GO TO DEBH-ADD-EXIT.
+           MOVE 99             TO WS-S1.
+      
+       DEBH-DISP-ADD.
+           PERFORM SAVE-SCREEN-3.
+           MOVE 7             TO SHADE-ROW.
+           MOVE 19             TO SHADE-COL.
+           MOVE 60             TO SHADE-WIDTH.
+           MOVE 15             TO SHADE-LINES.
+           DISPLAY S-MEM.
+           PERFORM SCREEN-SHADOW.
+           DISPLAY S-DEB-MEM.
+             DISPLAY SA-MEM.
+                 DISPLAY " ENTER to continue - ESCape " AT 2353
+                  WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+           CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+         IF USER-FUNC
+             EVALUATE KEY-CODE-1
+             WHEN ESC-KEY
+                  PERFORM RESTORE-SCREEN-3
+             END-EVALUATE
+             GO TO DEBH-ADD-EXIT.
+           PERFORM RESTORE-SCREEN-3.
+         IF NOT (WS-S1 = 99)
+             MOVE 0             TO WS-S1
+             GO TO DEBH-ADD-READ.
+      
+       DEBH-ADD-EXIT.
+             EXIT.
+      
+       DEBH-CRT-EDGE.
+                 DISPLAY WS-MDT1 AT CPOS WITH BACKGROUND-COLOR 0
+                                FOREGROUND-COLOR 3
+                 WS-MDT78 WITH FOREGROUND-COLOR 3
+                 WS-MDT80 WITH BACKGROUND-COLOR 0
+                           FOREGROUND-COLOR 3.
+                 ADD 1             TO CLIN.
+      
+       DBHIST-LOOKUP-EXIT.
+             EXIT.

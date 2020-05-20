@@ -1,0 +1,28 @@
+000030 01  W91-TRAN.
+           03  W91-KEY.
+000170         05  W91-AC      PIC  X(06).
+000060	       05  W91-DATE    PIC  9(08)    COMP.
+000040         05  W91-CODE    PIC  9(02).
+000070         05  W91-REF     PIC  X(08).
+      *    
+      *    TYPE: "U" = Unpaid.         \
+      *          "P" = Paid.            >  DEBIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      *          "A" = Allocated.       >  CREDIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050     03  W91-TYPE        PIC  X(01).
+000080     03  W91-REG         PIC  X(09).
+000090     03  W91-ORD         PIC  X(12).
+000100     03  W91-VALUE       PIC S9(09)V99 COMP-3.
+000110     03  W91-TAXFREE     PIC S9(09)V99 COMP-3.
+000120     03  W91-TAX         PIC S9(07)V99 COMP-3.
+000130     03  W91-DISC        PIC S9(03)V99 COMP-3.
+           03  W91-PAID        PIC S9(09)V99 COMP-3.
+           03  W91-ALLOCATED REDEFINES W91-PAID
+                               PIC S9(09)V99 COMP-3.
+           03  W91-REC         PIC  X(08).
+           03  W91-AGE         PIC  9(02)    COMP-5.
+           03  FILLER          PIC  X(01).

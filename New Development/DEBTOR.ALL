@@ -1,0 +1,26 @@
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ This routine calls DTPAllocate which is used to allocate  ³
+      *    ³ a Credit to one or more Debit transactions appearing on   ³
+      *    ³ Debtors account. The usual linkage items are included in  ³
+      *    ³ the call with the addition of W40-COMPANY and W90-TRAN.   ³
+      *    ³ W40-INSTR is used to to inform the program either allow   ³
+      *    ³ the USER to allocate the credit or to do the update of    ³
+      *    ³ the Debtor transactions with the allocations that were    ³
+      *    ³ chosen by the USER.                                       ³
+      *    ³                                                           ³
+      *    ³                     A = allocations                       ³
+      *    ³                     U = update transaction file           ³
+      *    ³                                                           ³
+      *    ³ If allocations were made by the USER then DTPALLOCATE     ³
+      *    ³ will return with W90-AGE containing a "P".                ³
+      *    ³                                                           ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+       ALLOCATE-CREDIT     SECTION.
+
+       ALLOC-CALL.
+             CALL "DTP\DTPALLOCATE" USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY DATA-FILE-IDS W40-COMPANY W90-TRAN.
+           IF W40-INSTR = "U"
+               CANCEL "DTP\DTPALLOCATE".
+
+       ALLOC-EXIT.
+             EXIT.

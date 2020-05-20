@@ -1,0 +1,27 @@
+      *
+      *    ****  *****	***  *****  ***  *****	   ***** *** *	   *****
+      *    *   * *     *   *   *   *   *   *	   *	  *  *	   *
+      *    *   * *     *   *   *   *   *   *	   *	  *  *	   *
+      *    *   * ***   *****   *   *   *   *	   ***	  *  *	   ***
+      *    *   * *     *   *   *   *   *   *	   *	  *  *	   *
+      *    *   * *     *   *   *   *   *   *	   *	  *  *	   *
+      *    ****  ***** *   *   *    ***    *	   *	 *** ***** *****
+      *
+010000 REWRITE-DEATOT.
+010010	     REWRITE DET-REC1.
+000030     IF WS-STAT1 NOT = "0"
+010030	       MOVE 45		 TO WS-F-ERROR
+010040         PERFORM WRITE-ERROR.
+010050	     GO TO WRITE-DEATOT-EXIT.
+
+010060 WRITE-DEATOT.
+010070	     WRITE DET-REC1.
+000030     IF WS-STAT1 NOT = "0"
+010090	       IF WS-STATUS = "22"
+010100		   GO TO REWRITE-DEATOT
+010110         ELSE
+010120		   MOVE 45	 TO WS-F-ERROR
+010130             PERFORM WRITE-ERROR.
+
+010140 WRITE-DEATOT-EXIT.
+010150       EXIT.

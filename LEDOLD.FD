@@ -1,0 +1,59 @@
+      /
+002000 FD  LEDOLD    LABEL RECORD IS STANDARD
+002010               VALUE OF FILE-ID IS W02-LEDOLD
+                     RECORDING MODE IS VARIABLE.
+002020 01  XFO-REC.
+	   03  XFO-KEY.
+002030	       05  XFO-DATE    PIC  9(08).
+002040	       05  XFO-DTE REDEFINES XFO-DATE.
+002050		   07  XFO-CC  PIC  9(02).
+002050		   07  XFO-YY  PIC  9(02).
+002060		   07  XFO-MM  PIC  9(02).
+002070		   07  XFO-DD  PIC  9(02).
+      *
+      *        01 : DEBTORS
+      *        02 : CREDITORS
+      *        03 : BAD DEBTS
+      *        04 : SALES
+      *        05 : SALES (RETURNS)
+      *        06 : PURCHASES
+      *        07 : PURCHASES (RETURNS)
+      *        08 : COST-OF-SALES
+      *        09 : COST-OF-SALES (RETURNS)
+      *        10 : OUTPUT VAT (DEBTORS)
+      *        11 : INPUT VAT (DEBTORS) 
+      *        12 : OUTPUT VAT (CREDITORS)
+      *        13 : INPUT VAT (CREDITORS)
+      *        14 : DEBTOR TRANSACTIONS
+      *        15 : DISCOUNT GIVEN (SALES)
+      *        16 : DISCOUNT REVERSED (SALES)
+      *        17 : AD-VALORM TAX (SALES)
+      *        18 : AD-VALORM TAX (RETURNS)
+      *        19 : STOCK (SALES)
+      *        20 : STOCK (SALES RETURNS)
+      *        21 : FREIGHT (PURCHASES)
+      *        22 : FREIGHT (RETURNS)
+      *        23 : DISCOUNT RECEIVED (PURCHASES)
+      *        24 : DISCOUNT REVERSED (PURCHASES) 
+      *        25 : CREDITOR TRANSACTIONS
+      *        26 : CASH SALES
+      *        27 : STOCK ADJUSTMENTS
+      *        28 : STOCK
+      *        29 : CASH REFUNDS
+      *	       30 : CONSIGNMENT DEBTORS
+      *	       31 : CONSIGNMENT
+      *	       32 : CONSIGNMENT RETURNS
+      *	       33 : COS CONSIGNMENT
+      *	       34 : COS CONSIGNMENT RETURNS
+      *	       35 : STOCK CONSIGNMENT
+      *	       36 : STOCK CONSIGNMENT RETURNS
+      *	       37 : PETTY CASH VOUCHER (CASH)
+      *	       38 : PETTY CASH
+      *
+	       05  XFO-TYPE    PIC  9(02)    COMP.
+	       05  XFO-LEDG.
+		   07  XFO-TRN PIC  9(02).
+		   07  FILLER  PIC  X(02).
+002160	   03  XFO-AC	       PIC  9(06).
+002080	   03  XFO-NAR	       PIC  X(40).
+002130	   03  XFO-VALUE       PIC S9(09)V99 COMP-3.

@@ -1,0 +1,740 @@
+      /*****************************************************************
+      *                                                                *
+      *    THIS FILE CONTAINS THE PARAMETERS REQUIRED BY THE SYSTEM.   *
+      *                                                                *
+      *    RECORD 1 :   COMPANY NAME AND TELEPHONE NUMBER.             *
+      *                 POSTAL CODE.                                   *
+      *                 RUN DATE (DMY & YMD).                          *
+      *                 INDICATOR FOR STATEMENT AND INVOICE HEADINGS.  *
+      *                 CASH SLIP HEADING (POINT OF SALE).             *
+      *                 CASH SLIP ADDRESS (POINT OF SALE).             *
+      *                                                                *
+      *    RECORD 2 :   COMPANY ADDRESS.                               *
+      *                                                                *
+      *    RECORD 3 :   FILE LOCATIONS (DISK DRIVE).                   *
+      *                 COMPANY CODE.                                  *
+      *                 PRINTER CONTROL CHARACTERS (1 AND 2).          *
+      *                 PRINTER NUMBERS FOR THE VARIOUS REPORTS.       *
+      *                 PASSWORD (STOCK).                              *
+      *                                                                *
+      *    RECORD 4 :   NUMBER OF USERS LOGGED ON.                     *
+      *                 TERMINAL STATUS.                               *
+      *                                                                *
+      *    RECORD 5 :   DEBTORS DISCOUNT RATES.                        *
+      *                 SUPERVISOR PASSWORDS.                          *
+      *                 MINIMUM MARGIN.                                *
+      *                 AGE ANALYSIS REQUIRED (DEBTORS).               *
+      *                                                                *
+      *    RECORD 6 :   PURCHASE JOURNAL.                              *
+      *                 GENERAL LEDGER ACCOUNT NUMBERS - INTEGRATION.  *
+      *                 PROFIT/LOSS.                                   *
+      *                 MONTH-END JOURNALS CONTROL.                    *
+      *                 STOCK PRICE INDICATOR (WHOLESALE/CASH).        *
+      *                 LINES PER PAGE - STOCK REPORTS.                *
+      *                                                                *
+      *    RECORD 7 :   CASH SALE ACCOUNT DETAILS.                     *
+      * 		USED FOR TOTAL SALES (CASH DRAWERS).	       *
+      *                                                                *
+      *    RECORD 8 :  COST OF SALES (TOTAL - STATISTICS FOR STOCK).   *
+      *                                                                *
+      *    RECORD 9 :  VAT CONTROL ACCOUNT.                            *
+      *                                                                *
+      *    RECORD 10: AVAILABLE.                                       *
+      *                                                                *
+      *    RECORD  11 -  60: TRANSACTION DETAILS AND STATS (DEBTORS).  *
+      *                                                                *
+      *    RECORD  61 - 100: DEBTOR CATEGORIES.                        *
+      *                                                                *
+      *    RECORD 101 - 150: SALESMAN DETAILS.                         *
+      *                                                                *
+      *    RECORD 151 - 190: CASH DRAWER DETAILS.		       *
+      *                                                                *
+      *    RECORD 191 - 200: TRANSACTION DETAILS AND STATS (CREDITORS).*
+      *                                                                *
+      ******************************************************************
+000010 FD  PARAM     IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-PARAM.
+      *
+      *    ****    R E C O R D	 1
+      *
+000030 01  PAR-RECORD1.
+000040     03  PAR-COMPANY     PIC  X(40).
+000050     03  PAR-TELEPHONE   PIC  X(14).
+000060	   03  PAR-DMY	       PIC  9(08)    COMP-3.
+000070	   03  PAR-YMD	       PIC  9(08)    COMP-3.
+000080	   03  PAR-STAT        PIC  9(01).
+      *
+      *    This indicator informs the system whether the Company name
+      *    and address must be printed on statements and/or invoices.
+      *                 I = Not on invoices.
+      *                 S = Not on statements.
+      *                 X = Neither statements nor invoices.
+      *
+000090	   03  PAR-STMINV      PIC  X(01).
+000100     03  PAR-CSHEAD      PIC  X(30).
+000110     03  PAR-CSHADD      PIC  X(30).
+      *
+      *    ****    R E C O R D	 1   ( O L D )
+      *
+000030 01  PAR-O-RECORD1.
+000040	   03  PAR-O-COMPANY   PIC  X(40).
+000050	   03  PAR-O-TELEPHONE PIC  X(14).
+000060	   03  PAR-O-DMY       PIC  9(06)    COMP-3.
+000070	   03  PAR-O-YMD       PIC  9(06)    COMP-3.
+000080	   03  PAR-O-STAT      PIC  9(01).
+000090	   03  PAR-O-STMINV    PIC  X(01).
+000100	   03  PAR-O-CSHEAD    PIC  X(30).
+000110	   03  PAR-O-CSHADD    PIC  X(30).
+	   03  FILLER	       PIC  X(02).
+      *
+      *    ****    R E C O R D   2 
+      *
+000120 01  PAR-RECORD2.
+000130     03  PAR-ADDRESS1    PIC  X(30).
+000140     03  PAR-ADDRESS2    PIC  X(30).
+000150     03  PAR-ADDRESS3    PIC  X(30).
+000160     03  PAR-ADDRESS4    PIC  X(30).
+000170     03  PAR-POST-CDE    PIC  9(04)     COMP-5.
+000180	   03  PAR-HIST-ID     PIC  9(04).
+      *
+      *    ****    R E C O R D	 3
+      *
+000190 01  PAR-RECORD3.
+      *
+      *    ****    I N V O I C E   F O R M A T
+      *
+	   03  PAR-INVX.
+	   05  PAR-INV	       PIC  X(01)    COMP-X.
+      *
+      *    ****    C A S H   S L I P   F O R M A T
+      *
+	   03  PAR-SLPX.
+	   05  PAR-SLIP        PIC  X(01)    COMP-X.
+      *
+      *    ****    C O N V E R T I O N	 F A C T O R
+      * 	   USE CONVERTION FACTOR (WEIGHT, LITRES ETC)
+      * 	   ON STOCK ITEMS
+      *
+000210	   03  PAR-C-FACT      PIC  X(01).
+      *
+      *    ****    C O M P A N Y   I D E N T I F I C A T I O N   C O D E
+      *
+000220	   03  PAR-PTH.
+	       05  PAR-EXT     PIC  X(03).
+      *
+      *    ****    S T A T E M E N T   F O R M A T
+      *
+	   03  PAR-STMX.
+	       05  PAR-STM     PIC  X(01)    COMP-X.
+	   03  PAR-CRDX        PIC  X(01).
+	   03  PAR-CRDX-ID.
+	       05  PAR-CID     PIC  X(01)  OCCURS 12.
+	   03  PAR-BANK-IND    PIC  X(01).
+	   03  PAR-PRICED-IND  PIC  X(01).
+	   03  PAR-PROMPT      PIC  X(01).
+	   03  PAR-HMRG        PIC  X(01)    COMP-X.
+	   03  PAR-PLU-D       PIC  X(01).
+	   03  PAR-STOCK       PIC  X(01).
+	   03  PAR-SLNGTH      PIC  X(01)    COMP-X.
+	   03  PAR-PPROMPT     PIC  X(01).
+	   03  PAR-SLIP-P      PIC  X(01).
+	   03  PAR-BAR-CODE    PIC  X(01).
+	   03  PAR-BC-HEIGHT.
+	       05  PAR-BCSIZE  PIC  X(01)    COMP-X.
+	   03  PAR-INV-CHECK   PIC  X(01).
+	   03  PAR-INV-AMT     PIC  9(07)    COMP-3.
+	   03  PAR-USE-3-DEC   PIC  X(01).
+	   03  PAR-BC-STYLE    PIC  X(01).
+	   03  PAR-SPLIT-BC    PIC  X(01).
+	   03  PAR-ALLOC-BC    PIC  X(01).
+      *
+      *    ****    R O U N D I N G   O F   S L I P   T O T A L
+      *
+	   03  PAR-ROUND-TOT   PIC  X(01).
+      *
+      *    ****    R O U N D I N G   I N D I C A T O R
+      *
+      * 	   1 = 0.05
+      * 	   2 = 0.10
+      * 	   3 = 0.20
+      * 	   4 = 0.50
+      * 	   5 = 1.00
+      * 	   6 = 2.00
+      * 	   7 = 5.00
+      *
+	   03  PAR-SLIP-ROUND  PIC  X(01).
+	   03  PAR-USE-ITM     PIC  X(01).
+	   03  PAR-EXT-STK     PIC  X(01).
+	   03  PAR-PACKS       PIC  X(01).
+	   03  PAR-CASES       PIC  X(01).
+	   03  PAR-PARCELS     PIC  X(01).
+	   03  PAR-POSMODE     PIC  X(01).
+	   03  PAR-SAL-ORD     PIC  X(01).
+	   03  PAR-NEW-SYS     PIC  X(01).
+000340	   03  PAR-PASSWORD    PIC  X(08).
+	   03  PAR-CSHCODE     PIC  X(10).
+	   03  PAR-INVPASS     PIC  X(06).
+	   03  PAR-OVER-LIM    PIC  X(01).
+	   03  PAR-ARREARS     PIC  X(01).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	DATE VARIABLES - DETERMINE CORRECT DATE (DDMMCCYY)     Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   03  PAR-CUR-YR      PIC  X(01) COMP-X.
+	   03  PAR-CUR-CEN     PIC  X(01) COMP-X.
+	   03  PAR-PRV-CEN     PIC  X(01) COMP-X.
+	   03  PAR-NXT-CEN     PIC  X(01) COMP-X.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё HANDLING FEE PERCENTAGE & IND - USED FOR STOCK TRANSFERS  Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   03  PAR-HFEE	       PIC  9(03)V999 COMP-3.
+	   03  PAR-HND-FEE     PIC  X(01).
+	   03  PAR-CHQ-PRN     PIC  9(01).
+	   03  PAR-CHQ-SPC     PIC  9(01).
+	   03  PAR-JCP	       PIC  X(06).
+	   03  PAR-CHEQUE-PRN  PIC  X(01).
+	   03  PAR-VER	       PIC  X(04).
+	   03  PAR-LEV	       PIC  9(01).
+	   03  PAR-SERIAL      PIC  X(07).
+000460	   03  PAR-VAT-REG     PIC  X(14).
+	   03  PAR-VERSION     PIC  X(05).
+      *
+      *    ****    This indicator is used as an indicator for
+      * 	   special routines for VAT exemption under
+      * 	   article 11(1g).
+      *
+000520	   03  PAR-ART11       PIC  X(01).
+      *
+      *    ****    R E C O R D   4
+      *
+000530 01  PAR-RECORD4.
+      *
+      *    STATUS - CONTAINS THE NUMBER OF USERS UPDATING FILES
+      *
+000540     03  PAR-STATUS.
+000550         05  PAR-USERS   PIC  9(02).
+000560     03  PAR-TERMINALS   OCCURS 24 TIMES.
+000570         05  PAR-USR     PIC  X(03).
+000580         05  PAR-PROG    PIC  X(02).
+000590	   03  PAR-TRMS        PIC  9(04)    COMP-5.
+000600     03  PAR-LOGON       PIC  9(01).
+000610     03  PAR-AGE         PIC  X(01).
+      *
+      *    ****    R E C O R D   5
+      *
+000620 01  PAR-RECORD5.
+000630     03  PAR-SYS         PIC  X(02).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		 DEBTORS SETTLEMENT DISCOUNT RATES.	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000640	   03  PAR-DISCOUNT.
+000650         05  PAR-DSETT   PIC S9(03)V99 COMP-3 OCCURS 10.
+000660     03  PAR-DEBTDISC REDEFINES PAR-DISCOUNT.
+000670         05  PAR-DD1     PIC S9(03)V99 COMP-3.
+000680         05  PAR-DD2     PIC S9(03)V99 COMP-3.
+000690         05  PAR-DD3     PIC S9(03)V99 COMP-3.
+000700         05  PAR-DD4     PIC S9(03)V99 COMP-3.
+000710         05  PAR-DD5     PIC S9(03)V99 COMP-3.
+000720         05  PAR-DD6     PIC S9(03)V99 COMP-3.
+000730         05  PAR-DD7     PIC S9(03)V99 COMP-3.
+000740         05  PAR-DD8     PIC S9(03)V99 COMP-3.
+000750         05  PAR-DD9     PIC S9(03)V99 COMP-3.
+000760         05  PAR-DD10    PIC S9(03)V99 COMP-3.
+	   03  PAR-USE-GROUP   PIC  X(01).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	       B A R   C O D E	 P A R A M E T E R S	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *
+      * 	  C I T I Z E N   C P L   S e r i e s
+      *
+      * 	  E L T R O N	L P	S e r i e s   2242
+      * 			L P +	S e r i e s   2122 2142
+      * 			T L P	S e r i e s   2044 2046 2242
+      *
+      *        ****   N a r r o w   B a r   W i d t h
+      *
+	   03  PAR-NAR	       PIC  9(02)    COMP-5.
+      *
+      *        ****   W i d e	B a r	W i d t h
+      *
+	   03  PAR-WIDE        PIC  9(02)    COMP-5.
+      *
+      *        ****   Y   A X I S
+      *
+	   03  PAR-COLUMN      PIC  9(04)    COMP-5.
+      *
+      *        ****   X   A X I S
+      *
+	   03  PAR-ROW	       PIC  9(04)    COMP-5.
+      *
+      *        ****   B a r   C o d e	H e i g h t
+      *
+	   03  PAR-BC-HGHT     PIC  9(02)    COMP-5.
+      *
+      *        ****   F o n t	S e l e c t i o n
+      *
+	   03  PAR-FONT        PIC  9(01).
+      *
+      *        ****   Y   A X I S
+      *
+	   03  PAR-F-COLUMN    PIC  9(04)    COMP-5.
+      *
+      *        ****   X   A X I S
+      *
+	   03  PAR-F-ROW       PIC  9(04)    COMP-5.
+      *
+      *        ****   Y   A X I S   2
+      *
+	   03  PAR-F-COL2      PIC  9(04)    COMP-5.
+      *
+      *        ****   X   A X I S   2
+      *
+	   03  PAR-F-ROW2      PIC  9(04)    COMP-5.
+      *
+      *        ****   S P L I T   D E S C R I P T I O N
+      *
+	   03  PAR-SPLIT       PIC  X(01).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	       PRINT EXTENDED VALUE ON PICKING SLIP	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   03  PAR-PIC-PRC     PIC  X(01).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	      PRINT DELIVERY ADDRESS ON PICKING SLIP	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   03  PAR-DELIV       PIC  X(01).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	      PRINT STOCK ITEM PRICE ON PICKING SLIP	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   03  PAR-PS-PRC      PIC  X(01).
+	   03  PAR-BC	       PIC  X(01).
+	   03  PAR-ADVALOREM   PIC  X(01).
+           03  PAR-ROUND       PIC  X(01).
+           03  PAR-ROUND-VAL   PIC  9V99     COMP-3.
+000870     03  PAR-ADV-RATE    PIC S9(03)V99 COMP-3.
+000880     03  PAR-FIN-RATE    PIC S9(03)V99 COMP-3.
+000890     03  PAR-PERIOD      PIC  9(02).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		    SYSTEM SUPERVISOR PASSWORDS.	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+      *
+      *    PASSWORD 1 - ALL SYSTEMS
+      * 	    2 - G E N E R A L	L E D G E R
+      * 	    3 - C R E D I T O R S
+      *             4 - G U A R A N T E E S
+      *             5 - C A S H   D R A W   F L O A T   (MTH/YEAR-END)
+      *             6 - D E B T O R   3 0 D A Y S / O V E R L I M I T
+      *             7 - S T O C K
+      *             8 - D E B T O R   C A T E G O R Y
+      *             9 - M A R G I N   ( STOCK - SALES )
+      *
+000900	   03  PAR-PW.
+000910         05  PAR-SUPER   PIC  X(06)    OCCURS 9.
+000920         05  PAR-ENTRY   PIC  9(02)    COMP-3.
+000930         05  PAR-MARG    PIC S9(02)V99.
+      *
+      *    ****    R E C O R D	 6
+      *
+000940 01  PAR-RECORD6.
+	   03  PAR-TRF-REF     PIC  9(07)    COMP-3.
+	   03  FILLER	       PIC  X(06).
+000970     03  PAR-RAILD       PIC S9(09)V99 COMP-3.
+000980     03  PAR-RAILM       PIC S9(09)V99 COMP-3.
+000990     03  PAR-DISCD       PIC S9(09)V99 COMP-3.
+001000     03  PAR-DISCM       PIC S9(09)V99 COMP-3.
+001010     03  PAR-COST-CODE   PIC  X(10).
+001020     03  PAR-MTHEND      PIC  9(02).                
+001030     03  PAR-LPG.
+001040         05  PAR-LPP     PIC  9(02).
+001050     03  PAR-WHOLESALE   PIC  X(01).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	       C O M P A N Y   -   F A X   N U M B E R	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   03  PAR-FAX	       PIC  X(14).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	   C O N S O L O D A T E D   S T A T E M E N T S       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   03  PAR-CON-STM     PIC  X(01).
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    ЁP R I N T	A L L	I N V O I C E S   O R	T R F	O N L YЁ
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   03  PAR-CON-TYPE    PIC  X(01).
+	   03  FILLER	       PIC  X(03).
+      *    ****    (STAFF/WAISTAGE)
+001070	   03  PAR-SWPGL       PIC  9(06)    COMP-5.
+001070	   03  PAR-PETGL       PIC  9(06)    COMP-3.
+001070	   03  PAR-WARGL       PIC  9(06)    COMP-3.
+001070	   03  PAR-SUSGL       PIC  9(06)    COMP-3.
+	   03  PAR-INTEGRATE   PIC  X(01).
+001070	   03  PAR-DEBGL       PIC  9(06)    COMP-3.
+001080	   03  PAR-CREGL       PIC  9(06)    COMP-3.
+001090	   03  PAR-INTGL       PIC  9(06)    COMP-3.
+001100	   03  PAR-BNKGL       PIC  9(06)    COMP-3.
+001110	   03  PAR-UNPROF      PIC  9(06)    COMP-3.
+001120	   03  PAR-REDGL       PIC  9(06)    COMP-3.
+001130	   03  PAR-ADJGL       PIC  9(06)    COMP-3.
+001140	   03  PAR-RLGL        PIC  9(06)    COMP-3.
+001150	   03  PAR-DSGL        PIC  9(06)    COMP-3.
+001160	   03  PAR-PL	       PIC S9(09)V99 COMP-3.
+      * 
+      *    ****    R E C O R D   7
+      *
+001170 01  PAR-RECORD7.
+001180     03  PAR-CASH-DAY    PIC S9(09)V99 COMP-3.
+001190     03  PAR-CASH-MTH    PIC S9(09)V99 COMP-3.
+001200     03  PAR-CASH-YEAR   PIC S9(09)V99 COMP-3.
+001210     03  PAR-CASH-RDAY   PIC S9(09)V99 COMP-3.
+001220     03  PAR-CASH-RMTH   PIC S9(09)V99 COMP-3.
+001230     03  PAR-CASH-RYEAR  PIC S9(09)V99 COMP-3.
+001240     03  PAR-CASH-GL     PIC  9(06)    COMP-3.
+	   03  PAR-DSP-HDG.
+	       05  PAR-DSP-L1  PIC  X(20).
+	       05  PAR-DSP-L2  PIC  X(20).
+	   03  PAR-PRMPT       PIC  X(01).
+	   03  PAR-CSH-ADD     PIC  X(01).
+	   03  PAR-CSH-TEL     PIC  X(01).
+	   03  PAR-CSH-VAT     PIC  X(01).
+	   03  PAR-CSH-TIME    PIC  X(01).
+	   03  PAR-CSH-ASSIST  PIC  X(01).
+	   03  PAR-CSH-DETAIL  PIC  X(01).
+	   03  PAR-CSH-VAT-DET PIC  X(01).
+	   03  PAR-CSH-ITM     PIC  X(01).
+001250	   03  FILLER	       PIC  X(12).
+	   03  PAR-PIC-REF     PIC  9(05)    COMP-3.
+	   03  PAR-CASH-BDMY   PIC  9(08).
+	   03  PAR-CASH-BYMD   PIC  9(08).
+001260     03  PAR-CASH-AC     PIC  X(06).
+      * 
+      *    ****    R E C O R D    8
+      *
+001270 01  PAR-RECORD8.
+001280     03  PAR-CSHD        PIC  X(30).
+001290     03  PAR-CSHT        PIC S9(09)V99 COMP-3.
+001300     03  PAR-CMTD        PIC S9(09)V99 COMP-3.
+001310     03  PAR-CYTD        PIC S9(09)V99 COMP-3.
+001320     03  PAR-ADJMTD      PIC S9(09)V99 COMP-3.
+001330	   03  PAR-DESC-H1.
+	       05  PAR-DESC1-H PIC  X(01).
+	       05  PAR-DSC-H1  PIC  X(13).
+	   03  PAR-DESC-H2.
+	       05  PAR-DESC2-H PIC  X(01).
+	       05  PAR-DSC-H2  PIC  X(13).
+	   03  PAR-DS-HD.
+	       05  PAR-DS-H    PIC  X(01).
+	       05  PAR-DS-H2   PIC  X(13).
+	   03  PAR-WS-HD.
+	       05  PAR-WS-H    PIC  X(01).
+	       05  PAR-WS-H2   PIC  X(09).
+	   03  PAR-CS-HD.
+	       05  PAR-CS-H    PIC  X(01).
+	       05  PAR-CS-H2   PIC  X(09).
+	   03  PAR-RT-HD.
+	       05  PAR-RT-H    PIC  X(01).
+	       05  PAR-RT-H2   PIC  X(09).
+      *
+      *    ****    R E C O R D   9
+      *
+001340 01  PAR-RECORD9.
+001350     03  PAR-DVAT-DAY    PIC S9(09)V99 COMP-3.     
+001360     03  PAR-CVAT-DAY    PIC S9(09)V99 COMP-3.     
+001370     03  PAR-DVAT-MTD    PIC S9(09)V99 COMP-3.     
+001380     03  PAR-CVAT-MTD    PIC S9(09)V99 COMP-3.     
+001390     03  PAR-DVAT-YTD    PIC S9(09)V99 COMP-3.     
+001400     03  PAR-CVAT-YTD    PIC S9(09)V99 COMP-3.     
+001410     03  PAR-VAT-GL      PIC  9(06)    COMP-3.
+001420     03  PAR-DGST-DAY    PIC S9(09)V99 COMP-3.     
+001430     03  PAR-CGST-DAY    PIC S9(09)V99 COMP-3.     
+001440     03  PAR-DGST-MTD    PIC S9(09)V99 COMP-3.     
+001450     03  PAR-CGST-MTD    PIC S9(09)V99 COMP-3.     
+001460     03  PAR-DGST-YTD    PIC S9(09)V99 COMP-3.     
+001470     03  PAR-CGST-YTD    PIC S9(09)V99 COMP-3.     
+001480     03  PAR-GST-GL      PIC  9(06)    COMP-3.
+001490     03  PAR-DNGS-DAY    PIC S9(09)V99 COMP-3.     
+001500     03  PAR-CNGS-DAY    PIC S9(09)V99 COMP-3.     
+001510     03  PAR-DNGS-MTD    PIC S9(09)V99 COMP-3.     
+001520     03  PAR-CNGS-MTD    PIC S9(09)V99 COMP-3.     
+001530     03  PAR-DNGS-YTD    PIC S9(09)V99 COMP-3.     
+001540     03  PAR-CNGS-YTD    PIC S9(09)V99 COMP-3.     
+001550     03  PAR-VAT-GST     PIC  X(01).
+001560     03  FILLER          PIC  X(09).
+      *
+      *    ****    R E C O R D   1 0
+      *
+001570 01  PAR-RECORD10.
+001580     03  PAR-TERMS OCCURS 63.
+001590         05  PAR-T-PRN1  PIC 9(01).
+001600         05  PAR-T-PRN2  PIC 9(01).
+      *
+      *    ****    R E C O R D S   1 1   T O   6 0
+      *
+001610 01  PAR-RECORD11.
+001620     03  PAR-TRAN-CODES  OCCURS 2.
+001630         05  PAR-T-VAT   PIC S9(09)V99  COMP-3.
+001640         05  PAR-E-DESC  PIC  X(12).
+001650         05  PAR-A-DESC  PIC  X(12).
+001660         05  PAR-ACTION  PIC  9(01).
+001670         05  PAR-T-CODE  PIC  9(02)     COMP-5.
+001680         05  PAR-T-GL    PIC  9(06)     COMP-3.
+001690         05  PAR-T-DAY   PIC  9(06)     COMP-5.
+001700         05  PAR-T-VAL   PIC S9(09)V99  COMP-3.
+001710         05  PAR-T-MTD   PIC  9(06)     COMP-5.
+001720         05  PAR-T-MTDV  PIC S9(09)V99  COMP-3.
+001730         05  PAR-T-YTD   PIC  9(06)     COMP-5.
+001740         05  PAR-T-YTDV  PIC S9(09)V99  COMP-3.
+      *
+      *    ****    R E C O R D S   6 1	 T O   1 0 0
+      *
+001750 01  PAR-RECORD61.
+001760     03  PAR-DEBT OCCURS 2.
+001770         05  PAR-CAT     PIC  9(02).
+001780         05  PAR-CDESC   PIC  X(30).
+001790         05  PAR-CDRMTD  PIC S9(09)V99 COMP-3.
+001800         05  PAR-CDRYTD  PIC S9(09)V99 COMP-3.
+001810         05  PAR-CCRMTD  PIC S9(09)V99 COMP-3.
+001820         05  PAR-CCRYTD  PIC S9(09)V99 COMP-3.
+001830     03  FILLER          PIC  X(14).
+      * 
+      *    ****    R E C O R D S   1 0 1   T O	 1 5 0
+      *
+001840 01  PAR-RECORD101.
+001850     03  PAR-SALESMAN    PIC  X(30).
+      *
+      *            s a l e s
+      *
+001860     03  PAR-SL-MTD      PIC S9(09)V99 COMP-3.
+001870     03  PAR-SL-YTD      PIC S9(09)V99 COMP-3.
+      *
+      *            c o s t
+      *
+001880     03  PAR-CT-MTD      PIC S9(09)V99 COMP-3.
+001890     03  PAR-CT-YTD      PIC S9(09)V99 COMP-3.
+      *
+      *            c o m m i s i o n
+      *
+001900     03  PAR-VC-MTD      PIC S9(09)V99 COMP-3.
+001910     03  PAR-VC-YTD      PIC S9(09)V99 COMP-3.
+      *
+      *            c o m m i s s i o n   s c a l e
+      *
+001920     03  PAR-SCOM.
+001930	       05  PAR-COMMISION OCCURS 7.
+001940		 07  PAR-FROM  PIC S9(09)    COMP-3.
+001960           07  PAR-CRATE PIC S9(03)V99 COMP-3.
+001970     03  PAR-SCOMR REDEFINES PAR-SCOM.
+001980	       05  PAR-FROM1   PIC S9(09)    COMP-3.
+002000         05  PAR-CRATE1  PIC S9(03)V99 COMP-3.
+002010	       05  PAR-FROM2   PIC S9(09)    COMP-3.
+002030         05  PAR-CRATE2  PIC S9(03)V99 COMP-3.
+002040	       05  PAR-FROM3   PIC S9(09)    COMP-3.
+002060         05  PAR-CRATE3  PIC S9(03)V99 COMP-3.
+002070	       05  PAR-FROM4   PIC S9(09)    COMP-3.
+002090         05  PAR-CRATE4  PIC S9(03)V99 COMP-3.
+002070	       05  PAR-FROM5   PIC S9(09)    COMP-3.
+002090	       05  PAR-CRATE5  PIC S9(03)V99 COMP-3.
+002070	       05  PAR-FROM6   PIC S9(09)    COMP-3.
+002090	       05  PAR-CRATE6  PIC S9(03)V99 COMP-3.
+002070	       05  PAR-FROM7   PIC S9(09)    COMP-3.
+002090	       05  PAR-CRATE7  PIC S9(03)V99 COMP-3.
+      *
+      * 	   c o m m i s s i o n	 t y p e
+      *
+      * 	   Type :   T = Turnover
+      * 		    G = Gross profit
+      *
+	   03  PAR-TCOM        PIC  X(01).
+	   03  FILLER	       PIC  X(03).
+      *
+      *    ****    R E C O R D S   1 5 1   T O   1 9 0
+      *
+002100 01  PAR-RECORD151.
+002110	   03  PAR-CSHDTE      PIC  9(08).
+	   03  PAR-REFNO REDEFINES PAR-CSHDTE.
+	       05  FILLER      PIC  X(02).
+	       05  PAR-CSHREF  PIC  9(06).
+	   03  PAR-CSH-DRAWER.
+002120	   05  PAR-FLOAT       PIC S9(07)V99 COMP-3.
+002130	   05  PAR-CASH        PIC S9(09)V99 COMP-3.
+002140	   05  PAR-CHEQUES     PIC S9(09)V99 COMP-3.
+002150	   05  PAR-CARDS       PIC S9(09)V99 COMP-3.
+002160	   05  PAR-VATVAL      PIC S9(09)V99 COMP-3.
+002170	   05  PAR-VOUCHERS    PIC S9(09)V99 COMP-3.
+002180	   05  PAR-RECEIPTS    PIC S9(09)V99 COMP-3.
+002190	   05  PAR-CSH	       PIC S9(09)V99 COMP-3.
+002200	   05  PAR-CSHMTD      PIC S9(09)V99 COMP-3.
+002210	   05  PAR-CSHYTD      PIC S9(09)V99 COMP-3.
+002220	   05  PAR-ESC	       PIC  X(01).
+002230	   05  PAR-DBL	       PIC  X(01).
+002240	   05  PAR-CDBL        PIC  X(01).
+002250	   05  PAR-SI	       PIC  X(01).
+002260	   05  PAR-CSI	       PIC  X(01).
+002270	   05  PAR-SO	       PIC  X(01).
+002280	   05  PAR-CSO	       PIC  X(01).
+002290	   05  PAR-6LPI        PIC  X(01).
+002300	   05  PAR-8LPI        PIC  X(01).
+002310	   05  PAR-SLP	       PIC  9(02)    COMP-X.
+002320	   05  PAR-ADVANCE     PIC  9(02)    COMP-5.
+002330	   05  PAR-CPRN        PIC  9(01).
+002340	   05  PAR-ITMS        PIC S9(07)    COMP-3.
+002350	   05  PAR-CUST        PIC S9(07)    COMP-3.
+002360	   05  PAR-TAXVAL      PIC S9(09)V99 COMP-3.
+002360	   05  PAR-BANKTRF     PIC S9(09)V99 COMP-3.
+002140	   05  PAR-PETTY       PIC S9(09)V99 COMP-3.
+	   05  PAR-SPEED       PIC S9(09)V99 COMP-3.
+	   05  PAR-CUSDISP     PIC  X(01).
+	   05  PAR-CUSPORT     PIC  9(01).
+	   05  PAR-KICK        PIC  X(05).
+	   05  PAR-P-KICK REDEFINES PAR-KICK.
+	       07  PAR-KC1     PIC  X(01)    COMP-X.
+	       07  PAR-KC2     PIC  X(01)    COMP-X.
+	       07  PAR-KC3     PIC  X(01)    COMP-X.
+	       07  PAR-KC4     PIC  X(01)    COMP-X.
+	       07  PAR-KC5     PIC  X(01)    COMP-X.
+	   05  PAR-KTCHPRN     PIC  X(01).
+	   05  PAR-KCHPORT     PIC  9(01).
+	   05  PAR-USE-3       PIC  X(01).
+	   05  PAR-SCALE-TYPE  PIC  X(01).
+	   05  PAR-SCALE       PIC  X(01).
+	   05  PAR-SCALPORT    PIC  9(01).
+	   05  PAR-PORT        PIC  9(01).
+	   05  PAR-DRAWER      PIC  X(01).
+      *
+      *    ****    R E C O R D S   1 9 1   T O   2 0 0
+      *
+002380 01  PAR-RECORD191.
+002390     03  PAR-CTRN-CODES  OCCURS 2.
+002400         05  PAR-C-ABR   PIC  X(03).
+002410         05  PAR-C-DESC  PIC  X(15).
+002420         05  PAR-C-ACT   PIC  9(01).
+002430         05  PAR-C-CODE  PIC  9(02)     COMP-5.
+002440         05  PAR-C-GL    PIC  9(06)     COMP-3.
+002450         05  PAR-C-DAY   PIC  9(06)     COMP-5.
+002460         05  PAR-C-VAL   PIC S9(09)V99  COMP-3.
+002470         05  PAR-C-MTD   PIC  9(06)     COMP-5.
+002480         05  PAR-C-MTDV  PIC S9(09)V99  COMP-3.
+002490         05  PAR-C-YTD   PIC  9(06)     COMP-5.
+002500         05  PAR-C-YTDV  PIC S9(09)V99  COMP-3.
+002510     03  FILLER          PIC  X(18).
+      * 
+      *    ****    R E C O R D S   2 0 1   T O	 2 5 0
+      *
+001840 01  PAR-RECORD201.
+001850     03  PAR-TECHNICIAN  PIC  X(30).
+      *
+      *            j o b s   c h a r g e d
+      *
+001900     03  PAR-JB-DAY      PIC S9(09)V99 COMP-3.
+001860     03  PAR-JB-MTD      PIC S9(09)V99 COMP-3.
+001870     03  PAR-JB-YTD      PIC S9(09)V99 COMP-3.
+      *
+      *            j o b s   c r e d i t e d
+      *
+001910     03  PAR-JC-DAY      PIC S9(09)V99 COMP-3.
+001880     03  PAR-JC-MTD      PIC S9(09)V99 COMP-3.
+001890     03  PAR-JC-YTD      PIC S9(09)V99 COMP-3.
+      *
+      *            r a t e   p e r   t i m e   u n i t
+      *
+           03  PAR-NORM-CRTE   PIC S9(05)V99 COMP-3.   
+           03  PAR-NORM-RATE   PIC S9(05)V99 COMP-3.   
+           03  PAR-NORM-DRTE   PIC S9(05)V99 COMP-3.   
+           03  PAR-OVER-CRTE   PIC S9(05)V99 COMP-3.   
+           03  PAR-OVER-RATE   PIC S9(05)V99 COMP-3.   
+           03  PAR-OVER-DRTE   PIC S9(05)V99 COMP-3.   
+           03  PAR-SUND-CRTE   PIC S9(05)V99 COMP-3.   
+           03  PAR-SUND-RATE   PIC S9(05)V99 COMP-3.   
+           03  PAR-SUND-DRTE   PIC S9(05)V99 COMP-3.   
+      *
+      *            g e n e r a l   l e d g e r   n u m b e r s
+      *
+           03  PAR-LAB-SALE    PIC  9(06)    COMP-3.
+	   03  PAR-LAB-DATE    PIC  9(08)    COMP-3.
+	   03  PAR-LAB-TIME    PIC  9(06)    COMP-3.
+	   03  FILLER	       PIC  X(11).
+      *
+      *    ****    R E C O R D S   2 5 1   T O	 2 5 4
+      *
+001840 01  PAR-RECORD251.
+           03  TRM-PRN-CONT OCCURS 2.
+      * 				    CONDENSED PRINT
+000230	       05  TRM-CONP    PIC  X(06).
+      *                                     CANCEL CONDENSED PRINT
+000240	       05  TRM-NORP    PIC  X(06).
+      *                                     EXPANDED PRINT
+000250	       05  TRM-EXPP    PIC  X(06).
+      *                                     CANCEL EXPANDED PRINT
+000260	       05  TRM-ECAN    PIC  X(06).
+      *                                     SET SPACING TO 8 LPI 
+000270	       05  TRM-8LPI    PIC  X(06).
+      *                                     SET SPACING TO 6 LPI 
+000280	       05  TRM-6LPI    PIC  X(06).
+      *                                     PRINT 10 CHARS PER INCH
+000290	       05  TRM-10CPI   PIC  X(06).
+      *                                     PRINT 12 CHARS PER INCH
+000300	       05  TRM-12CPI   PIC  X(06).
+      *                                     PRINT 17 CHARS PER INCH
+000310	       05  TRM-17CPI   PIC  X(06).
+      * 				    PRINTER TYPE
+	       05  TRM-PRN-TYPE	PIC  X(01).
+	       05  TRM-LENGTH	PIC  9(02) COMP-5.
+	       05  TRM-PAGE	PIC  9(02) COMP-5.
+      *
+      *   The following has been added to allow for double printing of
+      *   an Invoice (Format 12) for a single sheet printer.
+      *
+	   03  TRM-SINGLE	PIC  X(01) OCCURS 2.
+	   03  FILLER		PIC  X(09).
+	   03  TRM-VERSION	PIC  X(01).
+      *
+      *    ****    R E C O R D S   2 5 5   T O	 2 6 5
+      *
+001840 01  PAR-RECORD255.
+           03  TRM-PRINTERS OCCURS 10.
+000470         05  TRM-PICP    PIC  9(01).
+               05  TRM-PRN1    PIC  9(01).
+000480         05  TRM-INVP    PIC  9(01).
+               05  TRM-PRN2    PIC  9(01).
+000490         05  TRM-STDP    PIC  9(01).
+               05  TRM-PRN3    PIC  9(01).
+000500         05  TRM-STMP    PIC  9(01).
+               05  TRM-PRN4    PIC  9(01).
+000510         05  TRM-CSHP    PIC  9(01).
+               05  TRM-PRN5    PIC  9(01).
+000520         05  TRM-POS     PIC  9(01).
+               05  TRM-PRN6    PIC  9(01).
+           03  FILLER          PIC  X(06).
+      * 
+      *    ****    R E C O R D S   2 6 6   T O	 2 7 4
+      *
+001840 01  PAR-RECORD266.
+           03  PAR-REMKS.
+               05  PAR-QTE1    PIC  X(63).
+               05  PAR-QTE2    PIC  X(63).
+	   03  PAR-IREMKS REDEFINES PAR-REMKS.
+	       05  PAR-IRMK1   PIC  X(40).
+	       05  PAR-IRMK2   PIC  X(40).
+	       05  PAR-IRMK3   PIC  X(40).
+	       05  FILLER      PIC  X(06).
+	   03  PAR-I15REMKS REDEFINES PAR-REMKS.
+	       05  PAR-RMKS1   PIC  X(63).
+	       05  PAR-RMKS2   PIC  X(63).
+      *
+      *    ****    R E C O R D	 2 7 5
+      *
+001840 01  PAR-RECORD275.
+	   03  PAR-QTE-FMT     PIC  X(01).
+	   03  PAR-QTE-MRG     PIC  9(02)    COMP-5.
+	   03  PAR-QTE-SAL     PIC  X(63).
+	   03  PAR-QTE-SIG     PIC  X(20).
+	   03  PAR-BR-CDE      PIC  X(03).
+	   03  PAR-BR-NME      PIC  X(38).
+      *
+      *    ****    R E C O R D S   2 7 6   T O	 2 8 0
+      *
+001840 01  PAR-RECORD276.
+	   03  PAR-QHDR1       PIC  X(63).
+	   03  PAR-QHDR2       PIC  X(63).
+      *
+      *    ****    R E C O R D S   2 8 1   T O	 2 8 4
+      *
+001840 01  PAR-RECORD281.
+	   03  PAR-JOB-RMKS    PIC  X(90).
+	   03  FILLER	       PIC  X(36).

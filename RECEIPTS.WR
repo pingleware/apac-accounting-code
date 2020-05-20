@@ -1,0 +1,36 @@
+      *
+      *    ****  *****	***  ***** *** ****  *****  ***
+      *    *   * *     *   * *	    *  *   *   *   *   *
+      *    *   * *     *     *	    *  *   *   *   *
+      *    ****  ****  *     ****   *  ****    *    ***
+      *    *   * *     *     *	    *  *       *       *
+      *    *   * *     *   * *	    *  *       *   *   *
+      *    *   * *****	***  ***** *** *       *    ***
+      *
+010520 REWRITE-RECEIPTS.
+010530	     REWRITE RCT-RECORD1.
+000040     IF WS-STAT1 NOT = "0"
+010550	       MOVE 90		 TO WS-F-ERROR
+010560         PERFORM WRITE-ERROR.
+010570	     GO TO WRITE-RECEIPTS-EXIT.
+      
+000090 DELETE-RECEIPTS-REC.
+	     DELETE RECEIPTS.
+000040     IF WS-STAT1 NOT = "0"
+000050	       MOVE 90		 TO WS-F-ERROR
+000060         PERFORM WRITE-ERROR.
+010570	     GO TO WRITE-RECEIPTS-EXIT.
+
+010580 WRITE-RECEIPTS.
+010590	     WRITE RCT-RECORD1.
+           IF WS-STATUS = "22"
+	       ADD 1		 TO RCT-REF-EXT
+	       GO TO WRITE-RECEIPTS.
+010600	   IF WS-STATUS NOT = "00"
+010610	       MOVE 90		 TO WS-F-ERROR
+010620         PERFORM WRITE-ERROR.
+	     CLOSE RECEIPTS.
+	     OPEN I-O RECEIPTS.
+
+010630 WRITE-RECEIPTS-EXIT.
+010640       EXIT.

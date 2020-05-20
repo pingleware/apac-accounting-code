@@ -1,0 +1,22 @@
+      /
+000010 FD  PRDOLD    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-PRDOLD
+000220		     RECORDING MODE IS VARIABLE.
+000220 01  POD-REC1.
+000230	   03  POD-KEY.
+	       05  POD-SUPP    PIC  X(06).
+	       05  POD-EXT-CODE.
+		 07  POD-CODE  PIC  X(14).
+		 07  POD-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+	       05  POD-DTE     PIC  9(08)    COMP.
+	       05  POD-SEQ     PIC  9(04)    COMP.
+	       05  POD-TRAN    PIC  X(01).
+	   03  POD-REF	       PIC  X(08).
+000250	   03  POD-QNT	       PIC S9(07)V99 COMP-3.
+	   03  POD-COST        PIC S9(09)V99 COMP-3.
+	   03  POD-NAME.
+	       05  POD-NME     PIC  X(30).
+	       05  FILLER      PIC  X(10).
+	   03  POD-WHSE        PIC  X(06).
+	   03  FILLER	       PIC  X(04).

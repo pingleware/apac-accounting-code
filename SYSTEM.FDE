@@ -1,0 +1,111 @@
+      /*****************************************************************
+      *                                                                *
+      *    THIS FILE CONTAINS:                                         *
+      *                                                                *
+      *       RECORD 1:                                                *
+      *       ========                                                 *
+      *                THE 256 ASCII CODES WHICH ARE ACCESSED BY       *
+      *        USING THE DECIMAL CODE.                                 *
+      *                                                                *
+      *                THESE CODES ARE USED TO ENABLE THE SYSTEM TO    *
+      *        PERFORM SPECIAL FUNCTIONS WHICH REQUIRE CHARACTERS THAT *
+      *        ARE UNPRINTABLE AND ARE THEREFOR UNABLE TO BE CODED     *
+      *        INTO A COBOL PROGRAM.                                   *
+      *                                                                *
+      *       RECORD 2:                                                *
+      *       ========                                                 *
+      *                VARIOUS DETAILS OF THE SYSTEM.                  *
+      *                 1) WHICH PROGRAMS ARE AVAILABLE.               *
+      *                 2) WHICH FILES ARE USED BY THE SYSTEM.         *
+      *                 3) WHERE THE FILES ARE LOCATED.                *
+      *                 4) SECURITY DETAILS OF THE SYSTEM.             *
+      *                                                                *
+      ******************************************************************
+000240 FD  SECUR       IS EXTERNAL
+		       LABEL RECORD STANDARD
+000250                 VALUE OF FILE-ID W02-SYSTEM.
+000260 01  SEC-REC1.
+000280     03  SEC-ASCII           PIC  X(01) OCCURS 256.
+000290 01  SEC-REC2.
+000310     03  SEC-NUM             PIC  X(07).
+000320     03  SEC-EXT             PIC  X(03).
+000330     03  SEC-DISK            PIC  X(01).
+	   03  SEC-INITIAL	   PIC	9(08)	  COMP-5.
+	   03  SEC-DEBTORS	   PIC	9(06)	  COMP-5.
+	   03  SEC-STOCK	   PIC	9(06)	  COMP-5.
+	   03  SEC-TERMS	   PIC	9(04)	  COMP-5.
+	   03  SEC-VERSION	   PIC	9(02)V999 COMP-3.
+	   03  SEC-VDATE	   PIC	9(08)	  COMP-5.
+	   03  SEC-SYS		   PIC	X(12).
+	   03  SEC-VER		   PIC	X(04).
+	   03  SEC-AGREE	   PIC	X(01).
+	   03  SEC-DAYS 	   PIC	X(01)	  COMP-X.
+	   03  SEC-ANDATE	   PIC	9(08)	  COMP-5.
+	   03  SEC-EXPDATE	   PIC	9(08)	  COMP-5.
+000850	   03  FILLER		   PIC	X(40).
+	   03  SEC-DEM		   PIC	9(02)	  COMP-5.
+	   03  SEC-COUNT	   PIC	9(02)	  COMP-5.
+000880     03  SEC-PRNCOND.
+000890         05  SEC-CHAR1       PIC  X(01) OCCURS 4.
+000900     03  SEC-PRNNORM.
+000910         05  SEC-CHAR2       PIC  X(01) OCCURS 4.
+000740     03  SEC-PRNEXPD.
+000750         05  SEC-CHAR3       PIC  X(01) OCCURS 4.
+000760     03  SEC-PRNECAN.
+000770         05  SEC-CHAR4       PIC  X(01) OCCURS 4.
+           03  SEC-PAGE48.
+               05  SEC-CHAR5       PIC  X(01) OCCURS 4.
+           03  SEC-PAGE66.
+               05  SEC-CHAR6       PIC  X(01) OCCURS 4.
+           03  SEC-10CPI.
+               05  SEC-CHAR7       PIC  X(01) OCCURS 4.
+           03  SEC-12CPI.
+               05  SEC-CHAR8       PIC  X(01) OCCURS 4.
+           03  SEC-17CPI.
+               05  SEC-CHAR9       PIC  X(01) OCCURS 4.
+           03  SEC-DBLP.
+               05  SEC-CHAR10      PIC  X(01) OCCURS 4.
+           03  SEC-DCAN.
+               05  SEC-CHAR11      PIC  X(01) OCCURS 4.
+           03  SEC-P2-CON.
+               05  SEC-CHAR12      PIC  X(01) OCCURS 4.
+           03  SEC-P2-CCON.
+               05  SEC-CHAR13      PIC  X(01) OCCURS 4.
+           03  SEC-P2-EXP.
+               05  SEC-CHAR14      PIC  X(01) OCCURS 4.
+           03  SEC-P2-CEXP.
+               05  SEC-CHAR15      PIC  X(01) OCCURS 4.
+           03  SEC-P2-PGE48.
+               05  SEC-CHAR16      PIC  X(01) OCCURS 4.
+           03  SEC-P2-PGE66.
+               05  SEC-CHAR17      PIC  X(01) OCCURS 4.
+           03  SEC-P2-10CPI.
+               05  SEC-CHAR18      PIC  X(01) OCCURS 4.
+           03  SEC-P2-12CPI.
+               05  SEC-CHAR19      PIC  X(01) OCCURS 4.
+           03  SEC-P2-17CPI.
+               05  SEC-CHAR20      PIC  X(01) OCCURS 4.
+           03  SEC-P2-DBLP.
+               05  SEC-CHAR21      PIC  X(01) OCCURS 4.
+           03  SEC-P2-DCAN.
+	       05  SEC-CHAR22	   PIC	X(01) OCCURS 4.
+000860	   03  SEC-DATE 	   PIC	9(08)	  COMP-5.
+000920     03  SEC-PASS            PIC  9(06).
+000930     03  SEC-COMP            PIC  X(40).
+000940     03  SEC-MODULES.
+000950         05  SEC-DTP         PIC  9(01).
+000960         05  SEC-STP         PIC  9(01).
+000970         05  SEC-HPD         PIC  9(01).
+000980         05  SEC-CRP         PIC  9(01).
+000990         05  SEC-GLP         PIC  9(01).
+001000         05  SEC-POS         PIC  9(01).
+001010         05  SEC-JCP         PIC  9(01).
+001020         05  SEC-VHP         PIC  9(01).
+               05  SEC-WAG         PIC  9(01).
+               05  SEC-SAL         PIC  9(01).
+	       05  SEC-LEV	   PIC	9(01).
+	       05  SEC-WHS	   PIC	9(01).
+	       05  SEC-RTE	   PIC	9(01).
+	       05  FILLER	   PIC	X(07).
+001030     03  SEC-PRGM  REDEFINES SEC-MODULES.
+001040         05  SEC-PMODS       PIC  X(20).

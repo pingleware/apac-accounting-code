@@ -1,0 +1,42 @@
+      *
+      *    ****  ***** ****  ****  ***** ****	   ***** *** *	   *****
+      *    *   * *     *   * *	 * *	 *   *	   *	  *  *	   *
+      *    *   * *     *   * *	 * *	 *   *	   *	  *  *	   *
+      *    *   * ***   ****  *	 * ***	 ****	   ***	  *  *	   ***
+      *    *   * *     *   * *	 * *	 *	   *	  *  *	   *
+      *    *   * *     *   * *	 * *	 *	   *	  *  *	   *
+      *    ****  ***** ****  ****  ***** *	   *	 *** ***** *****
+      *
+000020 REWRITE-DEBDEP.
+000030	     REWRITE DBD-RECORD1.
+000040     IF WS-STAT1 NOT = "0"
+000050	       MOVE 33		 TO WS-F-ERROR
+000060         PERFORM WRITE-ERROR.
+000070	     GO TO WRITE-DEBDEP-EXIT.
+
+000090 REWRITE-DEBDEP-UNLOCK.
+000100	     REWRITE DBD-RECORD1.
+000110     IF WS-STAT1 NOT = "0"
+000120	       MOVE 33		 TO WS-F-ERROR
+000130         PERFORM WRITE-ERROR.
+000140	     UNLOCK DEBDEP.
+000150	     GO TO WRITE-DEBDEP-EXIT.
+
+000170 DELETE-DEBDEP-REC.
+000180	     DELETE DEBDEP.
+000190     IF WS-STAT1 NOT = "0"
+000200	       MOVE 33		 TO WS-F-ERROR
+000210         PERFORM WRITE-ERROR.
+000140	     UNLOCK DEBDEP.
+000150	     GO TO WRITE-DEBDEP-EXIT.
+
+000170 WRITE-DEBDEP.
+000180	     WRITE DBD-RECORD1.
+000190     IF WS-STAT1 NOT = "0"
+000200	       MOVE 33		 TO WS-F-ERROR
+000210         PERFORM WRITE-ERROR.
+	     CLOSE DEBDEP.
+	     OPEN I-O DEBDEP.
+
+000230 WRITE-DEBDEP-EXIT.
+000240	     EXIT.

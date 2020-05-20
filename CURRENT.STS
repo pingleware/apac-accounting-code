@@ -1,0 +1,109 @@
+[shared-]
+	version=2
+	pmark="C:\COBOL\APACSRC\CRP004.CBL" 4012 41
+	project=""
+	buildmode=0
+[edit-]
+	srch=S19
+	fSrchRe=0
+	rpl= PDT-REC
+	src= T-REC
+	fRplRe=21248
+	file="C:\COBOL\APACSRC\CRP004.CBL" 4004 1 4012 41
+	file="C:\COBOL\DATACRFT\RECOVER.GFD" 170 1 174 1
+	file="C:\COBOL\APACSRC\FILE.IDS" 342 1 350 32
+	file="C:\COBOL\APACSRC\pdcheq.id" 1 1 3 55
+	file="C:\COBOL\APACSRC\TXPTRN.ID" 1 1 1 1
+	file="C:\COBOL\APACSRC\FILES.APC" 43 1 51 38
+	file="C:\COBOL\APACSRC\RECOVER.GFD" 33 1 33 1
+	file="C:\COBOL\APACSRC\stp001.cbl" 3472 1 3472 41
+	file="C:\COBOL\APACSRC\dtp001.cbl" 5054 1 5062 8
+	file="C:\COBOL\APACSRC\bup000.cbl" 738 1 738 30
+	file="C:\COBOL\APACSRC\DTRFIX.CBL" 287 1 293 1
+	file="C:\COBOL\APACSRC\CMP.BAT" 1 1 1 1
+	file="C:\COBOL\APACSRC\LOGO.CRT" 102 1 107 43
+	file="C:\COBOL\APACSRC\PRGMENU.CBL" 1284 1 1284 19
+	file="C:\COBOL\APACSRC\inv001.pan" 342 1 342 12
+	file="C:\COBOL\APACSRC\CSH001.HOP" 2037 1 2039 45
+	file="C:\COBOL\APACSRC\GLP002.LST" 1 1 1 1
+	file="C:\COBOL\APACSRC\GLP001.LST" 315 1 315 1
+	file="C:\COBOL\APACSRC\glp001.dcr" 852 1 852 1
+	file="C:\COBOL\DATACRFT\DEBTOR.TRA" 86 1 94 31
+[pwb]
+	screen=25 80
+	winstyle=7
+	wnd=C 14 1 24 80
+	file="C:\COBOL\APACSRC\CRP004.CBL" 858 1 859 12
+	file="C:\COBOL\APACSRC\CRP004.BAK" 3086 1 3088 1
+	file="C:\COBOL\APACSRC\GLP004.CBL" 2563 1 2564 14
+	file="C:\COBOL\APACSRC\GLP003.CBL" 2722 1 2725 16
+	file="C:\COBOL\APACSRC\GLP002.CBL" 1869 1 1870 14
+	file="C:\COBOL\APACSRC\GLP001.CBL" 4770 1 4771 14
+	file="C:\COBOL\APACSRC\GACCNT.WR" 21 1 27 1
+	file="C:\COBOL\APACSRC\CRP003.CBL" 745 1 753 14
+	file="C:\COBOL\APACSRC\CRP002.CBL" 7629 1 7638 14
+	file="C:\COBOL\APACSRC\CRP001.CBL" 1520 1 1521 14
+	file="C:\COBOL\APACSRC\CREDIT.WR" 24 1 25 1
+	file="C:\COBOL\APACSRC\TXTRAN.WR" 31 1 31 1
+	file="C:\COBOL\APACSRC\TXPTRN.WR" 34 1 43 1
+	file="C:\COBOL\APACSRC\GLTRAN.WR" 17 1 26 1
+	file="C:\COBOL\APACSRC\CRTRAN.WR" 6 1 15 30
+	file="C:\COBOL\APACSRC\CRTRAN.FD" 1 1 1 1
+	file="C:\COBOL\APACSRC\DBTRAN.WR" 31 1 36 1
+	file="C:\COBOL\APACSRC\PDCHEQ.WR" 16 1 25 1
+	file="C:\COBOL\APACSRC\PDCHEQ.RD" 91 1 99 29
+	file="C:\COBOL\APACSRC\PDCHEQ.SL" 1 1 7 49
+	wnd=W 2 1 13 80
+[environ]
+	INCLUDE=
+	LIB=\COBOL
+	HELPFILES=
+[build]
+    build: macro DEBUG "0"
+    build: macro PWBRMAKE "pwbrmake"
+    build: macro NMAKEBSC1 "set"
+    build: macro NMAKEBSC2 "nmake"
+    build: macro MAPFILE_D "NUL"
+    build: macro MAPFILE_R "NUL"
+    build: macro LFLAGS_G "/NOI /BATCH"
+    build: macro LFLAGS_D "/CO /FAR /PACKC"
+    build: macro LFLAGS_R "/EXE /FAR /PACKC"
+    build: macro LINKER "link"
+    build: macro ILINK "ilink"
+    build: macro LRF "echo > NUL"
+    build: all $(PROJ).exe
+    build: target $(PROJ).bsc pwbrmake
+    build: target $(PROJ).exe lrf_exe link_exe
+    build: command pwbrmake "$(PWBRMAKE) @<<\n$(BRFLAGS) $(SBRS)\n<<"
+    build: command nmakebsc1 "$(NMAKEBSC1) MAKEFLAGS="
+    build: command nmakebsc2 "$(NMAKEBSC2) $(NMFLAGS) -f $(PROJFILE) $(PROJ).bsc"
+    build: release command lrf_exe "$(LRF) @<<$(PROJ).lrf\n$(RT_OBJS: = +^\n) $(OBJS: = +^\n)\n$@\n$(MAPFILE_R)\n$(LLIBS_G: = +^\n) +\n$(LLIBS_R: = +^\n) +\n$(LIBS: = +^\n)\n$(DEF_FILE) $(LFLAGS_G) $(LFLAGS_R);\n<<"
+    build: debug command lrf_exe "$(LRF) @<<$(PROJ).lrf\n$(RT_OBJS: = +^\n) $(OBJS: = +^\n)\n$@\n$(MAPFILE_D)\n$(LLIBS_G: = +^\n) +\n$(LLIBS_D: = +^\n) +\n$(LIBS: = +^\n)\n$(DEF_FILE) $(LFLAGS_G) $(LFLAGS_D);\n<<"
+    build: command link_exe "$(LINKER) @$(PROJ).lrf"
+    build: command run "$(PROJ).exe $(RUNFLAGS)"
+    build: command debug "CV $(CVFLAGS) $(PROJ).exe $(RUNFLAGS)"
+    build: include dependencies
+    build: include no system
+    build: include .cbl "^[ \t0-9]*copy[ \t]*\"\\([^\"]+\\)\""
+    build: include .cpy "^[ \t0-9]*copy[ \t]*\"\\([^\"]+\\)\""
+    build: include .rc "^[ \t]*rcinclude[ \t]+\\([^ \t]+\\)"
+    build: include .rc "^[ \t]*#[ \t]*include[ \t]*\"[ \t]*\\(\\:p\\)[ \t]*\""
+    build: include .rc "^[ \t]*#[ \t]*include[ \t]*<[ \t]*\\(\\:p\\)[ \t]*>" system
+    build: message "^SYS[0-9][0-9][0-9][0-9]:\\:b"
+    build: message "^NET[0-9][0-9][0-9][0-9]:\\:b"
+    build: message "^\\(\\{\\:p\\!<[^>]*>\\}\\) \\([0-9]+\\) \\([0-9]+\\)[ ]*:" file line col
+    build: message "^\\(\\:p\\):\\([0-9]+\\):" file line
+    build: message "^[^(]+(\\(\\:p\\)) : error L[0-9]+[ ]*: '_*\\([^']+\\)' : unresolved external" file token
+    build: message "^[^(]+(\\(\\:p\\)) : [^L]+L[124]" file
+    build: message "^LINK [^L]+L[124]"
+    build: message "^ILINK : [^L]+L[124]"
+    build: message "^\\(\\:p\\)(\\(\\:z\\))[ ]*: [^U]+U[124]" file line
+    build: message "^NMAKE : [^U]+U[124]"
+    build: message "^\\:p : [^U]+U[124]\\:d\\:d\\:d"
+    build: message "^\\(\\:p\\)\\:b\\([0-9]+\\) \\([0-9]+\\): \\*[ 0-9][ 0-9][ 0-9]" file line col
+    build: message "^\\*[ 0-9][ 0-9][0-9]\\-[FRC]"
+    build: message "^pwbrmake: [^U]+U[124]"
+    build: message "^BIND : [^U]+U[124]"
+    build: message "^\\(\\:p\\)(\\(\\:z\\)) RC:" file line
+    build: message "^RC: error"
+    build: language None

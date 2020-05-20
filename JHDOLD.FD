@@ -1,0 +1,61 @@
+      /
+000010 FD  JHDOLD    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JHDOLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  JHO-REC1.
+	   03  JHO-KEY.
+	       05  JHO-DTE     PIC  9(08).
+	       05  JHO-KEY2.
+000050		 07  JHO-REF   PIC  X(08).
+	   03  JHO-ITEM.
+	       05  JHO-KEY3    PIC  X(10).
+	       05  FILLER      PIC  X(20).
+	   03  JHO-KEY4.
+	       05  JHO-AC      PIC  X(06).
+	   03  JHO-NAME.
+	       05  JHO-KEY5    PIC  X(10).
+	       05  FILLER      PIC  X(30).
+	   03  JHO-AD1	       PIC  X(30).
+	   03  JHO-AD2	       PIC  X(30).
+	   03  JHO-AD3	       PIC  X(30).
+	   03  JHO-AD4	       PIC  X(30).
+	   03  JHO-PC	       PIC  X(04).
+	   03  JHO-HTEL	       PIC  X(14).
+	   03  JHO-TEL	       PIC  X(14).
+	   03  JHO-CONTACT.
+	       05  JHO-KEY6    PIC  X(10).
+	       05  FILLER      PIC  X(20).
+	   03  JHO-ID	       PIC  X(14).
+	   03  JHO-ORD	       PIC  X(12).
+	   03  JHO-OREF        PIC  X(09).
+	   03  JHO-EXP	       PIC  X(01).
+	   03  JHO-PRC	       PIC  X(01).
+	   03  JHO-ADV	       PIC  X(01).
+	   03  JHO-SMAN        PIC  9(04)    COMP-5.
+	   03  JHO-DOC	       PIC  X(01).
+	       88  JHO-QUOTE   VALUE "Q".
+	       88  JHO-INVOIC  VALUE "I".
+	       88  JHO-JOB     VALUE "J".
+	   03  JHO-STATUS      PIC  X(01).
+	       88  JHO-UNASSIGNED
+                               VALUE " " "U".
+	       88  JHO-ASSIGNED
+                               VALUE "A".
+	       88  JHO-WAITING VALUE "W".
+	       88  JHO-COMPLETE
+                               VALUE "C".
+	   03  JHO-COMMENT     PIC  X(30).
+	   03  JHO-START       PIC  9(08).
+000290	   03  JHO-SUBTOT      PIC S9(09)V99 COMP-3.
+000300	   03  JHO-DSCNT       PIC S9(07)V99 COMP-3.
+	   03  JHO-NON-TXBL    PIC S9(09)V99 COMP-3.
+	   03  JHO-TAXABLE     PIC S9(09)V99 COMP-3.
+000310	   03  JHO-TAX	       PIC S9(07)V99 COMP-3.
+000320	   03  JHO-TOT	       PIC S9(09)V99 COMP-3.
+	   03  JHO-INVOICE     PIC  X(08).
+	   03  JHO-BAL	       PIC S9(09)V99 COMP-3.
+000310	   03  JHO-ADVTAX      PIC S9(07)V99 COMP-3.
+	   03  JHO-INSTRUCT    PIC  X(09).
+	   03  JHO-PMETH       PIC  9(01).
+	   03  JHO-STAT	       PIC  9(03)    COMP-3.
+	   03  FILLER	       PIC  X(05).

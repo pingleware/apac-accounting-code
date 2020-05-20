@@ -1,0 +1,162 @@
+004470 01  W15-INPUT-AREA.
+004480	   03  W15-DATE        PIC 9(08).
+	   03  W15-DTE REDEFINES W15-DATE.
+001380	       05  W15-DATE-CHAR
+001390			       PIC  X(01)     OCCURS 8.
+004490	   03  W15-DATE1       REDEFINES W15-DATE.
+004500         05  W15-DD      PIC 9(02).
+004510         05  W15-MM      PIC 9(02).
+	       05  W15-CC      PIC 9(02).
+004520         05  W15-YY      PIC 9(02).
+	   03  W15-DATE2       REDEFINES W15-DATE.
+	       05  FILLER      PIC  9(04).
+	       05  W15-CCYY    PIC  9(04).
+004530	   03  W15-ACNO        PIC X(06).
+004540     03  W15-SNO         REDEFINES W15-ACNO.
+004550         05  W15-APREF   PIC X(01).
+004560	       05  W15-SERIAL  PIC X(05).
+004580	   03  W15-NAME.
+001490         05  W15-NCHAR   PIC X(01) OCCURS 40.
+001500     03  W15-N           REDEFINES W15-NAME.
+001510         05  W15-NIX.
+001520             07  W15-ENTRY PIC X(08).
+001530             07  FILLER  PIC X(16).
+001540         05  FILLER      PIC X(16).
+	   03  W15-ENCRYPT REDEFINES W15-NAME.
+	       05  W15-N1-2    PIC  X(02).
+	       05  W15-N3-4    PIC  X(02).
+	       05  W15-N5-6    PIC  X(02).
+	       05  W15-N7-8    PIC  X(02).
+	       05  W15-N9-10   PIC  X(02).
+	       05  W15-N11-12  PIC  X(02).
+	       05  W15-N13-14  PIC  X(02).
+	       05  W15-N15-16  PIC  X(02).
+	       05  W15-N17-18  PIC  X(02).
+	       05  W15-N19-20  PIC  X(02).
+	       05  W15-N21-22  PIC  X(02).
+	       05  W15-N23-24  PIC  X(02).
+	       05  W15-N25-26  PIC  X(02).
+	       05  W15-N27-28  PIC  X(02).
+	       05  W15-N29-30  PIC  X(02).
+	       05  FILLER      PIC  X(10).
+001760	   03  W15-ADDRESS     PIC  X(120).
+001770     03  W15-ADD  REDEFINES W15-ADDRESS.              
+001780	       05  W15-ADDR1   PIC  X(30).
+001790	       05  W15-ADDR2   PIC  X(30).
+001800	       05  W15-ADDR3   PIC  X(30).
+001810	       05  W15-ADDR4   PIC  X(30).
+001820     03  W15-ADD2 REDEFINES W15-ADDRESS.                     
+001830	       05  W15-ACHAR   PIC  X(01) OCCURS 120.
+001840	   03  W15-PCODE       PIC  9(04).
+	   03  W15-CONTACT     PIC  X(30).
+001620	   03  W15-STYLE       PIC  X(08).
+	   03  W15-TEL	       PIC  X(14).
+	   03  W15-FAX	       PIC  X(14).
+	   03  W15-TAX	       PIC  X(01).
+	   03  W15-TERMS       PIC  X(01).
+004590	   03  W15-UN	       PIC 9(05)V99.
+004600	   03  W15-UNIT REDEFINES W15-UN.
+004610         05  FILLER      PIC 9(01).
+004620         05  W15-UNT     PIC 9(04).
+               05  W15-UDEC    PIC 9(02).
+004630     03  W15-ORD         PIC 9(10).
+004640     03  W15-ONO         REDEFINES W15-ORD.
+004650         05  W15-OPREF   PIC 9(08).
+004660         05  W15-OSUB    PIC 9(02).
+	   03  W10-DESC.
+             04  W10-SDSC.
+004670         05  W15-DESCR.
+004680           07  W15-DESC  PIC X(18).
+004690           07  FILLER    PIC X(12).
+	   03  W15-CURRENCY    PIC X(10).
+004700	   03  W15-OCOST       PIC S9(09)V999 COMP-3.
+004700	   03  W15-RATE        PIC S9(03)V999 COMP-3.
+004700	   03  W15-COST        PIC S9(09)V999 COMP-3.
+004710	   03  W15-SELL        PIC S9(09)V999 COMP-3.
+004720	   03  W15-SETT        PIC 9(06).
+004730     03  W15-SET         REDEFINES W15-SETT.
+004740         05  W15-30      PIC 9(01).
+004750         05  W15-60      PIC 9(01).
+004760         05  W15-90      PIC 9(01).
+004770         05  W15-120     PIC 9(01).
+004780         05  W15-150     PIC 9(01).
+004790         05  W15-180     PIC 9(01).
+004800     03  W15-PAY         REDEFINES W15-SETT.
+004810         05  W15-MONTH   PIC 9(01) OCCURS 6.
+	   03  W15-SET-SHIFT   REDEFINES W15-SETT.
+	       05  W15-F5      PIC 9(05).
+	       05  FILLER      PIC 9(01).
+	   03  W15-SET-SHFT    REDEFINES W15-SETT.
+	       05  FILLER      PIC 9(01).
+	       05  W15-L5      PIC 9(05).
+004820	   03  W15-DEL	       PIC 9(08).
+           03  W15-DEL-DMY REDEFINES W15-DEL.
+               05  W15-DEL-DD  PIC 9(02).
+               05  W15-DEL-MM  PIC 9(02).
+	       05  W15-DEL-CC  PIC 9(02).
+               05  W15-DEL-YY  PIC 9(02).
+	   03  W15-LEDG.
+004830	       05  W15-CAT     PIC 9(02).
+	       05  FILLER      PIC X(02).
+004840	   03  W15-GRNN        PIC X(08).
+004850	   03  W15-GRND        PIC 9(08)     COMP-3.
+004860	   03  W15-INVN        PIC X(08).
+004870	   03  W15-INVD        PIC 9(08)     COMP-3.
+004880     03  W15-TCOST       PIC S9(09)V99 COMP-3.
+004890     03  W15-BAL         PIC S9(09)V99 COMP-3.
+004900     03  W15-TSELL       PIC S9(09)V99 COMP-3.
+004910     03  W15-QUANT       PIC S9(05)V9999 COMP-3.
+004920	   03  W15-XQNT        PIC S9(09)V99 COMP-3.
+004930	   03  W15-UCOST       PIC S9(09)V999 COMP-3.
+004940	   03  W15-USELL       PIC S9(09)V999 COMP-3.
+004950	   03  W15-UCASH       PIC S9(09)V999 COMP-3.
+004950	   03  W15-UWSALE      PIC S9(09)V999 COMP-3.
+           03  W15-RSELL       PIC S9(09)V99.
+	   03  W15-RSR1 REDEFINES W15-RSELL.
+               05  W15-RSR     PIC S9(09).
+               05  W15-RSRANDS REDEFINES W15-RSR.
+                   07  W15-RSR8
+                               PIC S9(08).
+                   07  W15-RSR9
+                               PIC  9(01).
+               05  W15-RSC     PIC  9(02).
+           03  W15-RSRC2 REDEFINES W15-RSELL.
+               05  FILLER      PIC S9(08).
+               05  W15-RSRCC   PIC  9V99.
+004960     03  W15-RAIL        PIC S9(09)V99 COMP-3.
+004970     03  W15-DISCOUNT    PIC S9(09)V99 COMP-3.
+004980	   03  W15-DISC1       PIC  99V999.
+	   03  W15-DSC1 REDEFINES W15-DISC1
+			       PIC  V9(05).
+004990	   03  W15-DISC2       PIC 99V999.
+	   03  W15-DSC2 REDEFINES W15-DISC2
+			       PIC  V9(05).
+	   03  W15-TAXABLE	OCCURS 12.
+006790	       05  W15-TAXVAL  PIC S9(09)V99  COMP-3.
+	       05  W15-VATVAL  PIC S9(09)V99  COMP-3.
+	   03  W15-TXBL        PIC S9(09)V999 COMP-3.
+	   03  W15-INCVAL      PIC S9(09)V99  COMP-3.
+	   03  W15-IVAT        PIC S9(07)V99  COMP-3.
+	   03  W15-U-VAT       PIC S9(07)V999 COMP-3.
+	   03  W15-U-PNETT     PIC S9(07)V999 COMP-3.
+	   03  W15-U-NETT      PIC S9(07)V999 COMP-3.
+	   03  W15-U-TXBL      PIC S9(07)V999 COMP-3.
+	   03  W15-U-NTXBL     PIC S9(07)V999 COMP-3.
+	   03  W15-U-INCVAL    PIC S9(07)V999 COMP-3.
+	   03  W15-VAT	       PIC S9(07)V99  COMP-3.
+	   03  W15-TOTVAT      PIC S9(09)V99  COMP-3.
+005000	   03  W15-TOTAL       PIC S9(09)V99  COMP-3.
+005010	   03  W15-IUN	       PIC S9(08)V999 COMP-3.
+005010	   03  W15-PUN	       PIC S9(07)V9(04) COMP-3.
+005010	   03  W15-AVRG        PIC S9(08)V9999 COMP-3.
+005020	   03  W15-ICOST       PIC S9(08)V9999 COMP-3.
+005020     03  W15-INCOST      PIC S9(09)V999 COMP-3.
+005020     03  W15-ILCOST      PIC S9(09)V999 COMP-3.
+005020	   03  W15-PCOST       PIC S9(09)V999 COMP-3.
+           03  W15-RMKS        PIC  X(08) VALUE "Account".
+           03  W15-PMT         PIC  X(08) VALUE "Deliver".
+           03  W15-PSLIP       PIC  X(08).
+	   03  W15-PMNT        PIC  X(12).
+	   03  W15-STM	       PIC  X(01).
+	   03  W15-WHSE        PIC  X(06) VALUE SPACES.
+004910	   03  W15-WQUANT      PIC S9(08)V9999 COMP-3.

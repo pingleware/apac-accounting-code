@@ -1,0 +1,31 @@
+      *
+      *    ****  *****	***  ***** *** ****  *****  ***
+      *    *   * *     *   * *	    *  *   *   *   *   *
+      *    *   * *     *     *	    *  *   *   *   *
+      *    ****  ****  *     ****   *  ****    *    ***
+      *    *   * *     *     *	    *  *       *       *
+      *    *   * *     *   * *	    *  *       *   *   *
+      *    *   * *****	***  ***** *** *       *    ***
+      *
+000010 FD  RECEIPTS  IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-RECEIPTS.
+000030 01  RCT-RECORD1.
+	   03  RCT-DATE        PIC  9(08).
+000310	   03  RCT-AC	       PIC  X(06).
+000320	   03  RCT-REF-KEY.
+	       05  RCT-REF     PIC  X(08).
+	       05  RCT-REF-EXT PIC  9(02).
+	   03  RCT-NAME        PIC  X(40).
+      *
+      *    TYPE USED TO INDICATE PAYMENT
+      *
+      *        C = CASH
+      *        Q = CHEQUE
+      *        T = TANSFER
+      *
+	   03  RCT-TYPE        PIC  X(01).
+000340	   03  RCT-VAL	       PIC S9(09)V99 COMP-3.
+000340	   03  RCT-CSH	       PIC S9(09)V99 COMP-3.
+000340	   03  RCT-CHQ	       PIC S9(09)V99 COMP-3.
+000340	   03  RCT-TRF	       PIC S9(09)V99 COMP-3.

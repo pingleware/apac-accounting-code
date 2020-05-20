@@ -1,0 +1,13 @@
+      *    *************************************************************
+      *           T H I S   R O U T I N E   I S   U S E D   T O
+      *        G E T   A   R E S P O N C E   F R O M   A   U S E R
+      *    *************************************************************
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё                         OPT-MESSAGE                       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       OPT-MESSAGE   SECTION.
+       OPT-SETUP.
+             CALL "UTP\ACCPTOPT" USING WS-INSTR WS-OPTION WS-OPT-MES WS-MES-LINE LS-USER-ID.
+
+       OPT-EXIT.
+             EXIT.

@@ -1,0 +1,43 @@
+      ******************************************************************
+      *                                                                *
+      *         I N V O I C E S   /   C R E D I T   N O T E S          *
+      *                                                                *
+      ******************************************************************
+       OPEN-PRINTER    SECTION.
+      *
+      *    ****   O P E N   P R I N T E R   F I L E
+      *
+       OPEN-PRINT-FILE.
+             MOVE "O"              TO WS-COMMAND.
+             MOVE "S"              TO WS-PRINTER.
+             MOVE ZERO             TO WS-ADVANCE WS-REPORT WS-SCREEN.
+             MOVE 2                TO WS-REPORT.
+             CALL "UTP\PRINTNUM" USING WS-PARID LS-USER-ID DATA-FILE-IDS WS-SCREEN-PRINT
+             ON EXCEPTION
+                GO TO OPEN-PRINTER-ERROR
+             END-CALL.
+             CANCEL "UTP\PRINTNUM".
+      *
+      *    ****   C A L L   T H E   P R I N T / S P O O L   U T I L I T Y
+      *
+       CALL-PRINTUTL.
+           if WS-PRINT-NO = 8
+               call "UTP\PRINTUSB" using ws-parid ls-user-id data-file-ids ws-screen-print w02-printer-details
+               ON EXCEPTION
+                  GO TO OPEN-PRINTER-ERROR
+               end-call
+           else
+               CALL "UTP\PRINTUTL" USING WS-PARID LS-USER-ID DATA-FILE-IDS WS-SCREEN-PRINT W02-PRINTER-DETAILS
+               ON EXCEPTION
+                  GO TO OPEN-PRINTER-ERROR
+               END-CALL
+           END-IF.
+             GO TO OPEN-PRINTER-EXIT.
+
+       OPEN-PRINTER-ERROR.
+             MOVE "Print/Spool Utility problem"  TO WS-ERR-MES.
+             PERFORM ERROR-MESSAGE.
+             MOVE 8                  TO WS-ERROR.
+
+       OPEN-PRINTER-EXIT.
+             EXIT.

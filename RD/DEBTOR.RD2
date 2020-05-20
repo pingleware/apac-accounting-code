@@ -1,0 +1,58 @@
+      *==================================================================
+      *
+      *    The routine READ-ERROR will be performed if a status other than
+      *    zero is returned after any READ or START request and requires
+      *    that the file number to be moved to WS-F-ERROR before being
+      *    performed.
+      *
+      *    On returning from READ-ERROR, WS-ERROR will contain a value as
+      *    follows:
+      * 	    0 - No error or status to report
+      * 	    1 - Record locked
+      * 	    2 - Duplicate key
+      * 	    3 - No Record / End of file / Invalid key
+      * 	    4 - File already open
+      * 	    5 - File already closed
+      * 	    6 - Index corrupted
+      * 	    7 - Network / Communication error
+      * 	    8 - Limit exceeded - Record locks
+      * 	    9 - File limit exceeded (files open)
+      * 	   10 - Open for output
+      * 	   11 - Open for input
+      * 	   12 - File locked
+      * 	   13 - File not open
+      * 	   14 - File not open for I/O
+      * 	   99 - All other errors
+      *
+008980 READ-DEBTOR.
+008990	     READ DEBTOR	 WITH IGNORE LOCK.
+009000     IF WS-STATUS = "00"
+009010         GO TO READ-DEBTOR-EXIT.
+009020     IF WS-STAT1 = "2" OR "3" OR "4"
+009030         MOVE 6            TO WS-F-ERROR
+009040         PERFORM READ-ERROR.
+009050*    IF RECORD-LOCKED
+009060*        PERFORM LOCKED-RECORD
+009070*        GO TO READ-DEBTOR.
+009080       MOVE 6              TO WS-F-ERROR.
+009090       PERFORM READ-ERROR.
+      
+009100 READ-DEBTOR-LOCK.
+009110       READ DEBTOR         WITH KEPT LOCK.
+009120     IF WS-STATUS = "00"
+009130         GO TO READ-DEBTOR-EXIT.
+009140     IF WS-STAT1 = "2" OR "3" OR "4"
+009150         MOVE 6            TO WS-F-ERROR
+009160         PERFORM READ-ERROR.
+009170     IF RECORD-LOCKED
+	       MOVE W02-DEBTOR	 TO WS-FILE
+009180         PERFORM LOCKED-RECORD
+009190         GO TO READ-DEBTOR-LOCK.
+009200     IF TOO-MANY-LOCKS
+009210         UNLOCK DEBTOR
+009220         GO TO READ-DEBTOR-LOCK.
+009230       MOVE 6              TO WS-F-ERROR.
+009240       PERFORM READ-ERROR.
+      
+009400 READ-DEBTOR-EXIT.
+009410       EXIT.

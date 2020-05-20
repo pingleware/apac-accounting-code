@@ -1,0 +1,157 @@
+PWB-GENERATED FILE: DO NOT MODIFY
+[shared-]
+	version=3
+	pmark="C:\COBOL32\APACSRC8\SALE\QTP002.CBL" 2307 25
+	project=""
+	buildmode=0
+[edit-]
+	file="C:\COBOL32\APACSRC8\SALE\QTP002.CBL" 2304 1 2307 25
+	srch=print
+	fSrchRe=0
+	rpl=FOREGROUND-COLOR 6 HIGHLIGHT
+	src=FOREGROUND-COLOR 14
+	fRplRe=28672
+[pwb]
+        screen=43 80
+	winstyle=7
+	wnd=Z 14 13 24 80 0 0
+	file="C:\COBOL32\APACSRC8\MENU\SLPMENU.CBL" 1216 1 1218 8
+	wnd=Z 2 1 24 80 0 0
+	file="C:\COBOL32\APACSRC8\SALE\QTP001.CBL" 1 1 1 1
+	wnd=Z 15 14 24 80 0 0
+	file="C:\COBOL32\APACSRC8\STOCK\STP032.CBL" 1046 1 1047 31
+	wnd=Z 1 0 24 80 0 0
+	file="C:\COBOL32\APACSRC8\INV\INVF12.CBL" 1 1 1 1
+	wnd=R 5 4 24 80 0 0
+	file="C:\COBOL32\APACSRC8\SALE\OINV02.CBL" 1478 1 1491 1
+	wnd=R 9 8 24 80 0 0
+	file="C:\COBOL32\APACSRC8\INV\INVDEL.CBL" 1 1 1 1
+	wnd=R 10 9 24 80 0 0
+	file="C:\COBOL32\APACSRC8\SALE\OINV01.CBL" 1 1 1 1
+	wnd=R 8 7 24 80 0 0
+	file="C:\COBOL32\APACSRC8\SALE\OINV10.CBL" 1492 1 1511 1
+	wnd=R 16 15 24 80 0 0
+	file="C:\COBOL32\APACSRC8\INV\INVF12W.CBL" 361 1 364 12
+	wnd=R 6 5 24 80 0 0
+	file="C:\COBOL32\APACSRC8\INV\INVF07.CBL" 1 1 1 1
+	wnd=R 4 3 24 80 0 0
+	file="C:\COBOL32\APACSRC8\INV\INVF01.CBL" 1278 1 1279 1
+	wnd=R 3 2 24 80 0 0
+	file="C:\COBOL32\APACSRC8\SALE\OINV07.CBL" 1492 1 1495 37
+	wnd=R 7 6 24 80 0 0
+	file="C:\COBOL32\APACSRC8\UTIL\PRINTUSB.CBL" 1 1 16 1
+	wnd=R 10 9 24 80 0 0
+	file="C:\COBOL32\APACSRC8\UTIL\SALMAN.CBL" 1 1 1 1
+	wnd=R 6 5 24 80 0 0
+	file="C:\COBOL32\APACSRC8\DEBT\DTP025.CBL" 1 1 1 24
+	wnd=R 11 10 24 80 0 0
+	file="C:\COBOL32\APACSRC8\MENU\DTPMENU.CBL" 1 1 8 1
+	wnd=R 9 8 24 80 0 0
+	file="C:\COBOL32\APACSRC8\DEBT\DEBREST.CBL" 1 1 1 1
+	wnd=R 6 5 24 80 0 0
+	file="C:\COBOL32\APACSRC8\UTIL\SPOOLPRN.CBL" 12 1 16 43
+	wnd=R 15 14 24 80 0 0
+	file="C:\COBOL32\APACSRC8\CHAIN.LS" 22 1 30 17
+	wnd=R 14 13 24 80 0 0
+	file="C:\COBOL32\APACSRC8\PRINTUTL.AP1" 1 1 1 1
+	wnd=R 12 11 24 80 0 0
+	file="C:\COBOL32\APACSRC8\APACPRNT.CBL" 1 1 1 1
+	wnd=R 8 7 24 80 0 0
+	file="C:\COBOL32\APACSRC8\TEST\APACPRNT.CBL" 1 1 1 1
+	wnd=R 7 6 24 80 0 0
+	file="C:\COBOL32\APACSRC8\CHAIN.WS" 22 1 32 16
+	wnd=R 13 12 24 80 0 0
+	file="C:\COBOL32\APACSRC8\WS.WS" 1 1 1 22
+	wnd=R 10 9 24 80 0 0
+	file="C:\COBOL32\APACSRC8\DEBT\STMF07W.CBL" 2386 1 2389 52
+	wnd=R 4 3 24 80 0 0
+	file="C:\COBOL32\APACSRC8\UTIL\PRINTUTL.CBL" 266 1 275 1
+	wnd=R 8 7 24 80 0 0
+	file="C:\COBOL32\APACSRC8\FUNCTION.PRO" 32 1 52 1
+	wnd=R 5 4 24 80 0 0
+	file="C:\COBOL32\APACSRC8\FUNCTION.WS" 1 1 1 1
+	wnd=R 11 10 24 80 0 0
+	file="C:\COBOL32\APACSRC8\FUNCTION.CRT" 22 1 22 1
+	wnd=R 10 9 24 80 0 0
+	file="C:\COBOL32\APACSRC8\UTIL\APACINST.CBL" 1 1 1 1
+	wnd=R 7 6 24 80 0 0
+	file="C:\COBOL32\APACSRC8\ERRORS.PRO" 1 1 1 1
+	wnd=R 10 9 24 80 0 0
+	file="C:\COBOL32\APACSRC8\OPTION.CRT" 1 1 1 1
+	wnd=R 11 10 24 80 0 0
+	file="C:\COBOL32\APACSRC8\ZA49.PRO" 1 1 12 53
+	wnd=R 3 2 24 80 0 0
+	file="<COMPILE>Build Results" 1 1 1 1
+	wnd=c 0 0 0 0 0 0
+	file="<SEARCH>Search Results" 1 1 1 1
+	wnd=c 0 0 0 0 0 0
+	file="<PRINT>Print Results" 1 1 1 1
+	wnd=c 0 0 0 0 0 0
+	file="<RECORD>Record" 1 1 1 1
+	wnd=c 0 0 0 0 0 0
+	file="<CLIPBOARD>Clipboard" 1 1 1 1
+	wnd=c 0 0 0 0 0 0
+	file="<pwbhelp>Help" 1 1 1 1
+	wnd=c 1 0 24 80 0 0
+	file="<browse>Browser Output" 1 1 1 1
+	wnd=c 0 0 0 0 0 0
+[build]
+    build: language "None"
+    build: template "Generic Options"
+    build: macro DEBUG "0"
+    build: macro MAPFILE_D "NUL"
+    build: macro MAPFILE_R "NUL"
+    build: macro LFLAGS_G "/NOI /BATCH /ONERROR:NOEXE"
+    build: macro LFLAGS_D "/CO /FAR /PACKC"
+    build: macro LFLAGS_R "/EXE /FAR /PACKC"
+    build: macro LINKER "link"
+    build: macro ILINK "ilink"
+    build: macro LRF "echo > NUL"
+    build: macro ILFLAGS "/a /e"
+    build: macro BSCMAKE "bscmake"
+    build: macro SBRPACK "sbrpack"
+    build: macro NMAKEBSC1 "set"
+    build: macro NMAKEBSC2 "nmake"
+    build: all $(PROJ).exe
+    build: target $(PROJ).exe lrf_exe link_exe
+    build: target $(PROJ).bsc bscmake
+    build: release command lrf_exe "$(LRF) @<<$(PROJ).lrf\n$(RT_OBJS: = +^\n) $(OBJS: = +^\n)\n$@\n$(MAPFILE_R)\n$(LIBS: = +^\n) +\n$(LLIBS_G: = +^\n) +\n$(LLIBS_R: = +^\n)\n$(DEF_FILE) $(LFLAGS_G) $(LFLAGS_R);\n<<"
+    build: debug command lrf_exe "$(LRF) @<<$(PROJ).lrf\n$(RT_OBJS: = +^\n) $(OBJS: = +^\n)\n$@\n$(MAPFILE_D)\n$(LIBS: = +^\n) +\n$(LLIBS_G: = +^\n) +\n$(LLIBS_D: = +^\n)\n$(DEF_FILE) $(LFLAGS_G) $(LFLAGS_D);\n<<"
+    build: command link_exe "$(LINKER) @$(PROJ).lrf"
+    build: command run "$(PROJ).exe $(RUNFLAGS)"
+    build: command debug "CV $(CVFLAGS) $(PROJ).exe $(RUNFLAGS)"
+    build: command bscmake "$(BSCMAKE) @<<\n$(BRFLAGS) $(SBRS)\n<<"
+    build: command nmakebsc1 "-$(NMAKEBSC1) MAKEFLAGS="
+    build: command nmakebsc2 "-$(NMAKEBSC2) $(NMFLAGS) -f $(PROJFILE) $(PROJ).bsc"
+    build: suffixes
+    build: include dependencies
+    build: include no system
+    build: include .cbl "^[ \t0-9]*copy[ \t]*\"\\([^\"]+\\)\""
+    build: include .cpy "^[ \t0-9]*copy[ \t]*\"\\([^\"]+\\)\""
+    build: include .rc "^[ \t]*rcinclude[ \t]+\\([^ \t]+\\)"
+    build: include .rc "^[ \t]*#[ \t]*include[ \t]*\"[ \t]*\\(\\:p\\)[ \t]*\""
+    build: include .rc "^[ \t]*#[ \t]*include[ \t]*<[ \t]*\\(\\:p\\)[ \t]*>" system
+    build: include .rc "^\\:i\\:b\\{ICON\\!BITMAP\\!FONT\\!CURSOR\\}\\:b\\{LOADONCALL\\:b\\!PRELOAD\\:b\\!FIXED\\:b\\!MOVABLE\\:b\\!DISCARDABLE\\:b\\!\\}*\\(\\:p\\)"
+    build: message "^SYS[0-9][0-9][0-9][0-9]:\\:b"
+    build: message "^NET[0-9][0-9][0-9][0-9]:\\:b"
+    build: message "^\\(\\{\\:p\\!<[^>]*>\\}\\) \\([0-9]+\\) \\([0-9]+\\)[ ]*:" file line col
+    build: message "^\\(\\:p\\):\\([0-9]+\\):" file line
+    build: message "^[^(]+(\\(\\:p\\)) : error L[0-9]+[ ]*: '_*\\([^']+\\)' : unresolved external" file token
+    build: message "^[^(]+(\\(\\:p\\)) : [^L]+L[124]" file
+    build: message "^LINK [^L]+L[124]"
+    build: message "^ILINK : [^L]+L[124]"
+    build: message "^\\(\\:p\\)(\\(\\:z\\))[ ]*: [^U]+U[124]" file line
+    build: message "^NMAKE : [^U]+U[124]"
+    build: message "^\\:p : [^U]+U[124]\\:d\\:d\\:d"
+    build: message "^\\(\\:p\\)\\:b\\([0-9]+\\) \\([0-9]+\\): \\*[ 0-9][ 0-9][ 0-9]" file line col
+    build: message "^\\*[ 0-9][ 0-9][0-9]\\-[FRC]"
+    build: message "^bscmake: [^B]+BK[124]"
+    build: message "^sbrpack: [^S]+SB[124]"
+    build: message "^BIND : [^U]+U[124]"
+    build: message "^\\(\\:p\\)(\\(\\:z\\)) RC:" file line
+    build: message "\\(\\:p\\)(\\(\\:z\\)) : error RC\\:z:" file line
+    build: message "^RC:"
+    build: message "^RC :"
+    build: message "^LIB :"
+    build: message "^MPC :"
+    build: message "^CVPACK :"

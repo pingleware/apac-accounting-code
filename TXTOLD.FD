@@ -1,0 +1,40 @@
+      /
+000010 FD  TXTOLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-TXTOLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  TXO-RECORD1.
+           03  TXO-KEY.
+      *
+      *    The first record on the file is the control record
+      *    and will have the type "C", taxtype 0 and the date
+      *    will contain the start date for the period.
+      *    
+      *    TYPE: "1" = Input Tax
+      *          "2" = Output Tax
+      *          "3" = Input Payments
+      *          "4" = Output Payments
+      *
+               05  TXO-TYPE    PIC  X(01).
+      *
+      *    ACTYPE: 1 = Debtors        (Sales / Returns)
+      *            2 = Cash           (Sales / Refunds)
+      *            3 = Creditors      (Purchases)
+      *            4 = General Ledger (Rates, Vehicles ETC)
+      *
+               05  TXO-ACTYPE  PIC  9(01).
+      *
+      *    CODE:  This is the transaction code
+      *
+               05  TXO-CODE    PIC  9(02).
+000050	       05  TXO-DATE    PIC  9(08).
+000060         05  TXO-REF     PIC  X(08).
+               05  TXO-SEQ     PIC  9(04).
+000070     03  TXO-VALUE       PIC S9(09)V99 COMP-3.
+           03  TXO-TAXFREE     PIC S9(09)V99 COMP-3.
+	   03  TXO-VAT-RATE    OCCURS 12.
+	       05  TXO-VAL     PIC S9(09)V99 COMP-3.
+	       05  TXO-VAT     PIC S9(09)V99 COMP-3.
+	   03  TXO-EXEMPT      PIC S9(09)V99 COMP-3.
+000100	   03  TXO-AC.
+	       05  TXO-CAC     PIC  9(05).
+               05  FILLER      PIC  X(01).

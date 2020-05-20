@@ -1,0 +1,11 @@
+       01  ERROR-LINE.
+           02  BACKGROUND-COLOR Red.
+               03           COLUMN 16 FOREGROUND-COLOR Red   HIGHLIGHT VALUE "здддддддддддддддддддддддддддддддддддддддддддддддд".
+               03           COLUMN 65 FOREGROUND-COLOR Black           VALUE "©".
+               03  LINE + 1 COLUMN 16 FOREGROUND-COLOR Red   HIGHLIGHT VALUE "Ё".
+               03           COLUMN 17 FOREGROUND-COLOR Grey  HIGHLIGHT PIC  X(48) FROM WS-ERR-MES.
+               03           COLUMN 65 FOREGROUND-COLOR Black           VALUE "Ё".
+               03  LINE + 1 COLUMN 16 FOREGROUND-COLOR Grey            VALUE "Ё           Press any key to continue            ".
+               03           COLUMN 65 FOREGROUND-COLOR Black           VALUE "Ё".
+               03  LINE + 1 COLUMN 16 FOREGROUND-COLOR Red   HIGHLIGHT VALUE "ю".
+               03           COLUMN 17 FOREGROUND-COLOR Black           VALUE "дддддддддддддддддддддддддддддддддддддддддддддддды".

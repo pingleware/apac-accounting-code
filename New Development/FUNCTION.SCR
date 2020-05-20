@@ -1,0 +1,188 @@
+      *    *************************************************************
+      *    ****    ROUTINES TO HANDLE VARIOUS FUNCTIONS FOR THE
+      *           S C R E E N ,   K E Y B O A R D   &  M O U S E
+      *    *************************************************************
+      *    ****    As this routine uses the variables defined in
+      *            W40.WS, include the following 'COPY W40.WS' in
+      *            the WORKING-STORAGE SECTION.
+      *
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё      SAVE-SCREEN /-2/-3  and  RESTORE-SCREEN /-2/-3       Ё
+      *    фммммммммммммммммммммммммммммммммммммммммммммммммммммммммммм╣
+      *    Ё                      SCREEN-SHADOW                        Ё
+      *    цддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд╢
+      *    Ё To routine is used to display a shadow down the right and Ё
+      *    Ё along the bottom of a pop-up box. The parameters that are Ё
+      *    Ё required:                                                 Ё
+      *    Ё          SHADE-ROW   - Top line of the box.               Ё
+      *    Ё          SHADE-COL   - Left line of box.                  Ё
+      *    Ё          SHADE-WIDTH - Width of the box.                  Ё
+      *    Ё          SHADE-LINES - Height of box.                     Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       CRT-KBD-MOUSE   SECTION.
+      *
+      *    ****    S C R E E N   A T T R I B U T E S
+      *
+       SAVE-ATTRIB.
+             CALL "CBL_READ_SCR_ATTRS" USING SAVE-POS W42-ATTRIB W41-LENGTH RETURNING WS-STATUS.
+
+       SCREEN-ATTRIBUTES-4.
+             CALL "CBL_READ_SCR_ATTRS" USING SAVE-POS W42-ATTRIB4 W41-LENGTH RETURNING WS-STATUS.
+
+       RESTORE-ATTRIB.
+             CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS W42-ATTRIB4 W41-LENGTH RETURNING WS-STATUS.
+             MOVE 4000               TO W41-LENGTH.
+
+       SCREEN-CONTENTS.
+             CALL "CBL_CLEAR_SCR" USING X"20" X"00" RETURNING WS-STATUS.
+
+       SAVE-SCREEN.
+             CALL "CBL_READ_SCR_CHATTRS" USING SAVE-POS W43-SCREEN W42-ATTRIB W41-LENGTH RETURNING WS-STATUS.
+
+       SAVE-SCREEN-2.
+             CALL "CBL_READ_SCR_CHATTRS" USING SAVE-POS W43-SCREEN2 W42-ATTRIB2 W41-LENGTH RETURNING WS-STATUS.
+
+       SAVE-SCREEN-3.
+             CALL "CBL_READ_SCR_CHATTRS" USING SAVE-POS W43-SCREEN3 W42-ATTRIB3 W41-LENGTH RETURNING WS-STATUS.
+
+       RESTORE-SCREEN.
+             CALL "CBL_WRITE_SCR_CHATTRS" USING SAVE-POS W43-SCREEN W42-ATTRIB W41-LENGTH RETURNING WS-STATUS.
+             MOVE 4000               TO W41-LENGTH.
+
+       RESTORE-SCREEN-2.
+             CALL "CBL_WRITE_SCR_CHATTRS" USING SAVE-POS W43-SCREEN2 W42-ATTRIB2 W41-LENGTH RETURNING WS-STATUS.
+             MOVE 4000               TO W41-LENGTH.
+
+       RESTORE-SCREEN-3.
+             CALL "CBL_WRITE_SCR_CHATTRS" USING SAVE-POS W43-SCREEN3 W42-ATTRIB3 W41-LENGTH RETURNING WS-STATUS.
+             MOVE 4000               TO W41-LENGTH.
+
+       POSITION-MOUSE.
+             MOVE 67                 TO MOUSE-FUNC.
+             CALL X"AF" USING MOUSE-FUNC MOUSE-DETAILS.
+             MOVE SCREEN-COL         TO STORE-LIN STORE-COL.
+             SUBTRACT 2              FROM STORE-LIN.
+             ADD STRING-LENGTH       TO STORE-COL.
+           IF NOT(MOUSE-Y < TOP-ROW OR > BOTTOM-ROW)
+               IF NOT(MOUSE-X < STORE-LIN OR > STORE-COL)
+                   IF MOUSE-Y = SCREEN-LIN
+                       MOVE "Y"      TO MOUSE-ENTER
+                   ELSE
+                       PERFORM CLEAR-BLOCK
+                       MOVE MOUSE-Y  TO SCREEN-LIN
+                       PERFORM SAVE-ATTR
+                       PERFORM MARK-BLOCK.
+
+       MOVE-BLOCK-UP.
+             PERFORM CLEAR-BLOCK.
+           IF SCREEN-LIN > TOP-ROW
+               SUBTRACT 1            FROM SCREEN-LIN
+           ELSE
+               MOVE BOTTOM-ROW       TO SCREEN-LIN.
+             PERFORM SAVE-ATTR.
+             PERFORM MARK-BLOCK.
+
+       MOVE-BLOCK-DOWN.
+             PERFORM CLEAR-BLOCK.
+           IF SCREEN-LIN < BOTTOM-ROW
+               ADD 1                 TO SCREEN-LIN
+           ELSE
+               MOVE TOP-ROW          TO SCREEN-LIN.
+             PERFORM SAVE-ATTR.
+             PERFORM MARK-BLOCK.
+
+       CLEAR-BLOCK.
+             CALL "CBL_WRITE_SCR_ATTRS" USING SCREEN-POSITION ORIGINAL-VID STRING-LENGTH.
+
+       MARK-BLOCK.
+             CALL "CBL_WRITE_SCR_ATTRS" USING SCREEN-POSITION REVERSE-VID STRING-LENGTH.
+
+       SAVE-ATTR.
+             CALL "CBL_READ_SCR_ATTRS" USING SCREEN-POSITION ORIGINAL-VID STRING-LENGTH.
+             PERFORM SET-UP-REVERSE-VID VARYING WS-S1 FROM 1 BY 1 UNTIL WS-S1 > STRING-LENGTH.
+      *
+      *    ****    The following variables are used by the REVERSE VIDEO routine.
+      *
+      *            03  W40-BIN.
+      *                05  W40-DEC    PIC  9(02)    COMP-X.
+      *            03  W40-HEX REDEFINES W40-BIN.
+      *                05  W40-CHAR   PIC  X(01).
+      *            03  W40-N1         PIC  9(02)    COMP-X.
+      *            03  W40-N2         PIC  9(02)    COMP-X.
+      *
+       SET-UP-REVERSE-VID.
+             MOVE ORIGINAL-CHAR(WS-S1) TO W40-CHAR.
+             MOVE ZERO               TO W40-N1 W40-N2.
+           IF W40-DEC > 127
+               SUBTRACT 128          FROM W40-DEC
+               ADD 8                 TO W40-N2.
+           IF W40-DEC > 63
+               SUBTRACT 64           FROM W40-DEC
+               ADD 4                 TO W40-N2.
+           IF W40-DEC > 31
+               SUBTRACT 32           FROM W40-DEC
+               ADD 2                 TO W40-N2.
+           IF W40-DEC > 15
+               SUBTRACT 16           FROM W40-DEC
+               ADD 1                 TO W40-N2.
+           IF W40-DEC > 7
+               SUBTRACT 8            FROM W40-DEC
+               ADD 128               TO W40-N1.
+           IF W40-DEC > 3
+               SUBTRACT 4            FROM W40-DEC
+               ADD 64                TO W40-N1.
+           IF W40-DEC > 1
+               SUBTRACT 2            FROM W40-DEC
+               ADD 32                TO W40-N1.
+           IF W40-DEC > 0
+               SUBTRACT 1            FROM W40-DEC
+               ADD 16                TO W40-N1.
+             ADD W40-N1 W40-N2       GIVING W40-DEC.
+             MOVE W40-CHAR           TO REVERSE-CHAR(WS-S1).
+
+       SCREEN-SHADOW.
+             CALL "CBL_READ_SCR_ATTRS" USING SAVE-POS W42-ATTRIB4 W41-LENGTH RETURNING WS-STATUS.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё           SHADE-ROW   - Top line of the box + 1.          Ё
+      *    Ё           SHADE-COL   - Left line of box + 2.             Ё
+      *    Ё           SHADE-WIDTH - Width of the box - 2.             Ё
+      *    Ё           SHADE-LINES - Height of box - 1.                Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             ADD 1                   TO SHADE-ROW.
+             ADD 2                   TO SHADE-COL.
+             SUBTRACT 1              FROM SHADE-LINES.
+             SUBTRACT 2              FROM SHADE-WIDTH.
+             ADD SHADE-COL SHADE-WIDTH  GIVING WS-S2.
+             ADD 1 WS-S2                GIVING WS-S3.
+             ADD SHADE-LINES SHADE-ROW  GIVING WS-S4.
+      *
+      *    ****  Create the vertical shadow
+      *
+             MOVE SHADE-ROW          TO WS-S1.
+             PERFORM TEST AFTER UNTIL WS-S1 = WS-S4
+                     MOVE SHADE-CHAR TO W42-BTE(WS-S1, WS-S2) W42-BTE(WS-S1, WS-S3)
+                     ADD 1           TO WS-S1
+             END-PERFORM.
+      *
+      *    ****  Create the horizontal shadow
+      *
+             MOVE SHADE-COL          TO WS-S2.
+             PERFORM TEST AFTER UNTIL WS-S2 > WS-S3
+                     MOVE SHADE-CHAR TO W42-BTE(WS-S1, WS-S2)
+                     ADD 1           TO WS-S2
+             END-PERFORM.
+             CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS W42-ATTRIB4 W41-LENGTH RETURNING WS-STATUS.
+
+       MESSAGE-INST.
+             PERFORM CLEAR-L50.
+             DISPLAY "Use " AT 5024 WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue " " WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                     " to move the message window" WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue.
+
+       HIDE-THE-CURSOR.
+             MOVE 255                TO CUR-ROW CUR-COL.
+             CALL "CBL_SET_CSR_POS" USING CUR-CONT RETURNING WS-STATUS.
+
+       DISPLAY-THE-CURSOR.
+             MOVE 50                 TO CUR-ROW.
+             MOVE 01                 TO CUR-COL.
+             CALL "CBL_SET_CSR_POS" USING CUR-CONT RETURNING WS-STATUS.

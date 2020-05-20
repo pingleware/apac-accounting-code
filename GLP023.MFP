@@ -1,0 +1,1730 @@
+      $set LINKCOUNT"256"
+      ******************************************************************
+      *                                                                *
+      *    ******   **	      *******	  ****	   ******    ******    *
+      *   **	**  **	      **    **	 **  **   **	**  **	  **   *
+      *   **	    **	      **    **	**    **       **	  **   *
+      *   **	    **	      *******	**    **     **        ****    *
+      *   **   ***  **	      **	**    **   **		  **   *
+      *   **	**  **	      **	 **  **   **	    **	  **   *
+      *    ******   ********  **	  ****	  ********   ******    *
+      *                                                                *
+      *     ENGLISH                                                    *
+      *                                                                *
+      *     G / L E D G E R   O P E R A T I N G   S T A T E M E N T    *
+      *                                                                *
+      *     VERSION 6.5 - February 1994.			       *
+      *                                                                *
+      ******************************************************************
+000010 IDENTIFICATION DIVISION.
+000020 PROGRAM-ID.	       GLP023.
+000030 AUTHOR.                 J.W. LEMMON (APAC).
+000040 DATE-WRITTEN.           JUNE 1983.
+000050 SECURITY.               PROGRAM MATERIAL IS THE SOLE PROPERTY OF
+000060                         APAC SOFTWARE.
+000070 ENVIRONMENT DIVISION.
+000080 CONFIGURATION SECTION.
+000090 SPECIAL-NAMES.
+000080		       CURSOR IS CSTART
+000090		       CONSOLE IS CRT
+		       CRT STATUS IS KEY-STATUS.
+000110 INPUT-OUTPUT SECTION.
+000120 FILE-CONTROL.
+
+       COPY CONTROL.SL.
+
+000140 COPY PARAM.SL.
+
+000160 COPY GACCNT.SL.
+
+000200 COPY GINDEX.SL.
+
+000220     SELECT GLREPT ASSIGN W02-PRINTER
+000230                   ORGANIZATION LINE SEQUENTIAL.
+
+000250 DATA DIVISION.
+000260 FILE SECTION.
+
+       COPY CONTROL.FDE.
+
+000280 COPY PARAM.FDE.
+
+000300 COPY GACCNT.FDE.
+
+000340 COPY GINDEX.FDE.
+
+000360 FD  GLREPT    LABEL RECORD OMITTED
+000370               LINAGE 66.
+000380 01  B-L1.
+000390     03  B-H1            PIC X(06).
+000400     03  B-DTE           PIC Z9/99/99.
+000410     03  FILLER          PIC X(07).
+000420     03  B-COMP          PIC X(40).
+000430     03  FILLER          PIC X(10).
+000440     03  B-H2            PIC X(06).
+000450     03  B-PGE           PIC ZZ9.
+000460 01  B-L2.
+000470     03  FILLER          PIC X(04).
+000480     03  B-NO1           PIC 9(04).
+000490     03  B-NO2           PIC 9(04).
+000500     03  FILLER          PIC X(06).
+000510     03  B-NAME.
+000520         05  FILLER      PIC X(06).
+000530         05  B-NME2.
+000540             07  FILLER  PIC X(10).
+000550             07  B-H3    PIC X(24).
+000560     03  B-SDE1          PIC X(01).
+000570     03  B-LINE.
+000580         05  FILLER      PIC X(01).
+000590         05  B-VAL       PIC Z(07)9.99-.
+000600         05  FILLER      PIC X(01).
+000610     03  B-SDE2          PIC X(01).
+000620     03  FILLER          PIC X(16).
+000630     03  B-SDE3          PIC X(01).
+000640     03  B-LINE2.
+000650         05  FILLER      PIC X(01).
+000660         05  B-VAL2      PIC Z(07)9.99-.
+000670         05  FILLER      PIC X(01).
+000680     03  B-SDE4          PIC X(01).
+000690 01  R-L1.
+000700     03  R-DET           PIC X(136).
+000710 01  R-L2.
+000720     03  R-H1            PIC X(06).
+000730     03  R-DTE1          PIC Z9/99/99.
+000740     03  FILLER          PIC X(31).
+000750     03  R-H2            PIC X(40).
+000760     03  R-DESC          PIC X(38).
+000770     03  R-H4            PIC X(06).
+000780     03  R-PGE           PIC ZZ9.
+000790 01  R-L3.
+000800     03  FILLER          PIC X(10).
+000810     03  R-AC1           PIC 9999/99.
+000820     03  FILLER          PIC X(03).
+000830     03  R-NME1          PIC X(30).
+000840     03  FILLER          PIC X(53).
+000850     03  R-DT1           PIC Z(07)9.99 BLANK WHEN ZERO.
+000860     03  FILLER          PIC X(01).
+000870     03  R-CR1           PIC Z(07)9.99 BLANK WHEN ZERO.
+000880     03  FILLER          PIC X(06).
+000890 01  R-L4.
+000900     03  FILLER          PIC X(14).
+000910     03  R-AC2           PIC 9999/99.
+000920     03  FILLER          PIC X(03).
+000930     03  R-NME2          PIC X(30).
+000940     03  FILLER          PIC X(27).
+000950     03  R-DT2           PIC Z(07)9.99 BLANK WHEN ZERO.
+000960     03  FILLER          PIC X(01).
+000970     03  R-CR2           PIC Z(07)9.99 BLANK WHEN ZERO.
+000980     03  FILLER          PIC X(28).
+000990 01  R-L5.
+001000     03  FILLER          PIC X(18).
+001010     03  R-AC3           PIC 9999/99.
+001020     03  FILLER          PIC X(03).
+001030     03  R-NME3          PIC X(30).
+001040     03  FILLER          PIC X(01).
+001050     03  R-DT3           PIC Z(07)9.99.
+001060     03  FILLER          PIC X(01).
+001070     03  R-CR3           PIC Z(07)9.99.
+001080     03  FILLER          PIC X(50).
+001090 01  R-L6.
+001100     03  FILLER          PIC X(10).
+001110     03  R-BH1           PIC X(08).
+001120     03  FILLER          PIC X(01).
+001130     03  R-BH2           PIC X(31).
+001140     03  R-BH3           PIC X(08).
+001150     03  R-BHEAD.
+001160         05  FILLER      PIC X(05).
+001170         05  R-BH4       PIC X(10).
+001180         05  R-BH5       PIC X(12).
+001190     03  R-BH6           PIC X(10).
+001200     03  R-BH7           PIC X(12).
+001210     03  R-BH8           PIC X(10).
+001220     03  R-BH9           PIC X(15).
+001230 01  SCH-L1.
+001240     03  S-H1            PIC X(14).
+001250     03  S-SUBGRP        PIC X(30).
+001260     03  FILLER          PIC X(07).
+001270     03  S-TL.
+001280         05  FILLER      PIC X(04).
+001290         05  S-H2        PIC X(15).
+001300         05  S-H3        PIC X(08).
+001310     03  FILLER          PIC X(02).
+001320 01  SCH-L2.
+001330     03  S-H4.
+001340         05  S-ACNO      PIC 9(04)/99.
+001350         05  FILLER      PIC X(03).
+001360     03  S-ANAME         PIC X(30).
+001370     03  FILLER          PIC X(11).
+001380     03  S-DT            PIC Z(07)9.99 BLANK WHEN ZERO.
+001390     03  FILLER          PIC X(05).
+001400     03  S-CR            PIC Z(07)9.99 BLANK WHEN ZERO.
+001410     03  FILLER          PIC X(02).
+001420 01  TRL-L1.
+001430     03  FILLER          PIC X(19).
+001440     03  TRL-H4          PIC X(07).
+001450     03  FILLER          PIC X(12).
+001460     03  TRL-H5          PIC X(12).
+001470     03  FILLER          PIC X(33).
+001480     03  TRL-H7          PIC X(05).
+001490     03  FILLER          PIC X(16).
+001500     03  TRL-H8          PIC X(06).
+001510     03  FILLER          PIC X(22).
+001520 01  TRL-L2.
+001530     03  FILLER          PIC X(19).
+001540     03  TRL-ACC         PIC 9(04)/99.
+001550     03  FILLER          PIC X(12).
+001560     03  TRL-ANME        PIC X(30).
+001570     03  FILLER          PIC X(11).
+001580     03  TRL-DBT         PIC Z(07)9.99.
+001590     03  FILLER          PIC X(11).
+001600     03  TRL-CRD         PIC Z(07)9.99-.
+001610     03  FILLER          PIC X(19).
+001620 01  STM-L1.
+001630     03  FILLER          PIC X(40).
+001640     03  STM-H1          PIC X(51).
+001650     03  FILLER          PIC X(31).
+001660     03  STM-H2          PIC X(06).
+001670     03  STM-PGE         PIC ZZZ9.
+001680 01  STM-L2.
+001690     03  FILLER          PIC X(40).
+001700     03  STM-H3          PIC X(52).
+001710     03  FILLER          PIC X(40).
+001720 01  STM-L3.
+001730     03  FILLER          PIC X(21).
+001740     03  STM-H4          PIC X(12).
+001750     03  FILLER          PIC X(73).
+001760     03  STM-H5          PIC X(05).
+001770     03  FILLER          PIC X(21).
+001780 01  STM-L4.
+001790     03  STM-H6          PIC X(47).
+001800     03  FILLER          PIC X(01).
+001810     03  STM-H7          PIC X(03).
+001820     03  FILLER          PIC X(34).
+001830     03  STM-H8          PIC X(47).
+001840 01  STM-L5.
+001850     03  STM-H9          PIC X(08).
+001860     03  FILLER          PIC X(02).
+001870     03  STM-H10         PIC X(03).
+001880     03  FILLER          PIC X(01).
+001890	   03  STM-H11	       PIC X(09).
+001900     03  FILLER          PIC X(02).
+001910	   03  STM-H12	       PIC X(05).
+001920     03  FILLER          PIC X(01).
+001930	   03  STM-H13	       PIC X(09).
+001940     03  FILLER          PIC X(02).
+001950	   03  STM-H14	       PIC X(05).
+001960     03  FILLER          PIC X(01).
+001970     03  STM-H15         PIC X(03).
+001980     03  FILLER          PIC X(10).
+001990     03  STM-H16         PIC X(11).
+002000     03  FILLER          PIC X(13).
+002010     03  STM-H17         PIC X(08).
+002020     03  FILLER          PIC X(02).
+002030     03  STM-H18         PIC X(03).
+002040     03  FILLER          PIC X(01).
+002050	   03  STM-H19	       PIC X(09).
+002060     03  FILLER          PIC X(02).
+002070	   03  STM-H20	       PIC X(05).
+002080     03  FILLER          PIC X(01).
+002090	   03  STM-H21	       PIC X(09).
+002100     03  FILLER          PIC X(02).
+002110	   03  STM-H22	       PIC X(05).
+002120 01  STM-L6.
+002130     03  STM-V1          PIC Z(08)-.
+002140     03  FILLER          PIC X(01).
+002150     03  STM-P1          PIC ZZZ        BLANK WHEN ZERO.
+002160     03  FILLER          PIC X(01).
+002170	   03  STM-V2	       PIC Z(08)9-    BLANK WHEN ZERO.
+002180     03  FILLER          PIC X(01).
+002190	   03  STM-P2	       PIC ZZZ.9      BLANK WHEN ZERO.
+002200     03  FILLER          PIC X(01).
+002210	   03  STM-V3	       PIC Z(08)9-    BLANK WHEN ZERO.
+002220     03  FILLER          PIC X(01).
+002230	   03  STM-P3	       PIC ZZZ.9      BLANK WHEN ZERO.
+002240     03  FILLER          PIC X(01).
+002250     03  STM-GP          PIC ZZZ        BLANK WHEN ZERO. 
+002260     03  FILLER          PIC X(01).
+002270     03  STM-DESC.
+002280         05  STM-AC      PIC 9(06).
+002290         05  FILLER      PIC X(01).
+002300         05  STM-ANAME   PIC X(25).
+002310     03  FILLER          PIC X(01).
+002320     03  STM-V4          PIC Z(08)-.
+002330     03  FILLER          PIC X(01).
+002340     03  STM-P4          PIC ZZZ        BLANK WHEN ZERO.
+002350     03  FILLER          PIC X(01).
+002360	   03  STM-V5	       PIC Z(08)9-    BLANK WHEN ZERO.
+002370     03  FILLER          PIC X(01).
+002380	   03  STM-P5	       PIC ZZZ.9      BLANK WHEN ZERO.
+002390     03  FILLER          PIC X(01).
+002400	   03  STM-V6	       PIC Z(08)9-    BLANK WHEN ZERO.
+002410     03  FILLER          PIC X(01).
+002420	   03  STM-P6	       PIC ZZZ.9      BLANK WHEN ZERO.
+002430 01  LED-L1.
+002440     03  LED-H1          PIC  X(07).
+002450     03  FILLER          PIC  X(02).
+002460     03  LED-H2          PIC  X(12).
+002470     03  FILLER          PIC  X(06).
+           03  LED-H2A         PIC  X(10).
+           03  FILLER          PIC  X(02).
+002480     03  LED-H3          PIC  X(04).
+002490     03  FILLER          PIC  X(04).
+002500     03  LED-H4          PIC  X(04).
+           03  FILLER          PIC  X(03).
+002500     03  LED-H4A         PIC  X(05).
+002510     03  FILLER          PIC  X(04).
+002520     03  LED-H5          PIC  X(05).
+002530     03  FILLER          PIC  X(02).
+002540     03  LED-H6          PIC  X(15).
+002550     03  FILLER          PIC  X(28).
+002560     03  LED-H7          PIC  X(05).
+002570     03  FILLER          PIC  X(06).
+002580     03  LED-H8          PIC  X(07).
+002590     03  FILLER          PIC  X(01).
+002600 01  LED-L2.
+002610     03  LED-AC          PIC 9(04)/99.
+002620     03  FILLER          PIC X(02).
+002630     03  LED-NME         PIC X(24).
+002640     03  FILLER          PIC X(04).
+002650     03  LED-TRAN.
+002660         05  LED-DTE     PIC Z9/99/99.
+002670         05  FILLER      PIC X(02).
+002680         05  LED-CDE     PIC X(04).
+               05  FILLER      PIC X(02).
+               05  LED-BTCH    PIC Z(06).
+002690         05  FILLER      PIC X(02).
+002700         05  LED-REF     PIC Z(07).
+002710         05  FILLER      PIC X(02).
+002720         05  LED-NAR     PIC X(36).
+002730         05  FILLER      PIC X(01).
+002740         05  LED-VAL     PIC Z(07)9.99-.
+002750         05  FILLER      PIC X(01).
+002760         05  LED-BAL     PIC Z(07)9.99-.
+       01  REC-L1.
+002610     03  REC-AC          PIC 9(04)/99.
+002620     03  FILLER          PIC X(02).
+002630     03  REC-NME         PIC X(40).
+           03  FILLER          PIC X(83).
+       01  REC-L2.
+002620     03  FILLER          PIC X(32).
+           03  REC-REC         PIC X(01).
+           03  FILLER          PIC X(04).
+002650     03  REC-TRAN.
+002660         05  REC-DTE     PIC Z9/99/99.
+002670         05  FILLER      PIC X(02).
+002680         05  REC-CDE     PIC X(04).
+002690         05  FILLER      PIC X(02).
+               05  REC-BTCH    PIC Z(06).
+002690         05  FILLER      PIC X(02).
+002700         05  REC-REF     PIC Z(07).
+002710         05  FILLER      PIC X(02).
+002720         05  REC-NAR     PIC X(36).
+002730         05  FILLER      PIC X(01).
+002740         05  REC-VAL     PIC Z(07)9.99-.
+002750         05  FILLER      PIC X(01).
+002760         05  REC-BAL     PIC Z(07)9.99-.
+002770 01  CHQ-L1.
+002780     03  FILLER          PIC X(04).
+002790     03  CHQ-H2          PIC X(04).
+002800     03  FILLER          PIC X(04).
+002810     03  CHQ-H3          PIC X(05).
+002820     03  FILLER          PIC X(33).
+002830     03  CHQ-H4          PIC X(08).
+002840     03  FILLER          PIC X(30).
+002850     03  CHQ-H1          PIC X(07).
+002860     03  FILLER          PIC X(02).
+002870     03  CHQ-H5          PIC X(07).
+002880     03  FILLER          PIC X(07).
+002890     03  CHQ-H6          PIC X(05).
+002900     03  FILLER          PIC X(07).
+002910     03  CHQ-H7          PIC X(06).
+002920     03  FILLER          PIC X(03).
+002930 01  CHQ-L2.
+002940     03  FILLER          PIC X(02).
+002950     03  CHQ-DTE         PIC Z9/99/99.
+002960     03  FILLER          PIC X(02).
+002970     03  CHQ-PAY         PIC X(36).
+002980     03  FILLER          PIC X(02).
+002990     03  CHQ-NAR         PIC X(36).
+003000     03  FILLER          PIC X(02).
+003010     03  CHQ-NO          PIC Z(06)9.
+003020     03  FILLER          PIC X(02).
+003030     03  CHQ-AC          PIC 9(04)/99.
+003040     03  FILLER          PIC X(01).
+003050     03  CHQ-DT          PIC Z(07)9.99.
+003060     03  FILLER          PIC X(01).
+003070     03  CHQ-CR          PIC Z(07)9.99-.
+003080     03  FILLER          PIC X(02).
+003090 01  BAL-L1.
+003100     03  FILLER          PIC X(19).
+003110     03  BAL-H1          PIC X(11).
+003120     03  BAL-H2          PIC X(07).
+003130     03  BAL-H3          PIC X(18).
+003140     03  BAL-H4.
+003150         05  FILLER      PIC X(14).
+003160         05  BAL-H5      PIC X(12).
+003170     03  BAL-H6          PIC X(14).
+003180     03  BAL-H7          PIC X(07).
+003190     03  BAL-H8          PIC X(05).
+003200     03  BAL-H9          PIC X(06).
+003210     03  FILLER          PIC X(19).
+003220 01  BAL-L2.
+003230     03  FILLER          PIC X(20).
+003240     03  BAL-GRP         PIC 9(02).
+003250     03  FILLER          PIC X(03).
+003260     03  BAL-GRNAME      PIC X(24).
+003270     03  FILLER          PIC X(83).
+003280 01  BAL-L3.
+003290     03  FILLER          PIC X(30).
+003300     03  BAL-AC          PIC 9(04).
+003310     03  FILLER          PIC X(03).
+003320     03  BAL-ACNAME      PIC X(24).
+003330     03  FILLER          PIC X(02).
+003340     03  BAL-DEBT        PIC Z(07)9.99.
+003350     03  FILLER          PIC X(02).
+003360     03  BAL-CRED        PIC Z(07)9.99-.
+003370     03  FILLER          PIC X(01).
+003380     03  BAL-TDBT        PIC Z(07)9.99.
+003390     03  FILLER          PIC X(02).
+003400     03  BAL-TCRD        PIC Z(07)9.99-.
+003410     03  FILLER          PIC X(18).
+003420 01  DEP-L1.
+003430     03  FILLER          PIC X(22).
+003440     03  DEP-H1          PIC X(22).
+003450     03  DEP-H2          PIC X(14).
+003460     03  DEP-H3          PIC X(08).
+003470     03  DEP-H4          PIC X(14).
+003480     03  FILLER          PIC X(19).
+003490     03  DEP-H5          PIC X(33).
+003500 01  DEP-L2.
+003510     03  FILLER          PIC X(20).
+003520     03  DEP-DATE        PIC Z9/99/99.
+003530     03  FILLER          PIC X(16).
+003540     03  DEP-NAR         PIC X(36).
+003550     03  FILLER          PIC X(14).
+003560     03  DEP-VAL         PIC Z(07)9.99-.
+003570     03  FILLER          PIC X(26).
+003580 01  P-L2.
+003590     03  P-H1            PIC X(06).
+003600     03  P-DTE1          PIC Z9/99/99.
+003610     03  FILLER          PIC X(20).
+003620     03  P-H2            PIC X(40).
+003630     03  P-HEAD          PIC X(49).
+003640     03  P-H4            PIC X(06).
+003650     03  P-PGE           PIC ZZ9.
+003660 01  P-L3.
+003670     03  FILLER          PIC X(13).
+003680     03  P-HD1           PIC X(06).
+003690     03  FILLER          PIC X(33).
+003700     03  P-HD2           PIC X(14).
+003710     03  FILLER          PIC X(05).
+003720 01  P-L4.
+003730     03  FILLER          PIC X(02).
+003740     03  P-HD3           PIC X(07).
+003750     03  P-HD4           PIC X(07).
+003760     03  P-HD5           PIC X(11).
+003770     03  P-HD6           PIC X(07).
+003780     03  P-HD7           PIC X(07).
+003790     03  P-HD8           PIC X(08).
+003800     03  P-HD9           PIC X(06).
+003810     03  P-HD10          PIC X(24).
+003820     03  P-HD11          PIC X(09).
+003830     03  P-HD12          PIC X(07).
+003840     03  P-HD13          PIC X(07).
+003850     03  P-HD14          PIC X(11).
+003860     03  P-HD15          PIC X(07).
+003870     03  P-HD16          PIC X(07).
+003880     03  P-HD17          PIC X(05).
+003890 01  P-L5.
+003900     03  P-MTD1          PIC Z(6)9- BLANK WHEN ZERO.
+003910     03  FILLER          PIC X(01).
+003920     03  P-MGRP1         PIC ZZ9.99 BLANK WHEN ZERO.
+003930     03  FILLER          PIC X(01).
+003940     03  P-MTOT1         PIC ZZ9.99 BLANK WHEN ZERO.
+003950     03  FILLER          PIC X(03).
+003960     03  P-LN4.
+003970         05  P-LN6.
+003980             07  P-YTD1  PIC Z(6)9- BLANK WHEN ZERO.
+003990         05  FILLER      PIC X(01).
+004000         05  P-YGRP1     PIC ZZ9.99 BLANK WHEN ZERO.
+004010         05  FILLER      PIC X(01).
+004020         05  P-LN7.
+004030             07  P-YTOT1 PIC ZZ9.99 BLANK WHEN ZERO.
+004040         05  FILLER      PIC X(02).
+004050         05  P-ACNO1     PIC 9999. 
+004060         05  FILLER      PIC X(01).
+004070         05  P-DESC      PIC X(24).
+004080         05  FILLER      PIC X(01).
+004090         05  P-ACNO2     PIC 9999. 
+004100         05  FILLER      PIC X(02).
+004110         05  P-LN8.
+004120             07  P-MTD2  PIC Z(6)9- BLANK WHEN ZERO.
+004130         05  FILLER      PIC X(01).
+004140         05  P-MGRP2     PIC ZZ9.99 BLANK WHEN ZERO.
+004150         05  FILLER      PIC X(01).
+004160         05  P-LN9.
+004170             07  P-MTOT2 PIC ZZ9.99 BLANK WHEN ZERO.
+004180     03  FILLER          PIC X(03).
+004190     03  P-YTD2          PIC Z(6)9- BLANK WHEN ZERO.
+004200     03  FILLER          PIC X(01).
+004210     03  P-YGRP2         PIC ZZ9.99 BLANK WHEN ZERO.
+004220     03  FILLER          PIC X(01).
+004230     03  P-YTOT2         PIC ZZ9.99 BLANK WHEN ZERO.
+004240 01  P-L6.
+004250     03  P-LN10          PIC X(22).  
+004260     03  FILLER          PIC X(03).
+004270     03  P-LN11          PIC X(22).
+004280     03  FILLER          PIC X(03).
+004290     03  P-LN2           PIC X(34).
+004300     03  P-LN13          PIC X(22).
+004310     03  FILLER          PIC X(03).
+004320     03  P-LN14          PIC X(22).  
+      /
+004330 WORKING-STORAGE SECTION.
+004340 77  WS-PARKEY       PIC 9(04)     COMP-5 VALUE 1.
+004350 77  WS-GLKEY        PIC 9(04)     COMP-5 VALUE 1.
+004360 77  WS-GTRKEY       PIC 9(04)     COMP-5 VALUE 1.
+004370 77  WS-GINKEY       PIC 9(04)     COMP-5 VALUE 1.
+004370 77  WS-NETKEY       PIC 9(04)     COMP-5 VALUE 1.
+004380 77  WS-KSTORE       PIC 9(04)     COMP-5.
+004390 77  WS-ISUB         PIC 9(04)     COMP-5.
+004400 77  WS-CHEQUE       PIC 9(04)     COMP-5.
+004410 77  WS-PAGE         PIC 9(04)     COMP-5.
+004420 77  WS-LINES        PIC 9(02) VALUE 66.
+004430 77  WS-S1           PIC 9(04)     COMP-5.
+004440 77  WS-S2           PIC 9(04)     COMP-5.
+004450 77  WS-S3           PIC 9(04)     COMP-5.
+004460 77  WS-S4           PIC 9(04)     COMP-5.
+004470 77  WS-S5           PIC 9(04)     COMP-5.
+004480 77  WS-S6           PIC 9(04)     COMP-5.
+004490 77  WS-S7           PIC 9(04)     COMP-5.
+004500 77  WS-S8           PIC 9(04)     COMP-5.
+004510 77  WS-S9           PIC 9(04)     COMP-5.
+004520 77  WS-S10          PIC 9(04)     COMP-5.
+004530 77  WS-S11          PIC 9(04)     COMP-5.
+004540 77  WS-OPEN         PIC  9(02) VALUE ZERO.
+004550 77  WS-EXS          PIC 9(01).
+004560 77  WS-NUM          PIC  Z9.
+004560 77  WS-SCH          PIC  X(01).
+004560 77  WS-RECON        PIC  X(01).
+004570 77  WS-ZERO         PIC  9(01).
+004580 77  WS-MM           PIC  9(02) COMP-5 VALUE ZERO.
+       77  WS-MTH          PIC  9(02) COMP-5.
+004590 77  WS-F-YR         PIC 9(02).
+004600 77  WS-E-YR         PIC 9(02).
+004610 77  WS-OPTION       PIC X(01).
+004630 77  WS-ERROR        PIC 9(01) VALUE ZERO.
+003050 77  WS-NORM         PIC  X(04).
+003060 77  WS-COND         PIC  X(04).
+003070 77  WS-EXPP         PIC  X(04).
+003080 77  WS-ECAN         PIC  X(04).
+003090 77  WS-8LPI       PIC  X(04).
+003100 77  WS-6LPI       PIC  X(04).
+       77  WS-10CPI        PIC  X(04).
+       77  WS-12CPI        PIC  X(04).
+       77  WS-17CPI        PIC  X(04).
+       77  WS-DBLP         PIC  X(04).
+       77  WS-DCAN         PIC  X(04).
+004710 77  WS-TNEXT        PIC 9(04)     COMP-5.
+004720 77  WS-SELECT       PIC X(13) VALUE "Select Option".
+003150 77  WS-PRN-NO	   PIC X(01)	 COMP-X VALUE 9.
+003160 77  WS-PRN-STAT	   PIC X(01)	 COMP-X.
+004730 77  WS-H1	   PIC X(05) VALUE "DATE:".
+004740 77  WS-H3           PIC X(06) VALUE "BATCH:".
+004750 77  WS-H4           PIC X(05) VALUE "PAGE:".
+004760 77  WS-CHK          PIC X(30) VALUE
+004770                     "Correct ENTER - N if incorrect".
+004780 77  WS-ER1          PIC X(07) VALUE "Account".
+004790 77  WS-ER3          PIC X(04) VALUE "Date".
+004800 77  WS-ER4          PIC X(05) VALUE "Value".
+004810 77  WS-ER5          PIC X(13) VALUE "Cheque number".
+004820 77  WS-ER6          PIC X(09) VALUE "No Record".
+004830 77  WS-ER7          PIC X(13) VALUE "Group Heading".
+      /
+004840 01  WS-DB-LINE.
+004850     03  WS-TOP-LNE.
+004860         05  WS-TCHR PIC X(01) OCCURS 80.
+004870     03  WS-T-LINE REDEFINES WS-TOP-LNE.
+004880         05  FILLER  PIC X(01).
+004890         05  WS-H-LINE
+004900                     PIC X(78).
+004910         05  FILLER  PIC X(01).
+004920     03  WS-TOP-LNE2.
+004930         05  WS-TCH  PIC X(01) OCCURS 80.
+           03  WS-TP-LINE2 REDEFINES WS-TOP-LNE2.
+               05  FILLER      PIC  X(01).
+               05  WS-TOP-COMP PIC  X(40).
+               05  FILLER      PIC  X(39).
+004940     03  WS-MID-LNE.
+004950         05  WS-MCHR PIC X(01) OCCURS 80.
+	   03  WS-MDGL-LNE REDEFINES WS-MID-LNE.
+	       05  WS-MGL1     PIC X(01).
+	       05  WS-MGL78    PIC X(78).
+	       05  WS-MGL80    PIC X(01).
+004960     03  WS-MID-LNE2.
+004970         05  WS-MCH  PIC X(01) OCCURS 80.
+	   03  WS-MID78 REDEFINES WS-MID-LNE2.
+	       05  FILLER      PIC  X(01).
+	       05  WS-BLNK78   PIC  X(78).
+	       05  FILLER      PIC  X(01).
+004980	   03  WS-BOT-LNE.
+004990         05  WS-BCHR PIC X(01) OCCURS 80.
+005000     03  WS-B-LINE REDEFINES WS-BOT-LNE.
+005010         05  FILLER  PIC X(01).
+005020         05  WS-F-LINE
+005030                     PIC X(78).
+005040         05  FILLER  PIC X(01).
+005050     03  WS-BOT-LNE2.
+005060         05  WS-BCH  PIC X(01) OCCURS 80.
+
+005080 COPY WS.WS.
+
+005100 COPY CHAIN.WS.
+
+005120 01  W00-TREC.
+005130     03  W00-DATE        PIC 9(06).
+005140     03  W00-NAR         PIC X(40).
+005150     03  W00-CODE        PIC 9(02).
+005160     03  W00-VAL         PIC S9(07)V99 COMP-3.
+005170     03  W00-PREV        PIC 9(04)     COMP-5.
+005180     03  W00-NXT         PIC 9(04)     COMP-5.
+005190     03  W00-AC          PIC 9(06)     COMP-3.
+005200     03  FILLER          PIC X(01).
+005210 01  W02-FID.
+
+       COPY CONTROL.ID.
+
+000300 COPY GACCNT.ID.
+
+000340 COPY GINDEX.ID.
+
+005340 01  W02-FILE-IDS.
+           03  W02-PRINTER.
+	       05  W02-REPORT PIC X(07) VALUE "GLP023.".
+               05  W02-USER   PIC X(05) VALUE SPACES.
+
+005360 01  W05-TDATE.
+005370     03  W05-TODAY       PIC 9(06).
+005380     03  W05-DTE  REDEFINES W05-TODAY.
+005390         05  W05-DD      PIC 9(02).
+005400         05  W05-MM      PIC 9(02).
+005410         05  W05-YY      PIC 9(02).
+005420     03  W05-TYMD        PIC 9(06).
+005430     03  W05-TDTE REDEFINES W05-TYMD.
+005440         05  W05-Y       PIC 9(02).
+005450         05  W05-M       PIC 9(02).
+005460         05  W05-D       PIC 9(02).
+005470 01  W10-H2.
+005480     03  FILLER          PIC X(27).
+005490     03  W10-HEAD        PIC X(13).
+005500 01  W15-INPUT.
+005510     03  W15-ACCOUNT     PIC 9(06).
+005520     03  W15-ACNO1 REDEFINES W15-ACCOUNT.
+005530         05  W15-ACNO    PIC 9(04).
+005540         05  W15-SER     PIC 9(02).
+005550     03  W15-ACNO2 REDEFINES W15-ACCOUNT.
+005560         05  W15-GR      PIC 9(02).
+005570         05  W15-SGRP    PIC 9(02).
+005580         05  W15-ASER    PIC 9(02).
+005590     03  W15-ACNO3 REDEFINES W15-ACCOUNT.
+005600         05  W15-GRP     PIC 9(01).
+005610         05  FILLER      PIC 9(05).
+005620     03  W15-START       PIC 9(04).
+005630     03  W15-STGRP REDEFINES W15-START.
+005640         05  W15-STGR    PIC 9(02).
+005650         05  W15-STSG    PIC 9(02).
+005510     03  W15-BEGACC      PIC 9(06).
+005510     03  W15-ENDACC      PIC 9(06).
+005660     03  W15-END         PIC 9(04).
+005670     03  W15-DATE        PIC 9(06).
+005680     03  W15-RDATE REDEFINES W15-DATE.
+005690         05  W15-DD      PIC 9(02).
+005700         05  W15-MM      PIC 9(02).
+005710         05  W15-YY      PIC 9(02).
+           03  W15-YMD     PIC  9(06).
+           03  W15-RYMD REDEFINES W15-YMD.
+               05  W15-YR  PIC  9(02).
+               05  W15-MT  PIC  9(02).
+               05  W15-DY  PIC  9(02).
+005720     03  W15-REFER       PIC 9(07).
+005730     03  W15-SCHAC REDEFINES W15-REFER.
+005740         05  W15-SACN0   PIC 9(04).
+005750         05  FILLER      PIC X(03).
+005760     03  W15-NAR         PIC X(36).
+005770     03  W15-VAL         PIC S9(09)V99.
+005780     03  W15-BANK        PIC 9(06).
+005790     03  W15-MONTH       PIC 9(02).
+005800     03  W15-PAYEE       PIC X(36).
+005810     03  W15-MONTHS REDEFINES W15-PAYEE.
+005820         05  W15-MNME    PIC X(09).
+005830         05  FILLER      PIC X(27).
+005840     03  W15-PER         PIC 9(03)V99.
+005850     03  W15-IND         PIC 9(01).
+005860     03  W15-ACNME       PIC X(30).
+005870     03  W15-PGRP        PIC 9(02).
+005880 01  W20-TOTALS.
+005890     03  W20-DEBIT       PIC S9(09)V99 COMP-3.
+005900     03  W20-CREDIT      PIC S9(09)V99 COMP-3.
+005910     03  W20-DR          PIC S9(09)V99 COMP-3.
+005920     03  W20-CR          PIC S9(09)V99 COMP-3.
+005930     03  W20-RESULT      PIC S9(09)V99.
+005940     03  W20-RES1 REDEFINES W20-RESULT.
+005950         05  W20-WHOLE   PIC 9(09).
+005960         05  W20-DEC     PIC S9(02).
+005970     03  W20-TOTAL       PIC S9(09)V99 COMP-3.
+000430 01  W20-DATE.
+000440     03  W20-DAY         PIC  9(02).
+000450     03  W20-MONTH       PIC  9(02).
+000460     03  W20-YEAR        PIC  9(02).
+000470 01  W20-DTE1 REDEFINES W20-DATE.
+000480     03  W20-DTE         PIC  9(06).
+       01  W21-DATE.
+           03  W21-YY          PIC  9(02).
+           03  W21-MM          PIC  9(02).
+           03  W21-DD          PIC  9(02).
+       01  W21-DTE1 REDEFINES W21-DATE.
+           03  W21-DTE         PIC  9(06).
+002850 01  W25-CALCS.
+002860     03  W25-RESULT      PIC 9(05)V99.
+002870     03  W25-RESULT1 REDEFINES W25-RESULT.
+002880         05  W25-WHOLE   PIC 9(05).
+002890         05  W25-DECIMAL PIC 9(02).
+           03  W25-RESULT2 REDEFINES W25-RESULT.
+               05  W25-KEY    PIC 9(04).
+               05  W25-SUB    PIC 9(01).
+               05  FILLER     PIC 9(02).
+005980 01  W25-EDIT.
+005990     03  W25-7.
+006000         05  W25-1       PIC ZZZZZZZ9-.
+006010     03  W25-S7V2.
+006020         05  W25-V1      PIC Z(07)9.99CR.
+003990	   03  W25-S8V2.
+004000	       05  W25-VG1     PIC Z(07)9.99CR.
+006030	   03  W25-DATE.
+006040         05  W25-DTE     PIC Z9/99/99.
+006050     03  W25-REF.
+006060         05  W25-REFER   PIC Z(07).
+006070 01  W30-INACTS.
+006080     02  W30-TAB1.
+006090     03  W30-INCOME-TABLE OCCURS 50.
+006100         05  W30-INACNO  PIC 9(04).
+006110         05  W30-INKEY   PIC 9(05)  COMP-0.
+006120     02  W30-TAB2 REDEFINES W30-TAB1.
+006130         05  W30-ING OCCURS 50.
+006140             07 W30-INGRP PIC 9(02).
+006150             07 W30-INSAC PIC 9(04).
+006160     02  W30-TAB3 REDEFINES W30-TAB1.
+006170         05  W30-INGS OCCURS 50.
+006180             07  FILLER  PIC 9(01).
+006190             07 W30-INGSUB PIC 9(03).
+006200             07  FILLER  PIC 9(02).
+006210 01  W30-COACTS.
+006220     02  W30-TAB4.
+006230     03  W30-COST-TABLE OCCURS 50.
+006240         05  W30-COACNO  PIC 9(04).
+006250         05  W30-COKEY   PIC 9(05)  COMP-0.
+006260     02  W30-TAB5 REDEFINES W30-TAB4.
+006270         05  W30-CNG OCCURS 50.
+006280             07 W30-COGRP  PIC 9(02).
+006290             07 W30-COSAC  PIC 9(04).
+006300     02  W30-TAB6 REDEFINES W30-TAB4.
+006310         05  W30-COGS OCCURS 50.
+006320             07 FILLER     PIC 9(01).
+006330             07 W30-COGSUB PIC 9(03).
+006340             07 FILLER     PIC 9(02).
+000550 01  W30-MONTHS.
+000560     03  W30-MONTH-NAMES.
+000570	       05  W30-ENG.
+000580		   07  FILLER  PIC  X(09) VALUE "January  ".
+		   07  FILLER  PIC  X(09) VALUE "February ".
+		   07  FILLER  PIC  X(09) VALUE "March	  ".
+		   07  FILLER  PIC  X(09) VALUE "April    ".
+		   07  FILLER  PIC  X(09) VALUE "May      ".
+		   07  FILLER  PIC  X(09) VALUE "June     ".
+		   07  FILLER  PIC  X(09) VALUE "July     ".
+		   07  FILLER  PIC  X(09) VALUE "August   ".
+		   07  FILLER  PIC  X(09) VALUE "September".
+		   07  FILLER  PIC  X(09) VALUE "October  ".
+		   07  FILLER  PIC  X(09) VALUE "November ".
+		   07  FILLER  PIC  X(09) VALUE "December ".
+000590     03  W30-MONTH REDEFINES W30-MONTH-NAMES
+000600			       PIC  X(09)  OCCURS 12.
+
+       COPY W40.WS.
+
+       COPY FUNCTION.WS.
+
+006560 01  W50-CALC.
+006570     05  W50-ACNTS OCCURS 30.
+006580         07  W50-ANO     PIC 9(06)     COMP-3.
+006590         07  W50-PER     PIC 9(03)V99  COMP-3.
+006600 01  W55-TOTALS.
+006610     03  W55-VAL         PIC S9(09)    COMP-3 OCCURS 12.
+006620 01  W55-TOT REDEFINES W55-TOTALS.
+006630     03  W55-1           PIC S9(09)    COMP-3.
+006640     03  W55-2           PIC S9(09)    COMP-3.
+006650     03  W55-3           PIC S9(09)    COMP-3.
+006660     03  W55-4           PIC S9(09)    COMP-3.
+006670     03  W55-5           PIC S9(09)    COMP-3.
+006680     03  W55-6           PIC S9(09)    COMP-3.
+006690     03  W55-7           PIC S9(09)    COMP-3.
+006700     03  W55-8           PIC S9(09)    COMP-3.
+006710     03  W55-9           PIC S9(09)    COMP-3.
+006720     03  W55-10          PIC S9(09)    COMP-3.
+006730     03  W55-11          PIC S9(09)    COMP-3.
+006740     03  W55-12          PIC S9(09)    COMP-3.
+006750 01  W60-TOTALS.
+006760     03  W60-VAL         PIC S9(09)    COMP-3 OCCURS 12.
+006770 01  W65-TOTALS.
+006780     03  W65-VAL         PIC S9(09)    COMP-3 OCCURS 12.
+006790 01  W70-ACTS.
+006800     03  W70-BRANCH      PIC 9(04)     COMP-5.
+006810     03  W70-GINDEX.
+006820         05  W70-DTE1    PIC 9(06).
+006830         05  W70-ACS  OCCURS 100 INDEXED BY W70-IX.
+006840             07  W70-AC  PIC 9(06)     COMP-3.
+006850             07  W70-LNK PIC 9(04)     COMP-5.
+006860         05  W70-NEXT    PIC 9(04)     COMP-5.
+006870     03  W70-GINDEX2.
+006880         05  W70-DTE2    PIC 9(06).
+006890         05  W70-ACS2 OCCURS 100.
+006900             07  W70-AC2 PIC 9(06)     COMP-3.
+006910             07 W70-LNK2 PIC 9(04)     COMP-5.
+006920         05  W70-NEXT2   PIC 9(04)     COMP-5.
+006930     03  W70-LNK2        PIC 9(04)     COMP-5.
+006940     03  W70-DATE        PIC 9(06).
+006950     03  W070-DEBT       PIC 9(06).
+006960     03  W070-CRED       PIC 9(06).
+006970     03  W070-STCK       PIC 9(06).
+006980     03  W070-BANK       PIC 9(06).
+
+007000 COPY W70.WS.
+
+007040 01  W75-KEYS.
+007050     03  W75-S          PIC 9(02) COMP-5.
+007060     03  W75-S1         PIC 9(02) COMP-5.
+007070     03  W75-SKEY       PIC 9(04) COMP-5
+007080                        OCCURS 18.
+007090 01  W80-HEAD.
+007100     03  W80-H1          PIC X(22).
+007110	   03  FILLER	       PIC X(17) VALUE "FOR THE MONTH OF".
+	   03  W80-MONTH.
+	       05  FILLER      PIC  X(01).
+007120	       05  W80-DATE    PIC Z9/99/99.
+007130 01  W90-TOTALS.
+007140     03  W90-ACCUM.
+007150         05  W90-V1      PIC S9(09)V99 COMP-3.
+007160         05  W90-V2      PIC S9(09)V99 COMP-3.
+007170         05  W90-V3      PIC S9(09)V99 COMP-3.
+007180         05  W90-V4      PIC S9(09)V99 COMP-3.
+007190         05  W90-V5      PIC S9(09)V99 COMP-3.
+007200         05  W90-V6      PIC S9(09)V99 COMP-3.
+007210         05  W90-V7      PIC S9(09)V99 COMP-3.
+007220         05  W90-V8      PIC S9(09)V99 COMP-3.
+007230         05  W90-V9      PIC S9(09)V99 COMP-3.
+007240         05  W90-V10     PIC S9(09)V99 COMP-3.
+007250         05  W90-V11     PIC S9(09)V99 COMP-3.
+007260         05  W90-V12     PIC S9(09)V99 COMP-3.
+007270         05  W90-V13     PIC S9(09)V99 COMP-3.
+007280         05  W90-V14     PIC S9(09)V99 COMP-3.
+007290         05  W90-V15     PIC S9(09)V99 COMP-3.
+007300         05  W90-V16     PIC S9(09)V99 COMP-3.
+007310         05  W90-V17     PIC S9(09)V99 COMP-3.
+007320         05  W90-V18     PIC S9(09)V99 COMP-3.
+007330     03  W90-TOT  REDEFINES W90-ACCUM.
+007340         05  W90-VAL     PIC S9(09)V99 COMP-3 OCCURS 18.
+007350     03  W90-PER         PIC 9(03)V9(06) COMP-3.
+007360 01  W90-COMP.
+007370     03  W90-CNAME       PIC X(40).
+      /
+007380 SCREEN SECTION.
+
+       COPY BLANK.CRT.
+
+       01  S-MTH.
+	   03  FOREGROUND-COLOR 7 HIGHLIGHT
+	       PIC 99 USING WS-MM AUTO.
+
+       01  ERROR-LINE.
+	   03  LINE 25 COLUMN  2 BACKGROUND-COLOR WS-TEMPBG
+				 FOREGROUND-COLOR WS-FGRND-5
+				 HIGHLIGHT
+				 PIC  X(48) FROM WS-ERR-MES.
+      /
+008520 PROCEDURE DIVISION USING WS-PARID WS-USER-ID WS0-PROGRAMS.
+008530 AA000           SECTION.
+008540 AA00.
+008560       PERFORM ZA000.
+	     PERFORM DA000.
+
+008970 AA30.
+008980	     CLOSE GLREPT.
+009030 AA35.
+009040       EXIT PROGRAM.
+009050 AA50.
+009060       MOVE SPACES TO R-DET.
+009070       MOVE WS-H1 TO R-H1.
+009080       MOVE W90-COMP TO R-H2.
+009090       MOVE WS-H4 TO R-H4.
+009100       ADD 1 TO WS-PAGE.
+009110       MOVE WS-PAGE TO R-PGE.
+009120       MOVE W05-TODAY TO R-DTE1.
+009130       WRITE R-L1 BEFORE 2 LINES.
+009140       MOVE SPACES TO R-DET.
+009150 AA55.
+009160       EXIT.
+
+       COPY FUNCTION.CRT.
+
+       COPY LOCKED.REC.
+
+       COPY CLEAR.CRT.
+
+009820 AB000           SECTION.
+
+       COPY CONTROL.RD.
+
+       COPY PARAM.RD.
+
+       COPY GACCNT.RD1.
+
+       COPY GINDEX.RD.
+
+010390 AB50.
+010400       MOVE 1 TO WS-GINKEY.
+010410       PERFORM READ-GINDEX THRU READ-GINDEX-EXIT.
+010420       MOVE I-REC1 TO W70-GINDEX.
+010430       MOVE I-DATE TO W70-DATE.
+010440 AB55.
+010450       EXIT.
+      /
+010460 AC000           SECTION.
+
+       COPY CONTROL.WR.
+
+      /
+010820 AF000-GET-FIRST SECTION.
+010830 AF00.
+010840       MOVE 1 TO WS-GINKEY.
+010850       PERFORM READ-GINDEX THRU READ-GINDEX-EXIT.
+010860       SET G-IX TO 1.
+010870       MOVE ZERO TO WS-ERROR.
+010880     IF I-ACT (G-IX) = ZERO
+010890         MOVE 9 TO WS-ERROR
+010900         GO TO AF999.
+010910       MOVE I-LNK (G-IX) TO WS-GLKEY.
+010920       PERFORM READ-GACCNT THRU READ-GACCNT-EXIT.
+010930 AF999.
+010940       EXIT.
+      /
+010950 AG000-GET-NEXT  SECTION.
+010960 AG00.
+010970     IF G-IX = 100
+010980         GO TO AG10.
+010990       SET G-IX UP BY 1.
+011000 AG05.
+011010     IF I-ACT (G-IX) = ZERO
+011020         GO TO AG15.
+011030       MOVE I-LNK (G-IX) TO WS-GLKEY.
+011040       PERFORM READ-GACCNT THRU READ-GACCNT-EXIT.
+011050       GO TO AG999.
+011060 AG10.
+011070     IF I-NEXT = ZERO
+011080         GO TO AG15.
+011090       MOVE I-NEXT TO WS-GINKEY.
+011100       PERFORM READ-GINDEX THRU READ-GINDEX-EXIT.
+011110       SET G-IX TO 1.
+011120       GO TO AG05.
+011130 AG15.
+011140       MOVE 9 TO WS-ERROR.
+011150 AG999.
+011160       EXIT.
+
+      /
+014630 DA000	       SECTION 5.
+014640 DA00.
+014650       DISPLAY CLR-SCREEN.
+014660       DISPLAY "OPERATING STATEMENT (Profit/Loss)" AT 0225
+014670                WITH FOREGROUND-COLOR 15.
+014680       DISPLAY "Are you sure (" AT 0412
+014690                WITH FOREGROUND-COLOR 7 
+014700               "Y" WITH FOREGROUND-COLOR 14
+014710               "/" WITH FOREGROUND-COLOR 7
+014720               "N" WITH FOREGROUND-COLOR 14
+014730               ")?" WITH FOREGROUND-COLOR 7.
+014740 DA01.
+014750       ACCEPT WS-OPTION AT 0432 WITH FOREGROUND-COLOR 15 AUTO.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+014810	   IF NOT (WS-OPTION = "N" OR "Y")
+014820         GO TO DA01.
+014830     IF WS-OPTION = "N"
+014840         GO TO DA999.
+014850       DISPLAY "Have Totals been accumulated (" AT 0612
+014860                WITH FOREGROUND-COLOR 7 
+014870               "Y" WITH FOREGROUND-COLOR 14
+014880               "/" WITH FOREGROUND-COLOR 7
+014890               "N" WITH FOREGROUND-COLOR 14
+014900               ")?" WITH FOREGROUND-COLOR 7.
+014910 DA02.
+014920       ACCEPT WS-OPTION AT 0648 WITH FOREGROUND-COLOR 15 AUTO.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+014980	   IF NOT (WS-OPTION = "N" OR "Y")
+014990         GO TO DA02.
+015000     IF WS-OPTION = "N"
+015010         GO TO DA999.
+015020       DISPLAY "Detailed print (" AT 0812
+015030                WITH FOREGROUND-COLOR 7 
+015040               "Y" WITH FOREGROUND-COLOR 14
+015050               "/" WITH FOREGROUND-COLOR 7
+015060               "N" WITH FOREGROUND-COLOR 14
+015070               ")?" WITH FOREGROUND-COLOR 7.
+015080 DA03.
+015090       ACCEPT WS-OPTION AT 0834 WITH FOREGROUND-COLOR 15 AUTO.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+015150	   IF NOT (WS-OPTION = "N" OR "Y")
+015160         GO TO DA03.
+015170     IF NOT (WS-OPTION = "N")
+015180         MOVE ZERO TO WS-EXS
+015190     ELSE
+015200         MOVE 1 TO WS-EXS.
+015210       DISPLAY "Print inactive accounts (" AT 1012
+015220                WITH FOREGROUND-COLOR 7 
+015230               "Y" WITH FOREGROUND-COLOR 14
+015240               "/" WITH FOREGROUND-COLOR 7
+015250               "N" WITH FOREGROUND-COLOR 14
+015260               ")?" WITH FOREGROUND-COLOR 7.
+015270 DA04.
+015280       ACCEPT WS-OPTION AT 1043 WITH FOREGROUND-COLOR 15 AUTO.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+015340	   IF NOT (WS-OPTION = "N" OR "Y")
+015350         GO TO DA04.
+015360     IF NOT (WS-OPTION = "N")
+015370         MOVE ZERO TO WS-ZERO
+015380     ELSE
+015390         MOVE 1 TO WS-ZERO.
+	     MOVE W05-MM	 TO WS-MM.
+	     DISPLAY "Keyin month >  <" AT 1212.
+015400 DA05.
+	     ACCEPT S-MTH AT 1225.
+	   IF WS-MM < 01 OR > 12
+	       MOVE W05-MM	 TO WS-MM.
+015410	     DISPLAY (14, 12) "Account No :".
+015420 DA15.
+015430	     MOVE WS-MM 	 TO WS-S7.
+015440     IF WS-S7 = 1
+015450         MOVE 12 TO WS-S8
+015460     ELSE
+015470         SUBTRACT 1 FROM WS-S7 GIVING WS-S8.
+015480       MOVE ZERO TO WS-PAGE.
+015490       MOVE WS-COND TO R-DET.
+015500       WRITE R-L1 BEFORE 0 LINES.
+015510 DA25.
+015520       PERFORM AA50 THRU AA55.
+015530	     MOVE SPACES	 TO R-DET.
+015540	     MOVE "OPERATING STATEMENT -"
+				 TO W80-H1.
+	     MOVE W30-MONTH (WS-MM)
+				 TO W80-MONTH.
+015550*      MOVE W05-TODAY TO W80-DATE.
+015560	     MOVE W80-HEAD TO STM-H3.
+015570       WRITE STM-L1 BEFORE 1 LINES.
+015580       MOVE ALL "-" TO STM-H3.
+015590       WRITE STM-L1 BEFORE 1 LINES.
+015600       MOVE SPACES TO R-DET.
+015610       MOVE "YEAR TO DATE" TO STM-H4.
+015620       MOVE "MONTH" TO STM-H5.
+015630       WRITE STM-L1 BEFORE 1 LINES.
+015640       MOVE ALL "-" TO STM-H6.
+015650       MOVE "PERC" TO STM-H7.
+015660       MOVE ALL "-" TO STM-H8.
+015670       WRITE STM-L1 BEFORE 1 LINES.
+015680       MOVE SPACES TO R-DET.
+015690	     MOVE " TARGET"	 TO STM-H9 STM-H17.
+015700	     MOVE " %"		 TO STM-H10 STM-H18.
+	     MOVE "  %" 	 TO STM-H12 STM-H14
+				    STM-H20 STM-H22.
+015720	     MOVE "  ACTUAL"	 TO STM-H11 STM-H19.
+015730	     MOVE "LAST YEAR"	 TO STM-H13 STM-H21.
+015740       MOVE "YTD" TO STM-H15.
+015750       MOVE "DESCRIPTION" TO STM-H16.
+015760       WRITE STM-L1 BEFORE 1 LINES.
+015770       MOVE ALL "-" TO STM-H15 STM-H16.
+015780 DA32.
+015790       MOVE ALL "-" TO STM-H9  STM-H10 STM-H11 STM-H12
+015800                       STM-H13 STM-H14 
+015810                       STM-H17 STM-H18 STM-H19 STM-H20
+015820                       STM-H21 STM-H22.
+015830       WRITE STM-L1 BEFORE 1 LINES.
+015840       MOVE SPACES TO R-DET.
+015850 DA34.
+015860       PERFORM AF000-GET-FIRST.
+015870       MOVE ZERO TO W15-GR.
+015880       MOVE 1 TO WS-S11.
+015890 DA34A.
+015900       MOVE ZERO TO W90-VAL (WS-S11).
+015910     IF WS-S11 < 18
+015920         ADD 1 TO WS-S11
+015930         GO TO DA34A.
+015940 DA35.
+015950     IF WS-ERROR = 9
+015960         GO TO DA75.
+015970     IF G-ASER NOT = ZERO
+015980         IF (WS-ZERO = 1) AND (G-BAL = ZERO) AND 
+015990            (G-VAL (WS-S8) = ZERO) 
+016000             GO TO DA73.
+016010     IF W15-GRP = G-GRP
+016020	       DISPLAY (14, 25) G-AC WITH FOREGROUND-COLOR 11
+016030         GO TO DA60.
+016040     IF G-GRP > 3
+016050         GO TO DA75.
+016060	     DISPLAY (14, 25) G-AC WITH FOREGROUND-COLOR 11.
+016070     IF G-GRP = 1
+016080         MOVE "*** INCOME ***" TO STM-ANAME
+016090         WRITE STM-L1 BEFORE 1 LINES
+016100         MOVE SPACES TO R-DET
+016110         GO TO DA60.
+016120     IF W15-GRP = 1
+016130         GO TO DA95.
+016140     IF W15-GR = ZERO
+016150         GO TO DA55.
+016160     IF W15-GRP > 2
+016170         GO TO DA60.
+016180 DA40.
+016190       PERFORM DA32.
+016200       MOVE "TOTAL COST OF SALES" TO STM-DESC.
+016210 DA45.
+016220       MOVE W90-V7 TO STM-V1.
+016230     IF W90-V1 NOT = ZERO
+016240         COMPUTE W90-PER = W90-V7 / W90-V1 * 100
+016250         MOVE W90-PER TO STM-P1.
+016260	     MULTIPLY 1 BY W90-V8
+				 GIVING STM-V2 ROUNDED.
+016270     IF W90-V2 NOT = ZERO
+016280         COMPUTE W90-PER = W90-V8 / W90-V2 * 100
+016290         MOVE W90-PER TO STM-P2.
+016260	     MULTIPLY 1 BY W90-V9
+				 GIVING STM-V3 ROUNDED.
+016310	   IF W90-V3 NOT = ZERO
+016320         COMPUTE W90-PER = W90-V9 / W90-V3 * 100
+016330         MOVE W90-PER TO STM-P3.
+016340       MOVE W90-V10 TO STM-V4.
+016350     IF W90-V4 NOT = ZERO
+016360         COMPUTE W90-PER = W90-V10 / W90-V4 * 100
+016370         MOVE W90-PER TO STM-P4.
+016260	     MULTIPLY 1 BY W90-V11
+				 GIVING STM-V5 ROUNDED.
+016390	   IF W90-V5 NOT = ZERO
+016400         COMPUTE W90-PER = W90-V11 / W90-V5 * 100
+016410         MOVE W90-PER TO STM-P5.
+016260	     MULTIPLY 1 BY W90-V12
+				 GIVING STM-V6 ROUNDED.
+016430	   IF W90-V6 NOT = ZERO
+016440         COMPUTE W90-PER = W90-V12 / W90-V6 * 100
+016450         MOVE W90-PER TO STM-P6.
+016460       WRITE STM-L1 BEFORE 1 LINES.
+016470       MOVE SPACES TO R-DET.
+016480       PERFORM DA32.
+016490 DA50.
+016500       MOVE "GROSS PROFIT" TO STM-DESC.
+016510       ADD W90-V1 TO W90-V7.
+016520       ADD W90-V2 TO W90-V8.
+016530       ADD W90-V3 TO W90-V9.
+016540       ADD W90-V4 TO W90-V10.
+016550       ADD W90-V5 TO W90-V11.
+016560       ADD W90-V6 TO W90-V12.
+016570       PERFORM DA45.
+016580 DA55.
+016590       MOVE "*** EXPENSES ***" TO STM-ANAME.
+016600       WRITE STM-L1 BEFORE 1 LINES.
+016610       MOVE SPACES TO R-DET.
+016620 DA60.
+016630       MOVE G-GR TO W15-GR.
+016640     IF WS-EXS = 1
+016650         IF G-ASER NOT = ZERO
+016660             GO TO DA73.
+016670       MOVE G-NAME TO STM-ANAME.
+016680       MOVE G-AC TO STM-AC.
+016690     IF WS-EXS = ZERO
+016700         IF G-ASER = ZERO
+016710             PERFORM DA100 THRU DA115
+016720	    GO TO DA72.
+016730     IF WS-EXS = 1
+016740         IF G-SR = ZERO
+016750             IF NOT (G-GR = 10 OR 20 OR 30)
+016760                 PERFORM DA100 THRU DA115
+016770                 GO TO DA72
+016780             ELSE
+016790                 GO TO DA72.
+016800       MOVE 1 TO WS-S1.
+016810       MOVE 2 TO WS-S2.
+016820       MOVE 3 TO WS-S3.
+016830       MOVE 4 TO WS-S4.
+016840       MOVE 5 TO WS-S5.
+016850       MOVE 6 TO WS-S6.
+016860     IF W15-GRP = 2
+016870         ADD 6 TO WS-S1
+016880         ADD 6 TO WS-S2
+016890         ADD 6 TO WS-S3
+016900         ADD 6 TO WS-S4
+016910         ADD 6 TO WS-S5
+016920         ADD 6 TO WS-S6
+016930     ELSE
+016940     IF W15-GRP = 3
+016950         ADD 12 TO WS-S1
+016960         ADD 12 TO WS-S2
+016970         ADD 12 TO WS-S3
+016980         ADD 12 TO WS-S4
+016990         ADD 12 TO WS-S5
+017000         ADD 12 TO WS-S6.
+017010       MOVE ZERO TO W20-DEBIT.
+017020     IF WS-S7 < WS-F-YR
+017030         MOVE 1 TO WS-S9
+017040         MOVE 12 TO WS-S10
+017050     ELSE
+017060         MOVE WS-S7 TO WS-S10
+017070         MOVE WS-F-YR TO WS-S9
+017080         GO TO DA70.
+017090 DA65.
+017100       ADD G-BVAL (WS-S9) TO W20-DEBIT.
+017110     IF WS-S9 < WS-S7
+017120         ADD 1 TO WS-S9
+017130         GO TO DA65.
+017140       MOVE WS-F-YR TO WS-S9.
+017150 DA70.
+	   IF WS-MM = W05-MM
+	       MOVE G-BAL	 TO G-VAL (WS-S7).
+017160	     ADD G-BVAL (WS-S9)  TO W20-DEBIT.
+017170     IF WS-S9 < WS-S10
+017180	       ADD 1		 TO WS-S9
+017190         GO TO DA70.
+017200     IF W15-GRP = 1
+017210         MULTIPLY -1 BY W20-DEBIT.
+017220       ADD W20-DEBIT TO W90-VAL (WS-S1).
+017230       MOVE W20-DEBIT TO STM-V1.
+017240     IF W90-V1 NOT = ZERO
+017250     IF W15-GRP = 1
+017260         MOVE 100 TO STM-P1
+017270     ELSE
+017280         COMPUTE W90-PER = W20-DEBIT / W90-V1 * 100
+017290         MOVE W90-PER TO STM-P1.
+017300	     MOVE G-VAL (WS-S7)  TO W20-DEBIT W20-CREDIT.
+016260	     MULTIPLY 1 BY W20-DEBIT
+				 GIVING STM-V2 ROUNDED.
+017310       ADD W20-DEBIT TO W90-VAL (WS-S2).
+017320     IF W90-V2 NOT = ZERO
+017330     IF W15-GRP = 1
+017340         MOVE 100 TO STM-P2
+017350     ELSE
+017360         COMPUTE W90-PER = W20-DEBIT / W90-V2 * 100
+017370         MOVE W90-PER TO STM-P2.
+017380	     MOVE G-LVAL (WS-S7) TO W20-DEBIT.
+016260	     MULTIPLY 1 BY W20-DEBIT
+				 GIVING STM-V3 ROUNDED.
+017390	     ADD W20-DEBIT TO W90-VAL (WS-S3).
+017400     IF W90-V3 NOT = ZERO
+017410     IF W15-GRP = 1
+017420         MOVE 100 TO STM-P3
+017430     ELSE
+017440         COMPUTE W90-PER = W20-DEBIT / W90-V3 * 100
+017450         MOVE W90-PER TO STM-P3.
+017460     IF W20-TOTAL NOT = ZERO
+017470         COMPUTE W90-PER = W20-CREDIT / W20-TOTAL * 100
+017480         MOVE W90-PER TO STM-GP.
+017490       MOVE G-BVAL (WS-S7) TO W20-DEBIT.
+017500     IF W15-GRP = 1
+017510         MULTIPLY -1 BY W20-DEBIT.
+017520       MOVE W20-DEBIT TO STM-V4.
+017530       ADD W20-DEBIT TO W90-VAL (WS-S4).
+017540     IF W90-V4 NOT = ZERO
+017550     IF W15-GRP = 1
+017560         MOVE 100 TO STM-P4
+017570     ELSE
+017580         COMPUTE W90-PER = W20-DEBIT / W90-V4 * 100
+017590	       MOVE W90-PER	 TO STM-P4.
+017600	     MOVE G-VAL (WS-S7)  TO W20-DEBIT.
+017610       SUBTRACT G-VAL (WS-S8) FROM W20-DEBIT.
+016260	     MULTIPLY 1 BY W20-DEBIT
+				 GIVING STM-V5 ROUNDED.
+017630	     ADD W20-DEBIT	 TO W90-VAL (WS-S5).
+017640     IF W90-V5 NOT = ZERO
+017650     IF W15-GRP = 1
+017660         MOVE 100 TO STM-P5
+017670     ELSE
+017680         COMPUTE W90-PER = W20-DEBIT / W90-V5 * 100
+017690         MOVE W90-PER TO STM-P5.
+017700       MOVE G-LVAL (WS-S7) TO W20-DEBIT.
+017710       SUBTRACT G-LVAL (WS-S8) FROM W20-DEBIT.
+016260	     MULTIPLY 1 BY W20-DEBIT
+				 GIVING STM-V6 ROUNDED.
+017730	     ADD W20-DEBIT TO W90-VAL (WS-S6).
+017740     IF W90-V6 NOT = ZERO
+017750     IF W15-GRP = 1
+017760         MOVE 100 TO STM-P6
+017770     ELSE
+017780         COMPUTE W90-PER = W20-DEBIT / W90-V6 * 100
+017790         MOVE W90-PER TO STM-P6.
+017800 DA72.
+017810     IF LINAGE-COUNTER < 62
+017820         WRITE STM-L1 BEFORE 1 LINES
+017830     ELSE
+017840         WRITE STM-L1 BEFORE PAGE
+017850         PERFORM DA25 THRU DA32.
+017860       MOVE SPACES TO R-DET.
+017870 DA73.
+017880       PERFORM AG000-GET-NEXT.
+017890       GO TO DA35.
+017900 DA75.
+017910       PERFORM DA32.
+017920       MOVE "TOTAL EXPENDITURE" TO STM-DESC.
+017930 DA80.
+017940       MOVE W90-V13 TO STM-V1.
+017950     IF W90-V1 NOT = ZERO
+017960         COMPUTE W90-PER = W90-V13 / W90-V1 * 100
+017970         MOVE W90-PER TO STM-P1.
+016260	     MULTIPLY 1 BY W90-V14
+				 GIVING STM-V2 ROUNDED.
+017990	   IF W90-V2 NOT = ZERO
+018000         COMPUTE W90-PER = W90-V14 / W90-V2 * 100
+018010         MOVE W90-PER TO STM-P2.
+016260	     MULTIPLY 1 BY W90-V15
+				 GIVING STM-V3 ROUNDED.
+018030	   IF W90-V3 NOT = ZERO
+018040         COMPUTE W90-PER = W90-V15 / W90-V3 * 100
+018050         MOVE W90-PER TO STM-P3.
+018060       MOVE W90-V16 TO STM-V4.
+018070     IF W90-V4 NOT = ZERO
+018080         COMPUTE W90-PER = W90-V16 / W90-V4 * 100
+018090         MOVE W90-PER TO STM-P4.
+016260	     MULTIPLY 1 BY W90-V17
+				 GIVING STM-V5 ROUNDED.
+018110	   IF W90-V5 NOT = ZERO
+018120         COMPUTE W90-PER = W90-V17 / W90-V5 * 100
+018130         MOVE W90-PER TO STM-P5.
+016260	     MULTIPLY 1 BY W90-V18
+				 GIVING STM-V6 ROUNDED.
+018150	   IF W90-V6 NOT = ZERO
+018160         COMPUTE W90-PER = W90-V18 / W90-V6 * 100
+018170         MOVE W90-PER TO STM-P6.
+018180       WRITE STM-L1 BEFORE 1 LINES.
+018190       MOVE SPACES TO R-DET.
+018200       PERFORM DA32.
+018210 DA85.
+018220       ADD W90-V13 TO W90-V7.
+018230       ADD W90-V14 TO W90-V8.
+018240       ADD W90-V15 TO W90-V9.
+018250       ADD W90-V16 TO W90-V10.
+018260       ADD W90-V17 TO W90-V11.
+018270       ADD W90-V18 TO W90-V12.
+018280       MOVE "TOTAL PROFIT/LOSS THIS MONTH" TO STM-DESC.
+018290       PERFORM DA45.
+018300       WRITE STM-L1 BEFORE PAGE.
+018310       MOVE WS-NORM TO R-DET.
+018320       WRITE R-L1 BEFORE 0 LINES.
+018330 DA90.
+018360       MOVE 4              TO WS-NETKEY.
+011300       PERFORM READ-CONTROL-LOCK THRU READ-CONTROL-EXIT.
+018380       MOVE W90-V8         TO G-PL.
+011360       PERFORM REWRITE-CONTROL-UNLOCK THRU WRITE-CONTROL-EXIT.
+018430       GO TO DA999.
+018440 DA95.
+018450       PERFORM DA32.
+018460       MOVE 100 TO STM-P1 STM-P2 STM-P3 STM-P4 
+018470                   STM-P5 STM-P6.
+018480       MOVE W90-V1 TO STM-V1.
+018490       MOVE W90-V2 TO STM-V2.
+016260	     MULTIPLY 1 BY W90-V2
+				 GIVING STM-V2 ROUNDED.
+016260	     MULTIPLY 1 BY W90-V3
+				 GIVING STM-V3 ROUNDED.
+018510	     MOVE W90-V4 TO STM-V4.
+016260	     MULTIPLY 1 BY W90-V5
+				 GIVING STM-V5 ROUNDED.
+016260	     MULTIPLY 1 BY W90-V6
+				 GIVING STM-V6 ROUNDED.
+018540	     MOVE "TOTAL SALES" TO STM-DESC.
+018550       WRITE STM-L1 BEFORE 1 LINES.
+018560       MOVE SPACES TO R-DET.
+018570       PERFORM DA32.
+018580     IF G-GRP = 3
+018590         GO TO DA55.
+018600       MOVE "*** COSTS ***" TO STM-ANAME.
+018610       WRITE STM-L1 BEFORE 1 LINES.
+018620       MOVE SPACES TO R-DET.
+018630       GO TO DA60.
+018640 DA100.
+018650     IF WS-EXS = 0
+018660         IF G-SR = ZERO
+018670             GO TO DA112.
+018680       MOVE ZERO TO W20-DEBIT.
+018690     IF WS-S7 < WS-F-YR
+018700         MOVE 1 TO WS-S9
+018710         MOVE 12 TO WS-S10
+018720     ELSE
+018730         MOVE WS-S7 TO WS-S10
+018740         MOVE WS-F-YR TO WS-S9
+018750         GO TO DA110.
+018760 DA105.
+018770       ADD G-BVAL (WS-S9) TO W20-DEBIT.
+018780     IF WS-S9 < WS-S7
+018790         ADD 1 TO WS-S9
+018800         GO TO DA105.
+018810       MOVE WS-F-YR TO WS-S9.
+018820 DA110.
+018830       ADD G-BVAL (WS-S9) TO W20-DEBIT.
+018840     IF WS-S9 < WS-S10
+018850         ADD 1 TO WS-S9
+018860         GO TO DA110.
+018870     IF W15-GRP = 1
+018880         MULTIPLY -1 BY W20-DEBIT.
+018890       MOVE W20-DEBIT TO STM-V1.
+016260	     MULTIPLY 1 BY G-VAL (WS-S7)
+				 GIVING STM-V2 ROUNDED.
+016260	     MULTIPLY 1 BY G-LVAL (WS-S7)
+				 GIVING STM-V3 ROUNDED.
+018920	     MOVE G-BVAL (WS-S7) TO W20-DEBIT.
+018930     IF W15-GRP = 1
+018940         MULTIPLY -1 BY W20-DEBIT.
+018950       MOVE W20-DEBIT TO STM-V4.
+018970	     SUBTRACT G-VAL (WS-S8) FROM G-VAL (WS-S7)
+				 GIVING STM-V5 ROUNDED.
+019000	     SUBTRACT G-LVAL (WS-S8) FROM G-LVAL (WS-S7)
+				 GIVING STM-V6 ROUNDED.
+019020 DA112.
+019030       WRITE STM-L1 BEFORE 0 LINES.
+019040 DA115.
+019050       EXIT.
+019060 DA999.
+019070       EXIT.
+      /
+033920 ZA000	     SECTION 9.
+033930 ZA00.
+033940       PERFORM ZA55 THRU ZA60.
+033950	     DISPLAY CLR-SCREEN.
+      *
+      *    ****    D O	 N O T	 D I S P L A Y	 E R R O R
+      * 	   M E S S A G E S
+      *
+	     MOVE 44		 TO USER-NUMBER.
+	     MOVE 1		 TO USER-SETTING.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *
+      *    ****    S E T   U P   T H E   F U N C T I O N   K E Y S
+      *
+	     MOVE 1		 TO USER-ACTION
+				    USER-SETTING.
+      *
+      *    ESC, F1 to F10 keys
+      *
+	     MOVE ZERO		 TO USER-NUMBER.
+	     MOVE 11		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *
+      *    PAGE-UP AND PAGE-DOWN KEYS
+      *
+	     MOVE 53		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *
+      *    PRE-DISPLAY ACCEPT FIELDS BEFORE DATA-ENTRY
+      *
+      *      MOVE 76		 TO USER-NUMBER.
+      *      MOVE 3		 TO USER-SETTING.
+      *      MOVE 1		 TO USER-KEYS.
+      *      CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *
+      *    ****    A C T I V A T E   M O U S E
+      *
+	     MOVE 64		 TO MOUSE-FUNC.
+	     MOVE 1		 TO MOUSE-PARAM.
+	     CALL X"AF" USING MOUSE-FUNC
+			      MOUSE-PARAM.
+	   IF MOUSE-FUNC NOT = 255
+	       MOVE "Y"		 TO MOUSE-ATTACHED
+	       MOVE 66		 TO MOUSE-FUNC
+	       MOVE 0		 TO MOUSE-PARAM
+	       CALL X"AF" USING MOUSE-FUNC
+				MOUSE-PARAM
+	   ELSE
+	       GO TO ZA00A.
+      *
+      *    ****    S E T   M O U S E   K E Y   T O   A C T
+      * 	   A S	 F U N C T I O N   K E Y
+      *
+	     MOVE 3		 TO USER-ACTION.
+	     MOVE 27		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *      CALL CBL_INIT_MOUSE USING MOUSE-HANDLE
+      *				       MOUSE-BUTTONS
+      *				 RETURNING MOUSE-STATUS.
+      *    IF MOUSE-STATUS = ZERO
+      *        MOVE "Y"		 TO MOUSE-ATTACHED.
+       ZA00A.
+019700	     MOVE 3		 TO WS-PARKEY.
+019710       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+019720	     MOVE PAR-DISC	 TO W02-DSK2
+                                    W02-DSK8 W02-DSK28.
+019730	     MOVE PAR-EXT	 TO W02-EXT2
+                                    W02-EXT8 W02-EXT28.
+           IF WS-USER NUMERIC
+               IF WS-USE > ZERO AND < 110
+                   MOVE WS-USE   TO WS-USUB
+                   GO TO ZA01A.
+             MOVE 110            TO WS-USUB.
+       ZA01A.
+014240       ADD 2549 WS-USUB    GIVING W25-RESULT.
+             MOVE W25-KEY        TO WS-PARKEY.
+             ADD 1 W25-SUB       GIVING WS-S6.
+014250       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+	   IF TRM-STDP (WS-S6) = 1
+               MOVE "LPT1"       TO W02-PRINTER
+	       MOVE ZERO	 TO WS-PRN-NO
+           ELSE
+           IF TRM-STDP (WS-S6) = 2
+               MOVE "LPT2"       TO W02-PRINTER
+	       MOVE 1		 TO WS-PRN-NO
+           ELSE
+           IF TRM-STDP (WS-S6) = 3
+               MOVE "LPT3"       TO W02-PRINTER
+	       MOVE 2		 TO WS-PRN-NO
+	   ELSE
+           IF TRM-STDP (WS-S6) = 4
+               MOVE "COM1"       TO W02-PRINTER
+           ELSE
+           IF TRM-STDP (WS-S6) = 5
+               MOVE "COM2"       TO W02-PRINTER
+           ELSE
+           IF TRM-STDP (WS-S6) = 9
+               MOVE WS-USER      TO W02-USER.
+             ADD 501 TRM-PRN3 (WS-S6)
+                                 GIVING W25-RESULT.
+             DIVIDE W25-RESULT BY 2
+                                 GIVING WS-PARKEY
+                                 REMAINDER WS-S6.
+             ADD 1               TO WS-S6.
+             PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+             MOVE TRM-CONP (WS-S6)
+                                 TO WS-COND.
+             MOVE TRM-NORP (WS-S6)
+                                 TO WS-NORM.
+             MOVE TRM-EXPP (WS-S6)
+                                 TO WS-EXPP.
+             MOVE TRM-ECAN (WS-S6)
+                                 TO WS-ECAN.
+             MOVE TRM-8LPI (WS-S6)
+                                 TO WS-8LPI.
+             MOVE TRM-6LPI (WS-S6)
+                                 TO WS-6LPI.
+             MOVE TRM-10CPI (WS-S6)
+                                 TO WS-10CPI.
+             MOVE TRM-12CPI (WS-S6)
+                                 TO WS-12CPI.
+             MOVE TRM-17CPI (WS-S6)
+                                 TO WS-17CPI.
+             MOVE TRM-DBLP (WS-S6)
+                                 TO WS-DBLP.
+             MOVE TRM-DCAN (WS-S6)
+                                 TO WS-DCAN.
+042170 ZA02.
+034370	     MOVE 1 TO WS-PARKEY.
+034380       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+034390       MOVE PAR-COMPANY TO W90-CNAME.
+034400       MOVE PAR-DMY TO W05-TODAY.
+034410       MOVE PAR-YMD TO W05-TYMD.
+             MOVE 6 TO WS-PARKEY.
+034380       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+             MOVE PAR-UNPROF     TO W70-UNPROF.             
+             MOVE PAR-BNKGL      TO W70-BNKGL.
+             MOVE 4 TO WS-NETKEY.
+034450       PERFORM READ-CONTROL THRU READ-CONTROL-EXIT.
+034510       MOVE G-OPEN TO WS-OPEN.
+034520       ADD 1 G-YEAR-END GIVING WS-F-YR.
+034530     IF WS-F-YR > 12
+034540         SUBTRACT 12 FROM WS-F-YR.
+034550       MOVE G-YEAR-END TO WS-E-YR.
+034560       MOVE 1 TO WS-S1.
+034570 ZA05.
+034620       MOVE ZERO TO WS-ERROR.
+034630     IF W70-BNKGL = ZERO
+034640         DISPLAY (20, 20) "Parameters not Set up - ENTER"
+034650                           WITH FOREGROUND-COLOR 14
+034660         ACCEPT (20, 50) WS-OPTION WITH FOREGROUND-COLOR 15 AUTO
+034670         MOVE 1 TO WS-ERROR.
+034680       PERFORM AB50 THRU AB55.
+	   IF WS-PRN-NO < 3
+	       PERFORM ZA210 THRU ZA215
+	       IF WS-ERROR = 1
+		   GO TO ZA205
+	   ELSE
+	       DISPLAY "Waiting for printer response" AT 1412
+			WITH FOREGROUND-COLOR 14 BLINK.
+034690	     OPEN OUTPUT GLREPT.
+	     DISPLAY SPACES AT 2525
+		     WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+034700	     GO TO ZA999.
+       ZA49.
+             DISPLAY "Too many files OPEN" AT 0812
+                      WITH FOREGROUND-COLOR 14.
+             DISPLAY "Check the FILES option in CONFIG.SYS" AT 1012.
+             DISPLAY "Press any key to continue" AT 1212.
+             ACCEPT WS-OPTION AT 1238 WITH FOREGROUND-COLOR 15.
+             GO TO ZA205.
+034710 ZA55.
+034720       MOVE 1 TO WS-S1.
+034730       MOVE SPACES TO WS-MID-LNE WS-MID-LNE2.
+034740 ZA60.
+034750       MOVE WS-G1 TO WS-TCHR (WS-S1) WS-BCHR (WS-S1).
+034760       MOVE WS-G8 TO WS-TCH  (WS-S1) WS-BCH  (WS-S1).
+034770     IF WS-S1 < 80
+034780         ADD 1 TO WS-S1
+034790         GO TO ZA60.
+034800       MOVE WS-G9  TO WS-TCH  (1).
+034810       MOVE WS-G10 TO WS-TCH  (80).
+034820       MOVE WS-G11 TO WS-BCH  (1).
+034830       MOVE WS-G12 TO WS-BCH  (80).
+034840       MOVE WS-G14 TO WS-TCHR (1)  WS-BCHR (1).
+034850       MOVE WS-G13 TO WS-TCHR (80) WS-BCHR (80).
+034860       MOVE WS-G2  TO WS-TCHR (11) WS-TCHR (45)
+034870                      WS-TCHR (63).
+034880       MOVE WS-G3  TO WS-MCHR (11) WS-MCHR (45)
+034890                      WS-MCHR (63)
+034900                      WS-MCHR (1)  WS-MCHR (80) 
+034910                      WS-MCH  (1)  WS-MCH  (80).
+034920       MOVE WS-G4  TO WS-BCHR (11) WS-BCHR (45)
+034930                      WS-BCHR (63).
+             MOVE WS-COMPANY     TO WS-TOP-COMP.
+034940 ZA200.
+034950       DISPLAY "Files locked - Try later" AT 2312
+034960                WITH FOREGROUND-COLOR 14
+                     " " WS-STATUS WITH FOREGROUND-COLOR 15.
+034970       DISPLAY "Press any key" AT 2512 
+034980		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+034990	     ACCEPT WS-OPTION AT 2526
+		    WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15 AUTO.
+035000 ZA205.
+035010       EXIT PROGRAM.
+       ZA210.
+	     MOVE ZERO		 TO WS-ERROR
+				    WS-S1 WS-S2 WS-S3 WS-S4
+				    WS-S5 WS-S6 WS-S7 WS-S8.
+	     CALL "PC_TEST_PRINTER" USING WS-PRN-NO
+					  WS-PRN-STAT
+				    RETURNING WS-STATUS.
+	   IF WS-PRN-STAT > 127
+	       MOVE 1		 TO WS-S1
+	       SUBTRACT 128	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 63
+	       MOVE 1		 TO WS-S2
+	       SUBTRACT 64	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 31
+	       MOVE 1		 TO WS-S3
+	       SUBTRACT 32	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 15
+	       MOVE 1		 TO WS-S4
+	       SUBTRACT 16	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 7
+	       MOVE 1		 TO WS-S5
+	       SUBTRACT 8	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 3
+	       MOVE 1		 TO WS-S6
+	       SUBTRACT 4	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 1
+	       MOVE 1		 TO WS-S7
+	       SUBTRACT 2	 FROM WS-PRN-STAT.
+	     MOVE WS-PRN-STAT	 TO WS-S8.
+	   IF WS-S3 = 0 AND
+	      WS-S5 = 0 AND
+	      WS-S8 = 0
+	       GO TO ZA215.
+	     DISPLAY "Check printer - " AT 2304
+		      WITH FOREGROUND-COLOR 6 HIGHLIGHT
+		     "R" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+		     "etry - "
+		     "A" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+		     "bort".
+       ZA212.
+	     ACCEPT WS-OPTION AT 2334
+		    WITH FOREGROUND-COLOR 7 HIGHLIGHT AUTO.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+	     IF NOT (WS-OPTION = "A" OR "R")
+		 GO TO ZA212.
+	     IF WS-OPTION = "A"
+		 MOVE 1 	 TO WS-ERROR
+		 GO TO ZA215.
+	       GO TO ZA210.
+       ZA215.
+	     EXIT.
+035020 ZA999.
+035030       EXIT.
+      /
+035040 ZB000	     SECTION 9.
+      
+041480 OPEN-ERROR.
+041490       DISPLAY CLR-SCREEN.
+041500       DISPLAY "Open error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041480 READ-ERROR.
+041490       DISPLAY CLR-SCREEN.
+041500       DISPLAY "Read error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041520 WRITE-ERROR.
+041530       DISPLAY CLR-SCREEN.
+041540       DISPLAY "Write error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041560 DISPLAY-FILE-NAME.
+041610     IF WS-F-ERROR = 2
+041620         MOVE W02-NETWORK TO WS-FILE
+041630         MOVE WS-NETKEY TO WS-KEY
+041640     ELSE
+041810     IF WS-F-ERROR = 8
+041820         MOVE W02-GACCNT TO WS-FILE
+041830         MOVE WS-GLKEY TO WS-KEY
+041840	   ELSE
+041850     IF WS-F-ERROR = 15
+041860         MOVE WS-PARID TO WS-FILE
+041870         MOVE WS-PARKEY TO WS-KEY
+041840     ELSE
+041850     IF WS-F-ERROR = 28
+041860         MOVE W02-GINDEX TO WS-FILE
+041870         MOVE WS-GINKEY TO WS-KEY.
+036720     IF WS-STATUS = "10"
+036730         MOVE "End of FILE" TO WS-STAT-MESSAGE
+036740     ELSE
+036750     IF WS-STATUS = "22"
+036760         MOVE "Duplicate record number" TO WS-STAT-MESSAGE
+036770     ELSE
+036780     IF WS-STATUS = "23"
+036790         MOVE "Invalid record number" TO WS-STAT-MESSAGE
+036800     ELSE
+036810     IF WS-STATUS = "24"
+036820         MOVE "DISK full" TO WS-STAT-MESSAGE
+036830     ELSE
+036840     IF WS-STATUS = "30"
+036850         MOVE "DISK error" TO WS-STAT-MESSAGE
+036860     ELSE
+036870     IF WS-STATUS = "94"
+036880         MOVE "FILE locked" TO WS-STAT-MESSAGE.
+045380       DISPLAY "File - " AT 1012 WS-FILE WITH FOREGROUND-COLOR 11.
+045390       DISPLAY "Status " AT 1212 
+                      WS-STATUS WITH FOREGROUND-COLOR 11
+                     ": " WS-STAT-MESSAGE WITH FOREGROUND-COLOR 14.
+045400     IF WS-STATUS NOT = "94" 
+045410         DISPLAY "Key    " AT 1412 
+                        WS-KEY WITH FOREGROUND-COLOR 11
+045420         DISPLAY "Reverse backup or contact program Support"
+                        AT 1612.
+045440         DISPLAY "Please make a note of these details" AT 1812.
+042170       STOP RUN.

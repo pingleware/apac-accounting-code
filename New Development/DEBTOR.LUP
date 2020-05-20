@@ -1,0 +1,306 @@
+      /    *************************************************************
+      *    ****    D E B T O R   L O O K U P
+      *    *************************************************************
+       DEBTOR-LOOKUP           SECTION.
+      
+       DEBT-LUP-SCREEN.
+             DISPLAY CLR-SCREEN.
+                   DISPLAY S-DEB.
+             MOVE SPACE          TO WS-OPTION.
+      
+       DEBT-LUP-CLR-SCREEN.
+             MOVE 0601           TO CPOS.
+             PERFORM DEBT-CRT-EDGE UNTIL CLIN = 22.
+             MOVE SPACES         TO W40-NAME.
+      
+       DEBT-LUP-NAME.
+                   ACCEPT SA-DEB.
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY
+                           MOVE SPACES TO W80-ACNO
+                           GO TO DEBTOR-LOOKUP-EXIT
+                 WHEN OTHER         PERFORM AA900-ALARM
+               END-EVALUATE
+               GO TO DEBT-LUP-NAME.
+             DISPLAY WS-BLNK78 AT 2302 WITH FOREGROUND-COLOR Cyan.
+                   DISPLAY SPACE AT 2501 WITH BACKGROUND-COLOR Cyan.
+             MOVE 6              TO CLIN.
+             MOVE 1              TO W75-S W75-S1.
+      
+       DEBT-LUP-TAB-LOOP.
+             MOVE SPACES         TO W75-DNO (W75-S1).
+           IF W75-S1 < 18
+               ADD 1             TO W75-S1
+               GO TO DEBT-LUP-TAB-LOOP.
+             MOVE ZERO           TO W75-S1.
+      
+       DEBT-LUP-ENTRY-TYPE.
+      *
+      *    ****    A C C O U N T   N A M E   S E Q U E N C E
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ If no characters entered set to start from the first name ³
+      *    ³ in the file. (First account name in sort sequence)               ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+           IF W40-NAME = SPACES
+               MOVE " !"         TO W40-NAME.
+             MOVE 40             TO WS-LENGTH.
+             CALL "CBL_TOUPPER" USING W40-NAME
+                                BY VALUE WS-LENGTH
+                                RETURNING WS-STATUS.
+             MOVE 1                 TO WS-LENGTH.
+             MOVE W40-NAME       TO DEB-NAME.
+             PERFORM START-AT-DEBT-NAME THRU READ-DEBTOR-EXIT.
+           IF WS-F-ERROR = 6
+               GO TO DEBT-NO-RECORD.
+
+       DEBT-GET-DEBTOR-REC.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³          Must the READ-DEBTOR-NEXT statement be skipped?      ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+           IF WS-OPTION = "J"
+               MOVE SPACE        TO WS-OPTION
+               GO TO DEBT-SKIP-DEBT-READ.
+             PERFORM READ-DEBTOR-NEXT THRU READ-DEBTOR-EXIT.
+           IF WS-F-ERROR = 6
+               SUBTRACT 1        FROM W75-S
+               GO TO DEBT-FULL-SCREEN.
+      
+       DEBT-SKIP-DEBT-READ.
+             MOVE DEB-ACNO       TO W75-DNO (W75-S).
+             MOVE DEB-NAME       TO W40-NAME.
+           IF DEB-TYPE = 1
+               INSPECT W40-NAME REPLACING ALL "*" BY " "
+                     INSPECT W40-NAME REPLACING FIRST "!" BY " ".
+                   DISPLAY DEB-ACNO AT LINE CLIN COLUMN 2
+                     WITH FOREGROUND-COLOR Cyan HIGHLIGHT.
+                   DISPLAY W40-NAME AT LINE CLIN COLUMN 9
+                     WITH FOREGROUND-COLOR Cyan HIGHLIGHT.
+             MOVE DEB-BAL        TO W100-LBAL.
+                   DISPLAY W100-LBAL AT LINE CLIN COLUMN 50
+                     WITH FOREGROUND-COLOR Cyan HIGHLIGHT.
+             COMPUTE W100-LARR = DEB-30 + DEB-60 + DEB-90 + DEB-120.
+                   DISPLAY W100-LARR AT LINE CLIN COLUMN 62
+                     WITH FOREGROUND-COLOR Cyan HIGHLIGHT.
+             MOVE DEB-CRL        TO W100-CRL.
+                   DISPLAY W100-CRL AT LINE CLIN COLUMN 73
+                     WITH FOREGROUND-COLOR Cyan HIGHLIGHT.
+           IF CLIN < 21
+               ADD 1             TO CLIN W75-S
+               GO TO DEBT-GET-DEBTOR-REC.
+      *
+      *    ****   U S E R   O P T I O N S
+      *
+       DEBT-FULL-SCREEN.
+                   DISPLAY " " AT 2303 WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                           " highlight - " WITH FOREGROUND-COLOR Grey
+                     "PgUp" WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                     "/" WITH FOREGROUND-COLOR Grey
+                     "PgDn" WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                     " - " WITH FOREGROUND-COLOR Grey
+                           "ENTER" WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                           " select - " WITH FOREGROUND-COLOR Grey
+                           "Esc" WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                     "ape - " WITH FOREGROUND-COLOR Grey
+                     "F9" WITH FOREGROUND-COLOR Brown HIGHLIGHT
+                     " memo/remarks"
+                      WITH FOREGROUND-COLOR Grey.
+
+       DEBT-SAVE-FULL-SCREEN.
+             PERFORM SAVE-SCREEN-2.
+                   MOVE 0                 TO W75-S1.
+             MOVE 0601           TO CPOS.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³                  Restore the screen attributes.               ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+       DEBT-CRT-ATTRIB.
+             MOVE 3920                 TO W41-LENGTH.
+             CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS
+                                              W42-ATTRIB2
+                                              W41-LENGTH
+                                        RETURNING WS-STATUS.
+                   MOVE 4000                 TO W41-LENGTH.
+      
+       DEBT-GET-USER-OPT.
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+             PERFORM CLEAR-L50.
+           IF ADIS-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN UP-KEY
+                           GO TO DEBT-ADJ-NO-KEYS
+                 WHEN DOWN-KEY
+                           GO TO DEBT-CHK-NO-KEYS
+                 WHEN ENTER-KEY
+                 WHEN CR-KEY
+                     GO TO DEBT-CHK-SELECT
+                 WHEN OTHER         PERFORM AA900-ALARM
+               END-EVALUATE
+               GO TO DEBT-GET-USER-OPT
+           ELSE
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY
+                     MOVE SPACES TO W80-ACNO
+                     GO TO DEBTOR-LOOKUP-EXIT
+                 WHEN PAGE-DOWN
+                           GO TO DEBT-GET-NEXT-PAGE
+                 WHEN PAGE-UP
+                           GO TO DEBT-GET-PREV-PAGE
+                 WHEN F9-KEY
+                     PERFORM DEBT-ADD-SPECS THRU DEBT-ADD-EXIT
+                     PERFORM DEBT-FULL-SCREEN
+                           GO TO DEBT-GET-USER-OPT
+                 WHEN OTHER         PERFORM AA900-ALARM
+               END-EVALUATE
+               GO TO DEBT-GET-USER-OPT.
+             PERFORM AA900-ALARM.
+                   GO TO DEBT-GET-USER-OPT.
+      
+       DEBT-GET-NEXT-PAGE.
+           IF W75-S < 16
+               GO TO DEBT-GET-USER-OPT.
+      
+       DEBT-NEW-PAGE.
+             MOVE 0601           TO CPOS.
+             PERFORM DEBT-CRT-EDGE UNTIL CLIN = 22.
+             MOVE 6              TO CLIN.
+             MOVE LOW-VALUES     TO W75-KEYS.
+             MOVE 1              TO W75-S W75-S1.
+             PERFORM DEBT-LUP-TAB-LOOP.
+             GO TO DEBT-GET-DEBTOR-REC.
+      
+       DEBT-GET-PREV-PAGE.
+             MOVE 1              TO WS-IXS1.
+      *    *************************************************************
+      *    ****    SET OPTION TO BYPASS THE READ NEXT
+      *    *************************************************************
+             MOVE "J"            TO WS-OPTION.
+      
+       DEBT-GET-PREV-LOOP.
+             PERFORM READ-DEBTOR-PREV THRU READ-DEBTOR-EXIT.
+           IF WS-F-ERROR = 6
+               MOVE SPACE         TO WS-OPTION
+               GO TO DEBT-NEW-PAGE.
+           IF WS-IXS1 < 31
+               ADD 1             TO WS-IXS1
+               GO TO DEBT-GET-PREV-LOOP.
+             GO TO DEBT-NEW-PAGE.
+      
+       DEBT-NO-RECORD.
+                   DISPLAY "No record - " AT 2512
+                      WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                           "N" WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                           "ext or "
+                      WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue
+                           "Q" WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+                           "uit > <"
+                      WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Blue.
+      
+       DEBT-GET-USER-OPT-2.
+                   ACCEPT WS-OPTION AT 2538
+                    WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Grey HIGHLIGHT AUTO.
+             CALL "CBL_TOUPPER" USING WS-OPTION
+                                BY VALUE WS-LENGTH
+                                RETURNING WS-STATUS.
+                 IF NOT (WS-OPTION = "N" OR "Q")
+               GO TO DEBT-GET-USER-OPT-2.
+           IF WS-OPTION = "N"
+               GO TO DEBT-LUP-SCREEN.
+             MOVE SPACES         TO W80-ACNO.
+                   GO TO DEBTOR-LOOKUP-EXIT.
+
+       DEBT-ADJ-NO-KEYS.
+           IF W75-S1 > 1
+               SUBTRACT 1        FROM W75-S1 CLIN.
+             GO TO DEBT-HIGHLIGHT.
+      
+       DEBT-CHK-NO-KEYS.
+           IF W75-S1 = ZERO
+               MOVE 1            TO W75-S1
+               GO TO DEBT-HIGHLIGHT.
+           IF W75-S1 < W75-S
+               ADD 1             TO W75-S1 CLIN.
+      
+       DEBT-HIGHLIGHT.
+             PERFORM DEBT-CRT-ATTRIB.
+             DISPLAY W43-DET (CLIN) AT CPOS WITH REVERSE-VIDEO.
+             GO TO DEBT-GET-USER-OPT.
+      
+       DEBT-CHK-SELECT.
+           IF W75-S1 = ZERO
+               GO TO DEBT-GET-USER-OPT.
+             MOVE CSTART         TO WS1-CURSOR.
+             MOVE W75-DNO (W75-S1)
+                                 TO DEB-ACNO.
+             PERFORM READ-DEBTOR THRU READ-DEBTOR-EXIT.
+             MOVE ZERO           TO COL-AND-LINE.
+             MOVE DEB-ACNO       TO W80-ACNO.
+                   GO TO DEBTOR-LOOKUP-EXIT.
+      
+       DEBT-ADD-SPECS.
+           IF W75-S1 = ZERO
+                     GO TO DEBT-ADD-EXIT.
+             MOVE W75-DNO (W75-S1)
+                                 TO DME-AC W80-ACNO.
+             MOVE 1              TO DME-SEQ.
+             PERFORM READ-DEBMEM THRU READ-DEBMEM-EXIT.
+           IF WS-F-ERROR NOT = ZERO
+               DISPLAY "No Memo or remarks" AT 2502
+                        WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT
+               CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS
+               GO TO DEBT-ADD-EXIT.
+             INITIALIZE W200-MEM-FLDS.
+             MOVE 1                 TO WS-S1.
+
+       DEBT-ADD-LOOP.
+             MOVE DME-DATA         TO W200-MEM(WS-S1).
+           IF WS-S1 > 11
+               GO TO DEBT-DISP-ADD.
+
+       DEBT-ADD-READ.
+             PERFORM READ-DEBMEM-NEXT THRU READ-DEBMEM-EXIT.
+           IF WS-F-ERROR = ZERO
+               IF DME-AC = W80-ACNO
+                   ADD 1         TO WS-S1
+                   GO TO DEBT-ADD-LOOP.
+           IF WS-S1 = ZERO
+               GO TO DEBT-ADD-EXIT.
+             MOVE 99                 TO WS-S1.
+
+       DEBT-DISP-ADD.
+             PERFORM SAVE-SCREEN-3.
+             MOVE 7                 TO SHADE-ROW.
+             MOVE 19                 TO SHADE-COL.
+             MOVE 60                 TO SHADE-WIDTH.
+             MOVE 15                 TO SHADE-LINES.
+             DISPLAY S-MEM.
+             PERFORM SCREEN-SHADOW.
+             DISPLAY S-DEB-MEM.
+             DISPLAY SA-MEM.
+                   DISPLAY " ENTER to continue or ESCape " AT 2502
+                      WITH BACKGROUND-COLOR Cyan FOREGROUND-COLOR Brown HIGHLIGHT.
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY
+                      PERFORM RESTORE-SCREEN-3
+               END-EVALUATE
+               GO TO DEBT-ADD-EXIT.
+             PERFORM RESTORE-SCREEN-3.
+           IF NOT (WS-S1 = 99)
+               MOVE 0                 TO WS-S1
+               GO TO DEBT-ADD-READ.
+      
+       DEBT-ADD-EXIT.
+             EXIT.
+      
+       DEBT-CRT-EDGE.
+                   DISPLAY WS-MDT1 AT CPOS WITH BACKGROUND-COLOR Black
+                                          FOREGROUND-COLOR Cyan
+                     WS-MDT78 WITH FOREGROUND-COLOR Cyan
+                     WS-MDT80 WITH BACKGROUND-COLOR Black
+                                   FOREGROUND-COLOR Cyan.
+                   ADD 1                 TO CLIN.
+      
+       DEBTOR-LOOKUP-EXIT.
+             EXIT.

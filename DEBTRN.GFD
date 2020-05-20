@@ -1,0 +1,35 @@
+      /
+000010 FD  DEBTRN    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-DEBTRN.
+000030 01  DBT-RECORD1.
+           02  DBT-TRA.
+           03  DBT-KEY.
+000170         05  DBT-AC      PIC  X(06).
+000060	       05  DBT-DATE    PIC  9(08)    COMP.
+000040         05  DBT-CODE    PIC  9(02).
+000070         05  DBT-REF     PIC  X(08).
+      *    
+      *    TYPE: "U" = Unpaid.         \
+      *          "P" = Paid.            >  DEBIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      *          "A" = Allocated.       >  CREDIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050     03  DBT-TYPE        PIC  X(01).
+000080     03  DBT-REG         PIC  X(09).
+000090     03  DBT-ORD         PIC  X(12).
+000100     03  DBT-VALUE       PIC S9(09)V99 COMP-3.
+000110     03  DBT-TAXFREE     PIC S9(09)V99 COMP-3.
+000120     03  DBT-TAX         PIC S9(07)V99 COMP-3.
+000130     03  DBT-DISC        PIC S9(03)V99 COMP-3.
+           03  DBT-PAID        PIC S9(09)V99 COMP-3.
+           03  DBT-ALLOCATED REDEFINES DBT-PAID
+                               PIC S9(09)V99 COMP-3.
+           03  DBT-REC         PIC  X(08).
+           03  DBT-AGE         PIC  9(02)    COMP-5.
+           03  DBT-UPDATE      PIC  X(01).
+           02  DBT-DBT.
+           03  DBT-OUTSTD      PIC S9(09)V99 COMP-3.
+           03  DBT-ALLOC       PIC S9(09)V99 COMP-3.

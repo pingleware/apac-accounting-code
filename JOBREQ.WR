@@ -1,0 +1,39 @@
+
+       REWRITE-JOBREQ.
+             REWRITE REQ-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-JOBREQ-EXIT.
+
+       REWRITE-JOBREQ-UNLOCK.
+             REWRITE REQ-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK JOBREQ.
+             GO TO WRITE-JOBREQ-EXIT.
+
+       DELETE-JOBREQ-REC-UNLOCK.
+             DELETE JOBREQ.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK JOBREQ.
+             GO TO WRITE-JOBREQ-EXIT.
+
+       DELETE-JOBREQ-REC.
+             DELETE JOBREQ.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-JOBREQ-EXIT.
+
+       WRITE-JOBREQ.
+             WRITE REQ-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-JOBREQ-EXIT.
+             EXIT.

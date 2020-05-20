@@ -1,0 +1,10 @@
+      /
+000010 FD  JOBRMK    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JOBRMK.
+000030 01  JRM-REC1.
+	   03  JRM-KEY.
+	       05  JRM-CODE    PIC  X(06).
+	   03  JRM-REMK1       PIC  X(40).
+	   03  JRM-REMK2       PIC  X(40).
+	   03  JRM-REMK3       PIC  X(40).
+	   03  JRM-REMK4       PIC  X(40).

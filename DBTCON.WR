@@ -1,0 +1,34 @@
+      *
+      *    ****  ****  *****  ***   ***  *   *	  ***** *** *	  *****
+      *    *   * *   *	 *   *	 * *   * *   *	  *	 *  *	  *
+      *    *   * *   *	 *   *	   *   * **  *	  *	 *  *	  *
+      *    *   * ****	 *   *	   *   * * * *	  ***	 *  *	  ***
+      *    *   * *   *	 *   *	   *   * *  **	  *	 *  *	  *
+      *    *   * *   *   *   *   * *   * *   *    *      *  *     *
+      *    ****  ****	 *    ***   ***  *   *	  *	*** ***** *****
+      *
+000010
+000020 REWRITE-DBTCON.
+000030	     REWRITE DBT-RECORD1.
+000040     IF WS-STAT1 NOT = "0"
+000050	       MOVE 64		  TO WS-F-ERROR
+000060         PERFORM WRITE-ERROR.
+000070	     GO TO WRITE-DBTCON-EXIT.
+000080
+000090 DELETE-DBTCON-REC.
+	     DELETE DBTCON.
+000040     IF WS-STAT1 NOT = "0"
+000050	       MOVE 64		  TO WS-F-ERROR
+000060         PERFORM WRITE-ERROR.
+000070	     GO TO WRITE-DBTCON-EXIT.
+000080
+000090 WRITE-DBTCON.
+000100	     WRITE DBT-RECORD1.
+000110	   IF WS-STAT1 NOT = "0"
+000120	       MOVE 64		  TO WS-F-ERROR
+000130         PERFORM WRITE-ERROR.
+	     CLOSE DBTCON.
+	     OPEN I-O DBTCON.
+
+000170 WRITE-DBTCON-EXIT.
+000180       EXIT.

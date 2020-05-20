@@ -1,0 +1,41 @@
+006240 01  S-CSH.
+006250	   03  LINE  2 COLUMN 32 FOREGROUND-COLOR 15
+				 VALUE "CASH BOOK LOOKUP".
+           03  LINE  3 COLUMN  2 VALUE "Starting Account >".
+           03          COLUMN 26 VALUE  "<".
+           03  LINE  4 COLUMN  2 REVERSE-VIDEO VALUE 
+               "  Acc/No   Account name                          Balance
+      -        "     ".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "อออออออออัออออออออออออออออออออออ
+      -        "อออออออออออัอออออออออออออออออธ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "อออออออออฯออออออออออออออออออออออ
+      -        "อออออออออออฯอออออออออออออออออพ".
+	   03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE
+	   "Key in at least the first character of the name or press ".
+           03          COLUMN 59 FOREGROUND-COLOR 14 VALUE "Esc".
+           03          COLUMN 62 FOREGROUND-COLOR 7 VALUE " to exit".
+	   03  LINE 25 COLUMN  2 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 1 VALUE "Pressing '".
+	   03	       COLUMN 12 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 14 VALUE "ENTER".
+	   03	       COLUMN 17 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 1 VALUE
+                                 "' key only, will start from the beginn
+      - 			 "ing of the C/Book file".
+       01  SA-CSH.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+				 PIC  9(06) USING W10-ACCOUNT AUTO.
+
+       01  SD-CSH.
+	   03  COLUMN  3 FOREGROUND-COLOR 3 HIGHLIGHT
+			 PIC  X(01) FROM CSH-TYPE.
+	   03  COLUMN  6 FOREGROUND-COLOR 3 HIGHLIGHT
+			 PIC  9(06) FROM CSH-AC.
+	   03  COLUMN 13 FOREGROUND-COLOR 3 HIGHLIGHT
+			 PIC X(30) FROM CSH-NAME.
+	   03  COLUMN 48 FOREGROUND-COLOR 3 HIGHLIGHT
+			 PIC Z(07)9.99CR FROM CSH-BAL.

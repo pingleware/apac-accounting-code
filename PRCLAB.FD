@@ -1,0 +1,11 @@
+      /
+000010 FD  PRCLAB    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-PRCLAB.
+000030 01  PLB-REC1.
+	   03  PLB-EXT-ITEM.
+	     05  PLB-ITEM  PIC	X(14).
+	     05  PLB-ITM   PIC	X(03).
+	     05  FILLER    PIC	X(01).
+	   03  PLB-QUANT   PIC	9(05)	  COMP-0.
+           03  PLB-FORM    PIC  9(05)     COMP-0.
+	   03  PLB-INV	   PIC	9(08)	  COMP-3.

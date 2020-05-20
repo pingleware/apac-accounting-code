@@ -1,0 +1,32 @@
+
+       REWRITE-CORDER.
+	     REWRITE COR-RECORD1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 48		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-CORDER-EXIT.
+
+       REWRITE-CORDER-UNLOCK.
+	     REWRITE COR-RECORD1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 48		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK CORDER.
+	     GO TO WRITE-CORDER-EXIT.
+
+       DELETE-CORDER-REC.
+	     DELETE CORDER.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 48		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK CORDER.
+	     GO TO WRITE-CORDER-EXIT.
+
+       WRITE-CORDER.
+	     WRITE COR-RECORD1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 48		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-CORDER-EXIT.
+             EXIT.

@@ -1,0 +1,44 @@
+      *
+      *  ***** *   * ****  ***** ****  *   *	 **** *** *    ****
+      *    *   *   * *	 *   *	 *   * *   *	 *     *  *    *
+      *    *	* *  *	 *   *	 *   * **  *	 *     *  *    *
+      *    *	 *   ****    *	 ****  * * *	 ***   *  *    ***
+      *    *	* *  *	     *	 *   * *  **	 *     *  *    *
+      *    *   *   * *	     *	 *   * *   *	 *     *  *    *
+      *    *   *   * *	     *	 *   * *   *	 *    *** **** ****
+      *
+010780 REWRITE-TXPTRN.
+010790	     REWRITE TXP-RECORD1.
+010800     IF WS-STAT1 NOT = "0"
+010810	       MOVE 35		 TO WS-F-ERROR
+010820         PERFORM WRITE-ERROR.
+010830	     GO TO WRITE-TXPTRN-EXIT.
+      
+010780 REWRITE-TXPTRN-UNLOCK.
+010790	     REWRITE TXP-RECORD1.
+010800     IF WS-STAT1 NOT = "0"
+010810	       MOVE 35		 TO WS-F-ERROR
+010820         PERFORM WRITE-ERROR.
+	     UNLOCK TXPTRN.
+010830	     GO TO WRITE-TXPTRN-EXIT.
+      
+010840 DELETE-TXPTRN-REC.
+010850	     DELETE TXPTRN.
+010860     IF WS-STAT1 NOT = "0"
+010870	       MOVE 35		 TO WS-F-ERROR
+010880         PERFORM WRITE-ERROR.
+010830	     GO TO WRITE-TXPTRN-EXIT.
+      
+010840 WRITE-TXPTRN.
+010850	     WRITE TXP-RECORD1.
+           IF WS-STATUS = "22"
+	       ADD 1		 TO TXP-SEQ
+	       GO TO WRITE-TXPTRN.
+010860     IF WS-STAT1 NOT = "0"
+010870	       MOVE 35		 TO WS-F-ERROR
+010880         PERFORM WRITE-ERROR.
+	     CLOSE TXPTRN.
+	     OPEN I-O TXPTRN.
+
+010890 WRITE-TXPTRN-EXIT.
+010900       EXIT.

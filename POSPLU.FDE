@@ -1,0 +1,34 @@
+000010 FD  POSPLU    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-POSPLU.
+000030 01  PLU-RECORD1.
+	   03  PLU-KEY.
+	       05  PLU-MENU.
+		   07  PLU-SUB0	PIC  X(01) COMP-X.
+		   07  PLU-SUB1	PIC  X(01) COMP-X.
+		   07  PLU-SUB2	PIC  X(01) COMP-X.
+		   07  PLU-SUB3	PIC  X(01) COMP-X.
+		   07  PLU-SUB4	PIC  X(01) COMP-X.
+		   07  PLU-SUB5	PIC  X(01) COMP-X.
+		   07  PLU-SUB6	PIC  X(01) COMP-X.
+		   07  PLU-SUB7	PIC  X(01) COMP-X.
+		   07  PLU-SUB8	PIC  X(01) COMP-X.
+		   07  PLU-SUB9	PIC  X(01) COMP-X.
+	       05  PLU-MENU-LEVEL REDEFINES PLU-MENU
+				PIC  X(01) COMP-X OCCURS 10.
+	       05  PLU-ACT	PIC  X(01).
+	       05  PLU-CODE.
+		   07  PLU-HEX	PIC  X(01) COMP-X.
+      *
+      *    SPECIFIES THE PLU-NUMBER
+      *
+	   03  PLU-KEY2.
+	       05  PLU-NO	PIC  9(03).
+      *
+      *    TYPE:  F = Function
+      *		      eg. VOID
+      * 	  I = Item Code
+      * 	  M = Menu
+      *
+	   03  PLU-TYPE 	PIC  X(01).
+	   03  PLU-VALUE	PIC  X(14).

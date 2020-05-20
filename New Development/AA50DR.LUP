@@ -1,0 +1,41 @@
+      /    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё This routine is used to call the Debtor / Ac's Receivable Ё
+      *    Ё lookup program and cancel it when control is returned.    Ё
+      *    Ё The  relevant  error  message  will be  displayed  if  an Ё
+      *    Ё exception occurs. The usual  parameters are passed to the Ё
+      *    Ё lookup program as well W40-COMPANY which will contain the Ё
+      *    Ё details of the account that has been selected when controlЁ
+      *    Ё is returned to the calling program.                       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       AA50-LOOKUP     SECTION.
+       AA50D.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё          Save the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM SAVE-SCREEN.
+             PERFORM SCREEN-CONTENTS.
+             MOVE PRG-DEBT-LUP       TO PRG-NAME.
+             CALL PRG-NAME USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY DATA-FILE-IDS W40-COMPANY
+                  ON EXCEPTION GO TO AA55
+             END-CALL.
+             GO TO AA58.
+
+       AA50R.
+             PERFORM SAVE-SCREEN.
+             PERFORM SCREEN-CONTENTS.
+             PERFORM JOBRMK-LOOKUP.
+
+       AA55.
+             MOVE SPACES             TO WS-ERR-MES.
+             STRING "Program- " DELIMITED SIZE PRG-NAME DELIMITED " " " not on disk, press ANY key" DELIMITED SIZE INTO WS-ERR-MES.
+             PERFORM ERROR-MESSAGE.
+
+       AA58.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё       Restore the screen contents and attributes.         Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             CANCEL PRG-NAME.
+             PERFORM RESTORE-SCREEN.
+
+       AA59.
+             EXIT.

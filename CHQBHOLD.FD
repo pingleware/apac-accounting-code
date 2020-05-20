@@ -1,0 +1,41 @@
+       FD  CHQBHOLD LABEL RECORD STANDARD
+000020		    VALUE OF FILE-ID W02-CHQBHOLD
+000220		    RECORDING MODE IS VARIABLE.
+       01  BHO-REC1.
+	   03  BHO-KEY		 PIC  9(06).
+      *
+      *    ****    T Y P E
+      * 	   'G' = General ledger
+      * 	   'C' = Creditor account
+      *
+	   03  BHO-TYPE 	 PIC  X(01).
+      *
+      *    ****    S T A T U S
+      * 	   ' ' = Captured
+      * 	   'P' = Printed
+      * 	   'X' = Posted
+      *
+	   03  BHO-STATUS	 PIC  X(01).
+	   03  BHO-DATE 	 PIC  9(08)    COMP-3.
+	   03  BHO-PAYEE	 PIC  X(40).
+	   03  BHO-BANK 	 PIC  9(06)    COMP-3.
+	   03  BHO-BANK-NAME	 PIC  X(30).
+	   03  BHO-NARRATIVE-1	 PIC  X(40).
+      *
+      *    ****    C h e q u e	 V a l u e
+      *
+	   03  BHO-VALUE	 PIC  9(09)V99 COMP-3.
+	   03  BHO-CHQNO	 PIC  9(06)    COMP-3.
+      *
+      *    ****    C r e d i t o r   D e t a i l s   (IF APPLICABLE)
+      *
+	   03  BHO-CRED		 PIC  X(06).
+	   03  BHO-CNAME	 PIC  X(40).
+      *
+      *    ****    A l l o c a t i o n s
+      *
+	   03  BHO-ALLOCATIONS OCCURS 10.
+	       05  BHO-GL-AC	 PIC  9(06)    COMP-3.
+	       05  BHO-GLAC-NAME PIC  X(30).
+	       05  BHO-NARRATIVE PIC  X(40).
+	       05  BHO-GL-VALUE  PIC  9(09)V99 COMP-3.

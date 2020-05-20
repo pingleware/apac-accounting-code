@@ -1,0 +1,19 @@
+000010 FD  GAROLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-GAROLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  GAO-RECORD1.
+           03  GAO-KEY.
+	       05  GAO-EXT-CODE.
+000360		 07  GAO-CODE  PIC  X(14).
+		 07  GAO-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+000040	       05  GAO-SERIAL  PIC  X(18).
+000060     03  GAO-DESC        PIC  X(30).
+           03  GAO-NAME.
+               05  GAO-NKEY    PIC  X(12).
+               05  FILLER      PIC  X(28).
+	   03  GAO-DATE1       PIC  9(08)  COMP.
+	   03  GAO-DATE2       PIC  9(08)  COMP.
+           03  GAO-PERIOD      PIC  9(02)  COMP-5.
+           03  GAO-INV         PIC  X(08).
+	   03  FILLER	       PIC  X(15).

@@ -1,0 +1,23 @@
+      /
+000010 FD  DBFOTO    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DBFOTO.
+000030 01  DBF-RECORD1.
+	   03  DBF-KEY.
+000170	       05  DBF-AC      PIC  X(06).
+	       05  DBF-CONT    PIC  X(08).
+	   03  DBF-DESC        PIC  X(30).
+000060	   03  DBF-DATE        PIC  9(08)     COMP-3.
+	   03  DBF-RENTAL      PIC S9(07)V99  COMP-3.
+	   03  DBF-TYPE        PIC  X(01).
+	   03  DBF-FREQ        PIC  X(01).
+	   03  DBF-ADATE       PIC  9(08)     COMP-3.
+	   03  DBF-ESC	       PIC  9(03)V99  COMP-3.
+	   03  DBF-RATE        PIC S9(06)V999 COMP-3.
+000110	   03  DBF-RDTE        PIC  9(08)     COMP-3.
+000100	   03  DBF-STRDNG      PIC  9(08)     COMP-5.
+000100	   03  DBF-LSTRDNG     PIC  9(08)     COMP-5.
+000100	   03  DBF-READING     PIC  9(08)     COMP-5.
+000120	   03  DBF-VALUE       PIC S9(07)V99  COMP-3.
+000120	   03  DBF-TAX	       PIC S9(05)V99  COMP-3.
+	   03  DBF-TCODE       PIC  X(01)     COMP-X.
+	   03  FILLER	       PIC  X(16).

@@ -1,0 +1,13 @@
+      /
+      *    ****    G E T   T H E   F I R S T   S T O C K   R E C O R D
+      *            V I A   T H E   I T E M   C O D E   I N D E X
+      *
+010590 GET-FIRST-STOCK SECTION.
+
+010600 FSTK-INIT.
+010610       MOVE "!"            TO STK-CODE.
+010620       PERFORM START-AT-STOCK-CODE THRU READ-STOCK-EXIT.
+           
+
+010990 GET-FIRST-STOCK-EXIT.
+011000       EXIT.

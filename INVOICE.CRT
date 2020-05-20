@@ -1,0 +1,57 @@
+009270 01  S26.
+009280     03  LINE  2 COLUMN 37 FOREGROUND-COLOR 15 VALUE "INVOICE".
+009290	   03  LINE  3 COLUMN  2 VALUE "Ac No".
+009300	   03	       COLUMN 15 VALUE "Name".
+	   03	       COLUMN 20 BACKGROUND-COLOR 5
+				 PIC  X(40) FROM WS-SPACE.
+009310	   03	       COLUMN 61 VALUE "Ord Noฐ".
+	   03	       COLUMN 68 BACKGROUND-COLOR 5
+				 PIC  X(12) FROM WS-SPACE.
+009320	   03  LINE  4 COLUMN  2 VALUE "Assisted".
+	   03	       COLUMN 11 BACKGROUND-COLOR 5
+				 PIC  X(02) FROM WS-SPACE.
+	   03	       COLUMN 61 VALUE "Tel.".
+	   03	       COLUMN 66 BACKGROUND-COLOR 5
+				 PIC  X(14) FROM WS-SPACE.
+009330	   03  LINE  5 COLUMN  2 VALUE "Inv. No".
+	   03	       COLUMN 10 BACKGROUND-COLOR 0
+				 PIC  X(08) FROM WS-SPACE.
+009340	   03	       COLUMN 21 VALUE "Contact".
+	   03	       COLUMN 29 BACKGROUND-COLOR 5
+				 PIC  X(14) FROM WS-SPACE.
+009350	   03	       COLUMN 47 VALUE "Ref No".
+	   03	       COLUMN 54 BACKGROUND-COLOR 5
+				 PIC  X(09) FROM WS-SPACE.
+009360	   03	       COLUMN 65 VALUE "Date".
+	   03	       COLUMN 70 BACKGROUND-COLOR 5
+				 PIC  X(10) FROM WS-SPACE.
+009370	   03  LINE  6 COLUMN  2 REVERSE-VIDEO VALUE "Item Code      I".
+009380	   03	       COLUMN 18 REVERSE-VIDEO VALUE "TM Description  ".
+009390     03          COLUMN 33 REVERSE-VIDEO VALUE "                ".
+009400     03          COLUMN 49 REVERSE-VIDEO VALUE "  Quantity ".
+009410     03          COLUMN 60 REVERSE-VIDEO VALUE "Unit Price  ".
+009420     03          COLUMN 72 REVERSE-VIDEO VALUE "Extended".
+009160	   03  LINE  7 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออออออออออัอออัอออออออออออออ
+      -        "ออออออออออออออออัออออออออัอออออออออัออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 19 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออออออออออฯอออฯอออออออออออออ
+      -        "ออออออออออออออออฯออออออออฯอออออออออฯออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009450	   03  LINE 20 COLUMN  3 VALUE "Sub Total ".
+009460	   03  LINE 21 COLUMN  3 VALUE "Discount  ".
+009490     03  LINE 22 COLUMN  3 VALUE "T A X -VAT".
+      *	   03	       COLUMN 30 VALUE "-AD VALOREM".
+009480     03  LINE 23 COLUMN  3 VALUE "AMOUNT DUE".
+009490*01  S26B.
+009500*    03  LINE 20 COLUMN 35 VALUE "Payment Received -".
+009510*    03	       COLUMN 54 VALUE "Cash       ".
+009520*    03	       COLUMN 66 VALUE ":".
+009530*    03  LINE 21 COLUMN 54 VALUE "Cheque     ".
+009540*    03	       COLUMN 66 VALUE ":".
+009550*    03  LINE 22 COLUMN 54 VALUE "Credit Card".
+009560*    03	       COLUMN 66 VALUE ":".
+009570*    03  LINE 23 COLUMN 34 VALUE "-Balance".
+009580*    03	       COLUMN 54 VALUE "CHANGE     ".
+009590*    03	       COLUMN 66 VALUE ":".

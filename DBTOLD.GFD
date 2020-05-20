@@ -1,0 +1,34 @@
+      /
+000010 FD  DBTOLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-DBTOLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  TRO-RECORD1.
+           03  TRO-KEY.
+000170         05  TRO-AC      PIC  X(06).
+000060	       05  TRO-DATE    PIC  9(08)    COMP.
+000040         05  TRO-CODE    PIC  9(02).
+000070	       05  TRO-REF.
+		   07  TRO-PREF	PIC  X(04).
+		   07  FILLER	PIC  X(04).
+      *    
+      *    TYPE: "U" = Unpaid.         \
+      *          "P" = Paid.            >  DEBIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      *          "A" = Allocated.       >  CREDIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050     03  TRO-TYPE        PIC  X(01).
+000080     03  TRO-REG         PIC  X(09).
+000090     03  TRO-ORD         PIC  X(12).
+000100     03  TRO-VALUE       PIC S9(09)V99 COMP-3.
+000110     03  TRO-TAXFREE     PIC S9(09)V99 COMP-3.
+000120     03  TRO-TAX         PIC S9(07)V99 COMP-3.
+000130     03  TRO-DISC        PIC S9(03)V99 COMP-3.
+           03  TRO-PAID        PIC S9(09)V99 COMP-3.
+           03  TRO-ALLOCATED REDEFINES TRO-PAID
+                               PIC S9(09)V99 COMP-3.
+           03  TRO-REC         PIC  X(08).
+           03  TRO-AGE         PIC  9(02)    COMP-5.
+           03  FILLER          PIC  X(01).

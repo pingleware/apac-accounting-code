@@ -1,0 +1,18 @@
+000010 FD  GARTEE    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-GARTEE.
+000030 01  GUA-RECORD1.
+           03  GUA-KEY.
+	       05  GUA-EXT-CODE.
+000360		 07  GUA-CODE  PIC  X(14).
+		 07  GUA-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+000040	       05  GUA-SERIAL  PIC  X(18).
+000060     03  GUA-DESC        PIC  X(30).
+           03  GUA-NAME.
+               05  GUA-NKEY    PIC  X(12).
+               05  FILLER      PIC  X(28).
+	   03  GUA-DATE1       PIC  9(08)  COMP.
+	   03  GUA-DATE2       PIC  9(08)  COMP.
+           03  GUA-PERIOD      PIC  9(02)  COMP-5.
+           03  GUA-INV         PIC  X(08).
+	   03  FILLER	       PIC  X(15).

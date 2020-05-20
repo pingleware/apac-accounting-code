@@ -1,0 +1,246 @@
+      /
+      *    ****    G E N E R A T E   A   D E B T O R
+      *            T R A N S A C T I O N
+      *
+000010 GENERATE-DEBTOR-TRAN SECTION 54.
+
+000030 DEBTOR-TRAN.
+           IF WS-SKIP = "N"
+000040         PERFORM AY60 THRU AY999
+               MOVE 0            TO WS-ACTION
+000050         PERFORM AY02 THRU AY59.
+
+000140 LINK-DEBTOR-TRANS.
+000230       INITIALIZE TRA-RECORD1.
+000310       MOVE W20-DTE        TO TRA-DATE.
+000320     IF W90-CODE = 01 OR 02
+	       IF NOT (W20-DTE < DEB-ACTIVE)
+000330		   MOVE W20-DTE	 TO DEB-ACTIVE.
+000340     IF W90-CODE = 02
+	       IF NOT (W20-DTE < DEB-PMT)
+000350		   MOVE W20-DTE	 TO DEB-PMT
+		   MOVE W90-CR	 TO DEB-LAST-PMT
+	       END-IF
+	       PERFORM DEBTOR-PAYMENT-PROFILE.
+000360       MOVE W90-CODE       TO TRA-CODE.
+000370       MOVE W90-REF        TO TRA-REF TRA-REG.
+000380       MOVE DEB-ACNO       TO TRA-AC.
+000390       SUBTRACT W90-CR FROM W90-DB 
+000400                           GIVING TRA-VALUE.
+	     COMPUTE W90-TX = W90-VAT(1) + W90-VAT(2) + W90-VAT(3)
+			    + W90-VAT(4) + W90-VAT(5) + W90-VAT(6)
+			    + W90-VAT(7) + W90-VAT(8) + W90-VAT(9)
+			    + W90-VAT(10) + W90-VAT(11) + W90-VAT(12).
+	   IF NOT (W90-CODE = 02 OR 15 OR 16 OR 20)
+000410         IF W00-ACTION = 1
+000420		   MULTIPLY -1 BY W90-TX
+000430                           GIVING TRA-TAX
+000440		   MULTIPLY -1 BY W90-EX
+000450                           GIVING TRA-TAXFREE
+000460         ELSE
+000470		   MOVE W90-EX	 TO TRA-TAXFREE
+000480		   MOVE W90-TX	 TO TRA-TAX
+               END-IF
+000490         ADD TRA-TAX       TO W00-T-VAT W90-VATTOT.
+000620	     MOVE TRA-TAX	 TO W90-TX.
+           IF OPEN-ITEM
+               IF TRA-VALUE < ZERO
+                   MOVE W75-ALLOCATED
+				 TO TRA-ALLOCATED
+	       ELSE
+               IF TRA-DATE < W30-120
+                   MOVE 5        TO TRA-AGE
+               ELSE
+               IF TRA-DATE < W30-90
+                   MOVE 4        TO TRA-AGE
+               ELSE
+               IF TRA-DATE < W30-60
+                   MOVE 3        TO TRA-AGE
+               ELSE
+	       IF TRA-DATE < W30-30
+                   MOVE 2        TO TRA-AGE
+               ELSE
+               IF TRA-DATE < W30-CUR
+		   MOVE 1	 TO TRA-AGE.
+	   IF TRA-VALUE > ZERO
+	       IF NOT (TRA-CODE = 17 OR 20) AND (TRA-AGE NOT = ZERO)
+		   IF TRA-AGE = 5
+		       ADD TRA-VALUE TO DEB-120
+		       SUBTRACT TRA-VALUE
+				     FROM W90-120
+		   ELSE
+		   IF TRA-AGE = 4
+		       ADD TRA-VALUE TO DEB-90
+		       SUBTRACT TRA-VALUE
+				     FROM W90-90
+		   ELSE
+		   IF TRA-AGE = 3
+		       ADD TRA-VALUE TO DEB-60
+		       SUBTRACT TRA-VALUE
+				     FROM W90-60
+		   ELSE
+		   IF TRA-AGE = 2
+		       ADD TRA-VALUE TO DEB-30
+		       SUBTRACT TRA-VALUE
+				     FROM W90-30
+		   ELSE
+		   IF TRA-AGE = 1
+		       ADD TRA-VALUE TO DEB-CUR
+		       SUBTRACT TRA-VALUE
+				     FROM W90-CUR.
+000660	     PERFORM WRITE-DBTRAN THRU WRITE-DBTRAN-EXIT.
+000900       MOVE 1              TO WS-ACTION.
+000220       PERFORM AY04 THRU AY59.
+000670     IF (TRA-TAX NOT = ZERO) OR 
+              (TRA-CODE = 01) OR
+000680        (TRA-CODE > 02 AND < 05) OR
+000690        (TRA-CODE = 20) 
+000700	       MOVE 1		 TO TAX-ACTYPE
+000710         MOVE TRA-CODE     TO TAX-CODE
+000720         MOVE TRA-DATE     TO TAX-DATE
+000730         MOVE TRA-REF      TO TAX-REF
+000740	       MOVE TRA-VALUE	 TO TAX-VALUE
+	       MOVE 1		 TO WS-S9
+	       PERFORM DEBTOR-TAX
+000750	       MOVE TRA-TAXFREE  TO TAX-TAXFREE
+000770         MOVE TRA-AC       TO TAX-AC
+000780         MOVE ZERO         TO TAX-SEQ
+000790         IF W90-CR > ZERO
+000810             MOVE "1"      TO TAX-TYPE
+000840         ELSE
+000850             MOVE "2"      TO TAX-TYPE
+	       END-IF
+000890	       PERFORM WRITE-TXTRAN THRU WRITE-TXTRAN-EXIT
+000900	       MOVE 1		 TO WS-ACTION
+000910	       PERFORM AY19 THRU AY59.
+000920       ADD TRA-VALUE       TO W00-T-VAL W00-T-MTDV W00-T-YTDV.
+000930       ADD 1               TO W00-T-DAY W00-T-MTD  W00-T-YTD.
+           IF WX-INT = "Y"
+               PERFORM DEBTOR-INTEGRATE. 
+000950       PERFORM UPDATE-TRAN-RECORD.
+000960     IF W90-CR > ZERO
+000970         GO TO DEBTOR-CR-TRANS.
+000980       ADD W90-DB          TO DEB-DEBT.
+000990       ADD W90-DB          TO DEB-BAL.
+001000     IF W90-CODE = 01
+001010         ADD W90-DB        TO DEB-PURYTD
+                                    DEB-MTHPUR (W20-MONTH)
+001020     ELSE
+001030     IF W90-CODE = 20
+001040         ADD W90-DB        TO DEB-INT.
+001050       GO TO DEBTOR-TRAN-EXIT.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё  Determine the month for which payments are to be updated Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       DEBTOR-PAYMENT-PROFILE.
+	   IF WS-MTHEND = 31 OR 99
+	       MOVE W20-MONTH	 TO WS-SUB
+	   ELSE
+	   IF NOT (W20-DAY > WS-MTHEND)
+	       MOVE W20-MONTH	 TO WS-SUB
+	   ELSE
+	   IF W20-MONTH = 12
+	       MOVE 1		 TO WS-SUB
+	   ELSE
+	       ADD 1 W20-MONTH	 GIVING WS-SUB.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		Update the Debtors payment profile	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     ADD W90-CR 	 TO DEB-MTHPMT(WS-SUB).
+
+       DEBTOR-TAX.
+	     MOVE W90-TAXVAL(WS-S9)
+				 TO TAX-VAL(WS-S9).
+	     MOVE W90-VAT(WS-S9) TO TAX-VAT(WS-S9).
+	   IF TRA-VALUE < ZERO
+	       IF TAX-VAL(WS-S9) > ZERO
+		   COMPUTE TAX-VAL(WS-S9) = TAX-VAL(WS-S9) * -1
+	       END-IF
+	       IF TAX-VAT(WS-S9) > ZERO
+		   COMPUTE TAX-VAT(WS-S9) = TAX-VAT(WS-S9) * -1
+	       END-IF
+	   END-IF.
+	   IF WS-S9 < 12
+	       ADD 1		 TO WS-S9
+	       GO TO DEBTOR-TAX.
+
+       DEBTOR-INTEGRATE.
+             MOVE W20-DTE        TO WX-DATE.
+	     MOVE "  DB"	 TO WX-LEDG.
+	     MOVE W90-CODE	 TO WX-TRN.
+             MOVE W00-E-DESC     TO WX-DESC.
+             MOVE "- DEBTORS"    TO WX-BOOK.
+             MOVE TRA-VALUE      TO WX-VALUE.
+             MOVE WX-DEBGL       TO WX-AC.
+             MOVE 01             TO WX-TYPE.
+             PERFORM GL-TRF-UPDATE.
+             MOVE 14             TO WX-TYPE.
+             COMPUTE WX-VALUE = (TRA-VALUE - TRA-TAX) * -1.             
+             MOVE W00-T-GL       TO WX-AC.
+             PERFORM GL-TRF-UPDATE.
+
+001070 DEBTOR-CR-TRANS.
+001080       ADD W90-CR          TO DEB-CRED.
+001090     IF W90-CODE = 04
+001100         SUBTRACT W90-CR   FROM DEB-PURYTD
+                                      DEB-MTHPUR (W20-MONTH).
+001110     IF W90-CODE = 17
+001120         SUBTRACT W90-CR   FROM DEB-INT
+001130         SUBTRACT W90-CR   FROM DEB-BAL.
+001140       MOVE W90-CR         TO W25-VALUE.
+001150       GO TO DEBTOR-TRAN-EXIT.
+001160
+001170 DEBTOR-CREDITS.
+001180       SUBTRACT W90-CR     FROM DEB-BAL.
+001190     IF W25-VALUE < DEB-120
+001200         SUBTRACT W25-VALUE
+001210                           FROM DEB-120
+001220         ADD W25-VALUE     TO W90-120
+001230         GO TO DEBTOR-TRAN-EXIT.
+001240       SUBTRACT DEB-120    FROM W25-VALUE.
+001250       ADD DEB-120         TO W90-120.
+001260       MOVE ZERO           TO DEB-120.
+001270     IF W25-VALUE < DEB-90
+001280         SUBTRACT W25-VALUE
+001290                           FROM DEB-90
+001300         ADD W25-VALUE     TO W90-90
+001310         GO TO DEBTOR-TRAN-EXIT.
+001320       SUBTRACT DEB-90     FROM W25-VALUE.
+001330       ADD DEB-90          TO W90-90.
+001340       MOVE ZERO           TO DEB-90.
+001350     IF W25-VALUE < DEB-60
+001360         SUBTRACT W25-VALUE 
+001370                           FROM DEB-60
+001380         ADD W25-VALUE     TO W90-60
+001390         GO TO DEBTOR-TRAN-EXIT.
+001400       SUBTRACT DEB-60     FROM W25-VALUE.
+001410       ADD DEB-60          TO W90-60.
+001420       MOVE ZERO           TO DEB-60.
+001430     IF W25-VALUE < DEB-30
+001440         SUBTRACT W25-VALUE 
+001450                           FROM DEB-30
+001460         ADD W25-VALUE     TO W90-30
+001470         GO TO DEBTOR-TRAN-EXIT.
+001480       SUBTRACT DEB-30     FROM W25-VALUE.
+001490       ADD DEB-30          TO W90-30.
+001500       MOVE ZERO           TO DEB-30.
+001510     IF W25-VALUE < DEB-CUR
+001520         SUBTRACT W25-VALUE 
+001530                           FROM DEB-CUR
+001540         ADD W25-VALUE     TO W90-CUR
+001550         GO TO DEBTOR-TRAN-EXIT.
+001560       SUBTRACT DEB-CUR    FROM W25-VALUE.
+001570       ADD DEB-CUR         TO W90-CUR.
+001580       MOVE ZERO           TO DEB-CUR.
+001590     IF W90-CODE = 02
+001600         IF W25-VALUE < DEB-INT
+001610             SUBTRACT W25-VALUE 
+001620                           FROM DEB-INT
+001630             ADD W25-VALUE TO W90-INT
+001640             GO TO DEBTOR-TRAN-EXIT
+001650         ELSE 
+001660             ADD DEB-INT   TO W90-INT
+001670             MOVE ZERO     TO DEB-INT.
+
+001690 DEBTOR-TRAN-EXIT.
+001700       EXIT.

@@ -1,0 +1,6 @@
+000010     SELECT LEDTRN  ASSIGN DISK
+000020                    LOCK MANUAL
+000030                    STATUS WS-STATUS
+000040                    ACCESS RANDOM
+000050                    ORGANIZATION RELATIVE
+000220                    RELATIVE WS-LTRKEY.

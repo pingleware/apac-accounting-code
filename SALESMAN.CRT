@@ -1,0 +1,19 @@
+009340 01  S-SMAN.
+	   03  LINE  5 COLUMN 41 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				 "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿".
+	   03  LINE  6 COLUMN 41 BACKGROUND-COLOR 7
+009360				 FOREGROUND-COLOR 0 VALUE
+				 "³       S A L E S   S T A F F      ³".
+	   03  LINE  7 COLUMN 41 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				 "ÃÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´".
+	   03  LINE  8 COLUMN 41 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				 "³Cde³      Sales person name       ³".
+	   03  LINE  9 COLUMN 41 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				 "ÃÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´".
+	   03  LINE 20 COLUMN 41 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				 "ÀÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ".

@@ -1,0 +1,38 @@
+      *
+      *    *   * ***** *   *  ****  ***** ****	    ***** ***** *     *****
+      *    ** ** *     ** **  *   * *	  *   *     *	    *	*     *
+      *    * * * *     * * *  *   * *	  *   *     *	    *	*     *
+      *    *   * ***   *   *  *   * ***   ****	    ***     *	*     ***
+      *    *   * *     *   *  *   * *	  *   *     *	    *	*     *
+      *    *   * *     *   *  *   * *	  *   *     *	    *	*     *
+      *    *   * ***** *   *  ****  ***** ****	    *	  ***** ***** *****
+      *
+000010 REWRITE-MEMDEB.
+000020	     REWRITE MEM-RECORD1.
+	   IF WS-STATUS = "23"
+000040	       MOVE 62		 TO WS-F-ERROR
+	       GO TO WRITE-MEMDEB-EXIT.
+000030     IF WS-STAT1 NOT = "0"
+000040	       MOVE 62		 TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060	     GO TO WRITE-MEMDEB-EXIT.
+000070
+000160 DELETE-MEMDEB-REC.
+000170	     DELETE MEMDEB.
+000180     IF WS-STAT1 NOT = "0"
+000190	       MOVE 62		 TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210	     UNLOCK MEMDEB.
+000220	     GO TO WRITE-MEMDEB-EXIT.
+000230
+000240 WRITE-MEMDEB.
+000250	     WRITE MEM-RECORD1.
+	   IF WS-STATUS = "22"
+000040	       MOVE 62		 TO WS-F-ERROR
+	       GO TO WRITE-MEMDEB-EXIT.
+000260	   IF WS-STAT1 NOT = "0"
+000270	       MOVE 62		 TO WS-F-ERROR
+000280         PERFORM WRITE-ERROR.
+000310
+000320 WRITE-MEMDEB-EXIT.
+000330       EXIT.

@@ -1,0 +1,113 @@
+       OPT-MESSAGE   SECTION.
+       OPT-CURSOR.
+	     MOVE 13		 TO SLIN.
+
+       OPT-SETUP.
+	     MOVE 64		 TO SCOL.
+	     MOVE 48		 TO WS-S1.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Delete leading spaces from the message to ensure that the Ё
+      *    Ё centering of the message is correct. Included procedure   Ё
+      *    Ё to accomodate PERFORM UNTIL.			       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   IF WS-ERR-CHAR(1) = SPACE
+	       PERFORM WITH TEST AFTER
+		       UNTIL NOT(WS-ERR-CHAR(1) = SPACE)
+		       MOVE WS-CONT
+				 TO WS-ERR-MES
+	       END-PERFORM
+	   END-IF.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		Calculate the LENGTH of the MESSAGE	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       OPT-LOOP.
+	   IF WS-ERR-CHAR (WS-S1) = SPACE
+	       SUBTRACT 1	 FROM WS-S1
+	       GO TO OPT-LOOP.
+	     SUBTRACT WS-S1 FROM 48
+				 GIVING WS-COUNT.
+	   IF WS-COUNT < 3
+	       MOVE WS-S1	 TO WS-COUNT
+	       GO TO OPT-POS.
+	     DIVIDE 2		 INTO WS-COUNT.
+	     SUBTRACT WS-COUNT FROM 48
+				 GIVING WS-S2.
+	     MOVE WS-S2 	 TO WS-COUNT.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	     Center the message in the DISPLAY WINDOW	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       OPT-CENTRE.
+	     MOVE WS-ERR-CHAR (WS-S1)
+				 TO WS-ERR-CHAR (WS-S2).
+	     MOVE SPACE 	 TO WS-ERR-CHAR (WS-S1).
+	   IF WS-S1 > 1
+	       SUBTRACT 1	 FROM WS-S1 WS-S2
+	       GO TO OPT-CENTRE.
+
+       OPT-POS.
+	     PERFORM SAVE-SCREEN.
+
+       OPT-DISPLAY.
+	     ADD 1 SLIN 	 GIVING SHADE-ROW.
+	     MOVE 18		 TO SHADE-COL.
+	     MOVE 48		 TO SHADE-WIDTH.
+	     MOVE 2		 TO SHADE-LINES.
+	     DISPLAY OPT-LINE AT LINE SLIN.
+	     PERFORM SCREEN-SHADOW.
+	     PERFORM MESSAGE-INST.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё If the character to be entered is contained within [ ],   Ё
+      *    Ё then move WS-OPTION to that position within WS-ERR-MES    Ё
+      *    Ё and display it as white (highlighted) on a magenta back-  Ё
+      *    Ё ground. This change; moving WS-OPTION has been included   Ё
+      *    Ё as using the CALL X"AF" function does not echo the value  Ё
+      *    Ё of the key that has been pressed, which can confuse the   Ё
+      *    Ё USER if an incorrect key is pressed.		           Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       OPT-REPLY.
+	     ADD 1		 TO SLIN.
+	   IF WS-ERR-CHAR (WS-COUNT) = "]"
+	       SUBTRACT 1	 FROM WS-COUNT
+	       ADD 16 WS-COUNT	 GIVING SCOL
+	       MOVE WS-OPTION	 TO WS-ERR-CHAR(WS-COUNT)
+	       DISPLAY WS-ERR-CHAR (WS-COUNT) AT SCREEN-POS
+		       WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			    BACKGROUND-COLOR 5
+	       ADD 1		 TO WS-COUNT.
+	     PERFORM HIDE-THE-CURSOR.
+
+       OPT-ACCEPT.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	   IF ADIS-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN UP-KEY
+		      PERFORM RESTORE-SCREEN
+		      IF SLIN > 3
+			  SUBTRACT 2 FROM SLIN
+		      ELSE
+			  MOVE 2     TO SLIN
+		      END-IF
+		      GO TO OPT-DISPLAY
+		 WHEN DOWN-KEY
+		      PERFORM RESTORE-SCREEN
+		      IF SLIN > 21
+			  MOVE 21    TO SLIN
+		      END-IF
+		      GO TO OPT-DISPLAY
+		 WHEN ENTER-KEY  GO TO OPT-END
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO OPT-REPLY
+	   ELSE
+	   IF DATA-8BIT
+	       MOVE KEY-CODE-1X  TO WS-OPTION.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+
+       OPT-END.
+	     PERFORM DISPLAY-THE-CURSOR.
+	     PERFORM RESTORE-SCREEN.
+
+       OPT-EXIT.
+	     EXIT.

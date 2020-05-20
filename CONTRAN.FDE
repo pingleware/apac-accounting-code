@@ -1,0 +1,34 @@
+      /
+000010 FD  CNTRAN    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-CNTRAN.
+000030 01  CON-RECORD1.
+	   03  CON-KEY.
+000160	       05  CON-CON-AC  PIC  X(06).
+	       05  CON-IND     PIC  X(02).
+000170	       05  CON-AC      PIC  X(06).
+000060	       05  CON-DATE    PIC  9(08)    COMP.
+000040	       05  CON-CODE    PIC  9(02).
+000070	       05  CON-REF     PIC  X(08).
+      *    
+      *    TYPE: "U" = Unpaid.         \
+      *          "P" = Paid.            >  DEBIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      *          "A" = Allocated.       >  CREDIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050	   03  CON-TYPE        PIC  X(01).
+000080	   03  CON-REG	       PIC  X(09).
+000090	   03  CON-ORD	       PIC  X(12).
+000100	   03  CON-VALUE       PIC S9(09)V99 COMP-3.
+000110	   03  CON-TAXFREE     PIC S9(09)V99 COMP-3.
+000120	   03  CON-TAX	       PIC S9(07)V99 COMP-3.
+000130	   03  CON-DISC        PIC S9(03)V99 COMP-3.
+	   03  CON-PAID        PIC S9(09)V99 COMP-3.
+	   03  CON-ALLOCATED REDEFINES CON-PAID
+                               PIC S9(09)V99 COMP-3.
+	   03  CON-REC	       PIC  X(08).
+	   03  CON-AGE	       PIC  9(02)    COMP-5.
+           03  FILLER          PIC  X(01).

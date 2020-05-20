@@ -1,0 +1,24 @@
+      *
+      *     ***  *****	***   ***  *   *   ***** ***** *****   *** *   *
+      *    *   *   *   *   * *	 * *  *      *	 *   * *	*  *   *
+      *    *	   *   *   * *	   * *	     *	 *  *  *	*  **  *
+      *     ***    *   *   * *	   **	     *	 ***   ***	*  * * *
+      *        *   *   *   * *	   * *	     *	 *  *  *	*  *  **
+      *    *   *   *   *   * *	 * *  *      *	 *   * *	*  *   *
+      *     ***    *	***   ***  *   *     *	 *   * *       *** *   *
+      *
+000010 REWRITE-TRFRIN.
+000020	     REWRITE SIN-RECORD1.
+000030     IF WS-STAT1 NOT = "0"
+000040	       MOVE 62		 TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060	     GO TO WRITE-TRFRIN-EXIT.
+000070
+000240 WRITE-TRFRIN.
+000250	     WRITE SIN-RECORD1.
+000260     IF WS-STAT1 NOT = "0"
+000270	       MOVE 62		 TO WS-F-ERROR
+000280         PERFORM WRITE-ERROR.
+000310
+000320 WRITE-TRFRIN-EXIT.
+000330       EXIT.

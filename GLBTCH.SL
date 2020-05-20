@@ -1,0 +1,8 @@
+      $SET KEYCOMPRESS "7"
+000210     SELECT GLBTCH ASSIGN DISK
+                         LOCK EXCLUSIVE
+000220                   STATUS WS-STATUS
+000230                   ACCESS DYNAMIC
+000240                   ORGANIZATION INDEXED
+000250                   RECORD GLB-KEY.
+      $SET NOKEYCOMPRESS

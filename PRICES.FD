@@ -1,0 +1,66 @@
+      /
+      *      *******   *******	 ******   ******   *******   ******
+      *      **    **  **    **    **	 **    **  **	    **	  **
+      *      **    **  **    **    **	 **	   **	    **
+      *      *******   *******	   **	 **	   *****     ******
+      *      **        **   **	   **	 **	   **		  **
+      *      **        **    **    **	 **    **  **	    **	  **
+      *      **        **    **  ******   ******   *******   ******
+      *
+000010 FD  PRICES    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-PRICES.
+000030 01  PRC-RECORD1.
+	   03  PRC-CODE.
+000040	       05  PRC-ITEM	 PIC  X(14).
+	       05  PRC-PLU REDEFINES PRC-ITEM
+				 PIC  9(14).
+000060	       05  PRC-ITM	 PIC  X(03).
+	       05  FILLER	 PIC  X(01).
+	   03  PRC-LDG.
+000070	       05  PRC-DEPART	 PIC  X(30).
+000050	   03  PRC-ACODE	 PIC  X(10).
+000080	   03  PRC-DESC.
+	       05  PRC-DSC26.
+000090		   07  PRC-DKEY	 PIC  X(14).
+		   07  FILLER	 PIC  X(12).
+000100	       05  FILLER	 PIC  X(04).
+	   03  PRC-DESC2.
+000090	       05  PRC-DKEY2	 PIC  X(14).
+000100	       05  FILLER	 PIC  X(16).
+000110	   03  PRC-QUANT	 PIC S9(09)V9(04) COMP-3.
+	   03  PRC-SALES-FIELDS.
+	       05  PRC-UNIT	 PIC S9(04)V999 COMP-3.
+	       05  PRC-PER	 PIC  X(08).
+000140	       05  PRC-PRICE	 PIC S9(08)V999 COMP-3.
+	       05  PRC-UNIT-2	 PIC S9(04)V999 COMP-3.
+	       05  PRC-PER-2	 PIC  X(08).
+000140	       05  PRC-PRICE-2	 PIC S9(08)V999 COMP-3.
+	       05  PRC-UNIT-3	 PIC S9(04)V999 COMP-3.
+	       05  PRC-PER-3	 PIC  X(08).
+000140	       05  PRC-PRICE-3	 PIC S9(08)V999 COMP-3.
+	       05  PRC-UNIT-4	 PIC S9(04)V999 COMP-3.
+	       05  PRC-PER-4	 PIC  X(08).
+000140	       05  PRC-PRICE-4	 PIC S9(08)V999 COMP-3.
+	   03  PRC-SELLING REDEFINES PRC-SALES-FIELDS.
+	       05  PRC-BREAK-DOWNS OCCURS 4.
+		   07  PRC-UNT	 PIC S9(04)V999 COMP-3.
+		   07  PRC-PR	 PIC  X(08).
+000140		   07  PRC-PRC	 PIC S9(08)V999 COMP-3.
+000410	   03  PRC-TAX		 PIC  9(01).
+	   03  PRC-VAT		 PIC  9(02)V99	COMP-3.
+000420	   03  PRC-XREF 	 PIC  X(18).
+
+000030 01  PRC-RECORD2.
+	   03  FILLER		 PIC  X(18).
+	   03  PRC-COMP 	 PIC  X(40).
+	   03  PRC-LIST.
+	       05  FILLER	 PIC  X(17).
+	       05  PRC-DAY	 PIC  Z9.
+	       05  FILLER	 PIC  X(01).
+	       05  PRC-MONTH	 PIC  X(14).
+	   03  PRC-PACKS	 PIC  X(01).
+	   03  FILLER		 PIC  X(01).
+	   03  PRC-ACNO 	 PIC  X(06).
+	   03  PRC-DEBTOR	 PIC  X(40).
+	   03  PRC-EXPIRE	 PIC  9(08)   COMP-5.
+	   03  FILLER		 PIC  X(75).

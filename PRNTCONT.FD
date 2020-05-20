@@ -1,0 +1,28 @@
+      /****************************************************************
+      *                                                               *
+      *        P R I N T E R   C O N T R O L   C H A R A C T E R S    *
+      *                                                               *
+      *    RECORD                                                     *
+      *                                                               *
+      *      1      CITOH                                             *
+      *                                                               *
+      *      2      EPSON RX/LX/LQ, PANASONIC, STAR, SEIKOSHA         *
+      *             AND OTHER COMPATIBLES                             *
+      *                                                               *
+      *      3      IBM/IBMPRO OR COMPATABLE                          *
+      *                                                               *
+      *      4      OKI - MICROLINE                                   *
+      *                                                               *
+      *****************************************************************
+000240 FD  PRNTCONT    LABEL RECORD STANDARD
+000250                 VALUE OF FILE-ID "PRNTCONT.APC".
+000290 01  PRN-REC1.
+000880	   03  PRN-COND 	   PIC X(06).
+000900	   03  PRN-NORM 	   PIC X(06).
+000740	   03  PRN-EXPD 	   PIC X(06).
+000760	   03  PRN-ECAN 	   PIC X(06).
+	   03  PRN-8LPI 	   PIC X(06).
+	   03  PRN-6LPI 	   PIC X(06).
+	   03  PRN-10CPI	   PIC X(06).
+	   03  PRN-12CPI	   PIC X(06).
+	   03  PRN-17CPI	   PIC X(06).

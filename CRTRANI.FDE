@@ -1,0 +1,34 @@
+      /
+000010 FD  CTRANS    IS EXTERNAL
+		     LABEL RECORD IS STANDARD
+000020               VALUE OF FILE-ID IS W02-CRTRAN.
+000030 01  CT-REC.
+	   03  CT-KEY.
+000150	       05  CT-CRED     PIC  X(06).
+000050	       05  CT-SDTE     PIC  9(08)    COMP.
+000040	       05  CT-COD      PIC  9(02).
+000060	       05  CT-SINV     PIC  X(08).
+	       05  CT-SEQ      PIC  9(02)    COMP-X.
+      *
+      *    TYPE: "U" = Unpaid.         \
+      * 	 "P" = Paid.		>  CREDIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      * 	 "A" = Allocated.	>  DEBIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050	   03  CT-TYPE	       PIC  X(01).
+	   03  CT-PJ	       PIC  X(01).
+000070	   03  CT-REF	       PIC  X(08).
+000080	   03  CT-DTE	       PIC  9(08)    COMP-3.
+000090	   03  CT-ORD	       PIC  X(07).
+000100	   03  CT-COST	       PIC S9(09)V99 COMP-3.
+	   03  CT-TAXFREE      PIC S9(09)V99 COMP-3.
+000110	   03  CT-SELL	       PIC S9(09)V99 COMP-3.
+	   03  CT-TAX	       PIC S9(07)V99 COMP-3.
+000120	   03  CT-AGE	       PIC  9(04)    COMP-5.
+	   03  CT-PAID	       PIC S9(09)V99 COMP-3.
+	   03  CT-ALLOCATED REDEFINES CT-PAID
+                               PIC S9(09)V99 COMP-3.
+	   03  CT-DREF	       PIC  X(08).

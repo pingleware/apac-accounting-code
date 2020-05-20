@@ -1,0 +1,32 @@
+      /
+000010 FD  DTHIST    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DTHIST.
+000030 01  TRH-RECORD1.
+	   03  TRH-KEY.
+000170	       05  TRH-AC      PIC  X(06).
+000060	       05  TRH-DATE    PIC  9(08)    COMP.
+000040	       05  TRH-CODE    PIC  9(02).
+000070	       05  TRH-REF     PIC  X(08).
+      *    
+      *    TYPE: "U" = Unpaid.         \
+      *          "P" = Paid.            >  DEBIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      *          "A" = Allocated.       >  CREDIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050	   03  TRH-TYPE        PIC  X(01).
+000080	   03  TRH-REG	       PIC  X(09).
+000090	   03  TRH-ORD	       PIC  X(12).
+000100	   03  TRH-VALUE       PIC S9(09)V99 COMP-3.
+000110	   03  TRH-TAXFREE     PIC S9(09)V99 COMP-3.
+000120	   03  TRH-TAX	       PIC S9(07)V99 COMP-3.
+000130	   03  TRH-DISC        PIC S9(03)V99 COMP-3.
+	   03  TRH-PAID        PIC S9(09)V99 COMP-3.
+	   03  TRH-ALLOCATED REDEFINES TRH-PAID
+                               PIC S9(09)V99 COMP-3.
+	   03  TRH-REC	       PIC  X(08).
+	   03  TRH-AGE	       PIC  9(02)    COMP-5.
+           03  FILLER          PIC  X(01).

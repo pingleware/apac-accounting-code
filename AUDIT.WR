@@ -1,0 +1,24 @@
+      
+010520 REWRITE-AUDIT.
+010530       REWRITE AUD-REC1.
+010540     IF WS-STATUS NOT = "00"
+010550         MOVE 1            TO WS-F-ERROR
+010560         PERFORM WRITE-ERROR.
+010570       GO TO WRITE-AUDIT-EXIT.
+      
+010580 WRITE-AUDIT.
+010590       WRITE AUD-REC1.
+	   IF WS-STATUS = "22"
+	       ADD 1		 TO WS-AUDKEY
+	       GO TO WRITE-AUDIT.
+010600	   IF WS-STATUS NOT = "00"
+010610         MOVE 1            TO WS-F-ERROR
+010620         PERFORM WRITE-ERROR.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		 Force system to WRITE the record.	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     CLOSE AUDIT.
+	     OPEN I-O AUDIT.
+
+010630 WRITE-AUDIT-EXIT.
+010640       EXIT.

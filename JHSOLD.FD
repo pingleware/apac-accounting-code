@@ -1,0 +1,26 @@
+000010 FD  JHSOLD    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JHSOLD
+000220		     RECORDING MODE IS VARIABLE.
+000030 01  HSO-RECORD1.
+	   03  HSO-KEY.
+000360	       05  HSO-MODEL   PIC  X(24).
+000040	       05  HSO-SERIAL  PIC  X(15).
+      *
+      *    R E P A I R	 T Y P E :
+      * 			   1 = NORMAL REPAIR
+      * 			   2 = WARRANTY REPAIR
+      * 			   3 = REPEAT
+      *
+	   03  HSO-TYPE        PIC  9(01).
+000060	   03  HSO-DESC        PIC  X(40).
+	   03  HSO-AC	       PIC  X(06).
+	   03  HSO-REF	       PIC  X(08).
+	   03  HSO-NAME.
+	       05  HSO-NKEY    PIC  X(12).
+               05  FILLER      PIC  X(28).
+	   03  HSO-DATE        PIC  9(08)  COMP.
+	   03  HSO-REMKS1      PIC  X(40).
+	   03  HSO-REMKS2      PIC  X(40).
+	   03  HSO-REMKS3      PIC  X(40).
+	   03  HSO-REMKS4      PIC  X(40).
+	   03  FILLER	       PIC  X(26).

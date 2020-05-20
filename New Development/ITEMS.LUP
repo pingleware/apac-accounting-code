@@ -1,0 +1,212 @@
+      /
+      *    ****    I T E M S   L O O K U P   R O U T I N E
+      *
+      *                      PERFORMED FROM AA50
+      *            (P R O C E S S   F U N C T I O N   K E Y S)
+      *
+000010 ITEMS-LOOKUP                      SECTION.
+       ITEM-SAVE-LIN.
+             MOVE LIN                TO SLIN.
+
+012520 ITEMS-LUP-SCREEN.
+             DISPLAY S-ITM.
+000120     IF WS-ETYPE = "D"
+000130         DISPLAY S-ITMD.
+
+       ITEMS-LUP-CLR-SCREEN.
+             MOVE 1011               TO CPOS.
+             PERFORM ITEMS-CRT-EDGE UNTIL CLIN = 22.
+             MOVE 5                  TO SHADE-ROW.
+             MOVE 11                 TO SHADE-COL.
+             MOVE 67                 TO SHADE-WIDTH.
+             MOVE 19                 TO SHADE-LINES.
+             PERFORM SCREEN-SHADOW.
+000340             PERFORM CLEAR-L50.
+000160             MOVE SPACES         TO W10-MODEL W10-IDESC.
+
+000200 ITEM-LUP-DATA.
+           IF WS-ETYPE = "Z"
+               NEXT SENTENCE
+           ELSE
+000210     IF WS-ETYPE = "I"
+000220               ACCEPT SA-ITM
+000230     ELSE
+000300               ACCEPT SA-ITMD.
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY
+000140                     MOVE SPACES TO W10-MODEL
+000150                     GO TO ITEMS-RESET-LIN
+                 WHEN OTHER         CALL X"E5"
+               END-EVALUATE
+               GO TO ITEM-LUP-DATA.
+000340             PERFORM CLEAR-L50.
+000350             MOVE 10                 TO CLIN.
+000360             MOVE 1                 TO W75-S W75-S1.
+
+       ITEMS-LUP-TAB-LOOP.
+             MOVE SPACES         TO W75-ITEM (W75-S1).
+           IF W75-S1 < 12
+               ADD 1             TO W75-S1
+               GO TO ITEMS-LUP-TAB-LOOP.
+             MOVE ZERO           TO W75-S1.
+
+000450 ITEMS-LUP-ENTRY-TYPE.
+000460           IF WS-ETYPE = "I" OR "Z"
+000470               IF W10-MODEL = SPACES
+000480                   MOVE "!"         TO W10-MODEL.
+000640           IF WS-ETYPE = "D"
+000650               MOVE W10-IDESC         TO W50-DATA
+000660               MOVE 40                 TO W50-LENGTH
+               CALL "CBL_TOUPPER" USING W50-30
+                                  BY VALUE W50-LENGTH
+                                  RETURNING WS-STATUS
+000720               MOVE W50-DATA         TO W10-IDESC.
+000580     IF WS-ETYPE = "I" OR "Z"
+               MOVE W10-MODEL         TO ITM-MODEL-NO
+006850               START ITEMS KEY >= ITM-MODEL-NO
+000840           ELSE
+000850     IF WS-ETYPE = "D"
+000860               MOVE W10-IDESC         TO ITM-DESC
+000870               START ITEMS KEY >= ITM-DKEY.
+006860           IF NOT (WS-STATUS = "00")
+               GO TO ITEMS-NO-RECORD.
+
+       ITEMS-GET-MOD-RECORD.
+           IF WS-OPTION = "J"
+               MOVE SPACE            TO WS-OPTION
+               GO TO ITEMS-SKIP-MOD-READ.
+             PERFORM READ-ITEMS-NEXT THRU READ-ITEMS-EXIT.
+009900     IF WS-F-ERROR = 57
+               SUBTRACT 1            FROM W75-S
+               GO TO ITEMS-FULL-SCREEN.
+
+       ITEMS-SKIP-MOD-READ.
+             MOVE ITM-MODEL-NO       TO W75-ITEM(W75-S).
+             DISPLAY (CLIN, 12) ITM-MODEL-NO WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 6 HIGHLIGHT.
+             DISPLAY ( , 37) ITM-DESC        WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 6 HIGHLIGHT.
+027700     IF CLIN < 21
+027710         ADD 1                 TO CLIN W75-S
+027720         GO TO ITEMS-GET-MOD-RECORD.
+
+       ITEMS-FULL-SCREEN.
+001020       DISPLAY " "    AT 2503 WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 6 HIGHLIGHT
+001030               " highlight - "      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+                     "PgUp"               WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 6 HIGHLIGHT
+                     "/"                  WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+                     "PgDn"               WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 6 HIGHLIGHT
+                     " - "                WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+001170               "Esc"                WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 6 HIGHLIGHT
+                     "ape"                WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+
+       ITEMS-SAVE-FULL-SCREEN.
+             PERFORM SAVE-SCREEN-2.
+             MOVE 0                  TO W75-S1.
+             MOVE 1011               TO CPOS.
+
+       ITEMS-CRT-ATTRIB.
+             MOVE 3920               TO W41-LENGTH.
+             CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS W42-ATTRIB2 W41-LENGTH RETURNING WS-STATUS.
+             MOVE 4000               TO W41-LENGTH.
+
+       ITEMS-GET-USER-OPT.
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+             PERFORM CLEAR-L50.
+           IF ADIS-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN UP-KEY     GO TO ITEMS-ADJ-NO-KEYS
+                 WHEN DOWN-KEY   GO TO ITEMS-CHK-NO-KEYS
+                 WHEN ENTER-KEY
+                 WHEN CR-KEY     GO TO ITEMS-CHK-SELECT
+                 WHEN OTHER      CALL X"E5" CALL X"E5" CALL X"E5"
+               END-EVALUATE
+               GO TO ITEMS-GET-USER-OPT
+           ELSE
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY    MOVE SPACES TO W10-MODEL
+                                 GO TO ITEMS-RESET-LIN
+                 WHEN PAGE-DOWN  GO TO ITEMS-GET-NEXT-PAGE
+                 WHEN PAGE-UP    GO TO ITEMS-GET-PREV-PAGE
+                 WHEN OTHER      CALL X"E5" CALL X"E5" CALL X"E5"
+               END-EVALUATE
+               GO TO ITEMS-GET-USER-OPT.
+             CALL X"E5".
+001280             GO TO ITEMS-GET-USER-OPT.
+
+001240 ITEMS-GET-NEXT-PAGE.
+           IF W75-S < 12
+               GO TO ITEMS-GET-USER-OPT.
+
+       ITEMS-NEW-PAGE.
+             MOVE 1011                 TO CPOS.
+             PERFORM ITEMS-CRT-EDGE UNTIL CLIN = 22.
+             MOVE 10                 TO CLIN.
+             MOVE LOW-VALUES         TO W75-KEYS.
+             MOVE 1                  TO W75-S W75-S1.
+             PERFORM ITEMS-LUP-TAB-LOOP.
+027830             GO TO ITEMS-GET-MOD-RECORD.
+
+       ITEMS-GET-PREV-PAGE.
+             MOVE 1                  TO WS-IXS1.
+      *
+      *    ****    SET OPTION TO BYPASS THE READ NEXT
+      *
+             MOVE "J"                TO WS-OPTION.
+
+       ITEMS-GET-PREV-LOOP.
+             PERFORM READ-ITEMS-PREV THRU READ-ITEMS-EXIT.
+009900     IF WS-F-ERROR = 57
+               MOVE SPACE            TO WS-OPTION
+               GO TO ITEMS-NEW-PAGE.
+           IF WS-IXS1 < 23
+               ADD 1                 TO WS-IXS1
+               GO TO ITEMS-GET-PREV-LOOP.
+             GO TO ITEMS-NEW-PAGE.
+
+027970 ITEMS-NO-RECORD.
+             MOVE W43-SCREEN         TO W43-SCREEN3.
+             MOVE W42-ATTRIB         TO W42-ATTRIB3.
+027730       MOVE "No Model codes"   TO WS-ERR-STRING.
+003260       PERFORM ERROR-MESSAGE.
+             MOVE W43-SCREEN3        TO W43-SCREEN.
+             MOVE W42-ATTRIB3        TO W42-ATTRIB.
+             GO TO ITEMS-RESET-LIN.
+
+       ITEMS-ADJ-NO-KEYS.
+           IF W75-S1 > 1
+               SUBTRACT 1            FROM W75-S1 CLIN.
+             GO TO ITEMS-HIGHLIGHT.
+
+       ITEMS-CHK-NO-KEYS.
+           IF W75-S1 = ZERO
+               MOVE 1                TO W75-S1
+               GO TO ITEMS-HIGHLIGHT.
+           IF W75-S1 < W75-S
+               ADD 1                 TO W75-S1 CLIN.
+
+       ITEMS-HIGHLIGHT.
+             PERFORM ITEMS-CRT-ATTRIB.
+             DISPLAY W43-DET4A(CLIN) AT CPOS WITH BACKGROUND-COLOR 6 FOREGROUND-COLOR 3 HIGHLIGHT.
+             GO TO ITEMS-GET-USER-OPT.
+
+002030 ITEMS-CHK-SELECT.
+002040     IF W75-S1 = ZERO
+002050         GO TO ITEMS-GET-USER-OPT.
+002060       MOVE CSTART             TO WS1-CURSOR.
+002070       MOVE W75-ITEM(W75-S1)   TO W10-MODEL ITM-MODEL-NO.
+002080       PERFORM READ-ITEMS THRU READ-ITEMS-EXIT.
+002090       MOVE ZERO               TO COL-AND-LINE.
+002100       GO TO ITEMS-RESET-LIN.
+
+       ITEMS-CRT-EDGE.
+             DISPLAY "³"                                                                 AT CPOS WITH FOREGROUND-COLOR 0           BACKGROUND-COLOR 3
+                     "                        ³                                        "         WITH FOREGROUND-COLOR 7 HIGHLIGHT BACKGROUND-COLOR 3
+                     "³"                                                                         WITH FOREGROUND-COLOR 3 HIGHLIGHT BACKGROUND-COLOR 3.
+019260       ADD 1                   TO CLIN.
+
+002160 ITEMS-RESET-LIN.
+             MOVE SLIN               TO LIN.
+
+       ITEMS-LOOKUP-EXIT.
+             EXIT.

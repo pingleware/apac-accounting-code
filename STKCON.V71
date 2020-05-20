@@ -1,0 +1,588 @@
+      $set LINKCOUNT"384"
+      ******************************************************************
+      *                                                                *
+      *    ******   ********  **    **	**    **  *******  *******     *
+      *   **	**     **     **   **	**    **  **	   **	 **    *
+      *   **	       **     **  **	**    **  **	   **	**     *
+      *    ******      **     *****	**    **  *****	   ******      *
+      * 	**     **     **  **	 **  **   **	   **	**     *
+      *   **	**     **     **   **	  ****	  **	   **	 **    *
+      *    ******      **     **    **	   **	  *******  **	 **    *
+      *                                                                *
+      *   ENGLISH                                                      *
+      *                                                                *
+      *   S T O C K   F I L E	C O N V E R T	F I L E   V E R  7.01  *
+      *                                                                *
+      *     VERSION 7.01 - February 1997			       *
+      * 							       *
+      ******************************************************************
+000010 IDENTIFICATION DIVISION.
+000020 PROGRAM-ID.     STKCON.
+000030 AUTHOR.         J W LEMMON (APAC).
+000040 DATE-WRITTEN.   MAY 1994.
+000050 ENVIRONMENT DIVISION.
+000060 CONFIGURATION SECTION.
+000070 SPECIAL-NAMES.
+000080                CONSOLE IS CRT.
+000090 INPUT-OUTPUT SECTION.
+000100 FILE-CONTROL.
+
+       COPY CONTROL.SL.
+
+000120 COPY PARAM.SL.
+
+000230 COPY STOCK.SL.
+
+000180	   SELECT STKOLD  ASSIGN DISK
+                          LOCK EXCLUSIVE
+000190                    STATUS WS-STATUS
+000200                    ACCESS SEQUENTIAL
+000210                    ORGANIZATION SEQUENTIAL.
+
+      /
+000260 DATA DIVISION.
+000270 FILE SECTION.
+
+       COPY CONTROL.FDE.
+
+000280 COPY PARAM.FDE.
+
+       COPY STOCK.FDE.
+
+000010 FD  STKOLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-STKOLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  STO-RECORD1.
+000040	   03  STO-CODE        PIC  X(14).
+	   03  STO-PLU REDEFINES STO-CODE
+			       PIC  9(14).
+000060	   03  STO-ITM	       PIC  X(03).
+	   03  STO-LDG.
+000070	       05  STO-LEDGN   PIC  9(04).
+	   03  STO-LG REDEFINES STO-LDG.
+	       05  FILLER      PIC  X(01).
+	       05  STO-LEDG    PIC  9(03).
+	   03  STO-BIN	       PIC  X(04).
+000050	   03  STO-ACODE       PIC  X(10).
+000080	   03  STO-DESC.
+000090	       05 STO-DKEY     PIC  X(14).
+000100         05 FILLER       PIC  X(16).
+	   03  STO-DESC2.
+000090	       05 STO-DKEY2    PIC  X(14).
+000100	       05 FILLER       PIC  X(16).
+000110	   03  STO-QUANT       PIC S9(07)V9(04) COMP-3.
+000120	   03  STO-LEVEL       PIC S9(07)V99  COMP-3.
+000130	   03  STO-COST        PIC S9(06)V999 COMP-3.
+000140	   03  STO-SELL        PIC S9(08)V999 COMP-3.
+000150	   03  STO-CASH        PIC S9(08)V999 COMP-3.
+000160	   03  STO-WSALE       PIC S9(08)V999 COMP-3.
+000160	   03  STO-PCOST       PIC S9(08)V999 COMP-3.
+000160	   03  STO-SELL4 REDEFINES STO-PCOST
+			       PIC S9(08)V999 COMP-3.
+000170	   03  STO-AVGE        PIC S9(06)V999 COMP-3.
+	   03  STO-O-AVGE REDEFINES STO-AVGE
+			       PIC S9(07)V99  COMP-3.
+000180	   03  STO-ORD	       PIC S9(07)V99  COMP-3.
+000190	   03  STO-LTIME       PIC  9(01)V99  COMP-3.
+000200	   03  STO-MTD	       PIC S9(09)V99  COMP-3.
+000210	   03  STO-MTDC        PIC S9(09)V99  COMP-3.
+000220	   03  STO-MTDV        PIC S9(09)V99  COMP-3.
+000230	   03  STO-YTD	       PIC S9(09)V99  COMP-3.
+000240	   03  STO-YTDC        PIC S9(09)V99  COMP-3.
+000250	   03  STO-YTDV        PIC S9(09)V99  COMP-3.
+000260	   03  STO-WK1	       PIC S9(09)V99  COMP-3.
+000270	   03  STO-WK2	       PIC S9(09)V99  COMP-3.
+000280	   03  STO-WK3	       PIC S9(09)V99  COMP-3.
+000290	   03  STO-WK4	       PIC S9(09)V99  COMP-3.
+000260	   03  STO-MTH1        PIC S9(09)V99  COMP-3.
+000270	   03  STO-MTH2        PIC S9(09)V99  COMP-3.
+000280	   03  STO-MTH3        PIC S9(09)V99  COMP-3.
+000290	   03  STO-MAVG        PIC S9(09)V99  COMP-3.
+000300	   03  STO-MARKUP      PIC S9(03)V99  COMP-3.
+000310	   03  STO-CMARKUP     PIC S9(03)V99  COMP-3.
+000320	   03  STO-WMARKUP     PIC S9(03)V99  COMP-3.
+000300	   03  STO-MARKUP4     PIC S9(03)V99  COMP-3.
+000330	   03  STO-ACT	       PIC  9(06)     COMP-3.
+000340	   03  STO-PUR	       PIC  9(06)     COMP-3.
+000350	   03  STO-DTE	       PIC  9(06)     COMP-3.
+000360	   03  STO-DISC        PIC  X(01).
+000370	   03  STO-IND	       PIC  9(01).
+000380	   03  STO-SUPP        PIC  X(06).
+000380	   03  STO-PSUPP       PIC  X(06).
+      *
+      *    UNITS PER (KILO/LITRE ETC)
+      *
+	   03  STO-PACK.
+000390	       05  STO-PRC     PIC  9(03)V99  COMP-3.
+000400	   03  STO-GUAR        PIC  9(02)     COMP-5.
+000410	   03  STO-TAX	       PIC  9(01).
+000420	   03  STO-XREF        PIC  X(14).
+	   03  STO-PLIST       PIC  X(01).
+000110	   03  STO-QPIC        PIC S9(07)V99  COMP-3.
+000110	   03  STO-QJOB        PIC S9(07)V99  COMP-3.
+	   03  STO-PER	       PIC  X(08).
+	   03  STO-PROC        PIC  X(01).
+	   03  STO-PRO-START   PIC  9(06)     COMP-3.
+	   03  STO-PRO-END     PIC  9(06)     COMP-3.
+	   03  STO-PRO-PRICE   PIC S9(07)V99  COMP-3.
+	   03  STO-LINK	       PIC  X(13).
+
+      /
+000430 WORKING-STORAGE SECTION.
+000440 77  WS-S1            PIC 9(04)     COMP-5.
+000440 77  WS-SUB           PIC 9(04)     COMP-5.
+003290 77  WS-NETKEY        PIC 9(04)     COMP-5 VALUE 1.
+003290 77  WS-PARKEY	    PIC 9(04)	  COMP-5 VALUE 1.
+000560 77  WS-ERROR         PIC 9(01)     VALUE ZERO.
+       77  WS-AVGE	    PIC 9(06)V999 COMP-3.
+000570 77  WS-PROG          PIC X(02).
+       77  WS-OPTION        PIC X(01).
+       77  TODAY-DDMMYY	   PIC	9(06) COMP-5.
+       77  WS-USUB	   PIC	9(04) COMP-5.
+002420 01  WS-DB-LINE.
+002430     03  WS-TOP-LNE.
+002440         05  WS-TCHR PIC  X(01) OCCURS 80.
+           03  WS-T-LINE REDEFINES WS-TOP-LNE.
+               05  FILLER  PIC  X(01).
+               05  WS-H-LINE
+                           PIC  X(78).
+               05  FILLER  PIC  X(01).
+002430     03  WS-TOP-LNE2.
+002440         05  WS-TCH  PIC  X(01) OCCURS 80.
+           03  WS-TP-LINE2 REDEFINES WS-TOP-LNE2.
+               05  FILLER      PIC  X(01).
+               05  WS-TOP-COMP PIC  X(40).
+001430	       05  FILLER      PIC  X(23).
+	       05  WS-WRKHD    PIC  X(11).
+001430	       05  FILLER      PIC  X(01).
+	       05  WS-WRKST    PIC  X(03).
+001430	       05  FILLER      PIC  X(01).
+002450	   03  WS-MID-LNE.
+002460         05  WS-MCHR PIC  X(01) OCCURS 80.
+002450     03  WS-MID-LNE2.
+	       05  FILLER      PIC  X(01) VALUE "³".
+	       05  WS-BLNK78   PIC  X(78) VALUE ALL "°".
+	       05  FILLER      PIC  X(01) VALUE "³".
+002470	   03  WS-BOT-LNE.
+002480         05  WS-BCHR PIC  X(01) OCCURS 80.
+           03  WS-B-LINE REDEFINES WS-BOT-LNE.
+               05  FILLER  PIC  X(01).
+               05  WS-F-LINE
+                           PIC  X(78).
+               05  FILLER  PIC  X(01).
+002470     03  WS-BOT-LNE2.
+002480         05  WS-BCH  PIC  X(01) OCCURS 80.
+
+000590 COPY WS.WS.
+
+000290 01  WS-PARID.
+000020	   03  WS-PTH15	   PIC	X(03).
+000030	   03  FILLER	   PIC	X(15) VALUE "_DATA\PARAM.DAT".
+
+002350 01  W02-FID.
+
+       COPY CONTROL.ID.
+
+000300 COPY STOCK.ID.
+
+000160 COPY STKOLD.ID.
+
+000320 01  W12-DATE.
+000330     03  W12-TODAY       PIC  9(06).
+000340     03  W12-DATE-DMY REDEFINES W12-TODAY.
+000350         05  W12-DAY     PIC  9(02).
+000360         05  W12-MONTH   PIC  9(02).  
+000370         05  W12-YEAR    PIC  9(02).
+000380     03  W12-T-YMD       PIC  9(06). 
+000390     03  W12-DATE-YMD REDEFINES W12-T-YMD.
+000400         05  W12-YY      PIC  9(02).
+000410         05  W12-MM      PIC  9(02).
+000420         05  W12-DD      PIC  9(02).
+
+       COPY FUNCTION.WS.
+
+       LINKAGE SECTION.
+
+       COPY CHAIN.LS.
+
+      /
+000850 SCREEN SECTION.
+
+       COPY BLANK.CRT.
+
+000860 01  S00.
+000910     03  LINE  2 COLUMN 28 FOREGROUND-COLOR 15
+000920		       VALUE "STOCK CONVERTION PROGRAM".
+	   03  LINE  3 COLUMN  2
+		       FOREGROUND-COLOR 14 VALUE "STOCK FILE".
+000930     03  LINE  4 COLUMN  2 VALUE "Reading :".
+000950     03  LINE  6 COLUMN  2 VALUE "Writing :".
+
+001130 01  S05.
+001140	   03  LINE 18 COLUMN 12 FOREGROUND-COLOR 11
+001150		       VALUE "Convertion unsuccessfull !".
+001160	   03  LINE 19 COLUMN 12 FOREGROUND-COLOR 11
+001170                 VALUE "Reload files from last backup and rekey al
+001180-                      "l updates and transactions".
+001190	   03  LINE 20 COLUMN 12 FOREGROUND-COLOR 11
+001200                 VALUE "since creating the last backup disk/s".
+      /
+001230 PROCEDURE DIVISION USING LS-PARID LS-USER-ID.
+001220 AA000	       SECTION.
+001230 AA00.
+001270	     PERFORM ZA000.
+           IF WS-ERROR = 9
+	       GO TO AA50.
+001260       DISPLAY S00.
+001340 AA05.
+001350	     READ STKOLD
+               AT END
+010160	       GO TO AA10.
+	     DISPLAY STO-CODE AT 0412 WITH FOREGROUND-COLOR 11
+		     " " STO-DESC WITH FOREGROUND-COLOR 11.
+001600       PERFORM AW000.
+             GO TO AA05.
+001450 AA10.
+001350	     READ SPAOLD
+               AT END
+010160	       GO TO AA15.
+	     DISPLAY PRO-ITEM AT 0912 WITH FOREGROUND-COLOR 11
+		     " " PRO-COMMENT WITH FOREGROUND-COLOR 11.
+001600	     PERFORM AX000.
+	     GO TO AA10.
+
+       AA15.
+	     MOVE "7.01"	 TO STK-VER.
+	     PERFORM REWRITE-CONTROL THRU WRITE-CONTROL-EXIT.
+001830	     CLOSE STOCK
+		   STKOLD.
+004990	     CALL "_MSREMOVE" USING BY REFERENCE W02-STKOLD
+005000                              BY CONTENT LENGTH OF W02-STKOLD
+005030                              BY REFERENCE WS-STATUS.
+
+       AA45.
+001920	     EXIT PROGRAM.
+001930 AA50.
+001940       DISPLAY S05.
+001950       STOP RUN.
+
+       COPY LOCKED.RC2.
+
+      /
+      *    ****    READ FILES ROUTINES
+      *
+008180 AC000-READ              SECTION.
+
+       COPY CONTROL.RD.
+
+       COPY PARAM.RD.
+
+      /
+      *    ****    REWRITE AND WRITE FILES ROUTINES
+      *
+009850 AD000-WRITE             SECTION.
+
+       COPY CONTROL.WR.
+
+       COPY STOCK.WR.
+
+      /
+      *    THIS ROUTINE WRITES THE DETAILS TO THE NEW FILE.
+      *
+001960 AW000           SECTION.
+011840 AW01.
+000040	     MOVE STO-CODE	 TO STK-CODE.
+000050	     MOVE STO-ACODE	 TO STK-ACODE.
+000060	     MOVE STO-BIN	 TO STK-BIN.
+	     MOVE STO-ITM	 TO STK-ITM.
+000070	     MOVE STO-LDG	 TO STK-LDG.
+000080	     MOVE STO-DESC	 TO STK-DESC.
+	     MOVE STO-DESC2	 TO STK-DESC2.
+000090	     MOVE STO-QUANT	 TO STK-QUANT.
+000100	     MOVE STO-LEVEL	 TO STK-LEVEL.
+	     MOVE ZERO		 TO STK-UNIT
+				    STK-UNIT-2
+				    STK-UNIT-3
+				    STK-UNIT-4.
+000110	     MOVE STO-COST	 TO STK-COST.
+	     MOVE STO-PER	 TO STK-PER.
+	     MOVE SPACES	 TO STK-PER-2
+				    STK-PER-3
+				    STK-PER-4.
+000120	     MOVE STO-SELL	 TO STK-SELL.
+000130	     MOVE STO-CASH	 TO STK-CASH.
+000130	     MOVE STO-WSALE	 TO STK-WSALE.
+000130	     MOVE ZERO		 TO STK-SELL-2
+				    STK-CASH-2
+				    STK-WSALE-2
+				    STK-SELL-3
+				    STK-CASH-3
+				    STK-WSALE-3
+				    STK-SELL-4
+				    STK-CASH-4
+				    STK-WSALE-4.
+	     MOVE STO-PCOST	 TO STK-PCOST.
+000140	     MOVE STO-AVGE	 TO STK-AVGE.
+000150	     MOVE STO-ORD	 TO STK-ORD.
+000160	     MOVE STO-LTIME	 TO STK-LTIME.
+000170	     MOVE STO-MTD	 TO STK-MTD.
+000180	     MOVE STO-MTDC	 TO STK-MTDC.
+000190	     MOVE STO-MTDV	 TO STK-MTDV.
+000200	     MOVE STO-YTD	 TO STK-YTD.
+000210	     MOVE STO-YTDC	 TO STK-YTDC.
+000220	     MOVE STO-YTDV	 TO STK-YTDV.
+000230	     MOVE STO-WK1	 TO STK-WK1.
+000240	     MOVE STO-WK2	 TO STK-WK2.
+000250	     MOVE STO-WK3	 TO STK-WK3.
+000260	     MOVE STO-WK4	 TO STK-WK4.
+000230	     MOVE STO-MTH1	 TO STK-MTH1.
+000240	     MOVE STO-MTH2	 TO STK-MTH2.
+000250	     MOVE STO-MTH3	 TO STK-MTH3.
+000260	     MOVE STO-MAVG	 TO STK-MAVG.
+000270	     MOVE STO-MARKUP	 TO STK-MARKUP.
+000280	     MOVE STO-CMARKUP	 TO STK-CMARKUP.
+000280	     MOVE STO-WMARKUP	 TO STK-WMARKUP.
+000130	     MOVE ZERO		 TO STK-MARKUP-2
+				    STK-CMARKUP-2
+				    STK-WMARKUP-2
+				    STK-MARKUP-3
+				    STK-CMARKUP-3
+				    STK-WMARKUP-3
+				    STK-MARKUP-4
+				    STK-CMARKUP-4
+				    STK-WMARKUP-4.
+000290	     MOVE STO-ACT	 TO STK-ACT.
+000300	     MOVE STO-PUR	 TO STK-PUR.
+000310	     MOVE STO-DTE	 TO STK-DTE.
+000320	     MOVE STO-DISC	 TO STK-DISC.
+000330	     MOVE STO-IND	 TO STK-IND.
+000350	     MOVE STO-SUPP	 TO STK-SUPP.
+	     MOVE STO-PSUPP	 TO STK-PSUPP.
+000340	     MOVE STO-PACK	 TO STK-PACK.
+000360	     MOVE STO-GUAR	 TO STK-GUAR.
+000370	     MOVE STO-TAX	 TO STK-TAX.
+000380	     MOVE STO-XREF	 TO STK-XREF.
+	     MOVE STO-PLIST	 TO STK-PLIST.
+	     MOVE STO-QJOB	 TO STK-QJOB.
+	     MOVE STO-QPIC	 TO STK-QPIC.
+	     MOVE ZERO		 TO STK-PROC
+				    STK-PRO-START
+				    STK-PRO-START-T
+				    STK-PRO-END
+				    STK-PRO-END-T
+				    STK-PRO-PRICE
+				    STK-PRO-PRICE-2
+				    STK-PRO-PRICE-3
+				    STK-PRO-PRICE-4.
+	     MOVE SPACES	 TO STK-PROC
+				    STK-LINK.
+             DISPLAY STK-CODE AT 0612 WITH FOREGROUND-COLOR 14
+                     " " STK-DESC WITH FOREGROUND-COLOR 14.
+002310	     PERFORM WRITE-STOCK THRU WRITE-STOCK-EXIT.
+
+002440 AW999.
+002450       EXIT.
+      /
+002460 ZA000           SECTION.
+002470 ZA00.
+             PERFORM ZA55 THRU ZA60.
+	     MOVE LS-PARID	 TO WS-PARID.
+	     MOVE LS-TODAY-DDMMYY
+				 TO TODAY-DDMMYY.
+044150	     DISPLAY CLR-SCREEN.
+      *
+      *    ****    S E T   U P   T H E   F U N C T I O N   K E Y S
+      *
+	     MOVE 1		 TO USER-ACTION
+				    USER-SETTING.
+      *
+      *    ESC, F1 to F10 keys
+      *
+	     MOVE ZERO		 TO USER-NUMBER.
+	     MOVE 11		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *
+      *    PAGE-UP AND PAGE-DOWN KEYS
+      *
+	     MOVE 53		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+      *
+      *    ****    A C T I V A T E   M O U S E
+      *
+	     MOVE 64		 TO MOUSE-FUNC.
+	     MOVE 1		 TO MOUSE-PARAM.
+	     CALL X"AF" USING MOUSE-FUNC
+			      MOUSE-PARAM.
+	   IF MOUSE-FUNC NOT = 255
+	       MOVE "Y"		 TO MOUSE-ATTACHED
+	       MOVE 66		 TO MOUSE-FUNC
+	       MOVE 0		 TO MOUSE-PARAM
+	       CALL X"AF" USING MOUSE-FUNC
+				MOUSE-PARAM
+	   ELSE
+	       GO TO ZA00A.
+      *
+      *    ****    S E T   M O U S E   K E Y   T O   A C T
+      * 	   A S	 F U N C T I O N   K E Y
+      *
+	     MOVE 3		 TO USER-ACTION.
+	     MOVE 27		 TO USER-NUMBER.
+	     MOVE 2		 TO USER-KEYS.
+	     CALL X"AF" USING SET-BIT-PAIRS, USER-KEY-CONTROL.
+       ZA00A.
+044230       MOVE 3              TO WS-PARKEY.
+044240       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+044260	     MOVE PAR-EXT	 TO W02-PTH2
+				    W02-PTH22
+				    W02-PTH22O.
+       ZA01B.
+044580       MOVE 1              TO WS-PARKEY.
+044590       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+044600       MOVE PAR-DMY        TO W12-TODAY.
+044610       MOVE PAR-YMD        TO W12-T-YMD.
+004990	     CALL "_MSRENAME" USING BY REFERENCE W02-STOCKF
+005000                              BY CONTENT LENGTH OF W02-STOCKF
+004990                              BY REFERENCE W02-STKOLD
+005000                              BY CONTENT LENGTH OF W02-STKOLD
+005030                              BY REFERENCE WS-STATUS.
+042240       OPEN INPUT STKOLD.
+042250	   IF WS-STAT1 = "9"
+               IF FLE-LOCKED
+042260             GO TO ZA200.
+003050     IF WS-STATUS NOT = "00"
+003060         MOVE 72 TO WS-F-ERROR
+003070         PERFORM OPEN-ERROR.
+042240       OPEN OUTPUT STOCK.
+042250     IF WS-STAT1 = "9"
+               IF FLE-LOCKED
+042260             GO TO ZA200.
+003050     IF WS-STATUS NOT = "00"
+003060         MOVE 22 TO WS-F-ERROR
+003070         PERFORM OPEN-ERROR.
+044650	     MOVE 3		 TO WS-NETKEY.
+044660       PERFORM READ-CONTROL THRU READ-CONTROL-EXIT.
+	     GO TO ZA999-EXIT.
+       ZA49.
+             DISPLAY "Too many files OPEN" AT 0812
+                      WITH FOREGROUND-COLOR 14.
+             DISPLAY "Check the FILES option in CONFIG.SYS" AT 1012.
+             DISPLAY "Press any key to continue" AT 1212.
+             ACCEPT WS-OPTION AT 1238 WITH FOREGROUND-COLOR 15.
+             GO TO ZA205.
+039850 ZA50.
+           IF WS-F-ERROR = 22
+	       MOVE "STOCK file" TO WS-FILE.
+039980	     DISPLAY "Rebuild " AT 0812
+039990                WS-FILE WITH FOREGROUND-COLOR 14.
+040000       DISPLAY "Press any key to continue" AT 1012.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+040020 ZA51.
+040030       EXIT PROGRAM.
+       ZA55.
+041220       MOVE 1              TO WS-S1.
+021870	     MOVE SPACES	 TO WS-MID-LNE.
+041240 ZA60.
+041250       MOVE WS-G1 TO WS-TCHR (WS-S1) WS-BCHR (WS-S1).
+             MOVE WS-G8 TO WS-TCH  (WS-S1) WS-BCH  (WS-S1).
+041260     IF WS-S1 < 80
+041270         ADD 1 TO WS-S1
+041280         GO TO ZA60.
+             MOVE WS-G9          TO WS-TCH  (1).
+             MOVE WS-G10         TO WS-TCH  (80).
+             MOVE WS-G11         TO WS-BCH  (1).
+             MOVE WS-G12         TO WS-BCH  (80).
+             MOVE WS-G14         TO WS-TCHR (1)  WS-BCHR (1).
+             MOVE WS-G13         TO WS-TCHR (80) WS-BCHR (80).
+021930       MOVE WS-G2          TO WS-TCHR (18) WS-TCHR (49)
+021940                              WS-TCHR (60) WS-TCHR (70).
+021950       MOVE WS-G3          TO WS-MCHR (18) WS-MCHR (49)
+021960                              WS-MCHR (60) WS-MCHR (70)
+				    WS-MCHR (1)  WS-MCHR (80).
+021970       MOVE WS-G4          TO WS-BCHR (18) WS-BCHR (49)
+021980                              WS-BCHR (60) WS-BCHR (70).
+	     MOVE LS-COMPANY	 TO WS-TOP-COMP.
+	   IF LS-USER = LS-PTH15
+	       MOVE "SupervisorÄ"  TO WS-WRKHD
+	   ELSE
+	       MOVE "Workstation"  TO WS-WRKHD
+	       MOVE LS-USER	   TO WS-WRKST.
+044790 ZA200.
+044800       DISPLAY "Files locked - Try later" AT 2312
+044810                WITH FOREGROUND-COLOR 14
+                     " " WS-STATUS WITH FOREGROUND-COLOR 15.
+044820       DISPLAY "Press any key" AT 2512 
+044830		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+044840	     ACCEPT WS-OPTION AT 2526
+		    WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15 AUTO.
+       ZA205.
+             EXIT PROGRAM.
+003080 ZA999-EXIT.
+003090       EXIT.
+      /
+003100 ZB000-ERROR           SECTION.
+      
+041480 OPEN-ERROR.
+041490       DISPLAY CLR-SCREEN.
+041500       DISPLAY "Open error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041480 READ-ERROR.
+041490       DISPLAY CLR-SCREEN.
+041500       DISPLAY "Read error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041520 WRITE-ERROR.
+041530       DISPLAY CLR-SCREEN.
+041540       DISPLAY "Write error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041560 DISPLAY-FILE-NAME.
+041610	   IF WS-F-ERROR = 2
+041620         MOVE W02-NETWORK  TO WS-FILE
+041630	       MOVE WS-NETKEY	 TO WS-KEY
+041840	   ELSE
+041850	   IF WS-F-ERROR = 15
+041860         MOVE WS-PARID     TO WS-FILE
+041870         MOVE WS-PARKEY    TO WS-KEY
+041840	   ELSE
+041850	   IF WS-F-ERROR = 22
+041860         MOVE W02-STOCKF   TO WS-FILE
+041870         MOVE ZERO         TO WS-KEY
+	       MOVE STK-CODE	 TO WS-KEYX
+041640     ELSE
+041650     IF WS-F-ERROR = 72
+041660         MOVE W02-STKOLD   TO WS-FILE
+041670	       MOVE ZERO	 TO WS-KEY.
+041880	   IF WS-STATUS = "10"
+041890         MOVE "End of FILE"
+                                 TO WS-STAT-MESSAGE
+041900     ELSE
+041910     IF WS-STATUS = "22"
+041920         MOVE "Duplicate record number" 
+                                 TO WS-STAT-MESSAGE
+041930     ELSE
+041940     IF WS-STATUS = "23"
+041950         MOVE "Invalid record number" 
+                                 TO WS-STAT-MESSAGE
+041960     ELSE
+041970     IF WS-STATUS = "24"
+041980         MOVE "DISK full"  TO WS-STAT-MESSAGE
+041990     ELSE
+042000     IF WS-STATUS = "30"
+042010         MOVE "DISK error" TO WS-STAT-MESSAGE
+042020     ELSE
+042030     IF WS-STATUS = "94"
+042040         MOVE "FILE locked" TO WS-STAT-MESSAGE.
+045380       DISPLAY "File - " AT 1012 WS-FILE WITH FOREGROUND-COLOR 11.
+045390       DISPLAY "Status " AT 1212 
+                      WS-STATUS WITH FOREGROUND-COLOR 11
+                     ": " WS-STAT-MESSAGE WITH FOREGROUND-COLOR 14.
+045400     IF WS-STATUS NOT = "94" 
+045410         DISPLAY "Key    " AT 1412 
+                        WS-KEY WITH FOREGROUND-COLOR 11
+                        " " WS-KEYX WITH FOREGROUND-COLOR 11
+045420         DISPLAY "Reverse backup or contact program Support"
+                        AT 1612.
+045440         DISPLAY "Please make a note of these details" AT 1812.
+042170       STOP RUN.

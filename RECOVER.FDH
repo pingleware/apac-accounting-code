@@ -1,0 +1,284 @@
+      /*****************************************************************
+      *                                                                *
+      *    RECOVERY FILE.                                              *
+      *                                                                *
+      *      THIS FILE IS USED FOR RECOVERY PURPOSES IN THE APAC       *
+      *    BUSINESS SYSTEM.                                            *
+      *                                                                *
+      *      EACH RECORD CONTAINS THE FILE ID OF THE RECORD THAT HAS   *
+      *    BEEN WRITTEN AND THE RECORD NUMBER (ACTUAL KEY) OF THE      *
+      *    RECORD.                                                     *
+      *                                                                *
+      *      ALL RECORDS OF ANY OF THE BUSINESS FILES THAT IS GOING    *
+      *    TO BE ALTERED HAS THE DETAILS OF THE RECORD WRITTEN TO THE  *
+      *    RECOVERY FILE PRIOR TO BEING CHANGED.                       *
+      *                                                                *
+      *      SHOULD THERE BE A SYSTEM FAILURE THIS FILE IS READ AND    *
+      *    THE DETAILS OF THE RECORDS ARE REWRITTEN TO THE VARIOUS     *
+      *    FILES RESTORING THEM TO THEIR ORIGINAL STATE                *
+      *                                                                *
+      ******************************************************************
+000010 FD  RECOVER  LABEL RECORD STANDARD
+000020              VALUE OF FILE-ID W02-RECOVER.
+000030 01  REC-RECORD.
+      *
+      *    ****    FILE ID     01 = PARAM            126 Bytes
+      * 		       02 = DEBTOR	     620 Bytes
+      * 		       03 = DBFOTO	     112 Bytes
+      * 		       04 = DBTRAN	      82 Bytes
+      * 		       05 = STOCKF	     512 Bytes
+      * 		       06 = CRDMEM	      70 Bytes
+      * 		       07 = CREDIT	     300 Bytes
+      * 		       08 = CRTRAN	      86 Bytes
+      * 		       09 = GARTEE	     146 Bytes
+      * 		       10 = PORDER	     190 Bytes
+      * 		       11 = ASSETT	     128 Bytes
+      * 		       12 = GACCNT	     270 Bytes
+      * 		       13 = GLTRAN	      80 Bytes
+      * 		       14 = CRDMEM
+      * 		       15 = GLINST	      49 Bytes
+      * 		       16 = AUDITF	      46 Bytes
+      * 		       17 = SORDER	     142 Bytes
+      * 		       18 = RECOVERY
+      * 		       19 = TXTRAN	     192 Bytes
+      * 		       20 = SPARTS	     750 Bytes
+      * 		       21 = JOBHDR	     424 Bytes
+      * 		       22 = INVOIC	     182 Bytes
+      * 		       23 = LAYBUY	     610 Bytes
+      * 		       24 = JOBAUD	     144 Bytes
+      * 		       25 = JOBCST	     146 Bytes
+      * 		       26 = JOBREQ	     202 Bytes
+      * 		       27 = JOBRMK	     166 Bytes
+      * 		       28 = JOBWAR	      82 Bytes
+      * 		       29 = CASH BOOK	     138 Bytes
+      * 		       30 = ROUTE (STD DEL)   48 Bytes
+      * 		       31 = CASH BOOK TRAN.
+      *				    (Point-of-Sale)   76 Bytes
+      * 		       32 = JOBDET	      48 Bytes
+      * 		       33 = DEBDEP	      46 Bytes
+      * 		       34 = PSLIP	     156 Bytes
+      * 		       35 = SLIP	     156 Bytes
+      * 		       36 = CHEQUE	      62 Bytes
+      * 		       37 = SHARED	     190 Bytes
+      * 		       38 = DEPARTMENT	     300 Bytes
+      * 		       39 = NETWORK	     190 Bytes
+      * 		       40 = LEDTRF	      66 Bytes
+      * 		       41 = WORKSTAT	      20 Bytes
+      * 		       42 = WORDER	     142 Bytes
+      * 		       43 = CARDEX	     126 Bytes
+      * 		       44 = PDCHEQ	      78 Bytes
+      * 		       45 = GPDHEQ	     618 Bytes
+      * 		       46 = STKDEX	      74 Bytes
+      * 		       47 = DEBALT	      60 Bytes
+      *			       48 = CORDER	     158 Bytes
+      * 		       49 = STKALT	      50 Bytes
+      * 		       50 =  **** AVAILABLE ****
+      * 		       51 = WARHSE	     176 Bytes
+      * 		       52 = WSTOCK	      62 Bytes
+      * 		       53 = DEBORD	      68 Bytes
+      * 		       54 = VEHICLE	     102 Bytes
+      * 		       55 = VEHSTK	      64 Bytes
+      * 		       56 = PURDEX	     106 Bytes
+      * 		       57 = ITEMS	      64 Bytes
+      * 		       58 = JCPHST	     326 Bytes
+      *			       59 = JCPLIN	      94 Bytes
+      *			       60 = JOBSTAT	      46 Bytes
+      *			       61 = JOBTECH	     174 Bytes
+      * 		       62 = TRFRIN	     148 Bytes
+      * 		       63 = TRFOUT	     148 Bytes
+      * 		       99 = TRANSACTION COMPLETED
+000040	   03  REC-FILE        PIC 9(02).
+      *
+      * 	ORIGINAL ACTION 	    RECOVERY
+      *        ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿    ÚÄÄÄÄÄÄÄÄÄ¿
+      *        ³0 = RECORD CHANGED    ³    ³(REWRITE)³
+      *        ³1 = RECORD WAS ADDED  ³    ³(DELETE) ³
+      *        ³2 = RECORD WAS DELETED³    ³(WRITE)  ³
+      *        ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ    ÀÄÄÄÄÄÄÄÄÄÙ
+000050	   03  REC-TYPE        PIC  9(01).
+000060     03  REC-KEY         PIC  9(06) COMP-5.
+      *
+      *    **** EACH UPDATE PROGRAM CREATES A NEW FILE WHICH WILL
+      *         START REC-TRAN AT 1 AND INCREMENT WITH EACH UPDATE
+      *
+000070     03  REC-TRAN        PIC  9(07) COMP-3.
+000080     03  REC-DETAIL.
+000090         05  REC-PARAM   PIC  X(126).
+000100	       05  FILLER      PIC  X(624).
+000110     03  REC-DETAIL2 REDEFINES REC-DETAIL.
+000120	       05  REC-DEBTOR  PIC  X(620).
+000130	       05  FILLER      PIC  X(130).
+000140     03  REC-DETAIL3 REDEFINES REC-DETAIL.
+000180	       05  REC-DBFOTO  PIC  X(112).
+000160	       05  FILLER      PIC  X(638).
+000170     03  REC-DETAIL4 REDEFINES REC-DETAIL.
+000180	       05  REC-DBTRAN  PIC  X(82).
+000190	       05  FILLER      PIC  X(668).
+000200     03  REC-DETAIL5 REDEFINES REC-DETAIL.
+000210	       05  REC-STOCKF  PIC  X(512).
+000220	       05  FILLER      PIC  X(238).
+000230	   03  REC-DETAIL5A REDEFINES REC-DETAIL.
+000240         05  REC-STOCKM  PIC  X(190).
+000250	       05  FILLER      PIC  X(560).
+000260     03  REC-DETAIL6 REDEFINES REC-DETAIL.
+000270	       05  REC-CRDMEM  PIC  X(70).
+000280	       05  FILLER      PIC  X(680).
+000290     03  REC-DETAIL7 REDEFINES REC-DETAIL.
+000300	       05  REC-CREDIT  PIC  X(300).
+000310	       05  FILLER      PIC  X(450).
+000320     03  REC-DETAIL8 REDEFINES REC-DETAIL.
+000330	       05  REC-CRTRAN  PIC  X(86).
+000340	       05  FILLER      PIC  X(664).
+000350     03  REC-DETAIL9 REDEFINES REC-DETAIL.
+	       05  REC-GARTEE  PIC  X(146).
+000360	       05  FILLER      PIC  X(604).
+000370     03  REC-DETAIL10 REDEFINES REC-DETAIL.
+000380	       05  REC-PORDER  PIC  X(190).
+000390	       05  FILLER      PIC  X(560).
+	   03  REC-DETAIL11 REDEFINES REC-DETAIL.
+	       05  REC-ASSETT  PIC  X(128).
+	       05  FILLER      PIC  X(622).
+000420	   03  REC-DETAIL12 REDEFINES REC-DETAIL.
+000430	       05  REC-GACCNT  PIC  X(270).
+000440	       05  FILLER      PIC  X(480).
+000450	   03  REC-DETAIL13 REDEFINES REC-DETAIL.
+000460	       05  REC-GLTRAN  PIC  X(80).
+000470	       05  FILLER      PIC  X(670).
+000450	   03  REC-DETAIL14 REDEFINES REC-DETAIL.
+000470	       05  FILLER      PIC  X(750).
+000480     03  REC-DETAIL15 REDEFINES REC-DETAIL.
+000490	       05  REC-GLINST  PIC  X(49).
+000500	       05  FILLER      PIC  X(701).
+000510     03  REC-DETAIL16 REDEFINES REC-DETAIL.
+000520	       05  REC-AUDITF  PIC  X(46).
+000530	       05  FILLER      PIC  X(704).
+000540     03  REC-DETAIL17 REDEFINES REC-DETAIL.
+000550	       05  REC-SORDER  PIC  X(142).
+000560	       05  FILLER      PIC  X(608).
+000570	   03  REC-DETAIL18 REDEFINES REC-DETAIL.
+000590	       05  FILLER      PIC  X(750).
+000570	   03  REC-DETAIL19 REDEFINES REC-DETAIL.
+000580	       05  REC-TXTRAN  PIC  X(192).
+000590	       05  FILLER      PIC  X(558).
+000600     03  REC-DETAIL20 REDEFINES REC-DETAIL.
+000610	       05  REC-SPARTS  PIC  X(750).
+000630	   03  REC-DETAIL21 REDEFINES REC-DETAIL.
+	       05  REC-JOBHDR  PIC  X(424).
+000640	       05  FILLER      PIC  X(326).
+000650	   03  REC-DETAIL22 REDEFINES REC-DETAIL.
+000660	       05  REC-INVOIC  PIC  X(182).
+	       05  FILLER      PIC  X(568).
+000670     03  REC-DETAIL23 REDEFINES REC-DETAIL.
+000680         05  REC-LAYBUY  PIC  X(610).
+000690	       05  FILLER      PIC  X(140).
+000700	   03  REC-DETAIL24 REDEFINES REC-DETAIL.
+000710	       05  REC-JOBAUD  PIC  X(144).
+000720	       05  FILLER      PIC  X(606).
+000400	   03  REC-DETAIL25 REDEFINES REC-DETAIL.
+	       05  REC-JOBCST  PIC  X(146).
+000410	       05  FILLER      PIC  X(604).
+000400	   03  REC-DETAIL26 REDEFINES REC-DETAIL.
+	       05  REC-JOBREQ  PIC  X(202).
+000410	       05  FILLER      PIC  X(558).
+000400	   03  REC-DETAIL27 REDEFINES REC-DETAIL.
+	       05  REC-JOBRMK  PIC  X(166).
+000410	       05  FILLER      PIC  X(584).
+000400	   03  REC-DETAIL28 REDEFINES REC-DETAIL.
+	       05  REC-JOBWAR  PIC  X(82).
+000410	       05  FILLER      PIC  X(668).
+000730	   03  REC-DETAIL29 REDEFINES REC-DETAIL.
+000740	       05  REC-CASHBK  PIC  X(138).
+000750	       05  FILLER      PIC  X(612).
+000760	   03  REC-DETAIL30 REDEFINES REC-DETAIL.
+	       05  REC-ROUTE   PIC  X(48).
+000780	       05  FILLER      PIC  X(702).
+000760	   03  REC-DETAIL30A REDEFINES REC-DETAIL.
+	       05  REC-CASHTR  PIC  X(76).
+000780	       05  FILLER      PIC  X(674).
+000760	   03  REC-DETAIL32 REDEFINES REC-DETAIL.
+	       05  REC-JOBDET  PIC  X(48).
+000780	       05  FILLER      PIC  X(702).
+000760	   03  REC-DETAIL33 REDEFINES REC-DETAIL.
+	       05  REC-DEBDEP  PIC  X(46).
+000780	       05  FILLER      PIC  X(704).
+000760	   03  REC-DETAIL34 REDEFINES REC-DETAIL.
+	       05  REC-PSLIP   PIC  X(156).
+000780	       05  FILLER      PIC  X(594).
+000760	   03  REC-DETAIL35 REDEFINES REC-DETAIL.
+	       05  REC-SLIP    PIC  X(156).
+000780	       05  FILLER      PIC  X(594).
+000790     03  REC-DETAIL36 REDEFINES REC-DETAIL.
+000800         05  REC-CHEQUE  PIC  X(62).
+000810	       05  FILLER      PIC  X(688).
+000790     03  REC-DETAIL38 REDEFINES REC-DETAIL.
+000800	       05  REC-DEPART  PIC  X(300).
+000810	       05  FILLER      PIC  X(450).
+000820     03  REC-DETAIL39 REDEFINES REC-DETAIL.
+000830	       05  REC-NETWORK PIC  X(190).
+000840	       05  FILLER      PIC  X(560).
+000820	   03  REC-DETAIL40 REDEFINES REC-DETAIL.
+000830	       05  REC-LEDTRF  PIC  X(66).
+000840	       05  FILLER      PIC  X(684).
+000820	   03  REC-DETAIL41 REDEFINES REC-DETAIL.
+000830	       05  REC-WORKST  PIC  X(146).
+000840	       05  FILLER      PIC  X(604).
+000820	   03  REC-DETAIL43 REDEFINES REC-DETAIL.
+000830	       05  REC-CARDEX  PIC  X(126).
+000840	       05  FILLER      PIC  X(624).
+000820	   03  REC-DETAIL44 REDEFINES REC-DETAIL.
+000830	       05  REC-PDCHEQ  PIC  X(78).
+000840	       05  FILLER      PIC  X(672).
+000820	   03  REC-DETAIL45 REDEFINES REC-DETAIL.
+000830	       05  REC-GPDCHQ  PIC  X(618).
+000840	       05  FILLER      PIC  X(132).
+000820	   03  REC-DETAIL46 REDEFINES REC-DETAIL.
+000830	       05  REC-STKDEX  PIC  X(74).
+000840	       05  FILLER      PIC  X(676).
+000820	   03  REC-DETAIL47 REDEFINES REC-DETAIL.
+000830	       05  REC-DEBALT  PIC  X(60).
+000840	       05  FILLER      PIC  X(690).
+000400	   03  REC-DETAIL48 REDEFINES REC-DETAIL.
+	       05  REC-CORDER  PIC  X(158).
+000410	       05  FILLER      PIC  X(592).
+000820	   03  REC-DETAIL49 REDEFINES REC-DETAIL.
+000830	       05  REC-STKALT  PIC  X(62).
+000840	       05  FILLER      PIC  X(688).
+000400	   03  REC-DETAIL51 REDEFINES REC-DETAIL.
+	       05  REC-WARHSE  PIC  X(176).
+000410	       05  FILLER      PIC  X(574).
+000400	   03  REC-DETAIL52 REDEFINES REC-DETAIL.
+	       05  REC-WSTOCK  PIC  X(62).
+000410	       05  FILLER      PIC  X(688).
+000400	   03  REC-DETAIL53 REDEFINES REC-DETAIL.
+	       05  REC-DEBORD  PIC  X(68).
+000410	       05  FILLER      PIC  X(682).
+000400	   03  REC-DETAIL54 REDEFINES REC-DETAIL.
+	       05  REC-VEHICLE PIC  X(102).
+000410	       05  FILLER      PIC  X(648).
+000400	   03  REC-DETAIL55 REDEFINES REC-DETAIL.
+	       05  REC-VEHSTK  PIC  X(64).
+000410	       05  FILLER      PIC  X(686).
+000450	   03  REC-DETAIL56 REDEFINES REC-DETAIL.
+000460	       05  REC-PURDEX  PIC  X(106).
+000470	       05  FILLER      PIC  X(644).
+000450	   03  REC-DETAIL57 REDEFINES REC-DETAIL.
+000460	       05  REC-ITEMS   PIC  X(64).
+000470	       05  FILLER      PIC  X(686).
+000450	   03  REC-DETAIL58 REDEFINES REC-DETAIL.
+000460	       05  REC-JCPHST  PIC  X(326).
+000470	       05  FILLER      PIC  X(424).
+000450	   03  REC-DETAIL59 REDEFINES REC-DETAIL.
+000460	       05  REC-JCPLIN  PIC  X(92).
+000470	       05  FILLER      PIC  X(658).
+000450	   03  REC-DETAIL60 REDEFINES REC-DETAIL.
+000460	       05  REC-JOBSTAT PIC  X(46).
+000470	       05  FILLER      PIC  X(704).
+000400	   03  REC-DETAIL61 REDEFINES REC-DETAIL.
+	       05  REC-JOBTECH PIC  X(174).
+000410	       05  FILLER      PIC  X(576).
+000350	   03  REC-DETAIL62 REDEFINES REC-DETAIL.
+	       05  REC-TRFRIN  PIC  X(148).
+000360	       05  FILLER      PIC  X(602).
+000350	   03  REC-DETAIL63 REDEFINES REC-DETAIL.
+	       05  REC-TRFOUT  PIC  X(148).
+000360	       05  FILLER      PIC  X(602).

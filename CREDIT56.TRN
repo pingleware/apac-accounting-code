@@ -1,0 +1,84 @@
+      *
+      *    G E T   A   C R E D I T O R   T R A N S A C T I O N
+      *    R E C O R D
+      *
+      *    PERFORM THIS ROUTINE WITH THE TRANSACTION CODE IN W90-CODE
+      *
+      *    ON EXITING THE TRANSACTION CODE DETAILS ARE IN W00-
+      *    WHILE W90-TRNKEY CONTAINS THE KEY TO THE PARAMETER FILE
+      *    WHERE THIS TRANSACTION CODE IS FOUND AND W90-TS IS THE
+      *    TRANSACTION CODE SUBSCRIPT IN THE RECORD.
+      *
+       GET-CREDITOR-TRAN-RECORD SECTION 61.
+
+       GET-CREDITOR-TRAN.
+             ADD 381 W90-CODE    GIVING W90-RESULT.
+             DIVIDE W90-RESULT BY 2
+                                 GIVING W90-TRNKEY
+                                 REMAINDER W90-TS.
+             ADD 1               TO W90-TS.
+
+       GET-CREDITOR-TRAN-CODE.
+             MOVE W90-TRNKEY     TO WS-PARKEY.
+             PERFORM AY01 THRU AY59.
+
+       STORE-CREDITOR-TRAN-DESC.
+             MOVE PAR-C-ABR (W90-TS)
+                                 TO W00-C-ABR.
+             MOVE PAR-C-DESC (W90-TS)
+                                 TO W00-C-DESC.
+             MOVE PAR-C-ACT (W90-TS)
+                                 TO W00-C-ACT.
+             MOVE PAR-C-CODE (W90-TS)
+                                 TO W00-C-CODE.
+             MOVE PAR-C-GL   (W90-TS)
+                                 TO W00-C-GL.
+
+       STORE-CREDITOR-TRAN-STATS.
+             MOVE PAR-C-DAY  (W90-TS)
+                                 TO W00-C-DAY.
+             MOVE PAR-C-VAL  (W90-TS)
+                                 TO W00-C-VAL.
+             MOVE PAR-C-MTD  (W90-TS)
+                                 TO W00-C-MTD.
+             MOVE PAR-C-MTDV (W90-TS)
+                                 TO W00-C-MTDV.
+             MOVE PAR-C-YTD  (W90-TS)
+                                 TO W00-C-YTD.
+             MOVE PAR-C-YTDV (W90-TS)
+                                 TO W00-C-YTDV.
+
+       GET-CREDITOR-TRAN-EXIT.
+             EXIT.
+
+       GET-CREDITOR-TRAN-DESC SECTION 61.
+
+       GET-CRED-TRAN-DESC.
+             PERFORM GET-CREDITOR-TRAN.
+             MOVE W90-TRNKEY     TO WS-PARKEY.
+             PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+             PERFORM STORE-CREDITOR-TRAN-DESC.
+
+       GET-CRED-TRAN-DESC-EXIT.
+             EXIT.
+      
+       UPDATE-TRAN-RECORD SECTION 5.
+
+       UPDATE-TRAN-CODE.
+             MOVE W90-TRNKEY     TO WS-PARKEY.
+             PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+             MOVE W00-C-ABR      TO PAR-C-ABR  (W90-TS).
+             MOVE W00-C-DESC     TO PAR-C-DESC (W90-TS).
+             MOVE W00-C-ACT      TO PAR-C-ACT  (W90-TS).
+             MOVE W00-C-CODE     TO PAR-C-CODE (W90-TS).
+             MOVE W00-C-GL       TO PAR-C-GL   (W90-TS).
+             MOVE W00-C-DAY      TO PAR-C-DAY  (W90-TS).
+             MOVE W00-C-VAL      TO PAR-C-VAL  (W90-TS).
+             MOVE W00-C-MTD      TO PAR-C-MTD  (W90-TS).
+             MOVE W00-C-MTDV     TO PAR-C-MTDV (W90-TS).
+             MOVE W00-C-YTD      TO PAR-C-YTD  (W90-TS).
+             MOVE W00-C-YTDV     TO PAR-C-YTDV (W90-TS).
+             PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+
+       UPDATE-CREDITOR-TRAN-EXIT.
+             EXIT.

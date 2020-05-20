@@ -1,0 +1,14 @@
+       01 G-001 PIC X(10).
+       01 G-002 PIC X(40).
+       01 G-003 PIC Z9/99 VALUE ZERO.
+       01 G-004 PIC Z(6)9 VALUE ZERO.
+       01 G-005 PIC X.
+       01 G-006 PIC Z(4)9 VALUE ZERO.
+       01 G-007 PIC X.
+       01 G-008 PIC ZZ9.99 VALUE ZERO.
+       01 G-009 PIC 9 VALUE ZERO.
+       01 G-010 PIC Z(4)9 VALUE ZERO.
+       01 G-011 PIC Z(4)9 VALUE ZERO.
+       01 G-012 PIC X(12).
+       01 G-013 PIC X(12).
+       01 G-014 PIC X.

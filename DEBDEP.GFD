@@ -1,0 +1,20 @@
+      /
+000010 FD  DEBDEP    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DEBDEP.
+000030 01  DBD-RECORD1.
+000040	   03  DBD-ACNO        PIC  X(06).
+	   03  DBD-DEPT-CODES.
+	       05  DBD-DEPT-CODE OCCURS 10.
+		   07  DBD-DEPT-CDE
+			       PIC  X(04).
+	   03  DBD-DEP-CODES REDEFINES DBD-DEPT-CODES.
+	       05  DBD-DCDE-1  PIC  X(04).
+	       05  DBD-DCDE-2  PIC  X(04).
+	       05  DBD-DCDE-3  PIC  X(04).
+	       05  DBD-DCDE-4  PIC  X(04).
+	       05  DBD-DCDE-5  PIC  X(04).
+	       05  DBD-DCDE-6  PIC  X(04).
+	       05  DBD-DCDE-7  PIC  X(04).
+	       05  DBD-DCDE-8  PIC  X(04).
+	       05  DBD-DCDE-9  PIC  X(04).
+	       05  DBD-DCDE-10 PIC  X(04).

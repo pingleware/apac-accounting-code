@@ -1,0 +1,37 @@
+009340 01  S-DEB.
+009350	   03  LINE  2 COLUMN 28 FOREGROUND-COLOR 15
+009360				 VALUE "DEBTOR LOOKUP (".
+	   03	       COLUMN 43 FOREGROUND-COLOR 5 HIGHLIGHT
+				 PIC 99/99/9999 FROM WS-HIST-DATE.
+	   03	       COLUMN 53 FOREGROUND-COLOR 7 HIGHLIGHT
+				 VALUE ")".
+
+009370     03  LINE  3 COLUMN  2 VALUE "Starting Name >".
+009380     03          COLUMN 57 VALUE  "<".
+009390     03  LINE  4 COLUMN  2 REVERSE-VIDEO VALUE 
+009400         "Ac/No  Customer name                               Balan
+009410-        "ce    Arrears    Limit".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออัอออออออออออออออออออออออออ
+      -        "อออออออออออออออัอออออออออออัออออออออออัอออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออฯอออออออออออออออออออออออออ
+      -        "อออออออออออออออฯอออออออออออฯออออออออออฯอออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009440     03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE 
+009450       "Key in at least the first character of the name or press".
+009460     03          COLUMN 59 FOREGROUND-COLOR 14 VALUE "Esc".
+009470     03          COLUMN 62 FOREGROUND-COLOR 7 VALUE " to exit".
+009480	   03  LINE 25 COLUMN  2 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 1 VALUE "Pressing '".
+009490	   03	       COLUMN 12 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 14 VALUE "ENTER".
+009500	   03	       COLUMN 17 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 1 VALUE
+009510                           "' key only, will start from the beginn
+009520-                          "ing of the debtor file".
+009530 01  SA-DEB.
+009540	   03  LINE  3 COLUMN 17 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009550                           PIC  X(40) USING W40-NAME AUTO.

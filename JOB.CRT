@@ -1,0 +1,43 @@
+010020 01  S30.
+010030     03  LINE  2 COLUMN 36 FOREGROUND-COLOR 15 
+010040                           VALUE "JOB CARD".
+010050     03  LINE  3 COLUMN  2 VALUE "Ac No".
+010060     03          COLUMN 15 VALUE "Name".
+	   03	       COLUMN 20 BACKGROUND-COLOR 5
+				 PIC  X(40) FROM WS-SPACE.
+010070	   03	       COLUMN 61 VALUE "Ord Noฐ".
+	   03	       COLUMN 68 BACKGROUND-COLOR 5
+				 PIC  X(12) FROM WS-SPACE.
+010080     03  LINE  4 COLUMN  2 VALUE "Tech.".
+	   03	       COLUMN 11 BACKGROUND-COLOR 5
+				 PIC  X(02) FROM WS-SPACE.
+	   03	       COLUMN 61 VALUE "Tel.".
+	   03	       COLUMN 66 BACKGROUND-COLOR 5
+				 PIC  X(14) FROM WS-SPACE.
+010090	   03  LINE  5 COLUMN  2 VALUE "Job No".
+	   03	       COLUMN 10 BACKGROUND-COLOR 0
+				 PIC  X(08) FROM WS-SPACE.
+	   03	       COLUMN 20 VALUE "Contact".
+	   03	       COLUMN 29 BACKGROUND-COLOR 5
+				 PIC  X(14) FROM WS-SPACE.
+010100	   03	       COLUMN 65 VALUE "Date".
+	   03	       COLUMN 70 BACKGROUND-COLOR 5
+				 PIC  X(10) FROM WS-SPACE.
+009370	   03  LINE  6 COLUMN  2 REVERSE-VIDEO VALUE "Item Code      I".
+009380	   03	       COLUMN 18 REVERSE-VIDEO VALUE "TM Description  ".
+009390     03          COLUMN 33 REVERSE-VIDEO VALUE "                ".
+009400     03          COLUMN 49 REVERSE-VIDEO VALUE "  Quantity ".
+009410     03          COLUMN 60 REVERSE-VIDEO VALUE "Unit Price  ".
+009420     03          COLUMN 72 REVERSE-VIDEO VALUE "Extended".
+009160	   03  LINE  7 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออออออออออัอออัอออออออออออออ
+      -        "ออออออออออออออออัออออออออัอออออออออัออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 19 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออออออออออฯอออฯอออออออออออออ
+      -        "ออออออออออออออออฯออออออออฯอออออออออฯออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+010190	   03  LINE 20 COLUMN  3 VALUE "Sub Total ".
+010200	   03  LINE 21 COLUMN  3 VALUE "Discount  ".
+010210     03  LINE 22 COLUMN  3 VALUE "T A X -VAT".
+010230	   03  LINE 23 COLUMN  3 VALUE "AMOUNT DUE".

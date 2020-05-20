@@ -1,0 +1,19 @@
+009340 01  S-ROUTE.
+	   03  LINE  5 COLUMN 25 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+		 "зддддддддддддддддддддддддддддддддддддддддддддддддд©".
+	   03  LINE  6 COLUMN 25 BACKGROUND-COLOR 7
+009360				 FOREGROUND-COLOR 0 VALUE
+		 "Ё             R O U T E   L O O K U P             Ё".
+	   03  LINE  7 COLUMN 25 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+		 "цддддддддбдддддддддддддддддддддддддддддддддддддддд╢".
+	   03  LINE 20 COLUMN 25 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+		 "юддддддддадддддддддддддддддддддддддддддддддддддддды".
+
+       01  SD-ROUTE.
+	   03  COLUMN 26 FOREGROUND-COLOR 5
+			 BACKGROUND-COLOR 7 PIC X(08) FROM RTE-ROUTE.
+	   03  COLUMN 35 FOREGROUND-COLOR 1 BACKGROUND-COLOR 7
+			 PIC X(40) FROM RTE-DESC.

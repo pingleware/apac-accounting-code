@@ -1,0 +1,49 @@
+      /
+000010 FD  JOBOLD    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JOBOLD
+000220		     RECORDING MODE IS VARIABLE.
+000030 01  JOO-REC1.
+	   03  JOO-KEY.
+000050	     05  JOO-REF       PIC  X(08).
+	     05  JOO-SEQN.
+		 07  JOO-SEQ   PIC  9(03).
+		 07  JOO-SUB   PIC  9(02).
+	     05  JOO-SQN REDEFINES JOO-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 1  -	ITEM DETAILS
+      *                 : 2  -  DISCOUNT DETAILS
+      *                 : 3  -  REMARKS
+      *                 : 4  -  INTERNAL NOTES FOR PICKING SLIP 
+      * 		: 7  -	REQUISITIONS
+      *                 : 8  -  JOB REQUIRED
+      *
+	   03  JOO-TYPE        PIC  9(01).
+000140	   03  JOO-DETAIL.
+             05  JOO-EXT-ITEM.
+000190		 07  JOO-ITEM  PIC  X(14).
+		 07  JOO-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+000210	     05  JOO-DESC      PIC  X(40).
+	     05  JOO-SERIAL REDEFINES JOO-DESC.
+                 07  FILLER    PIC X(01).
+		 07  JOO-SNUM OCCURS 2.
+		     09  JOO-SNO
+			       PIC X(18).
+                     09  FILLER
+                               PIC X(01).
+                 07  FILLER    PIC X(01).
+000160	     05  JOO-QNT       PIC S9(06)V999 COMP-3.
+	     05  JOO-COST      PIC S9(06)V999 COMP-3.
+	     05  JOO-SELL      PIC S9(08)V999 COMP-3.
+	     05  JOO-VAT       PIC S9(07)V99 COMP-3.
+000280	     05  JOO-VAL       PIC S9(09)V99 COMP-3.
+000270	     05  JOO-INCTAX    PIC S9(07)V99 COMP-3.
+000270	     05  JOO-NONTAX    PIC S9(09)V99 COMP-3.
+000270	     05  JOO-TAXVAL    PIC S9(09)V99 COMP-3.
+	     05  JOO-DSC       PIC S9(02)V99 COMP-3.
+	     05  JOO-DISC      PIC S9(07)V99 COMP-3.
+	     05  JOO-SERNO     PIC  X(18).
+	     05  JOO-TECH      PIC  9(02).
+	     05  JOO-VAT-SUB   PIC  9(01).
+	     05  FILLER        PIC  X(01).

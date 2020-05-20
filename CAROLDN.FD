@@ -1,0 +1,20 @@
+      /
+000010 FD  CAROLD    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-CAROLD
+000220		     RECORDING MODE IS VARIABLE.
+000220 01  CRO-REC1.
+000230	   03  CRO-KEY.
+	       05  CRO-AC      PIC  X(06).
+	       05  CRO-CODE    PIC  X(18).
+	       05  CRO-ITM     PIC  X(03).
+	       05  CRO-DTE     PIC  9(08)    COMP.
+	       05  CRO-SEQ     PIC  9(02)    COMP.
+	   03  CRO-REF	       PIC  X(08).
+	   03  CRO-SMAN        PIC  9(02).
+000250	   03  CRO-QNT	       PIC S9(09)V99 COMP-3.
+	   03  CRO-COST        PIC S9(09)V99 COMP-3.
+	   03  CRO-SELL        PIC S9(09)V99 COMP-3.
+	   03  CRO-NAME        PIC  X(40).
+	   03  CRO-SUPP        PIC  X(05).
+	   03  CRO-WHS	       PIC  X(06).
+	   03  FILLER	       PIC  X(11).

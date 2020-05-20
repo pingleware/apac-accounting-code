@@ -1,0 +1,23 @@
+      *    THIS FILE IS USED TO TRANSFER THE VARIOUS FIGURES TO
+      *    THE GENERAL LEDGER.
+      *
+      *    ALL TRANSACTIONS WILL UPDATE THIS FILE.
+      *
+      *    THERE WILL BE A RECORD GENERATED FOR EACH TYPE OF TRANSACTION
+      *    THAT IS MADE IN ANY OF THE LEDGERS FOR EACH DATE.
+      *
+      *    THE SYSTEM WILL THEN TRANSFER THESE DETAILS TO THE GENERAL
+      *    LEDGER AT THE USERS REQUEST.
+      *
+      *    ONCE THE DETAILS HAVE BEEN TRANSFERED TO THE GENERAL LEDGER,
+      *    THE RECORD IS DELETED FROM THIS FILE.
+      *
+      *    THE LEDGER CODES ARE:
+      *                         01 - DEBTORS
+      *                         02 - SALES
+      *                         03 - COST-OF-SALES
+      *                         04 - CREDITORS
+      *                         05 - PURCHASES
+      *                         06 - STOCK
+      *
+

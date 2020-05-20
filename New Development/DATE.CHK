@@ -1,0 +1,67 @@
+      *
+      *               D A T E   C H E C K   R O U T I N E
+      *
+      *    Call datecheck with DateVariables and the CURSOR position
+      *    where the date must be keyed in. (CPOS)
+      *
+      *    The background and foreground colours to be used must be in
+      *    W22-COLOUR when this program is called.
+      *    The default colours are 5 (magenta) for background and 7 
+      *    (Grey/White) for foreground.
+      *
+      *    This program is used to ACCEPT and then check the validity of
+      *    a date keyed in by the USER.
+      *
+      *    If the Escape key is pressed, the program exits with the 
+      *    value X"EC" in W22-INSTR.
+      *
+      *    For DATE-CHECK and DATE-CHECK-ACCEPT-PLUS the following is 
+      *    returned to the calling program on exiting; the valid date 
+      *    will be in:
+      * 
+      *           ****      CCYYMMDD - FORMAT      ****
+      *                   W20-DTE      [9(08)]
+      *                   W22-DTE1     [9(08)]
+      *                   W22-DATE-YMD [9999/99/99] Group Level
+      *
+      *                            AND
+      *
+      *           ****      DDMMCCYY - FORMAT      ****
+      *                   W22-DTE      [9(08)]
+      *                   W22-DTE3     [9(08)]
+      *                   W22-DATE     [9(08)]
+      *                   W22-DATE-DMY [99/99/9999] Group Level
+      *
+       CHECK-DATE         SECTION.
+      *
+      *    If the program is called with W22-INSTR = "V", then the date
+      *    in W22-DATE (DDMMCCYY)is validated and relevant errors will
+      *    be returned to the calling program in W22-ERROR.
+      *
+      *                   0 - "Valid DATE"            
+      *                   1 - "Invalid DATE" 
+      *                   2 - "Invalid DAY"  
+      *                   3 - "Invalid MONTH"
+      *            
+       DATE-CHECK.
+             MOVE "V"                TO W22-INSTR.
+             GO TO CHECK-DATE-CALL.
+      *
+      *    If the program is called with W22-INSTR = "C", then the date
+      *    is accepted and checked and returned in W22-DATE (DDMMCCYY).
+      *
+       DATE-CHECK-ACCEPT.
+             MOVE "C"                TO W22-INSTR.
+             GO TO CHECK-DATE-CALL.
+      *
+      *    If the program is called with W22-INSTR not= "C" or "V", then
+      *    the date is accepted and checked.
+      *
+       DATE-CHECK-ACCEPT-PLUS.
+             MOVE "A"                TO W22-INSTR.
+             
+       CHECK-DATE-CALL.         
+             CALL "UTP\DateCheck" USING W-DATES.
+
+       CHECK-DATE-EXIT.
+             EXIT.

@@ -1,0 +1,39 @@
+       AA50-LOOKUP     SECTION.
+010840 AA50O.
+010850       MOVE "O"            TO WS-LOOK.
+
+       AA50-SAVE.
+011050	     PERFORM SAVE-SCREEN.
+011080       MOVE 4              TO W44-FUNCTION.
+011090	     PERFORM SCREEN-CONTENTS.
+011210	     PERFORM SORDER-LOOKUP.
+	     GO TO AA58.
+
+       AA50.
+011050       PERFORM SAVE-SCREEN.
+	     CALL PRG-NAME
+		 USING LS-PARID
+		       LS-USER-ID
+		       LS0-PROGRAMS
+		       LS0-SECURITY
+		       W10-STOCK
+		 ON EXCEPTION
+		     GO TO AA55
+	     END-CALL.
+	     CANCEL PRG-NAME.
+	     GO TO AA58.
+
+       AA55.
+	     MOVE SPACE 	 TO WS-ERR-MES.
+	     STRING "Program- " DELIMITED SIZE
+		     PRG-NAME DELIMITED " "
+		     " not on disk, press ANY key"
+		     DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+
+       AA58.
+011320       PERFORM RESTORE-SCREEN.
+
+       AA59.
+	     EXIT.

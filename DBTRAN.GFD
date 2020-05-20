@@ -1,0 +1,31 @@
+      /
+000010 FD  DBTRAN    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-DBTRAN.
+000030 01  TRA-RECORD1.
+           03  TRA-KEY.
+000170         05  TRA-AC      PIC  X(06).
+000060	       05  TRA-DATE    PIC  9(08)    COMP.
+000040         05  TRA-CODE    PIC  9(02).
+000070         05  TRA-REF     PIC  X(08).
+      *    
+      *    TYPE: "U" = Unpaid.         \
+      *          "P" = Paid.            >  DEBIT TRANSACTIONS
+      *          "X" = Partial payment./
+      *
+      *          "U" = Unallocated.    \
+      *          "A" = Allocated.       >  CREDIT TRANSACTIONS
+      *          "X" = Partial allocat./
+      *
+000050     03  TRA-TYPE        PIC  X(01).
+000080     03  TRA-REG         PIC  X(09).
+000090     03  TRA-ORD         PIC  X(12).
+000100     03  TRA-VALUE       PIC S9(09)V99 COMP-3.
+000110     03  TRA-TAXFREE     PIC S9(09)V99 COMP-3.
+000120     03  TRA-TAX         PIC S9(07)V99 COMP-3.
+000130     03  TRA-DISC        PIC S9(03)V99 COMP-3.
+           03  TRA-PAID        PIC S9(09)V99 COMP-3.
+           03  TRA-ALLOCATED REDEFINES TRA-PAID
+                               PIC S9(09)V99 COMP-3.
+           03  TRA-REC         PIC  X(08).
+           03  TRA-AGE         PIC  9(02)    COMP-5.
+           03  FILLER          PIC  X(01).

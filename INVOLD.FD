@@ -1,0 +1,109 @@
+      /
+000010 FD  INVOLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-INVOLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  DCO-REC1.
+	   03  DCO-KEY.
+	     05  DCO-AC        PIC  X(06).
+000050	     05  DCO-REF       PIC  X(08).
+	     05  DCO-SEQN.
+		 07  DCO-SEQ   PIC  9(03).
+		 07  DCO-SUB   PIC  9(02).
+	     05  DCO-SQN REDEFINES DCO-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 0  -  HEADER RECORD
+      *                 : 1  -  ITEM DETAILS
+      *                 : 2  -  DISCOUNT DETAILS
+      *                 : 3  -  REMARKS
+      * 		: 4  -	NON STOCK LINE DETAILS
+      * 		: 5  -	DELIVERY ADDRESS
+      *                 : 9  -  TRAILER
+      *
+	   03  DCO-TYPE        PIC  9(01).
+000070	   03  DCO-DTE	       PIC  9(08).
+	   03  DCO-DETAIL.
+	     05  DCO-NAME      PIC  X(40).
+	     05  DCO-PICNO     PIC  9(02)    COMP-5.
+000090	     05  DCO-ORD       PIC  X(12).
+000130	     05  DCO-SMAN      PIC  9(04)    COMP-5.
+	     05  DCO-DOC       PIC  X(01).
+	       88  DCO-CREDIT  VALUE "C".
+	       88  DCO-INVOIC  VALUE "I".
+	     05  DCO-PAGE      PIC  9(02).
+	     05  DCO-OREF      PIC  X(09).
+	     05  DCO-EXP       PIC  X(01).
+	     05  DCO-PRC       PIC  X(01).
+	     05  DCO-ADV       PIC  X(01).
+	     05  DCO-VALUE     PIC S9(09)V99 COMP-3.
+	     05  DCO-PROF      PIC  X(01).
+	     05  DCO-USER      PIC  9(04)    COMP-5.
+	     05  FILLER        PIC  X(75).
+000140	   03  DCO-DET2 REDEFINES DCO-DETAIL.
+	     05  DCO-EXT-ITEM.
+000190		 07  DCO-ITEM  PIC  X(14).
+		 07  DCO-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+	     05  DCO-MSER.
+000090		 07  DCO-DESC  PIC  X(30).
+		 07  FILLER    PIC  X(10).
+	     05  DCO-SERIALS REDEFINES DCO-MSER.
+                 07  FILLER    PIC  X(01).
+		 07  DCO-SNUM OCCURS 2.
+		   09  DCO-SNO PIC  X(18).
+                   09  FILLER  PIC  X(01).
+                 07  FILLER    PIC  X(01).
+000160	     05  DCO-QNT       PIC S9(06)V999 COMP-3.
+	     05  DCO-COST      PIC S9(07)V999 COMP-3.
+	     05  DCO-SELL      PIC S9(07)V999 COMP-3.
+	     05  DCO-VAT       PIC S9(07)V99 COMP-3.
+000280	     05  DCO-VAL       PIC S9(09)V99 COMP-3.
+000270	     05  DCO-INCTAX    PIC S9(09)V99 COMP-3.
+000270	     05  DCO-NONTAX    PIC S9(07)V99 COMP-3.
+000270	     05  DCO-TAXVAL    PIC S9(07)V99 COMP-3.
+	     05  DCO-DSC       PIC S9(02)V99 COMP-3.
+	     05  DCO-DISC      PIC S9(07)V99 COMP-3.
+	     05  DCO-SERNO     PIC  X(18).
+	     05  DCO-UNITS     PIC S9(04)V999 COMP-3.
+	     05  DCO-CONVERT   PIC S9(06)V999 COMP-3.
+	     05  DCO-PER       PIC  X(08).
+	     05  DCO-PACK      PIC  9(01)    COMP-0.
+	     05  DCO-VAT-SUB   PIC  9(01).
+	     05  DCO-V-PER     PIC S9(03)V99 COMP-3.
+	     05  FILLER        PIC  X(03).
+000140	   03  DCO-DET3 REDEFINES DCO-DETAIL.
+000290	     05  DCO-SUBTOT    PIC S9(09)V99 COMP-3.
+000300	     05  DCO-DSCNT     PIC S9(07)V99 COMP-3.
+	     05  DCO-NON-TXBL  PIC S9(09)V99 COMP-3.
+	     05  DCO-TAXABLE   PIC S9(09)V99 COMP-3.
+000310	     05  DCO-TAX       PIC S9(07)V99 COMP-3.
+000320	     05  DCO-TOT       PIC S9(09)V99 COMP-3.
+	     05  DCO-INVOICE   PIC  X(08).
+	     05  DCO-BAL       PIC S9(09)V99 COMP-3.
+000310	     05  DCO-ADVTAX    PIC S9(07)V99 COMP-3.
+	     05  DCO-TERMS     PIC  X(01).
+	     05  DCO-CONTACT   PIC  X(14).
+	     05  DCO-TEL       PIC  X(14).
+	     05  DCO-INSTRUCT  PIC  X(15).
+	     05  DCO-EXT       PIC  X(03).
+	     05  FILLER        PIC  X(54).
+000140	   03  DCO-DET4 REDEFINES DCO-DETAIL.
+	     05  DCO-REMKS.
+		 07  FILLER    PIC  X(04).
+		 07  DCO-JRMKS PIC  X(40).
+		 07  FILLER    PIC  X(16).
+	     05  DCO-PSELL     PIC S9(09)V99 COMP-3.
+	     05  DCO-PVAT      PIC S9(09)V99 COMP-3.
+000280	     05  DCO-PVAL      PIC S9(09)V99 COMP-3.
+000270	     05  DCO-PINCTAX   PIC S9(09)V99 COMP-3.
+000270	     05  DCO-PNONTAX   PIC S9(09)V99 COMP-3.
+000270	     05  DCO-PTAXVAL   PIC S9(09)V99 COMP-3.
+	     05  DCO-LEDG      PIC  X(04).
+	     05  FILLER        PIC  X(54).
+000140	   03  DCO-DET5 REDEFINES DCO-DETAIL.
+	     05  DCO-AD1       PIC  X(30).
+	     05  DCO-AD2       PIC  X(30).
+	     05  DCO-AD3       PIC  X(30).
+	     05  DCO-AD4       PIC  X(30).
+	     05  DCO-PC        PIC  X(04).
+	     05  FILLER        PIC  X(30).

@@ -1,0 +1,40 @@
+       FD  CHQBATCH LABEL RECORD STANDARD
+000020		    VALUE OF FILE-ID W02-CHQBATCH.
+       01  BCH-REC1.
+	   03  BCH-KEY		 PIC  9(06).
+      *
+      *    ****    T Y P E
+      * 	   'G' = General ledger
+      * 	   'C' = Creditor account
+      *
+	   03  BCH-TYPE 	 PIC  X(01).
+      *
+      *    ****    S T A T U S
+      * 	   ' ' = Captured
+      * 	   'P' = Printed
+      * 	   'X' = Posted
+      *
+	   03  BCH-STATUS	 PIC  X(01).
+	   03  BCH-DATE 	 PIC  9(08)    COMP-3.
+	   03  BCH-PAYEE	 PIC  X(40).
+	   03  BCH-BANK 	 PIC  9(06)    COMP-3.
+	   03  BCH-BANK-NAME	 PIC  X(30).
+	   03  BCH-NARRATIVE-1	 PIC  X(40).
+      *
+      *    ****    C h e q u e	 V a l u e
+      *
+	   03  BCH-VALUE	 PIC  9(09)V99 COMP-3.
+	   03  BCH-CHQNO	 PIC  9(06)    COMP-3.
+      *
+      *    ****    C r e d i t o r   D e t a i l s   (IF APPLICABLE)
+      *
+	   03  BCH-CRED		 PIC  X(06).
+	   03  BCH-CNAME	 PIC  X(40).
+      *
+      *    ****    A l l o c a t i o n s
+      *
+	   03  BCH-ALLOCATIONS OCCURS 10.
+	       05  BCH-GL-AC	 PIC  9(06)    COMP-3.
+	       05  BCH-GLAC-NAME PIC  X(30).
+	       05  BCH-NARRATIVE PIC  X(40).
+	       05  BCH-GL-VALUE  PIC  9(09)V99 COMP-3.

@@ -1,0 +1,42 @@
+      *
+      *    ****   G E T   S T O C K   R E C O R D   U S I N G   C O D E
+      *
+015170 CA000         SECTION.
+015180 CA00.
+013310	     MOVE 18		 TO W50-LENGTH.
+
+       CA05.
+	   IF WS-EXT-STK = "Y"
+013320	       MOVE W10-EXT-ITEM TO W50-DATA
+	   ELSE
+	       MOVE W10-ITEM	 TO W50-DATA
+	       MOVE W10-ITM	 TO W50-ITM.
+	   IF W50-1 = SPACE
+	       IF WS-EXT-STK = "Y"
+		   MOVE W50-17	 TO W10-EXT-ITEM
+	       ELSE
+		   MOVE W50-13	 TO W10-ITEM
+	       END-IF
+               GO TO CA05.      
+	     CALL "CBL_TOUPPER" USING W50-DATA
+                                BY VALUE W50-LENGTH
+                                RETURNING W50-STATUS.
+013380	     MOVE W50-EXT-ITEM TO W10-EXT-ITEM.
+
+       CA06.
+013380	     MOVE W50-EXT-ITEM	 TO STK-CODE.
+
+       CA10.
+	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+	   IF WS-STATUS = "23"
+	       MOVE W50-EXT-ITEM TO W10-EXT-CODE2
+	       PERFORM CA200
+	       IF NOT (STK-XREF = W10-EXT-ITEM)
+		   MOVE 22	 TO WS-F-ERROR
+	       ELSE
+		   MOVE STK-CODE TO W10-EXT-ITEM.
+           IF WS-F-ERROR = 0
+               PERFORM CA500.
+
+       CA99.
+             EXIT.

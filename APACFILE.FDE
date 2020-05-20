@@ -1,0 +1,12 @@
+      /    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё This file contains the key, file-name, file-number and    Ё
+      *    Ё path for each file in the APAC system.		       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000010 FD  APACFILE  IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-APACFILE.
+000030 01  APAC-RECORD1.
+	   03  APAC-KEY        PIC  X(08).
+	   03  APAC-FILE       PIC  9(04).
+	   03  APAC-NAME       PIC  X(12).
+	   03  APAC-PATH       PIC  X(52).

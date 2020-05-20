@@ -1,0 +1,42 @@
+
+       REWRITE-WORDER.
+	     REWRITE WOR-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-WORDER-EXIT.
+
+       REWRITE-WORDER-UNLOCK.
+	     REWRITE WOR-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK WORDER.
+	     GO TO WRITE-WORDER-EXIT.
+
+       DELETE-WORDER-REC-UNLOCK.
+	     DELETE WORDER.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK WORDER.
+	     GO TO WRITE-WORDER-EXIT.
+
+       DELETE-WORDER-REC.
+	     DELETE WORDER.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-WORDER-EXIT.
+
+       WRITE-WORDER.
+	     WRITE WOR-REC1.
+           IF WS-STATUS = "22"
+	       ADD 1		 TO WOR-SEQ
+	       GO TO WRITE-WORDER.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 42		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-WORDER-EXIT.
+             EXIT.

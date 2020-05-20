@@ -1,0 +1,29 @@
+      /
+000010 FD  STATION   LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-STATION.
+       01  STA-RECORD.
+           03  STA-NO          PIC  X(03).
+           03  STA-EXT         PIC  X(03).
+	   03  STA-USER.
+	       05  STA-NO      PIC  X(03).
+	       05  STA-TERM    PIC  9(03).
+	       05  STA-NAME    PIC  X(30).
+	       05  STA-PASS    PIC  X(08).
+	       05  STA-DATE    PIC  9(06).
+	       05  STA-GL      PIC  X(01).
+	       05  STA-GLLEV   PIC  9(01).
+	       05  STA-STOCK   PIC  X(01).
+	       05  STA-STLEV   PIC  9(01).
+	       05  STA-DEBT    PIC  X(01).
+	       05  STA-DBLEV   PIC  9(01).
+	       05  STA-CRED    PIC  X(01).
+	       05  STA-CRLEV   PIC  9(01).
+	       05  STA-PARM    PIC  X(01).
+	       05  STA-PALEV   PIC  9(01).
+	       05  STA-SALES   PIC  X(01).
+	       05  STA-SALEV   PIC  9(01).
+	       05  STA-JOBS    PIC  X(01).
+	       05  STA-JBLEV   PIC  9(01).
+	       05  STA-WAGES   PIC  X(01).
+	       05  STA-WGLEV   PIC  9(01).
+	       05  FILLER      PIC  X(12).

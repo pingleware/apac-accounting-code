@@ -1,0 +1,18 @@
+      /
+000010 FD  JOBTECH   IS EXTERNAL
+                     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JOBTECH.
+000030 01  TIM-REC1.
+	   03  TIM-KEY.
+	       05  TIM-TECH    PIC  9(04).
+	       05  TIM-DATE    PIC  9(08).
+	       05  TIM-TIME    PIC  9(06).
+	   03  TIM-JOB	       PIC  X(08).
+	   03  TIM-E-DATE      PIC  9(08).
+	   03  TIM-E-TIME      PIC  9(06).
+	   03  TIM-ITEM        PIC  X(40).
+	   03  TIM-PMETH       PIC  X(02).
+	   03  TIM-AC	       PIC  X(06).
+	   03  TIM-NAME        PIC  X(40).
+	   03  TIM-WCOMP       PIC  X(06).
+	   03  TIM-WNAME       PIC  X(40).

@@ -1,0 +1,17 @@
+      /
+000010 FD  WHOUSE    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-WHOUSE.
+000030 01  WAR-RECORD1.
+000040	   03  WAR-CODE        PIC  X(14).
+000060	   03  WAR-ITM	       PIC  X(03).
+	   03  WAR-HOUSE       PIC  X(06).
+      *
+      *    S T A T U S :
+      * 		D = DUE FROM WHAREHOUSE
+      * 		T = IN TRANSIT TO WAREHOSE
+      * 		A = AT THE WAREHOUSE
+      *
+	   03  WAR-STATUS      PIC  X(01).
+	   03  WAR-DATE        PIC  9(06)    COMP-3.
+000110	   03  WAR-QUANT       PIC S9(07)V9(04) COMP-3.

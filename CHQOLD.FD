@@ -1,0 +1,32 @@
+      /
+000890 FD  CHQOLD    LABEL RECORD STANDARD
+000900               VALUE OF FILE-ID W02-CHQOLD
+000220               RECORDING MODE IS VARIABLE.
+000910 01  CQO-RECORD1.
+000920     03  CQO-CONTROL     PIC  9(06)    COMP.
+000930	   03  CQO-DYMD        PIC  9(08).
+           03  CQO-NEXT        PIC  9(06).
+000980	   03  FILLER	       PIC  X(52).
+000990 01  CQO-RECORD2.
+001000     03  CQO-TR-NUMBER   PIC  9(06)    COMP.
+	   03  CQO-YMD	       PIC  9(08).
+           03  CQO-RYMD REDEFINES CQO-YMD.
+	       05  CQO-CN      PIC  9(02).
+               05  CQO-YR      PIC  9(02).
+               05  CQO-MT      PIC  9(02).
+               05  CQO-DY      PIC  9(02).
+001050     03  CQO-NAME        PIC  X(24).
+001060     03  CQO-TEL         PIC  X(14).
+           03  CQO-RECEIVED REDEFINES CQO-TEL.
+               05  CQO-REC.
+		07 CQO-DTE-REC PIC  9(08).
+	       05  FILLER      PIC  X(06).
+001070	   03  CQO-DTE	       PIC  9(08).
+           03  CQO-RDTE REDEFINES CQO-DTE.
+               05  CQO-DD      PIC  9(02).
+               05  CQO-MM      PIC  9(02).
+	       05  CQO-CC      PIC  9(02).
+               05  CQO-YY      PIC  9(02).
+001080	   03  CQO-VALUE       PIC S9(09)V99 COMP-3.
+	   03  CQO-DEL	       PIC  X(01).
+	   03  FILLER	       PIC  X(05).

@@ -1,0 +1,35 @@
+      *
+      *    S O U T H   A F R I C A N S	 R E A D   D A T E S   I N
+      *    'DAY/MONTH/YEAR'   F O R M A T.
+      *
+      *    F O R   S O R T I N G   P U R P O S E S ,   T H E
+      *    S Y S T E M   S T O R E S   D A T E S   I N
+      *    'YEAR/MONTH/DAY'  F O R M A T.
+      *
+      *    T H E   F O L L O W I N G   T W O   R O U T I N E S   A R E
+      *    U S E D   T O   S W I T C H   B E T W E E N   T H E S E
+      *    T W O   F O R M A T S
+      *
+       SWITCH-DATES    SECTION.
+      *
+      *    ****   PERFORM THIS ROUTINE WITH DATE IN W22-DTE3 (DDMMCCYY)
+      *           USE DATE W22-DTE2 AS CONVERTED DATE (CCYYMMDD)
+      *
+       SWITCH-DATE-TO-CYMD.
+             MOVE W22-DD3            TO W22-DD2.
+             MOVE W22-MM3            TO W22-MM2.
+             MOVE W22-CC3            TO W22-CC2.
+             MOVE W22-YY3            TO W22-YY2.
+             GO TO SWITCH-DATE-EXIT.
+      *
+      *    ****   PERFORM THIS ROUTINE WITH DATE IN W22-DTE2 (CCYYMMDD)
+      *           USE DATE W22-DTE3 AS CONVERTED DATE (DDMMCCYY)
+      *
+       SWITCH-DATE-TO-DMCY.
+             MOVE W22-CC2            TO W22-CC3.
+             MOVE W22-YY2            TO W22-YY3.
+             MOVE W22-MM2            TO W22-MM3.
+             MOVE W22-DD2            TO W22-DD3.
+
+       SWITCH-DATE-EXIT.
+             EXIT.

@@ -1,0 +1,77 @@
+      /
+      *    ****   D I S P L A Y   S U P P L I E R S
+      *
+      *	здддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *	Ё Supplier     XXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ё
+      *	Ё Alt Supplier XXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX Ё
+      *	юдддддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       BF000	       SECTION 52.
+       BF00.
+	     PERFORM SAVE-SCREEN-3.
+019250	     DISPLAY CLEAR-L25.
+	     MOVE 13		 TO SHADE-ROW.
+	     MOVE 11		 TO SHADE-COL.
+	     MOVE 62		 TO SHADE-WIDTH.
+	     MOVE 3		 TO SHADE-LINES.
+	     DISPLAY "зддддддддддддддддддддддддддддддддддддддддддддддддд
+      - 	     "ддддддддддддд" AT 1209
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "©" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "Ё Supplier
+      -		     "             " AT 1309
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "Ё" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "Ё Alt Supplier
+      - 	     "             " AT 1409
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "Ё" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			      BACKGROUND-COLOR 7.
+	     DISPLAY "ю" AT 1509
+		      WITH FOREGROUND-COLOR 0 BACKGROUND-COLOR 7
+		     "дддддддддддддддддддддддддддддддддддддддддддддддддд
+      -		     "дддддддддддды"
+		      WITH FOREGROUND-COLOR 7 HIGHLIGHT
+			   BACKGROUND-COLOR 7.
+	     PERFORM SCREEN-SHADOW.
+
+       BF05.
+	   IF NOT (STK-SUPP = SPACES OR LOW-VALUES)
+               MOVE STK-SUPP     TO P-NUMBER
+               PERFORM READ-CREDIT THRU READ-CREDIT-EXIT
+               IF WS-F-ERROR = ZERO
+		   DISPLAY P-NUMBER AT 1324
+			   WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				BACKGROUND-COLOR 0
+		   DISPLAY P-NAME AT 1331
+			   WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				BACKGROUND-COLOR 0
+	       END-IF
+	   ELSE
+	       DISPLAY "No Supplier recorded for this Item" AT 1331
+			WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			     BACKGROUND-COLOR 0.
+	   IF NOT (STK-PSUPP = SPACES OR LOW-VALUES)
+	       MOVE STK-PSUPP	 TO P-NUMBER
+               PERFORM READ-CREDIT THRU READ-CREDIT-EXIT
+	       IF WS-F-ERROR = ZERO
+		   DISPLAY P-NUMBER AT 1424
+			   WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				BACKGROUND-COLOR 0
+		   DISPLAY P-NAME AT 1431
+			   WITH FOREGROUND-COLOR 7 HIGHLIGHT
+				BACKGROUND-COLOR 0
+	       END-IF
+	   ELSE
+	       DISPLAY "No Alt Supplier recorded for this Item" AT 1331
+			WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			     BACKGROUND-COLOR 0.
+	     DISPLAY "Press any key to continue" AT 2512
+		      WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			   BACKGROUND-COLOR 3.
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     PERFORM RESTORE-SCREEN-3.
+
+       BF999.
+	     EXIT.

@@ -1,0 +1,4 @@
+           03  W02-APACFIDS.
+               05  W02-L-OR-N  PIC  X(08) VALUE "SYSTEMS\".
+               05  W02-SYSID   PIC  X(03).
+               05  FILLER      PIC  X(10) VALUE "_FIDS.APC".

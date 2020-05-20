@@ -1,0 +1,81 @@
+      /
+000010 FD  AUDIT     LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-AUDITF.
+000030 01  AUD-HDR.
+000040     03  FILLER          PIC  X(02).
+000050     03  AUD-REP1        PIC  9(01).
+000060     03  AUD-REP2        PIC  9(01).
+000070     03  AUD-REP3        PIC  9(01).
+000080     03  AUD-REP4        PIC  9(01).
+000090     03  AUD-REP5        PIC  9(01).
+000100     03  AUD-REP6        PIC  9(01).
+000110     03  AUD-REP7        PIC  9(01).
+000120     03  AUD-REP8        PIC  9(01).
+000130     03  AUD-REP9        PIC  9(01).
+000140     03  AUD-REP10       PIC  9(01).
+000150     03  AUD-REP11       PIC  9(01).
+000160     03  AUD-REP12       PIC  9(01).
+000170     03  AUD-REP13       PIC  9(01).
+000180     03  AUD-REP14       PIC  9(01).
+000190     03  FILLER          PIC  X(06).
+000200     03  AUD-AUDIT       PIC  9(06)    COMP-5.
+000210	   03  FILLER	       PIC  X(21).
+      *
+      *    ****    L O S T   S A L E   A N D   L O W   L E V E L
+      * TYPE 1 & 2
+      *
+000220 01  AUD-REC1.
+000230     03  AUD-TYPE        PIC  9(02)    COMP-5.
+000240     03  AUD-SUB         PIC  9(02)    COMP-5.
+000250     03  AUD-QNT         PIC  9(06)    COMP-5.
+000260     03  AUD-BCODE.
+	       05  AUD-EXT-CODE.
+000270		 07  AUD-CODE  PIC  X(14).
+		 07  AUD-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+000280         05  AUD-KEY     PIC  9(06)    COMP-5.
+	   03  FILLER	       PIC  X(20).
+      *
+      *    ****    I N V O I C E   /   C R E D I T   N O T E   /
+      * 	   R E C E I P T
+      * TYPE 3, 4 & 11
+      *
+000290 01  AUD-REC2.
+000300     03  FILLER          PIC  X(02).
+000310     03  AUD-AC          PIC  X(06).
+000320     03  AUD-REF         PIC  X(08).
+000330     03  AUD-TAX         PIC S9(07)V99 COMP-3.
+000340     03  AUD-VAL         PIC S9(09)V99 COMP-3.
+000340	   03  AUD-R-CSH       PIC S9(09)V99 COMP-3.
+000340	   03  AUD-R-CHQ       PIC S9(09)V99 COMP-3.
+000340	   03  AUD-R-TRF       PIC S9(09)V99 COMP-3.
+	   03  AUD-PAYMENT     PIC  X(01).
+      *
+      *    ****    C A S H   S A L E   /   I N V O I C E   /   
+      *               L A Y - B U Y   ( S A L E S M A N )
+      * TYPE 5, 7 & 9
+      *
+000350 01  AUD-REC3.
+000360     03  FILLER          PIC  X(02).
+000370     03  AUD-CSH         PIC  9(08)    COMP-5.
+000380     03  AUD-SMAN        PIC  9(02)    COMP-5.
+           03  AUD-SUPER       PIC  9(02)    COMP-5.
+000390	   03  FILLER	       PIC  X(21).
+000400     03  AUD-COST        PIC S9(09)V99 COMP-3.
+000410     03  AUD-SELL        PIC S9(09)V99 COMP-3.
+	   03  FILLER	       PIC  X(05).
+      *
+      *    ****    S T O C K   A D J U S T M E N T S   C A S H   S A L E
+      *                  I N V O I C E   &   L A Y - B U Y
+      * TYPE 6, 8 & 10
+      *
+000420 01  AUD-REC4.
+000430     03  FILLER          PIC  X(08).
+	   03  AUD-EXT-STOCK.
+000440	       05  AUD-STOCK   PIC  X(14).
+	       05  AUD-ITM2    PIC  X(03).
+	       05  FILLER      PIC  X(01).
+000450     03  AUD-CST         PIC S9(09)V99 COMP-3.
+000460     03  AUD-SEL         PIC S9(09)V99 COMP-3.
+	   03  FILLER	       PIC  X(07).
+	   03  AUD-DISC        PIC  X(01).

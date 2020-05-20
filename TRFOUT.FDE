@@ -1,0 +1,27 @@
+      /
+      *     ******   ********	       ******	**    **  ********
+      *    **	 **	**	      **    **	**    **     **
+      *    **		**	      **    **	**    **     **
+      *     ******	**    ******  **    **	**    **     **
+      * 	 **	**	      **    **	**    **     **
+      *    **	 **	**	      **    **	**    **     **
+      *     ******	**	       ******	 ******      **
+      *
+000010 FD  TRFOUT    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-TRFOUT.
+000030 01  SOT-RECORD1.
+	   03  SOT-KEY.
+	       05  SOT-BR-CODE PIC  X(03).
+	       05  SOT-REF     PIC  X(07).
+	   03  SOT-DATE        PIC  9(08)     COMP.
+	   03  SOT-USER        PIC  X(03).
+	   03  SOT-WS.
+	       05  SOT-WSNO    PIC  9(03).
+	   03  SOT-USER-NAME   PIC  X(30).
+	   03  SOT-BR-FROM     PIC  X(38).
+	   03  SOT-BR-TO       PIC  X(38).
+	   03  SOT-LINES       PIC  9(07)     COMP-3.
+	   03  SOT-VALUE       PIC S9(10)V999 COMP-3.
+	   03  SOT-TO-CDE      PIC  X(03).
+	   03  FILLER	       PIC  X(04).

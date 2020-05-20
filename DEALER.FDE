@@ -1,0 +1,23 @@
+      /
+000010 FD  DEALER    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-DEALER.
+000220 01  DEL-REC1.
+000230	   03  DEL-KEY.
+	       05  DEL-ACCNT   PIC  X(06).
+	       05  DEL-DTE     PIC  9(08)    COMP.
+	       05  DEL-REF     PIC  X(08).
+	       05  DEL-SEQ     PIC  9(04)    COMP.
+	   03  DEL-SMAN	       PIC  9(02).
+	   03  DEL-NAME.
+	       05  DEL-NME     PIC  X(19).
+	       05  FILLER      PIC  X(21).
+	   03  DEL-CODE.
+	       05  DEL-ITEM    PIC  X(14).
+000060	       05  DEL-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  DEL-LEDG        PIC  X(04).
+	   03  DEL-DESC        PIC  X(30).
+000250	   03  DEL-QNT	       PIC S9(07)V99 COMP-3.
+	   03  DEL-COST        PIC S9(09)V99 COMP-3.
+	   03  DEL-SELL        PIC S9(09)V99 COMP-3.

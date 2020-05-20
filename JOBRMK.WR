@@ -1,0 +1,39 @@
+
+       REWRITE-JOBRMK.
+	     REWRITE JRM-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 41           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-JOBRMK-EXIT.
+
+       REWRITE-JOBRMK-UNLOCK.
+	     REWRITE JRM-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 41           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK JOBRMK.
+	     GO TO WRITE-JOBRMK-EXIT.
+
+       DELETE-JOBRMK-REC-UNLOCK.
+	     DELETE JOBRMK.
+           IF WS-STAT1 NOT = "0"
+               MOVE 41           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK JOBRMK.
+	     GO TO WRITE-JOBRMK-EXIT.
+
+       DELETE-JOBRMK-REC.
+	     DELETE JOBRMK.
+           IF WS-STAT1 NOT = "0"
+               MOVE 41           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-JOBRMK-EXIT.
+
+       WRITE-JOBRMK.
+	     WRITE JRM-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 41           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-JOBRMK-EXIT.
+             EXIT.

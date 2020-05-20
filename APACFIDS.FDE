@@ -1,0 +1,13 @@
+      /    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³  This file is used for obtaining the path for any file in ³
+      *    ³ the APAC system via the key name for that file. There are ³
+      *    ³ two  files,  one in the SYSTEMS directory and one in  the ³
+      *    ³ OFFLINE directory.  The file to be used is determined  by ³
+      *    ³ the system at startup time (See BUP000/1).		       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+000010 FD  APACFIDS  IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-APACFIDS.
+000030 01  AFID-RECORD1.
+	   03  AFID-KEY        PIC  X(08).
+	   03  AFID-PATH       PIC  X(64).

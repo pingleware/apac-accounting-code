@@ -1,0 +1,22 @@
+006860 01  W95-STM.
+006870     03  W95-COMP        PIC X(40).
+006880     03  W95-ADD1        PIC X(30).
+006890     03  W95-ADD2        PIC X(30).
+006900     03  W95-ADD3        PIC X(30).
+006910     03  W95-ADD4        PIC X(30).
+006920     03  W95-PC.
+006930         05  W95-POST    PIC 9(04).
+006940     03  W95-TEL         PIC X(14).
+	   03  W95-FAX	       PIC  X(14).
+006950     03  W95-V1.
+006960         05  W95-T       PIC Z(04)9.99.
+006970     03  W95-V2.
+006980         05  W95-B       PIC Z(06)9.99-.
+006990     03  W95-D.
+007000	       05  W95-DTE     PIC Z9/99/9999.
+	   03  W95-TIME.
+               05  W95-HH      PIC 99.
+               05  FILLER      PIC X(01) VALUE ":".
+               05  W95-MM      PIC 99.
+               05  FILLER      PIC X(01) VALUE ":".
+               05  W95-SS      PIC 99.

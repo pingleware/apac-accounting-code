@@ -1,0 +1,42 @@
+
+       REWRITE-SORDER.
+             REWRITE SOR-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 20           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-SORDER-EXIT.
+
+       REWRITE-SORDER-UNLOCK.
+             REWRITE SOR-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 20           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK SORDER.
+             GO TO WRITE-SORDER-EXIT.
+
+       DELETE-SORDER-REC-UNLOCK.
+             DELETE SORDER.
+           IF WS-STAT1 NOT = "0"
+               MOVE 20           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK SORDER.
+             GO TO WRITE-SORDER-EXIT.
+
+       DELETE-SORDER-REC.
+             DELETE SORDER.
+           IF WS-STAT1 NOT = "0"
+               MOVE 20           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-SORDER-EXIT.
+
+       WRITE-SORDER.
+             WRITE SOR-REC1.
+           IF WS-STATUS = "22"
+               ADD 1             TO SOR-SEQ
+               GO TO WRITE-SORDER.
+           IF WS-STAT1 NOT = "0"
+               MOVE 20           TO WS-F-ERROR
+	       PERFORM WRITE-ERROR.
+
+       WRITE-SORDER-EXIT.
+             EXIT.

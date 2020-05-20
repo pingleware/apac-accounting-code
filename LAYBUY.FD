@@ -1,0 +1,22 @@
+      /
+002110 FD  LAYBUY    LABEL RECORD STANDARD
+002120               VALUE OF FILE-ID W02-LAYBUY.
+       01  LAY-RECORD.
+           03  LAY-REF         PIC  X(08).
+           03  LAY-NAME.
+               05  LAY-NKEY    PIC  X(12).
+               05  FILLER      PIC  X(28).
+           03  LAY-ADDRESS     PIC  X(70).
+           03  LAY-TEL         PIC  X(14).
+           03  LAY-PURCH       PIC S9(09)V99 COMP-3.
+           03  LAY-BAL         PIC S9(09)V99 COMP-3.
+           03  LAY-DATE        PIC  9(08)    COMP-3.
+           03  LAY-DETAILS
+             04  LAY-ITEMS OCCURS 20.
+	       05  LAY-EXT-ITEM.
+		  07  LAY-ITEM PIC  X(14).
+		  07  LAY-ITM  PIC  X(03).
+		  07  FILLER   PIC  X(01).
+               05  LAY-QNT     PIC  9(03)    COMP-3.
+               05  LAY-COST    PIC S9(07)V99 COMP-3.
+               05  LAY-SELL    PIC S9(07)V99 COMP-3.

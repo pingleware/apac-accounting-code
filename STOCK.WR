@@ -1,0 +1,51 @@
+      *
+      *     ***  *****  ***   ***  *   *     ***** ***** *     *****
+      *    *   *   *   *   * *   * *  *      *       *   *     *
+      *    *       *   *   * *     * *       *       *   *     *
+      *     ***    *   *   * *     **        ***     *   *     ***
+      *        *   *   *   * *     * *       *       *   *     *
+      *    *   *   *   *   * *   * *  *      *       *   *     *
+      *     ***    *    ***   ***  *   *     *     ***** ***** *****
+      *
+000010 REWRITE-STOCK.
+000020       REWRITE STK-RECORD1.
+000030     IF WS-STAT1 NOT = "0"
+000040         MOVE 22           TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060       GO TO WRITE-STOCK-EXIT.
+000070
+000080 REWRITE-STOCK-UNLOCK.
+000090       REWRITE STK-RECORD1.
+000100     IF WS-STAT1 NOT = "0"
+000110         MOVE 22           TO WS-F-ERROR
+000120         PERFORM WRITE-ERROR.
+000130       UNLOCK STOCK.
+000140       GO TO WRITE-STOCK-EXIT.
+000150
+000160 DELETE-STOCK-REC.
+000170       DELETE STOCK.
+000180     IF WS-STAT1 NOT = "0"
+000190         MOVE 22           TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210       UNLOCK STOCK.
+000220       GO TO WRITE-STOCK-EXIT.
+000230
+000240 WRITE-STOCK.
+000250       WRITE STK-RECORD1.
+000260     IF WS-STAT1 NOT = "0"
+000270         MOVE 22           TO WS-F-ERROR
+000280         PERFORM WRITE-ERROR.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё To avoid problems of having data corrupted (MULTI USER)   Ё
+      *    Ё by the cache (buffering) of data on the individual Work   Ё
+      *    Ё stations. This results in data from one work station not  Ё
+      *    Ё being available on another Work station until the cache   Ё
+      *    Ё has been ceared. Including a close of the file after each Ё
+      *    Ё new record is added and then re-opening the file seems to Ё
+      *    Ё resolve the problem.				       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     CLOSE STOCK.
+	     OPEN I-O STOCK.
+
+000320 WRITE-STOCK-EXIT.
+000330       EXIT.

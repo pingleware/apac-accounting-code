@@ -1,0 +1,42 @@
+      *
+      *  *** ***** ***** *     *     **** *** *    ****
+      *   *    *   *	 **   **     *	   *  *    *
+      *   *    *   *	 * * * *     *	   *  *    *
+      *   *    *   ***	 *  *  *     ***   *  *    ***
+      *   *    *   *	 *     *     *	   *  *    *
+      *   *    *   *	 *     *     *	   *  *    *
+      *  ***   *   ***** *     *     *	  *** **** ****
+      *
+000010 REWRITE-ITEMS.
+000020	     REWRITE ITM-RECORD1.
+000030     IF WS-STAT1 NOT = "0"
+000040	       MOVE 57		 TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060	     GO TO WRITE-ITEMS-EXIT.
+000070
+000080 REWRITE-ITEMS-UNLOCK.
+000090	     REWRITE ITM-RECORD1.
+000100     IF WS-STAT1 NOT = "0"
+000110	       MOVE 57		 TO WS-F-ERROR
+000120         PERFORM WRITE-ERROR.
+000130	     UNLOCK ITEMS.
+000140	     GO TO WRITE-ITEMS-EXIT.
+000150
+000160 DELETE-ITEMS-REC.
+000170	     DELETE ITEMS.
+000180     IF WS-STAT1 NOT = "0"
+000190	       MOVE 57		 TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210	     GO TO WRITE-ITEMS-EXIT.
+000220
+000230 WRITE-ITEMS.
+000240	     WRITE ITM-RECORD1.
+000250     IF WS-STATUS = "22"
+000260	       DELETE ITEMS
+000270	       GO TO WRITE-ITEMS.
+000280     IF WS-STAT1 NOT = "0"
+000290	       MOVE 57		 TO WS-F-ERROR
+000300         PERFORM WRITE-ERROR.
+
+000340 WRITE-ITEMS-EXIT.
+000350       EXIT.

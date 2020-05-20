@@ -1,0 +1,381 @@
+      /
+      *    ****    S A L E S   O R D E R   L O O K U P   R O U T I N E
+      *
+      *            PERFORMED FROM AA50 
+      *            (P R O C E S S   F U N C T I O N   K E Y S)
+      *
+000010 SORDER-LOOKUP             SECTION.
+
+000030 SORD-LUP-SCREEN.
+000040       DISPLAY CLR-SCREEN. 
+000050       DISPLAY S-SOR.
+             MOVE SPACE          TO WS-OPTION.
+000060     IF WS-ETYPE = "A"
+      *
+      *    ****    A C C O U N T   N U M B E R	 S E Q U E N C E
+      *
+000070         DISPLAY S-SORA
+           ELSE
+	   IF WS-ETYPE = "T"
+      *
+      *    ****    F R O M   S P E C I F I E D	 D A T E
+      *
+	       DISPLAY S-SORB.
+
+       SORD-LUP-CLR-SCREEN.
+000140       MOVE 0601           TO CPOS.
+000150       PERFORM SORD-CRT-EDGE UNTIL CLIN = 22.
+000160       MOVE SPACES         TO W80-ACNO W14-ORDER.
+             MOVE ZERO           TO W10-SORD W21-DTE.
+
+000200 SORD-LUP-DATA.
+000210     IF WS-ETYPE = "O"
+      *
+      *    ****  O R D E R / Q U O T E	 N U M B E R   S E Q U E N C E
+      *
+000220	       ACCEPT SA-SOR
+000230     ELSE
+000240     IF WS-ETYPE = "A"
+      *
+      *    ****    A C C O U N T   N U M B E R	 S E Q U E N C E
+      *
+000250	       ACCEPT SA-SORA
+           ELSE
+           IF WS-ETYPE = "T"
+               MOVE 1            TO W10-SORD
+      *
+      *    ****    F R O M   S P E C I F I E D	 D A T E
+      *
+	       ACCEPT SA-SORB.
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+000320		     MOVE ZERO	 TO W10-SORD
+000330		     GO TO SORD-LOOKUP-EXIT
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO SORD-LUP-DATA.
+	   IF WS-ETYPE = "T"
+      *
+      *    ****    C H A N G E	 D A T E   T O	 CCYYMMDD  (W20-DTE)
+      *
+	       MOVE W21-DTE	 TO W22-DTE3
+	       MOVE W22-DD3	 TO W20-DAY
+	       MOVE W22-MM3	 TO W20-MONTH
+	       MOVE W22-CC3	 TO W20-CENT
+	       MOVE W22-YY3	 TO W20-YEAR.
+	     DISPLAY WS-BLNK78 AT 2302 WITH FOREGROUND-COLOR 3.
+000340	     DISPLAY SPACE AT 2501 WITH BACKGROUND-COLOR 3.
+000350       MOVE 6              TO CLIN.
+000360       MOVE 1              TO W75-S W75-S1.
+
+000380 SORD-LUP-TAB-LOOP.
+000390       MOVE ZERO           TO W75-SORD (W75-S1).
+000400     IF W75-S1 < 18
+000410         ADD 1             TO W75-S1
+000420         GO TO SORD-LUP-TAB-LOOP.
+000430       MOVE ZERO           TO W75-S1.
+
+000450 SORD-LUP-ENTRY-TYPE.
+000460     IF WS-ETYPE = "O"
+000470         IF W10-SORD = ZERO
+000480             MOVE 1        TO W10-SORD.
+      *
+      *    ****    A C C O U N T   N U M B E R	 S E Q U E N C E
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё If no account number entered set to start from the first  Ё
+      *    Ё account in the file.				       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000490	   IF WS-ETYPE = "A"
+000500         IF W80-ACNO = SPACES
+000510             MOVE "     !" TO W80-ACNO.
+      *
+      *    ****  O R D E R / Q U O T E	 N U M B E R   S E Q U E N C E
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Includes from a specified date as these will also be      Ё
+      *    Ё presented in quote/order number sequence.		       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000730	   IF WS-ETYPE = "O" OR "T"
+000740         MOVE W10-SORD     TO SOR-REF
+	       MOVE ZERO	 TO SOR-SQN
+000750         PERFORM START-AT-ORDER-NO THRU READ-SORDER-EXIT
+000760     ELSE
+      *
+      *    ****    A C C O U N T   N U M B E R	 S E Q U E N C E
+      *
+000770	   IF WS-ETYPE = "A"
+               MOVE ZERO         TO SOR-REF SOR-SEQ
+	       MOVE 6		 TO WS-LENGTH
+	       CALL "CBL_TOUPPER" USING W80-ACNO
+				  BY VALUE WS-LENGTH
+				  RETURNING WS-STATUS
+	       MOVE 1		 TO WS-LENGTH
+000780         MOVE W80-ACNO     TO SOR-AC
+000790         PERFORM START-AT-ORD-DEBT THRU READ-SORDER-EXIT.
+000880     IF WS-F-ERROR = 20
+000890         GO TO SORD-NO-RECORD.
+
+000910 SORD-GET-SORDER-REC.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	  Must the READ-SORDER-NEXT statement be skipped?      Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	   IF WS-OPTION = "J"
+               MOVE SPACE        TO WS-OPTION
+               GO TO SORD-SKIP-SORD-READ.
+000920       PERFORM READ-SORDER-NEXT THRU READ-SORDER-EXIT.
+000930     IF WS-F-ERROR = 20
+000940	       SUBTRACT 1	 FROM W75-S
+000950         GO TO SORD-FULL-SCREEN.
+
+       SORD-SKIP-SORD-READ.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Is this a header or trailer record? If not go and read    Ё
+      *    Ё the next record.					       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+           IF NOT (SOR-TYPE = 0 OR 9)
+               GO TO SORD-GET-SORDER-REC.
+           IF SOR-TYPE = ZERO
+	       MOVE SOR-DTE	 TO W22-DATE.
+           IF WS-ETYPE = "T"
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё If from a specified date has been requested then check if Ё
+      *    Ё the details are to be displayed. As there is no index for Ё
+      *    Ё date in this file, the date must be checked after each    Ё
+      *    Ё read to determine if it qualifies. 		       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	       IF W20-DTE > W22-DATE
+                   GO TO SORD-GET-SORDER-REC.
+      *
+      *    ****    H E A D E R	 R E C O R D
+      *
+	   IF SOR-TYPE = ZERO
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Store the header record key in an array which can then be Ё
+      *	   Ё used to access the quote if the item is selected by the   Ё
+      *    Ё USER to be displayed.				       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000960	       MOVE SOR-REF	 TO W75-SORD (W75-S)
+               MOVE SOR-REF      TO W14-REF
+               MOVE SOR-AC       TO W14-AC
+               MOVE SOR-NAME     TO W14-NAME
+	       MOVE SOR-DTE	 TO W22-DTE2
+	       MOVE W22-CC2	 TO W22-CC3
+	       MOVE W22-YY2	 TO W22-YY3
+	       MOVE W22-MM2	 TO W22-MM3
+	       MOVE W22-DD2	 TO W22-DD3
+	       MOVE W22-DTE3	 TO W14-DATE
+               MOVE SOR-PICNO    TO W14-PS
+               MOVE SOR-DOC      TO W14-DOC
+               GO TO SORD-GET-SORDER-REC.
+      *
+      *    ****    T R A I L E R   R E C O R D
+      *
+	   IF SOR-TYPE = 9
+	       MOVE SOR-TOT	 TO W14-VALUE
+	       MOVE SOR-INVOICE  TO W14-INV.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	Check document type and display appropriate title.     Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+           IF W14-DOC = "Q"
+               MOVE "QUOTE"      TO W14-DDOC
+           ELSE
+           IF W14-DOC = "O"
+               MOVE "ORDER"      TO W14-DDOC
+           ELSE
+           IF W14-DOC = "D"
+               MOVE "DELIVER"    TO W14-DDOC.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	  Display the details of the order/quote/invoice.      Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000970       DISPLAY (CLIN, 2) W14-REF WITH FOREGROUND-COLOR 11.
+000980       DISPLAY ( , 11) W14-AC WITH FOREGROUND-COLOR 11.
+001000       DISPLAY ( , 18) W14-NME WITH FOREGROUND-COLOR 11.
+001020	     DISPLAY ( , 46) W14-DATE WITH FOREGROUND-COLOR 11.
+001040       DISPLAY ( , 57) W14-PS WITH FOREGROUND-COLOR 11.
+001040       DISPLAY ( , 60) W14-DDOC WITH FOREGROUND-COLOR 11.
+001040       DISPLAY ( , 69) W14-VALUE WITH FOREGROUND-COLOR 11.
+             MOVE SPACES         TO W14-ORDER.
+001050	   IF CLIN < 21
+001060	       ADD 1		 TO CLIN W75-S
+001070         GO TO SORD-GET-SORDER-REC.
+
+001090 SORD-FULL-SCREEN.
+      *
+      *    ****   U S E R   O P T I O N S
+      *
+001020	     DISPLAY " " AT 2303 WITH FOREGROUND-COLOR 14
+001030		     " highlight - " WITH FOREGROUND-COLOR 7
+		     "PgUp" WITH FOREGROUND-COLOR 14
+                     "/" WITH FOREGROUND-COLOR 7
+		     "PgDn" WITH FOREGROUND-COLOR 14
+		     " - " WITH FOREGROUND-COLOR 7
+001040		     "ENTER" WITH FOREGROUND-COLOR 14
+001050		     " select - " WITH FOREGROUND-COLOR 7
+001170		     "Esc" WITH FOREGROUND-COLOR 14
+		     "ape" WITH FOREGROUND-COLOR 7.
+	     PERFORM SAVE-SCREEN-2.
+001220	     MOVE 0		 TO W75-S1.
+001230       MOVE 0601           TO CPOS.
+
+001250 SORD-CRT-ATTRIB.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		  Restore the screen attributes.	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     MOVE 1920		 TO W41-LENGTH.
+	     CALL "CBL_WRITE_SCR_ATTRS" USING SAVE-POS
+					      W42-ATTRIB2
+					      W41-LENGTH
+					RETURNING WS-STATUS.
+001290	     MOVE 2000		 TO W41-LENGTH.
+
+001310 SORD-GET-USER-OPT.
+      *
+      *    ****   G E T   T H E   U S E R   R E S P O N S E
+      *
+	     CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+	     DISPLAY CLEAR-L25.
+	   IF ADIS-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN UP-KEY
+001320		     GO TO SORD-ADJ-NO-KEYS
+		 WHEN DOWN-KEY
+001340		     GO TO SORD-CHK-NO-KEYS
+		 WHEN ENTER-KEY
+		 WHEN CR-KEY
+		     GO TO SORD-CHK-SELECT
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO SORD-GET-USER-OPT
+	   ELSE
+	   IF USER-FUNC
+	       EVALUATE KEY-CODE-1
+		 WHEN ESC-KEY
+		     MOVE ZERO	 TO W10-SORD
+		     GO TO SORD-LOOKUP-EXIT
+		 WHEN PAGE-DOWN
+001340		     GO TO SORD-GET-NEXT-PAGE
+		 WHEN PAGE-UP
+001340		     GO TO SORD-GET-PREV-PAGE
+		 WHEN OTHER	 CALL X"E5"
+	       END-EVALUATE
+	       GO TO SORD-GET-USER-OPT.
+	     CALL X"E5".
+001280	     GO TO SORD-GET-USER-OPT.
+
+       SORD-GET-NEXT-PAGE.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Check that screen is full before trying to display the    Ё
+      *    Ё next page. If screen is not full, then ignore the request Ё
+      *    Ё and return to get the USER reponse.		       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+001550     IF W75-S < 16
+001560         GO TO SORD-GET-USER-OPT.
+
+001240 SORD-NEW-PAGE.
+      *
+      *    ****   D I S P L A Y	  A   B L A N K	  L O O K U P	F O R M
+      *
+001570	     MOVE 0601		 TO CPOS.
+001580       PERFORM SORD-CRT-EDGE UNTIL CLIN = 22.
+001590       MOVE 6              TO CLIN.
+001600	     MOVE LOW-VALUES	 TO W75-KEYS.
+001610	     MOVE 1		 TO W75-S W75-S1.
+001620       PERFORM SORD-LUP-TAB-LOOP.
+001630       GO TO SORD-GET-SORDER-REC.
+
+       SORD-GET-PREV-PAGE.
+             MOVE 1              TO WS-IXS1.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Set WS-OPTION to bypass the READ-SORDER-NEXT in procedure Ё
+      *    Ё SORD-GET-SORDER-REC.				       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     MOVE "J"		 TO WS-OPTION.
+
+       SORD-GET-PREV-LOOP.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё If the USER has requested the previous screen, then read  Ё
+      *    Ё backwards through the file to the first record of the     Ё
+      *    Ё previous screen and then go to the procedure that is used Ё
+      *    Ё to display the next page.				       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+             PERFORM READ-SORDER-PREV THRU READ-SORDER-EXIT.
+           IF WS-F-ERROR = 20
+	       MOVE SPACE	 TO WS-OPTION
+               GO TO SORD-NEW-PAGE.
+           IF SOR-TYPE NOT = 0
+               GO TO SORD-GET-PREV-LOOP.
+	   IF WS-IXS1 < 31
+               ADD 1             TO WS-IXS1
+               GO TO SORD-GET-PREV-LOOP.
+             GO TO SORD-NEW-PAGE.
+
+001650 SORD-NO-RECORD.
+      *
+      *    ****   D I S P L A Y	  E R R O R   M E S S A G E
+      *
+001660	     DISPLAY "No record - " AT 2512
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+001670		     "N" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+001680		     "ext or "
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+001690		     "Q" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+001700		     "uit > <"
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+
+001720 SORD-GET-USER-OPT-2.
+001730	     ACCEPT WS-OPTION AT 2538
+		    WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15 AUTO.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+001790	   IF NOT (WS-OPTION = "N" OR "Q")
+001800         GO TO SORD-GET-USER-OPT-2.
+001810     IF WS-OPTION = "N"
+001820         GO TO SORD-LUP-SCREEN.
+001830       MOVE ZERO           TO W10-SORD.
+001840       GO TO SORD-LOOKUP-EXIT.
+
+001860 SORD-ADJ-NO-KEYS.
+001870     IF W75-S1 > 1
+001880         SUBTRACT 1        FROM W75-S1 CLIN.
+001890       GO TO SORD-HIGHLIGHT.
+
+001910 SORD-CHK-NO-KEYS.
+001920     IF W75-S1 = ZERO
+001930         MOVE 1            TO W75-S1
+001940         GO TO SORD-HIGHLIGHT.
+001950     IF W75-S1 < W75-S
+001960         ADD 1             TO W75-S1 CLIN.
+
+001980 SORD-HIGHLIGHT.
+001990       PERFORM SORD-CRT-ATTRIB.
+002000       DISPLAY W43-DET (CLIN) AT CPOS WITH REVERSE-VIDEO.
+002010       GO TO SORD-GET-USER-OPT.
+
+002030 SORD-CHK-SELECT.
+002040     IF W75-S1 = ZERO
+002050         GO TO SORD-GET-USER-OPT.
+002060       MOVE CSTART         TO WS1-CURSOR.
+002070       MOVE W75-SORD (W75-S1) 
+                                 TO W10-SORD.
+002080       PERFORM READ-SORDER THRU READ-SORDER-EXIT.
+002090	     MOVE ZERO		 TO COL-AND-LINE.
+002100       GO TO SORD-LOOKUP-EXIT.
+
+002120 SORD-CRT-EDGE.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё Display individual lines for the blank form - starting    Ё
+      *    Ё from the line number, up to and including the line number Ё
+      *    Ё specified by the perform - varying / until statement.     Ё
+      *    Ё Performed from the following procedures SORD-NEW-PAGE and Ё		       Ё
+      *    Ё SORD-LUP-CLR-SCREEN.				       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+002130	     DISPLAY WS-MSO1 AT CPOS WITH BACKGROUND-COLOR 0
+					  FOREGROUND-COLOR 3
+		     WS-MSO78 WITH FOREGROUND-COLOR 3
+		     WS-MSO80 WITH BACKGROUND-COLOR 0
+				   FOREGROUND-COLOR 3.
+002140	     ADD 1		 TO CLIN.
+
+002160 SORD-LOOKUP-EXIT.
+002170       EXIT.

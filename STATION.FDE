@@ -1,0 +1,13 @@
+      /
+000010 FD  STATION   IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-STATION.
+000220 01  STA-REC1.
+000230	   03  STA-REF.
+	       05  STA-WS      PIC  X(02).
+	       05  STA-REF     PIC  9(06).
+	   03  STA-DATE        PIC  9(08) COMP
+000250	   03  STA-BTCH        PIC  X(01).
+	   03  STA-POST	       PIC  X(01).
+	   03  STA-LOCAL       PIC  X(01).
+	   03  STA-ONLINE      PIC  X(01).

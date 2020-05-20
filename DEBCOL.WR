@@ -1,0 +1,40 @@
+      *
+      *    ****  ***** ****  *   * ***** *   *    ***** ***** *     *****
+      *    *   * *     *   * ** ** *     ** **    *       *   *     *
+      *    *   * *     *   * * * * *     * * *    *       *   *     *
+      *    *   * ***   ****  *   * ***   *   *    ***     *   *     ***
+      *    *   * *     *   * *   * *     *   *    *       *   *     *
+      *    *   * *     *   * *   * *     *   *    *       *   *     *
+      *    ****  ***** ****  *   * ***** *   *    *     ***** ***** *****
+      *
+000010 REWRITE-DEBCOL.
+000020	     REWRITE DMC-RECORD1.
+000030     IF WS-STAT1 NOT = "0"
+000040	       MOVE 49		 TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060	     GO TO WRITE-DEBCOL-EXIT.
+000070
+000080 REWRITE-DEBCOL-UNLOCK.
+000090	     REWRITE DMC-RECORD1.
+000100     IF WS-STAT1 NOT = "0"
+000110	       MOVE 49		 TO WS-F-ERROR
+000120         PERFORM WRITE-ERROR.
+000130	     UNLOCK DEBCOL.
+000140	     GO TO WRITE-DEBCOL-EXIT.
+000150
+000160 DELETE-DEBCOL-REC.
+000170	     DELETE DEBCOL.
+000180     IF WS-STAT1 NOT = "0"
+000190	       MOVE 49		 TO WS-F-ERROR
+000200         PERFORM WRITE-ERROR.
+000210	     UNLOCK DEBCOL.
+000220	     GO TO WRITE-DEBCOL-EXIT.
+000230
+000240 WRITE-DEBCOL.
+000250	     WRITE DMC-RECORD1.
+000260     IF WS-STAT1 NOT = "0"
+000270	       MOVE 49		 TO WS-F-ERROR
+000280         PERFORM WRITE-ERROR.
+000310
+000320 WRITE-DEBCOL-EXIT.
+000330       EXIT.

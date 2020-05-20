@@ -1,0 +1,9 @@
+       01  OPT-LINE.
+          02  BACKGROUND-COLOR Cyan.
+              03           COLUMN 16 FOREGROUND-COLOR Cyan  HIGHLIGHT VALUE "здддддддддддддддддддддддддддддддддддддддддддддддд".
+              03           COLUMN 65 FOREGROUND-COLOR Black           VALUE "©".
+              03  LINE + 1 COLUMN 16 FOREGROUND-COLOR Cyan  HIGHLIGHT VALUE "Ё".
+              03           COLUMN 17 FOREGROUND-COLOR Brown HIGHLIGHT PIC       X(48) FROM WS-ERR-MES.
+              03           COLUMN 65 FOREGROUND-COLOR Black           VALUE "Ё".
+              03  LINE + 1 COLUMN 16 FOREGROUND-COLOR Cyan  HIGHLIGHT VALUE "ю".
+              03           COLUMN 17 FOREGROUND-COLOR Black           VALUE "дддддддддддддддддддддддддддддддддддддддддддддддды".

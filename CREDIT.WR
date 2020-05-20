@@ -1,0 +1,45 @@
+
+       REWRITE-CREDIT.
+             REWRITE P-REC.
+           IF WS-STAT1 NOT = "0"
+               MOVE 3            TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-CREDIT-EXIT.
+
+       REWRITE-CREDIT-UNLOCK.
+             REWRITE P-REC.
+           IF WS-STAT1 NOT = "0"
+               MOVE 3            TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK CREDIT.
+             GO TO WRITE-CREDIT-EXIT.
+
+       DELETE-CREDIT-REC.
+             DELETE CREDIT.
+           IF WS-STAT1 NOT = "0"
+               MOVE 3            TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK CREDIT.
+             GO TO WRITE-CREDIT-EXIT.
+
+       WRITE-CREDIT.
+             WRITE P-REC.
+           IF WS-STAT1 NOT = "0"
+               MOVE 3            TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ To avoid problems of having data corrupted (MULTI USER)   ³
+      *    ³ by the cache (buffering) of data on the individual Work   ³
+      *    ³ stations. Cache results in data from one work station not ³
+      *    ³ being available on another Work Station until the cache   ³
+      *    ³ has been cleared. Including a close of the file after each³
+      *    ³ new Creditor has been added and then re-opening the file  ³
+      *    ³ is the way in which the system will release the data for  ³
+      *    ³ it to be written to the server file and should resolve    ³
+      *    ³ this problem.					       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     CLOSE CREDIT.
+	     OPEN I-O CREDIT.
+
+       WRITE-CREDIT-EXIT.
+             EXIT.

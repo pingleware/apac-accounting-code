@@ -1,0 +1,42 @@
+
+       REWRITE-JOBWAR.
+	     REWRITE JBW-REC1.
+	   IF WS-STAT1 NOT = "0"
+	       MOVE 28		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-JOBWAR-EXIT.
+
+       REWRITE-JOBWAR-UNLOCK.
+	     REWRITE JBW-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 28		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK JOBWAR.
+	     GO TO WRITE-JOBWAR-EXIT.
+
+       DELETE-JOBWAR-REC-UNLOCK.
+	     DELETE JOBWAR.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 28		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK JOBWAR.
+	     GO TO WRITE-JOBWAR-EXIT.
+
+       DELETE-JOBWAR-REC.
+	     DELETE JOBWAR.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 28		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-JOBWAR-EXIT.
+
+       WRITE-JOBWAR.
+	     WRITE JBW-REC1.
+	   IF WS-STATUS = "22"
+	       ADD 1		 TO JBW-SEQ
+	       GO TO WRITE-JOBWAR.
+	   IF WS-STAT1 NOT = "0"
+	       MOVE 28		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-JOBWAR-EXIT.
+             EXIT.

@@ -1,0 +1,97 @@
+      /
+000010 FD  SOROLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-SOROLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  SOO-REC1.
+	   03  SOO-KEY.
+000050	     05  SOO-REF       PIC  X(08).
+	     05  SOO-SEQN.
+		 07  SOO-SEQ   PIC  9(03).
+		 07  SOO-SUB   PIC  9(02).
+	     05  SOO-SQN REDEFINES SOO-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 0  -  HEADER RECORD
+      *                 : 1  -  ITEM DETAILS
+      *                 : 2  -  PARTS DETAILS
+      *                 : 3  -  REMARKS
+      *                 : 4  -  INTERNAL NOTES FOR PICKING SLIP 
+      *                 : 5  -  ADDRESS
+      *                 : 9  -  TRAILER
+      *
+	   03  SOO-TYPE        PIC  9(01).
+	   03  SOO-AC	       PIC  X(06).
+	   03  SOO-DETAIL.
+	     05  SOO-NAME      PIC  X(40).
+000070	     05  SOO-DTE       PIC  9(08)    COMP-3.
+	     05  SOO-PICNO     PIC  9(02)    COMP-5.
+000090	     05  SOO-ORD       PIC  X(12).
+000130	     05  SOO-SMAN      PIC  9(04)    COMP-5.
+	     05  SOO-DOC       PIC  X(01).
+	       88  SOO-DELIV   VALUE "D".
+	       88  SOO-INVOIC  VALUE "I".
+	       88  SOO-ORDER   VALUE "O".
+	       88  SOO-QUOTE   VALUE "Q".
+	     05  SOO-PAGE      PIC  9(02).
+	     05  SOO-OREF      PIC  X(09).
+	     05  SOO-EXP       PIC  X(01).
+	     05  SOO-PRC       PIC  X(01).
+	     05  SOO-ADV       PIC  X(01).
+	     05  SOO-TEL       PIC  X(14).
+	     05  SOO-CONTACT   PIC  X(19).
+	     05  SOO-BIN       PIC  X(06).
+000140	   03  SOO-DET2 REDEFINES SOO-DETAIL.
+	     05  SOO-EXT-ITEM.
+000190	       07  SOO-ITEM    PIC  X(14).
+	       07  SOO-ITM     PIC  X(03).
+	       07  FILLER      PIC  X(01).
+000210	     05  SOO-DESC      PIC  X(40).
+	     05  SOO-SERIAL REDEFINES SOO-DESC.
+                 07  FILLER    PIC X(01).
+		 07  SOO-SNUM OCCURS 2.
+		     09  SOO-SNO
+			       PIC X(18).
+                     09  FILLER
+                               PIC X(01).
+                 07  FILLER    PIC X(01).
+000160	     05  SOO-QNT       PIC S9(05)V99 COMP-3.
+	     05  SOO-COST      PIC S9(06)V999 COMP-3.
+	     05  SOO-SELL      PIC S9(08)V999 COMP-3.
+	     05  SOO-VAT       PIC S9(07)V99 COMP-3.
+000280	     05  SOO-VAL       PIC S9(09)V99 COMP-3.
+000270	     05  SOO-INCTAX    PIC S9(09)V99 COMP-3.
+000270	     05  SOO-NONTAX    PIC S9(09)V99 COMP-3.
+000270	     05  SOO-TAXVAL    PIC S9(09)V99 COMP-3.
+	     05  SOO-DSC       PIC S9(02)V99 COMP-3.
+	     05  SOO-DISC      PIC S9(07)V99 COMP-3.
+	     05  SOO-SERNO     PIC  X(01).
+	     05  SOO-PER       PIC  X(07).
+	     05  SOO-VAT-SUB   PIC  9(01).
+	     05  SOO-PACK      PIC  9(01)    COMP-0.
+000140	   03  SOO-DET3 REDEFINES SOO-DETAIL.
+000290	     05  SOO-SUBTOT    PIC S9(09)V99 COMP-3.
+000300	     05  SOO-DSCNT     PIC S9(07)V99 COMP-3.
+	     05  SOO-NON-TXBL  PIC S9(09)V99 COMP-3.
+	     05  SOO-TAXABLE   PIC S9(09)V99 COMP-3.
+000310	     05  SOO-TAX       PIC S9(07)V99 COMP-3.
+000320	     05  SOO-TOT       PIC S9(09)V99 COMP-3.
+	     05  SOO-INVOICE   PIC  X(08).
+	     05  SOO-BAL       PIC S9(09)V99 COMP-3.
+000310	     05  SOO-ADVTAX    PIC S9(07)V99 COMP-3.
+	     05  SOO-INSTRUCT  PIC  X(09).
+	     05  SOO-PMETH     PIC  9(01).
+	     05  SOO-STATUS    PIC  9(03)    COMP-3.
+	     05  SOO-HTEL      PIC  X(14).
+	     05  SOO-ID        PIC  X(14).
+	     05  SOO-COMMENT   PIC  X(29).
+000140	   03  SOO-DET4 REDEFINES SOO-DETAIL.
+	     05  SOO-AD1       PIC  X(30).
+	     05  SOO-AD2       PIC  X(26).
+	     05  SOO-AD3       PIC  X(26).
+	     05  SOO-AD4       PIC  X(26).
+	     05  SOO-PC        PIC  X(04).
+	     05  FILLER        PIC  X(02).
+000140	   03  SOO-DET5 REDEFINES SOO-DETAIL.
+	     05  SOO-TEXT      PIC  X(63).
+	     05  SOO-SIGN      PIC  X(20).
+	     05  FILLER        PIC  X(31).

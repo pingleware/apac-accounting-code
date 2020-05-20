@@ -1,0 +1,196 @@
+      *
+      *    THIS ROUTINE IS USED TO ALLOCATE A CREDIT TO VARIOUS
+      *    DEBIT TRANSACTIONS APPEARING ON THE DEBTORS ACCOUNT
+      *    CLIN MUST CONTAIN THE LINE NUMBER ON WHICH THE TRANS-
+      *    ACTIONS ARE TO BE DISPLAYED.
+      *
+       ALLOCATE-CREDIT           SECTION 56.
+
+       ALLOC-INIT.
+             MOVE W90-CODE       TO W45-CODE.
+             OPEN OUTPUT DEBTRN.
+             CLOSE DEBTRN.
+             OPEN I-O DEBTRN.
+             MOVE W90-CR         TO W75-BALANCE.
+             ADD W90-DISCOUNT         TO W75-BALANCE.
+             MOVE W90-ALLOCATED  TO W75-ALLOCATED.
+             DISPLAY S-ALLOC.
+             MOVE ZERO           TO WS-DBTKEY W75-KEY WS-ERROR.
+             MOVE DEB-ACNO       TO TRA-AC.
+             MOVE ZERO           TO TRA-DATE TRA-CODE.
+             MOVE SPACES         TO TRA-REF.
+             PERFORM START-AT-DTRN-KEY THRU READ-DBTRAN-EXIT.
+           IF WS-F-ERROR = 5
+               GO TO ALLOC-COMPLETE.
+
+       ALLOC-DBTRAN-NEXT.
+             PERFORM READ-DBTRAN-NEXT THRU READ-DBTRAN-EXIT.
+           IF (WS-F-ERROR = 5) OR
+              (DEB-ACNO NOT = TRA-AC)
+               GO TO ALLOC-END-DBTRAN.
+           IF (TRA-VALUE < ZERO) OR
+              (TRA-VALUE = TRA-PAID)
+               GO TO ALLOC-DBTRAN-NEXT.
+           IF (W45-CODE = 17) AND
+              (TRA-CODE NOT = 20)
+               GO TO ALLOC-DBTRAN-NEXT.
+             MOVE TRA-RECORD1    TO DBT-RECORD1.
+             MOVE SPACE          TO DBT-UPDATE.
+             COMPUTE DBT-OUTSTD = DBT-VALUE - DBT-PAID.
+             MOVE ZERO           TO DBT-ALLOC.
+             ADD 1               TO WS-DBTKEY W75-KEY.
+             PERFORM WRITE-DEBTRN THRU WRITE-DEBTRN-EXIT.
+           IF DBT-OUTSTD > W75-BALANCE
+               MOVE W75-BALANCE  TO DBT-ALLOC
+           ELSE
+               MOVE DBT-OUTSTD   TO DBT-ALLOC.
+             MOVE TRA-CODE       TO W90-CODE.
+             PERFORM GET-DEBTOR-TRAN-DESC.
+
+       ALLOC-DISP-TRAN.
+             DISPLAY S-DTRN AT LINE CLIN.
+           IF WS-ALLOCATE = "A"
+               MOVE "A"          TO WS-OPTION
+               GO TO ALLOC-CHK-SELECT.
+
+       ALLOC-DISP-USER-OPT.
+             DISPLAY " " AT 2303 WITH FOREGROUND-COLOR 14
+                     " view transactions, " WITH FOREGROUND-COLOR 7
+                     "A" WITH FOREGROUND-COLOR 14
+                     "ccept/" WITH FOREGROUND-COLOR 7
+                     "C" WITH FOREGROUND-COLOR 14
+                     "hange allocation, " WITH FOREGROUND-COLOR 7
+                     "E" WITH FOREGROUND-COLOR 14
+                     "nd or " WITH FOREGROUND-COLOR 7
+                     "Esc" WITH FOREGROUND-COLOR 14
+                     " to abort" WITH FOREGROUND-COLOR 7.
+
+        ALLOC-GET-USER-OPT.
+             CALL X"AF" USING GET-SINGLE-CHAR, KEY-STATUS.
+             PERFORM CLEAR-L50.
+           IF ADIS-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN UP-KEY
+                     GO TO ALLOC-MOVE-UP
+                 WHEN DOWN-KEY
+                     GO TO ALLOC-MOVE-DOWN
+                 WHEN ENTER-KEY
+                 WHEN CR-KEY
+                     GO TO ALLOC-CHK-SELECT
+                 WHEN OTHER
+                     CALL X"E5"
+               END-EVALUATE
+               GO TO ALLOC-GET-USER-OPT
+           ELSE
+           IF USER-FUNC
+               EVALUATE KEY-CODE-1
+                 WHEN ESC-KEY
+                     MOVE 9         TO WS-ERROR
+                     GO TO ALLOC-COMPLETE
+                 WHEN OTHER
+                     CALL X"E5"
+               END-EVALUATE
+               GO TO ALLOC-GET-USER-OPT
+           ELSE
+           IF DATA-8BIT
+               MOVE KEY-CODE-1X  TO WS-OPTION.
+
+       ALLOC-CHK-SELECT.
+             CALL "CBL_TOUPPER" USING WS-OPTION
+                                BY VALUE WS-LENGTH
+                                RETURNING WS-STATUS.
+           IF NOT (WS-OPTION = "A" OR "C" OR "E")
+               GO TO ALLOC-GET-USER-OPT.
+           IF WS-OPTION = "C"
+               GO TO ALLOC-CHANGE-AMT.
+           IF WS-OPTION = "E"
+               GO TO ALLOC-COMPLETE.
+           IF DBT-UPDATE = SPACE
+               IF DBT-ALLOC > W75-BALANCE
+                   MOVE W75-BALANCE
+                                 TO DBT-ALLOC
+               END-IF
+               ADD DBT-ALLOC     TO W75-ALLOCATED
+               SUBTRACT DBT-ALLOC
+                                 FROM W75-BALANCE
+               DISPLAY S-ALLOC
+               MOVE "Y"          TO DBT-UPDATE
+               PERFORM REWRITE-DEBTRN THRU WRITE-DEBTRN-EXIT.
+           IF W75-BALANCE = ZERO
+               GO TO ALLOC-END.
+           IF WS-DBTKEY NOT < W75-KEY
+               GO TO ALLOC-DBTRAN-NEXT.
+             ADD 1                 TO WS-DBTKEY.
+             GO TO ALLOC-READ-DEBTRN.
+
+       ALLOC-MOVE-UP.
+           IF WS-DBTKEY > 1
+               SUBTRACT 1         FROM WS-DBTKEY
+               GO TO ALLOC-READ-DEBTRN.
+             GO TO ALLOC-DISP-USER-OPT.
+
+       ALLOC-MOVE-DOWN.
+           IF WS-DBTKEY NOT < W75-KEY
+               GO TO ALLOC-DBTRAN-NEXT.
+             ADD 1                 TO WS-DBTKEY.
+             GO TO ALLOC-READ-DEBTRN.
+
+       ALLOC-CHANGE-AMT.
+           IF DBT-UPDATE = "Y"
+               ADD DBT-ALLOC     TO W75-BALANCE
+               SUBTRACT DBT-ALLOC
+                                 FROM W75-ALLOCATED
+               DISPLAY S-ALLOC
+               MOVE ZERO         TO DBT-ALLOC
+               MOVE SPACE         TO DBT-UPDATE
+               PERFORM REWRITE-DEBTRN THRU WRITE-DEBTRN-EXIT.
+             ACCEPT S-DTRN AT LINE CLIN.
+           IF DBT-ALLOC > DBT-OUTSTD
+               MOVE DBT-OUTSTD   TO DBT-ALLOC.
+           IF DBT-ALLOC > W75-BALANCE
+               MOVE W75-BALANCE  TO DBT-ALLOC.
+             GO TO ALLOC-DISP-TRAN.
+
+       ALLOC-READ-DEBTRN.
+             PERFORM READ-DEBTRN THRU READ-DEBTRN-EXIT.
+             GO TO ALLOC-DISP-TRAN.
+
+       ALLOC-END-DBTRAN.
+             DISPLAY "No more transactions" AT 2541
+                      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+             PERFORM READ-DBTRAN-PREV THRU READ-DBTRAN-EXIT.
+             GO TO ALLOC-DISP-USER-OPT.
+
+       ALLOC-END.
+           IF WS-ALLOCATE = "A"
+               GO TO ALLOC-COMPLETE.
+             DISPLAY "Total has been allocated " AT 2521
+                      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+                     "A" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+                     "ccept/"
+                      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1
+                     "R" WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14
+                     "eview allocations > <"
+                      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+             MOVE "A"            TO WS-OPTION.
+
+       ALLOC-OPT.
+             ACCEPT WS-OPTION AT 2573
+                    WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15
+                         UPDATE AUTO.
+             CALL "CBL_TOUPPER" USING WS-OPTION
+                                BY VALUE WS-LENGTH
+                                RETURNING WS-STATUS.
+           IF NOT (WS-OPTION = "A" OR "R")
+               GO TO ALLOC-OPT.
+             PERFORM CLEAR-L50.
+           IF WS-OPTION = "R"
+               GO TO ALLOC-DISP-TRAN.
+
+       ALLOC-COMPLETE.
+             MOVE 1              TO WS-DBTKEY.
+             PERFORM CLEAR-L50.
+             MOVE W45-CODE       TO W90-CODE.
+
+       ALLOC-EXIT.
+             EXIT.

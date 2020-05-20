@@ -1,0 +1,24 @@
+      *
+      *     ***  *****	***   ***  *   *     ****  *****  ***
+      *    *   *   *   *   * *	 * *  *      *	 * *   * *   *
+      *    *	   *   *   * *	   * *	     *	 * *  *  *
+      *     ***    *   *   * *	   **	     ****  ***	 *
+      *        *   *   *   * *	   * *	     *	   *  *  *
+      *    *   *   *   *   * *	 * *  *      *	   *   * *   *
+      *     ***    *	***   ***  *   *     *	   *   *  ***
+      *
+000010 REWRITE-STKPRC.
+000020	     REWRITE PRC-RECORD1.
+000030     IF WS-STAT1 NOT = "0"
+000040	       MOVE 34		 TO WS-F-ERROR
+000050         PERFORM WRITE-ERROR.
+000060	     GO TO WRITE-STKPRC-EXIT.
+000070
+000240 WRITE-STKPRC.
+000250	     WRITE PRC-RECORD1.
+000260     IF WS-STAT1 NOT = "0"
+000270	       MOVE 34		 TO WS-F-ERROR
+000280         PERFORM WRITE-ERROR.
+000310
+000320 WRITE-STKPRC-EXIT.
+000330       EXIT.

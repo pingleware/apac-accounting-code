@@ -1,0 +1,32 @@
+
+       REWRITE-PORDER.
+             REWRITE ORD-RECORD1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 16           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             GO TO WRITE-PORDER-EXIT.
+
+       REWRITE-PORDER-UNLOCK.
+             REWRITE ORD-RECORD1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 16           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK PORDER.
+             GO TO WRITE-PORDER-EXIT.
+
+       DELETE-PORDER-REC.
+             DELETE PORDER.
+           IF WS-STAT1 NOT = "0"
+               MOVE 16           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+             UNLOCK PORDER.
+             GO TO WRITE-PORDER-EXIT.
+
+       WRITE-PORDER.
+             WRITE ORD-RECORD1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 16		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-PORDER-EXIT.
+             EXIT.

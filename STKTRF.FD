@@ -1,0 +1,52 @@
+000010 FD  STKTRF    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-STKTRF.
+      *
+      *    ****    H E A D E R
+      *
+000030 01  TRF-RECORD1.
+	   03  TRF-ID.
+	       05  TRF-BR-CODE PIC  X(03).
+	       05  TRF-REF     PIC  X(07).
+	   03  TRF-DATE        PIC  9(08)     COMP.
+	   03  TRF-BR-FROM     PIC  X(38).
+	   03  TRF-TO-CDE      PIC  X(03).
+	   03  TRF-BR-TO       PIC  X(38).
+	   03  TRF-VALUE       PIC S9(10)V999 COMP-3.
+	   03  FILLER	       PIC  X(216).
+      *
+      *    ****   T R A N S F E R   D E T A I L S
+      *
+000030 01  TRF-RECORD2.
+	   03  TRF-EXT-CODE.
+000040	       05  TRF-CODE    PIC  X(14).
+	       05  TRF-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+000050     03  TRF-ACODE       PIC  X(10).
+000060	   03  TRF-BIN	       PIC  X(06).
+000070	   03  TRF-LEDG        PIC  X(04).
+000080     03  TRF-DESC        PIC  X(30).
+000080	   03  TRF-DESC2       PIC  X(30).
+000090     03  TRF-QUANT       PIC S9(07)V9(04) COMP-3.
+000100	   03  TRF-LEVEL       PIC S9(07)V99  COMP-3.
+000110     03  TRF-COST        PIC S9(06)V999 COMP-3.
+	   03  TRF-BREAK-DOWNS OCCURS 4.
+	       05  TRF-UNT     PIC S9(04)V999 COMP-3.
+	       05  TRF-PR      PIC  X(08).
+000300	       05  TRF-MKUP    PIC S9(03)V99  COMP-3.
+000300	       05  TRF-CMKUP   PIC S9(03)V99  COMP-3.
+000300	       05  TRF-WMKUP   PIC S9(03)V99  COMP-3.
+000140	       05  TRF-SL      PIC S9(08)V999 COMP-3.
+000150	       05  TRF-CSH     PIC S9(08)V999 COMP-3.
+000160	       05  TRF-WSL     PIC S9(08)V999 COMP-3.
+000140	   03  TRF-AVGE        PIC S9(07)V999 COMP-3.
+000150	   03  TRF-ORD	       PIC S9(07)V99  COMP-3.
+000160	   03  TRF-LTIME       PIC  9(01)V99  COMP-3.
+000350	   03  TRF-SUPP        PIC  X(06).
+000360	   03  TRF-GUAR        PIC  9(02)     COMP-5.
+000370     03  TRF-TAX         PIC  9(01).
+000380	   03  TRF-XREF        PIC  X(18).
+	   03  TRF-CASES       PIC S9(05)     COMP-3.
+	   03  TRF-USE-CASES   PIC  X(01).
+	   03  TRF-USE-PACKS   PIC  X(01).
+	   03  TRF-EXEMPT      PIC  X(01).
+	   03  TRF-FACT	       PIC  9(06)V999 COMP-3.

@@ -1,0 +1,54 @@
+      /
+      *    F L U S H   F I L E   B U F F E R S
+      *
+       FLUSH-FILE-BUFFER SECTION.
+
+       FLUSH-INIT.
+           IF FH-NAME = SPACES
+               GO TO FLUSH-EXIT.
+            
+      *
+      *    GET DIRECTORY (PATH)
+      *
+           IF FH-PATH = SPACES
+               MOVE ZERO         TO FH-S1
+               CALL X"91" USING FH-S1, FH-FUNC, FH-PATH
+               MOVE "\"          TO FH-SL
+           ELSE
+               IF FH-C = ":"
+                   MOVE FH-NAME  TO FH-FILE
+               END-IF
+               GO TO FLUSH-HANDLE.
+
+           IF FH-C = ":"
+               STRING FH-DSK DELIMITED SIZE
+                      FH-PATH DELIMITED SIZE
+                      INTO FILE-NAME
+               MOVE FH-NAME      TO FH-FILE
+               MOVE FILE-NAME    TO FH-PATH.
+
+       FLUSH-HANDLE.
+             STRING FH-PATH DELIMITED X"00"
+                    "\" DELIMITED SIZE
+                    FH-FILE DELIMITED " "
+                    INTO FILE-NAME.
+               
+       FLUSH-END.
+             DISPLAY FILE-NAME AT 2424.
+      *
+      *    FUNCTION 68h = Flush file buffers
+      *
+             MOVE 104            TO AH-PARM.
+             MOVE ZERO           TO AL-PARM.
+             CALL X"84" USING MSDOS, FLAG, AX-PARM, FILE-HANDLE,
+                              CX-PARM, DX-PARM.
+      *
+      *    AL will contain the error code if any.
+      *
+           IF AL-PARM NOT = ZERO
+               DISPLAY AL-PARM AT 2402
+               ACCEPT WS-OPTION AT 2406 WITH AUTO.
+
+       FLUSH-EXIT.
+             EXIT.
+

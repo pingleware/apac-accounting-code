@@ -1,0 +1,19 @@
+009340 01  S-DPT.
+	   03  LINE  5 COLUMN  3 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				"зддддддддддддддддддддддддддддддддддд©".
+	   03  LINE  6 COLUMN  3 BACKGROUND-COLOR 7
+009360				 FOREGROUND-COLOR 0 VALUE
+				"Ё       D E P A R T M E N T S       Ё".
+	   03  LINE  7 COLUMN  3 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				"цддддбдддддддддддддддддддддддддддддд╢".
+	   03  LINE  8 COLUMN  3 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				"ЁCodeЁ  Sales Ledger / Department   Ё".
+	   03  LINE  9 COLUMN  3 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				"цддддедддддддддддддддддддддддддддддд╢".
+	   03  LINE 20 COLUMN  3 BACKGROUND-COLOR 7
+				 FOREGROUND-COLOR 0 VALUE
+				"юддддадддддддддддддддддддддддддддддды".

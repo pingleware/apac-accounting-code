@@ -1,0 +1,17 @@
+      /
+       FD  WS-SPARTS IS EXTERNAL
+		     LABEL RECORD STANDARD
+003050		     VALUE OF FILE-ID W02-WS-SPARTS.
+003060 01  PRW-REC1.
+	   03  PRW-EXT-ITEM.
+	       05  PRW-ITEM    PIC  X(14).
+	       05  PRW-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  PRW-COMMENT     PIC  X(40).
+	   03  PRW-TYPE        PIC  9(02)      COMP.
+	   03  PRW-PARTS OCCURS 30.
+	      05  PRW-EXT-CODE.
+		  07  PRW-CODE PIC  X(14).
+		  07  PRW-PITM PIC  X(03).
+		  07  FILLER   PIC  X(01).
+	      05  PRW-QUANT    PIC  9(05)V9999 COMP-3.

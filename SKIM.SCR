@@ -1,0 +1,39 @@
+N SKIM.COM
+A 100
+JMP 0126                          ; jump over data
+DB "Can't find"
+DB 32
+DB "COMSPEC="
+DB D A 24
+DW 00 80 00 5C 00 6C 00
+CLD
+MOV AH,4A                         ; Modify block at ES
+MOV SP,0C85                       ; (move stack)
+MOV BX,00C9                       ; to this size
+INT 21                            ; through DOS
+MOV AX,CS                         ; Point to this segment
+MOV [011C],AX                     ; and load into
+MOV [0120],AX                     ; EXEC parameter
+MOV [0124],AX                     ; block
+MOV AX,2901                       ; Parse string
+MOV SI,0081                       ; Src = command tail
+MOV DI,005C                       ; Dest
+INT 21                            ; through DOS
+MOV AX,2901                       ; Parse string
+INT 21                            ; through DOS
+MOV AX,2901                       ; Parse string
+MOV DI,006C                       ; Next FCB
+INT 21                            ; through DOS
+MOV AX,[002C]                     ; Segment to env
+MOV [0303],AX                     ; save it
+MOV DS,AX                         ; point DS to env
+SUB SI,SI                         ; SI = 0
+CMP Byte [SI],00                  ; end of env
+JNZ 016A
+PUSH CS                           ; point DS to our seg
+POP DS
+MOV DX,0102                       ; Report error
+JMP 01A5
+MOV DI,010D                       ; look for this string
+
+

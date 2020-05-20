@@ -1,0 +1,8 @@
+000010 FD  DEBMEM    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-DEBMEM.
+000030 01  DME-RECORD1.
+           03  DME-KEY.
+               05  DME-AC      PIC  X(06).
+               05  DME-SEQ     PIC  9(02).
+           03  DME-DATA        PIC  X(60).

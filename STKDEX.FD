@@ -1,0 +1,21 @@
+      /
+000010 FD  STKDEX    LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-STKDEX.
+000220 01  STX-REC1.
+000230	   03  STX-KEY.
+	       05  STX-EXT-CODE.
+		 07  STX-CODE  PIC  X(14).
+		 07  STX-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+	       05  STX-DTE     PIC  9(08)    COMP.
+	       05  STX-SEQ     PIC  9(02)    COMP.
+	   03  STX-GRN	       PIC  X(08).
+	   03  STX-REF.
+	       05  STX-USER    PIC  9(03)    COMP-3.
+	       05  STX-PROG    PIC  X(06).
+	   03  STX-WS	       PIC  9(03).
+000250	   03  STX-QNT	       PIC S9(07)V99 COMP-3.
+	   03  STX-COST        PIC S9(07)V99 COMP-3.
+	   03  STX-SELL        PIC S9(07)V99 COMP-3.
+	   03  STX-REMARKS     PIC  X(20).
+	   03  STX-TIME        PIC  9(08)    COMP.

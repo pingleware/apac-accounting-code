@@ -1,0 +1,39 @@
+      /
+000010 FD  TXTRAN    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-TXTRAN.
+000030 01  TAX-RECORD1.
+           03  TAX-KEY.
+      *
+      *    The first record on the file is the control record
+      *    and will have the type "C", taxtype 0 and the date
+      *    will contain the start date for the period.
+      *    
+      *    TYPE: "1" = Input Tax
+      *          "2" = Output Tax
+      *          "3" = Input Payments
+      *          "4" = Output Payments
+      *
+               05  TAX-TYPE    PIC  X(01).
+      *
+      *    ACTYPE: 1 = Debtors        (Sales / Returns)
+      *            2 = Cash           (Sales / Refunds)
+      *            3 = Creditors      (Purchases)
+      *            4 = General Ledger (Rates, Vehicles ETC)
+      *
+               05  TAX-ACTYPE  PIC  9(01).
+      *
+      *    CODE:  This is the transaction code
+      *
+               05  TAX-CODE    PIC  9(02).
+000050	       05  TAX-DATE    PIC  9(08).
+000060         05  TAX-REF     PIC  X(08).
+               05  TAX-SEQ     PIC  9(04).
+000070     03  TAX-VALUE       PIC S9(09)V99 COMP-3.
+           03  TAX-TAXFREE     PIC S9(09)V99 COMP-3.
+	   03  TAX-VAT-RATE    OCCURS 12.
+	       05  TAX-VAL     PIC S9(09)V99 COMP-3.
+	       05  TAX-VAT     PIC S9(09)V99 COMP-3.
+	   03  TAX-EXEMPT      PIC S9(09)V99 COMP-3.
+000100	   03  TAX-AC.
+               05  TAX-CAC     PIC  9(05).
+               05  FILLER      PIC  X(01).

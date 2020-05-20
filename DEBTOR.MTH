@@ -1,0 +1,25 @@
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё  Determine the month for which payments are to be updated Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       DEBTOR-PAYMENT-PROFILE.
+	   IF WS-MTHEND = 31 OR 99
+	       MOVE W20-MONTH	 TO WS-SUB
+	   ELSE
+	   IF NOT (W20-DAY > WS-MTHEND)
+	       MOVE W20-MONTH	 TO WS-SUB
+	   ELSE
+	   IF W20-MONTH = 12
+	       MOVE 1		 TO WS-SUB
+	   ELSE
+	       ADD 1 W20-MONTH	 GIVING WS-SUB.
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		Update the Debtors payment profile	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+	     ADD W90-CR 	 TO DEB-MTHPMT(WS-SUB).
+
+
+
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё		Update the Debtors payment profile	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       DEBTOR-PMT-PROFILE.

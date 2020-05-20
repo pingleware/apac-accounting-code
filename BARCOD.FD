@@ -1,0 +1,11 @@
+000330 FD  BARCOD   LABEL RECORD STANDARD
+000020		    VALUE OF FILE-ID W02-BARCOD.
+       01  BAR-REC.
+	   03  BAR-EXT-ITEM.
+	       05  BAR-ITEM    PIC  X(14).
+	       05  BAR-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  BAR-CODE        PIC  X(14).
+000360	   03  BAR-DESC        PIC  X(30).
+	   03  BAR-QNT	       PIC  9(04).
+	   03  BAR-PRICE       PIC  9(03)V99 COMP.

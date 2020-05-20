@@ -1,0 +1,22 @@
+      /
+002000 FD  CSTRAN    LABEL RECORD IS STANDARD
+002010               VALUE OF FILE-ID IS W02-CSTRAN.
+002020 01  CST-REC.
+002030	   03  CST-DATE        PIC  9(08).
+002040     03  CST-DTE         REDEFINES CST-DATE.
+002050	       05  CST-CN      PIC  9(02).
+002050         05  CST-YY      PIC  9(02).
+002060         05  CST-MM      PIC  9(02).
+002070         05  CST-DD      PIC  9(02).
+002080     03  CST-NAR         PIC  X(40).
+002090     03  CST-DESC        REDEFINES CST-NAR.
+002100         05  CST-NARATIVE PIC  X(36).
+               05  FILLER      PIC  9(07)    COMP-3.
+           03  CST-REFER.
+002110         05  CST-REF     PIC  9(07).
+002120     03  CST-CODE        PIC  9(02).
+002130     03  CST-VAL         PIC S9(09)V99 COMP-3.
+002140     03  CST-PREV        PIC  9(06)    COMP-5.
+002150     03  CST-NXT         PIC  9(06)    COMP-5.
+002160     03  CST-AC          PIC  9(06)    COMP-3.
+002170     03  FILLER          PIC  X(01).

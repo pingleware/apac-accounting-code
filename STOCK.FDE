@@ -1,0 +1,170 @@
+      /
+      * 	 ******   ********   ******    ******	**    **
+      * 	**    **     **     **	  **  **    **	**   **
+      * 	**	     **     **	  **  **	**  **
+      * 	 ******      **     **	  **  **	****
+      * 	      **     **     **	  **  **	**  **
+      * 	**    **     **     **	  **  **    **	**   **
+      * 	 ******      **      ******    ******	**    **
+      *
+000010 FD  STOCK     IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-STOCKF.
+000030 01  STK-RECORD1.
+	   03  STK-CODE.
+000040	       05  STK-ITEM	 PIC  X(14).
+	       05  STK-PLU REDEFINES STK-ITEM
+				 PIC  9(14).
+000060	       05  STK-ITM	 PIC  X(03).
+	       05  FILLER	 PIC  X(01).
+	   03  STK-LDG.
+000070	       05  STK-LEDGN	 PIC  9(04).
+	   03  STK-LG REDEFINES STK-LDG.
+	       05  FILLER	 PIC  X(01).
+	       05  STK-LEDG	 PIC  9(03).
+	   03  STK-BIN		 PIC  X(06).
+000050	   03  STK-ACODE	 PIC  X(10).
+000080	   03  STK-DESC.
+	       05  STK-DSC26.
+000090		   07  STK-DKEY	 PIC  X(14).
+		   07  FILLER	 PIC  X(12).
+000100	       05  FILLER	 PIC  X(04).
+	   03  STK-DESC2.
+000090	       05  STK-DKEY2	 PIC  X(14).
+000100	       05  FILLER	 PIC  X(16).
+000110	   03  STK-QUANT	 PIC S9(09)V9(04) COMP-3.
+000120	   03  STK-LEVEL	 PIC S9(07)V99	COMP-3.
+000130	   03  STK-COST 	 PIC S9(07)V9999 COMP-3.
+	   03  STK-SALES-FIELDS.
+	       05  STK-UNIT	 PIC S9(04)V999 COMP-3.
+	       05  STK-PER	 PIC  X(08).
+000300	       05  STK-MARKUP	 PIC S9(03)V99	COMP-3.
+000310	       05  STK-CMARKUP	 PIC S9(03)V99	COMP-3.
+000320	       05  STK-WMARKUP	 PIC S9(03)V99	COMP-3.
+000140	       05  STK-SELL	 PIC S9(08)V999 COMP-3.
+000150	       05  STK-CASH	 PIC S9(08)V999 COMP-3.
+000160	       05  STK-WSALE	 PIC S9(08)V999 COMP-3.
+	       05  STK-UNIT-2	 PIC S9(04)V999 COMP-3.
+	       05  STK-PER-2	 PIC  X(08).
+000300	       05  STK-MARKUP-2  PIC S9(03)V99	COMP-3.
+000300	       05  STK-CMARKUP-2 PIC S9(03)V99	COMP-3.
+000300	       05  STK-WMARKUP-2 PIC S9(03)V99	COMP-3.
+000140	       05  STK-SELL-2	 PIC S9(08)V999 COMP-3.
+000150	       05  STK-CASH-2	 PIC S9(08)V999 COMP-3.
+000160	       05  STK-WSALE-2	 PIC S9(08)V999 COMP-3.
+	       05  STK-UNIT-3	 PIC S9(04)V999 COMP-3.
+	       05  STK-PER-3	 PIC  X(08).
+000300	       05  STK-MARKUP-3  PIC S9(03)V99	COMP-3.
+000300	       05  STK-CMARKUP-3 PIC S9(03)V99	COMP-3.
+000300	       05  STK-WMARKUP-3 PIC S9(03)V99	COMP-3.
+000140	       05  STK-SELL-3	 PIC S9(08)V999 COMP-3.
+000150	       05  STK-CASH-3	 PIC S9(08)V999 COMP-3.
+000160	       05  STK-WSALE-3	 PIC S9(08)V999 COMP-3.
+	       05  STK-UNIT-4	 PIC S9(04)V999 COMP-3.
+	       05  STK-PER-4	 PIC  X(08).
+000300	       05  STK-MARKUP-4  PIC S9(03)V99	COMP-3.
+000300	       05  STK-CMARKUP-4 PIC S9(03)V99	COMP-3.
+000300	       05  STK-WMARKUP-4 PIC S9(03)V99	COMP-3.
+000140	       05  STK-SELL-4	 PIC S9(08)V999 COMP-3.
+000150	       05  STK-CASH-4	 PIC S9(08)V999 COMP-3.
+000160	       05  STK-WSALE-4	 PIC S9(08)V999 COMP-3.
+	   03  STK-SELLING REDEFINES STK-SALES-FIELDS.
+	       05  STK-BREAK-DOWNS OCCURS 4.
+		   07  STK-UNT	 PIC S9(04)V999 COMP-3.
+		   07  STK-PR	 PIC  X(08).
+000300		   07  STK-MKUP  PIC S9(03)V99	COMP-3.
+000300		   07  STK-CMKUP PIC S9(03)V99	COMP-3.
+000300		   07  STK-WMKUP PIC S9(03)V99	COMP-3.
+000140		   07  STK-SL	 PIC S9(08)V999 COMP-3.
+000150		   07  STK-CSH	 PIC S9(08)V999 COMP-3.
+000160		   07  STK-WSL	 PIC S9(08)V999 COMP-3.
+000160	   03  STK-PCOST	 PIC S9(08)V999 COMP-3.
+000160	   03  STK-SELL4 REDEFINES STK-PCOST
+				 PIC S9(08)V999 COMP-3.
+000170	   03  STK-AVGE 	 PIC S9(07)V9999 COMP-3.
+	   03  STK-O-AVGE REDEFINES STK-AVGE
+				 PIC S9(08)V999	COMP-3.
+000180	   03  STK-ORD		 PIC S9(07)V99	COMP-3.
+000190	   03  STK-LTIME	 PIC  9(01)V99	COMP-3.
+000200	   03  STK-MTD		 PIC S9(09)V99	COMP-3.
+000210	   03  STK-MTDC 	 PIC S9(09)V99	COMP-3.
+000220	   03  STK-MTDV 	 PIC S9(09)V99	COMP-3.
+000230	   03  STK-YTD		 PIC S9(09)V99	COMP-3.
+000240	   03  STK-YTDC 	 PIC S9(09)V99	COMP-3.
+000250	   03  STK-YTDV 	 PIC S9(09)V99	COMP-3.
+000260	   03  STK-WK1		 PIC S9(09)V99	COMP-3.
+000270	   03  STK-WK2		 PIC S9(09)V99	COMP-3.
+000280	   03  STK-WK3		 PIC S9(09)V99	COMP-3.
+000290	   03  STK-WK4		 PIC S9(09)V99	COMP-3.
+000260	   03  STK-MTH1 	 PIC S9(09)V99	COMP-3.
+000270	   03  STK-MTH2 	 PIC S9(09)V99	COMP-3.
+000280	   03  STK-MTH3 	 PIC S9(09)V99	COMP-3.
+000290	   03  STK-MAVG 	 PIC S9(09)V99	COMP-3.
+000330	   03  STK-ACT		 PIC  9(08)	COMP-3.
+000340	   03  STK-PUR		 PIC  9(08)	COMP-3.
+000350	   03  STK-DTE		 PIC  9(08)	COMP-3.
+000360	   03  STK-DISC 	 PIC  X(01).
+000370	   03  STK-IND		 PIC  9(01).
+      *
+      *    ****    S u p p l i e r
+      *
+000380	   03  STK-SUPP 	 PIC  X(06).
+      *
+      *    ****    P r e v i o u s   S u p p l i e r
+      *
+000380	   03  STK-PSUPP	 PIC  X(06).
+      *
+      *    SELLING UNITS PER PURCHASE UNIT (KILO/LITRE ETC)
+      *
+	   03  STK-PACK.
+000390	       05  STK-PRC	 PIC  9(04)V999 COMP-3.
+000400	   03  STK-GUAR 	 PIC  9(02)	COMP-5.
+000410	   03  STK-TAX		 PIC  9(01).
+000420	   03  STK-XREF 	 PIC  X(18).
+	   03  STK-PLIST	 PIC  X(01).
+000110	   03  STK-QPIC 	 PIC S9(07)V99	COMP-3.
+000110	   03  STK-QJOB 	 PIC S9(07)V99	COMP-3.
+	   03  STK-PROC 	 PIC  X(01).
+      *
+      *    ****    S P E C I A L S   /	 P R O M O T I O N S
+      *
+      * 	START DATE & TIME
+      * 	END DATE & TIME
+      * 	PRICE FOR SINGLE & EACH PACK
+      *
+	   03  STK-PRO-START	 PIC  9(08)	COMP-3.
+	   03  STK-PRO-START-T	 PIC  9(04)	COMP-5.
+	   03  STK-PRO-END	 PIC  9(08)	COMP-3.
+	   03  STK-PRO-END-T	 PIC  9(04)	COMP-5.
+	   03  STK-PRO-PRICES.
+	       05  STK-PRO-PRICE   PIC S9(08)V999 COMP-3.
+	       05  STK-PRO-PRICE-2 PIC S9(08)V999 COMP-3.
+	       05  STK-PRO-PRICE-3 PIC S9(08)V999 COMP-3.
+	       05  STK-PRO-PRICE-4 PIC S9(08)V999 COMP-3.
+	   03  STK-PRO-PRCS REDEFINES STK-PRO-PRICES.
+	       05  STK-P-PRC	 OCCURS 4
+				 PIC S9(08)V999 COMP-3.
+	   03  STK-LINK		 PIC  X(13).
+	   03  STK-USE-CASES	 PIC  X(01).
+	   03  STK-CASES	 PIC S9(09)	COMP-3.
+	   03  STK-USE-PACKS	 PIC  X(01).
+	   03  STK-SR-TRCK	 PIC  X(01).
+	   03  STK-EXEMPT	 PIC  X(01).
+	       88  TAX-CERT	 VALUE "Y".
+	   03  STK-FACT 	 PIC  9(06)V999 COMP-3.
+      ******************************************************************
+      *								       *
+      *  Jan 2010 - Allow for two discounts for a Debtor on the same   *
+      * 	    Sales Ledger code. Included two additional Debtor  *
+      * 	    discount codes (11 and 12) each with a field to    *
+      * 	    define which debtor discount code uses this as an  *
+      * 	    alternate discount. The relevant Stock Item will   *
+      * 	    have an indicator field to instruct the system to  *
+      * 	    use the alternate discount. The alternate discount *
+      * 	    is only applicable if the discount code for which  *
+      * 	    this alternate discount is applicable is the code  *
+      * 	    on the Debtor account record.		       *
+      * 							       *
+      ******************************************************************
+	   03  STK-ALT-DISC	 PIC  X(01).
+	   03  FILLER		 PIC  X(06).

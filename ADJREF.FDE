@@ -1,0 +1,12 @@
+      /    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё This file is used to extract reference details from the   Ё
+      *    Ё stock adjustment file which allows the user to enquire    Ё
+      *	   Ё regarding reference codes used.			       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+000010 FD  ADJREF   IS EXTERNAL
+		    LABEL RECORD STANDARD
+000020		    VALUE OF FILE-ID W02-ADJREF.
+       01  ADJ-RECORD.
+	   03  ADJ-CODE        PIC  X(08).
+	   03  ADJ-DATE        PIC  9(08).
+	   03  ADJ-ENTRIES     PIC  9(03) COMP-3.

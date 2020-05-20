@@ -1,0 +1,462 @@
+      $set LINKCOUNT"512"
+       IDENTIFICATION DIVISION.
+000020 PROGRAM-ID.     APACPRNT.
+000030 AUTHOR.         J W LEMMON (APAC).
+000040 DATE-WRITTEN.   MARCH 2009.
+
+           This program is used to print/spool/display report details.
+
+           The program performs the following functions:
+
+               Open the printer.
+               Open the spool file.
+               Set up the necessary parameters if the report is to appear
+               on the screen.
+               Print a line and advance the paper as requested.
+               Spool a line and pass on the advance parameters.
+               Display a line of print as requested (allows for left/right).
+
+           The calling program/s treat all reports as if they were being
+           printed on a printer and are unaware of the Users request to
+           spool or display the report.
+
+                   COPYRIGHT NOTICE: COPYRIGHT (C) 2009 -
+                                     by James William Lemmon.
+                                       (Id No. 4412165050082).
+
+                   All rights reserved.
+
+                   e-mail jwlemmon@gmail.com.
+
+000050 SECURITY.
+                   This program is free software; you can redistribute
+                   it and/or modify it under the terms of the GNU General
+                   Public License as published by the Free Software
+                   Foundation; either version 2 of the License, or (at
+                   your option) any later version.
+
+                   This program is distributed in the hope that it will
+                   be useful, but WITHOUT ANY WARRANTY; without even the
+                   implied warranty of MERCHANTABILITY or FITNESS FOR A
+                   PARTICULAR PURPOSE.  See the GNU General Public License
+                   for more details.
+
+                   You should have received a copy of the GNU General
+                   Public License along with this program; if not, write
+                   to the Free Software Foundation, Inc., 59 Temple Place
+                   - Suite 330, Boston, MA 02111-1307, USA.
+
+000050 ENVIRONMENT DIVISION.
+000060 CONFIGURATION SECTION.
+000070 SPECIAL-NAMES.
+000080                 CONSOLE IS CRT.
+000090 INPUT-OUTPUT SECTION.
+000100 FILE-CONTROL.
+
+       COPY APACFIDS.SL.
+
+000120 COPY PARAM.SL.
+
+000200     SELECT PRNREP  ASSIGN W02-PRINTER
+                          ORGANIZATION LINE SEQUENTIAL.
+
+000200     SELECT PRNSPL  ASSIGN W02-SPOOLER
+                          ORGANIZATION LINE SEQUENTIAL.
+
+000220 DATA DIVISION.
+000230 FILE SECTION.
+
+       COPY APACFIDS.FDE.
+
+000250 COPY PARAM.FDE.
+
+      /
+000330 FD  PRNREP    LABEL RECORD OMITTED
+000420               LINAGE IS WS-PGE-LENGTH.
+       01  R-SL1.
+           03  R-SLA           PIC  X(78).
+           03  FILLER          PIC  X(58).
+       01  R-SL2.
+           03  FILLER          PIC  X(58).
+           03  R-SLB           PIC  X(78).
+000350 01  REP-LINE1.
+000360     03  REP-DETAIL1     PIC  X(136).
+
+000330 FD  PRNSPL.
+       01  SPL-L1.
+           03  SPL-CONT.
+               05  SPL-ADV     PIC  9(02).
+               05  SPL-LIN     PIC  9(02).
+000360     03  SPL-DETAIL1     PIC  X(136).
+
+      /
+
+       working-storage section.
+       77  WS-CHECK        PIC  X(18)    VALUE
+                           "aeWlimemnomLalismJ".
+003260 77  WS-S1           PIC  9(04)    COMP-5.
+003270 77  WS-S2           PIC  9(04)    COMP-5.
+003280 77  WS-S3           PIC  9(04)    COMP-5.
+003290 77  WS-S4           PIC  9(04)    COMP-5.
+003300 77  WS-S5           PIC  9(04)    COMP-5.
+003310 77  WS-S6           PIC  9(04)    COMP-5.
+003320 77  WS-S7           PIC  9(04)    COMP-5.
+003330 77  WS-S8           PIC  9(04)    COMP-5.
+003330 77  WS-LEFT         PIC  9(04)    COMP-5.
+003330 77  WS-RIGHT        PIC  9(04)    COMP-5.
+001670 77  WS-NETKEY       PIC  9(06)    COMP-5.
+001660 77  WS-PARKEY       PIC  9(06)    COMP-5.
+001820 77  WS-OPTION       PIC  X(01).
+001820 77  WS-SINGLE       PIC  X(01).
+       77  WS-ERROR        PIC  9(01)    VALUE ZERO.
+       77  WS-LINES        PIC  9(02)    VALUE ZERO.
+002570 77  WS-PGE-LENGTH   PIC  9(02)    VALUE 66.
+001870 77  WS-PRN-LENGTH   PIC  9(02)    VALUE 62.
+003650 77  WS-COND         PIC  X(06)    VALUE X"000000000000".
+003660 77  WS-NORM         PIC  X(06)    VALUE X"000000000000".
+003070 77  WS-EXPP         PIC  X(06)    VALUE X"000000000000".
+003080 77  WS-ECAN         PIC  X(06)    VALUE X"000000000000".
+003090 77  WS-8LPI         PIC  X(06)    VALUE X"000000000000".
+003100 77  WS-6LPI         PIC  X(06)    VALUE X"000000000000".
+       77  WS-10CPI        PIC  X(06)    VALUE X"000000000000".
+       77  WS-12CPI        PIC  X(06)    VALUE X"000000000000".
+       77  WS-17CPI        PIC  X(06)    VALUE X"000000000000".
+003150 77  WS-PRN-NO       PIC  X(01)    COMP-X VALUE 9.
+003160 77  WS-PRN-STAT     PIC  X(01)    COMP-X.
+       77  TODAY-DDMMYY    PIC  9(08) COMP-5.
+       77  WS-USUB         PIC  9(04) COMP-5.
+
+
+       01   printer-control.
+
+           03  document-title.
+               05  title-len   pic x(02) comp-5.
+               05  title-text  pic x(20).
+
+           03  font-family.
+               05  font-family-namelen  pic x(2) comp-5 value 80.
+	       05  font-family-name	pic x(80).
+
+	   03  FontTypeFace    pic x(13) value "Courier" & x"00".
+	   03  font-style      pic x(2) comp-5.
+	   03  font-size-8     pic x(2) comp-5 value 8.
+	   03  font-size-9     pic x(2) comp-5 value 9.
+	   03  font-size-10    pic x(2) comp-5 value 10.
+	   03  font-size-11    pic x(2) comp-5 value 11.
+	   03  font-size-12    pic x(2) comp-5 value 12.
+	   03  font-size-13    pic x(2) comp-5 value 13.
+	   03  font-size-14    pic x(2) comp-5 value 14.
+	   03  font-size-15    pic x(2) comp-5 value 15.
+	   03  font-size-16    pic x(2) comp-5 value 16.
+	   03  font-size-17    pic x(2) comp-5 value 17.
+	   03  font-size-18    pic x(2) comp-5 value 18.
+
+           03  abort           pic x(4) comp-5 value 1.
+           03  prn-control     pic x(4) comp-5 value 2.
+           03  prn-flags       pic x(4) comp-5 value 3.
+           03  prn-command     pic x(4) comp-5 value 4.
+	   03  prn-handle      pic x(2) comp-5.
+
+           03  prn-line-80     pic x(4) comp-5 value 80.
+           03  prn-line-136    pic x(4) comp-5 value 136.
+
+       01  W01-Print-Line-80.
+           03  W01-Detail-80   pic x(80).
+
+       01  W01-Print-Line-136.
+           03  W01-Detail-136  pic x(136).
+
+      *
+      *    *****    test data layout
+      *
+       01  W01-PRINTER-COMP.
+	   03  FILLER	      PIC  X(10) VALUE SPACES.
+	   03  W01-COMP-NAME  PIC  X(40) VALUE
+			    "TEST COMPANY - APAC/WINDOWS PRINTING USB".
+
+       01  W01-PRINT-HEADER.
+	   03  W01-DATE-H     PIC  X(06) VALUE "Date:".
+	   03  W01-DATE       PIC  Z9/99/9999.
+	   03  FILLER	      PIC  X(06) VALUE SPACES.
+	   03  W01-COMPANY    PIC  X(40) VALUE SPACES.
+	   03  FILLER	      PIC  X(08) VALUE SPACES.
+	   03  W01-PAGE-H     PIC  X(06) VALUE "Page:".
+	   03  W01-PAGE       PIC  ZZZ9.
+
+       01  W01-PRINT-RECORD.
+	   03  W01-ACNO       PIC  X(06).
+	   03  FILLER	      PIC  X(02) VALUE SPACES.
+	   03  W01-ACNT-NAME  PIC  X(40).
+	   03  FILLER	      PIC  X(02) VALUE SPACES.
+	   03  W01-BALANCE    PIC  Z(07)9.99-.
+	   03  FILLER	      PIC  X(02) VALUE SPACES.
+	   03  W01-ACTIVE     PIC  Z9/99/9999.
+	   03  FILLER	      PIC  X(02) VALUE SPACES.
+	   03  W01-STATUS     PIC  X(04).
+
+       COPY WS.WS.
+
+000290 01  WS-PARID.
+000020     03  WS-SYS-ID       PIC  X(03).
+
+       01  W02-FILE-IDS.
+
+       COPY APACFIDS.ID.
+
+       COPY PARAM.ID.
+
+           03  W02-PRINTER.
+               05  W02-PRN     PIC  X(06).
+
+           03  W02-SPOOLER.
+               05  W02-WS      PIC  X(02).
+               05  W02-US      PIC  X(01).
+               05  W02-TERM    PIC  X(03).
+               05  W02-US2     PIC  X(01).
+               05  W02-REP     PIC  X(01).
+               05  W02-P       PIC  X(01).
+               05  W02-USER    PIC  X(03).
+
+       COPY W12.WS.
+
+001510 01  W20-DATE.
+001520     03  W20-DAY         PIC 9(02).
+001530     03  W20-MONTH       PIC 9(02).
+	   03  W20-CENT        PIC 9(02).
+001540     03  W20-YEAR        PIC 9(02).
+001550 01  W20-DTE1 REDEFINES W20-DATE.
+001560	   03  W20-DTE	       PIC 9(08).
+001550 01  W20-DTE2 REDEFINES W20-DATE.
+	   03  W20-CC	       PIC 9(02).
+001520     03  W20-YY          PIC 9(02).
+001530     03  W20-MM          PIC 9(02).
+001540     03  W20-DD          PIC 9(02).
+       01  W20-LEAP REDEFINES W20-DATE.
+	   03  FILLER	       PIC 9(04).
+	   03  W20-CY	       PIC 9(04).
+
+001570 01  W25-CALCS.
+001580	   03  W25-RESULT      PIC  9(09)V99.
+001590     03  W25-RESULT1 REDEFINES W25-RESULT.
+001600	       05  W25-DAYS    PIC  9(03).
+001610	       05  W25-WHOLE   PIC  9(06).
+001620	       05  W25-DECIMAL PIC  9(02).
+	   03  W25-RESULT2 REDEFINES W25-RESULT.
+	       05  FILLER      PIC  9(02).
+	       05  W25-KEY     PIC  9(04).
+	       05  W25-SUB     PIC  9(01).
+	       05  FILLER      PIC  9(02).
+001630	   03  W25-PASS.
+001640	       05  W25-PASS1   PIC  9(03).
+001650	       05  W25-PASS2   PIC  9(03).
+001660	   03  W25-TIME        PIC  9(08).
+001670     03  W25-TRED REDEFINES  W25-TIME.
+001680	       05  FILLER      PIC  9(02).
+001690	       05  W25-FACT    PIC  9(06).
+	       05  W25-DATE REDEFINES W25-FACT.
+		   07  W25-YY  PIC  9(02).
+		   07  W25-MM  PIC  9(02).
+		   07  W25-DD  PIC  9(02).
+	   03  W25-CUR-CC      PIC  9(02) COMP-5.
+	   03  W25-PRV-CC      PIC  9(02) COMP-5.
+	   03  W25-NXT-CC      PIC  9(02) COMP-5.
+
+       LINKAGE SECTION.
+
+       COPY CHAIN.LS.
+
+       01  LS-SCREEN-PRINT.
+      *
+      *    COMMAND: C = Close printer
+      *             E = End of report
+      *             O = Open printer
+      *             P = Print a line
+      *             S = Skip to new page
+      *
+           03  LS-COMMAND      PIC  X(01).
+      *
+      *    PRINTER: D = Disk
+      *             S = Screen
+      *             1 = Default Printer
+      *             2 = Allow user to select a printer
+      *
+           03  LS-PRINTER.
+               05  LS-PRINT-NO PIC  9(01).
+      *
+      *    ADVANCE:   0 = Print - No advance
+      *             1-3 = Print advance lines specified
+      *             4-? = Print advance 1 line, then use a loop
+      *                   to advance the remaining lines.
+      *              99 = Print and advance to a new page.
+      *
+           03  LS-ADVANCE      PIC  9(02).
+      *
+      *    REPORT: 1 = Picking Slips
+      *            2 = Invoices/Credit Notes
+      *            3 = General Reports (Stock)
+      *            4 = General Reports (Creditors)
+      *            5 = General Reports (Debtors)
+      *            6 = General Reports (G/Ledger)
+      *            7 = Statements
+      *            8 = Labels
+      *            9 = Quotations
+      *
+           03  LS-REPORT       PIC  9(01).
+           03  LS-SCREEN       PIC  9(01).
+           03  LS-SCREEN-LIN   PIC  9(02).
+           03  LS-LINAGE       PIC  9(02).
+           03  LS-PAPER        PIC  X(01).
+           03  FILLER          PIC  X(01).
+
+       01  L02-PRINTER-DETAILS.
+           03  L02-PRINTER     PIC  X(12).
+002570     03  L02-PGE-LENGTH  PIC  9(02).
+001870     03  L02-PRN-LENGTH  PIC  9(02).
+           03  L02-LINAGE      PIC  9(02).
+           03  L02-PRN-STATUS  PIC  X(01).
+      *
+      *    ****    D  =  Detail line
+      *            C  =  Condensed print
+      *            E  =  Expanded print
+      *            H  =  Header line
+      *            X  =  Cancel expanded print
+      *            1  =  10 Characters per inch
+      *            2  =  12 Characters per inch
+      *            3  =  17 Characters per inch
+      *            6  =  6 Lines per inch
+      *            8  =  8 Lines per inch
+      *
+           03  L02-PRN-TYPE    PIC  X(01).
+           03  L02-PRN-LINE    PIC  X(136).
+
+001230* PROCEDURE DIVISION USING LS-PARID
+      * 			 LS-USER-ID
+      * 			 LS-SCREEN-PRINT
+      * 			 L02-PRINTER-DETAILS.
+
+       procedure division.
+005070 AA000-MAIN	       SECTION.
+005080 AA00.
+	     ACCEPT W25-FACT FROM DATE.
+	     MOVE W25-YY	 TO W12-YEAR.
+	     MOVE W25-MM	 TO W12-MONTH.
+	     MOVE W25-DD	 TO W12-DAY.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ T H I S   I F   S T A T E M E N T	 W A S	 U S E D   T O ³
+      *    ³ H A N D L E   T H E   M I L L E N I U M   S W I T C H     ³
+      *    ³ O V E R.						       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      *	   IF W25-YY < 50
+      *	       MOVE 20		 TO W12-CENT
+      *	   ELSE
+      *	       MOVE 19		 TO W12-CENT.
+	     MOVE 20		 TO W12-CENT.
+	     MOVE W12-TODAY	 TO TODAY-DDMMYY.
+003200	     MOVE W12-DAY	 TO W12-DD.
+003210	     MOVE W12-MONTH	 TO W12-MM.
+	     MOVE W12-CENT	 TO W12-CC.
+003220	     MOVE W12-YEAR	 TO W12-YY.
+
+       AA05.
+             move 17             to title-len.
+             move "Printer Info Test"
+                                 to title-text.
+
+	     call "PC_WIN_OPEN_PRINTER_EXT"
+				 using by reference prn-handle
+				       by reference document-title
+				       by value 3 size 2
+	     end-call.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³		     Setup the printer font		       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     call "PC_WIN_SET_PFONT"
+				     using by reference prn-handle
+					   by reference FontTypeFace
+					   by value font-size-11
+             end-call.
+	     perform printer-header.
+	     perform print-line.
+	     move 4		 to prn-command.
+	     perform control-printer.
+	     perform set-printer-font-18.
+	     perform printer-comp.
+	     perform print-line.
+	     move 4		 to prn-command.
+	     perform control-printer.
+	     perform set-printer-font-11.
+	     MOVE "TST001"	 TO W01-ACNO.
+	     MOVE "First test account name - Version 9"
+				 TO W01-ACNT-NAME.
+	     MOVE 185624.23	 TO W01-BALANCE.
+	     MOVE 12082009	 TO W01-ACTIVE.
+	     MOVE "30 D"	 TO W01-STATUS.
+	     MOVE W01-PRINT-RECORD
+				 TO W01-Print-Line-80.
+	     perform print-line.
+	     move 4		 to prn-command.
+             perform control-printer.
+	     MOVE "TST002"	 TO W01-ACNO.
+	     MOVE "Second test account name"
+				 TO W01-ACNT-NAME.
+	     MOVE -567.94	 TO W01-BALANCE.
+	     MOVE 23072009	 TO W01-ACTIVE.
+	     MOVE "CRED"	 TO W01-STATUS.
+	     MOVE W01-PRINT-RECORD
+				 TO W01-Print-Line-80.
+	     perform print-line.
+	     move 4		 to prn-command.
+             perform control-printer.
+	     MOVE "TST003"	 TO W01-ACNO.
+	     MOVE "Third test account name"
+				 TO W01-ACNT-NAME.
+	     MOVE 23947.12	 TO W01-BALANCE.
+	     MOVE 19082009	 TO W01-ACTIVE.
+	     MOVE "CURR"	 TO W01-STATUS.
+	     MOVE W01-PRINT-RECORD
+				 TO W01-Print-Line-80.
+	     perform print-line.
+	     move 4		 to prn-command.
+             perform control-printer.
+
+	     perform close-down-printer.
+             stop run.
+
+       printer-header	   section.
+	     MOVE TODAY-DDMMYY	 TO W01-DATE.
+	     MOVE 1		 TO W01-PAGE.
+	     MOVE W01-PRINT-HEADER
+				 TO W01-Print-Line-80.
+
+       printer-comp	   section.
+	     MOVE W01-PRINTER-COMP
+				 TO W01-Print-Line-80.
+
+       print-line	  section.
+	     call "PC_WIN_WRITE_PRINTER" using prn-handle
+                                              W01-Print-Line-80
+					 by value 80 size 2
+             end-call.
+
+	set-printer-font-11   section.
+	     call "PC_WIN_SET_PFONT"
+				     using by reference prn-handle
+					   by reference FontTypeFace
+					   by value font-size-11
+             end-call.
+
+	set-printer-font-18   section.
+	     call "PC_WIN_SET_PFONT"
+				     using by reference prn-handle
+					   by reference FontTypeFace
+					   by value font-size-18
+             end-call.
+
+        control-printer    section.
+	     call "PC_WIN_PRINTER_CONTROL" using prn-handle
+				       by value 4 SIZE 2
+             end-call.
+
+        close-down-printer section.
+	    call "PC_WIN_CLOSE_PRINTER" using by reference prn-handle
+            end-call.

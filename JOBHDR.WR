@@ -1,0 +1,42 @@
+
+       REWRITE-JOBHDR.
+	     REWRITE JHD-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 14		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-JOBHDR-EXIT.
+
+       REWRITE-JOBHDR-UNLOCK.
+	     REWRITE JHD-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 14		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK JOBHDR.
+	     GO TO WRITE-JOBHDR-EXIT.
+
+       DELETE-JOBHDR-REC-UNLOCK.
+	     DELETE JOBHDR.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 14		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK JOBHDR.
+	     GO TO WRITE-JOBHDR-EXIT.
+
+       DELETE-JOBHDR-REC.
+	     DELETE JOBHDR.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 14		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-JOBHDR-EXIT.
+
+       WRITE-JOBHDR.
+	     WRITE JHD-REC1.
+      *     IF WS-STATUS = "22"
+      *	       ADD 1		 TO JHD-REF
+      *	       GO TO WRITE-JOBHDR.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 14		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-JOBHDR-EXIT.
+             EXIT.

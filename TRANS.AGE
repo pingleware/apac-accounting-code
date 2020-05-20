@@ -1,0 +1,75 @@
+      *    зддддддддддддддддддддддддддддддддддддддддддддддддддддддддддд©
+      *    Ё	   Calculate the age analysis for this account	       Ё
+      *    юддддддддддддддддддддддддддддддддддддддддддддддддддддддддддды
+       XB76.
+	     MOVE ZERO		 TO W35-CUR
+				    W35-30
+				    W35-60
+				    W35-90
+				    W35-120
+				    W35-150
+				    W35-INT.
+             MOVE DEB-ACNO       TO TRA-AC.
+             MOVE ZERO           TO TRA-DATE TRA-CODE.
+             MOVE SPACES         TO TRA-REF.
+             PERFORM START-AT-DTRN-KEY THRU READ-DBTRAN-EXIT.
+           IF WS-F-ERROR = 5
+	       GO TO XB80-TRAN.
+
+       XB78.
+             PERFORM READ-DBTRAN-NEXT THRU READ-DBTRAN-EXIT.
+           IF (WS-F-ERROR = 5) OR
+              (DEB-ACNO NOT = TRA-AC)
+	       GO TO XB80-TRAN.
+	   IF TRA-VALUE < ZERO
+               IF (TRA-VALUE + TRA-ALLOCATED) = ZERO
+		   GO TO XB78
+               ELSE
+                   ADD TRA-ALLOCATED 
+                                 TO TRA-VALUE
+                   MOVE ZERO     TO TRA-ALLOCATED
+           ELSE
+               IF TRA-VALUE = TRA-PAID
+		   GO TO XB78
+               ELSE
+                   SUBTRACT TRA-PAID
+                                 FROM TRA-VALUE
+                   MOVE ZERO     TO TRA-PAID.
+           IF TRA-VALUE > ZERO
+	       IF NOT (TRA-DATE > W30-120)
+		   MOVE 5	 TO TRA-AGE
+	       ELSE
+	       IF NOT (TRA-DATE > W30-90)
+		   MOVE 4	 TO TRA-AGE
+	       ELSE
+	       IF NOT (TRA-DATE > W30-60)
+		   MOVE 3	 TO TRA-AGE
+	       ELSE
+	       IF NOT (TRA-DATE > W30-30)
+		   MOVE 2	 TO TRA-AGE
+	       ELSE
+	       IF NOT (TRA-DATE > W30-CUR)
+		   MOVE 1	 TO TRA-AGE
+	       ELSE
+		   MOVE ZERO	 TO TRA-AGE.
+           IF TRA-CODE = 17 OR 20
+	       ADD TRA-VALUE	 TO W35-INT
+           ELSE
+           IF TRA-AGE = 5
+	       ADD TRA-VALUE	 TO W35-150
+           ELSE
+           IF TRA-AGE = 4
+	       ADD TRA-VALUE	 TO W35-120
+           ELSE
+           IF TRA-AGE = 3
+	       ADD TRA-VALUE	 TO W35-90
+           ELSE
+           IF TRA-AGE = 2
+	       ADD TRA-VALUE	 TO W35-60
+           ELSE
+           IF TRA-AGE = 1
+	       ADD TRA-VALUE	 TO W35-30
+	   ELSE
+	   IF TRA-AGE = ZERO
+	       ADD TRA-VAL	 TO W35-CUR.
+	     GO TO XB78.

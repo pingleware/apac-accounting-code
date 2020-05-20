@@ -1,0 +1,31 @@
+      /*****************************************************************
+      *                                                                *
+      *      C A S H B O O K   -   F I L E   L A Y O U T	       *
+      *                                                                *
+      *      VALUE FIELDS ALLOW FOR 9 WHOLE NUMBERS.                   *
+      *                                                                *
+      ******************************************************************
+000010 FD  CASHBOOK  IS EXTERNAL
+                     LABEL RECORD IS STANDARD
+000020		     VALUE OF FILE-ID IS W02-CASHBOOK.
+000030 01  CSH-RECORD.
+	   03  CSH-KEY.
+      *
+      *    ****   I = Income,  C = Costs,  E = Expenses
+      * 	  A = Cash,    W = Wages,  V = VAT
+      * 	  B = Bank
+      *
+	       05  CSH-TYPE    PIC  X(01).
+000040	       05  CSH-AC      PIC  9(06).
+000170	   03  CSH-NAME.
+	       05  CSH-NKEY    PIC  X(12).
+	       05  FILLER      PIC  X(18).
+	   03  CSH-GLAC        PIC  9(06)    COMP-3.
+	   03  CSH-OBAL	       PIC S9(09)V99 COMP-3.
+      *
+      *    ****   Monthly Balance for each month of the current year.
+      *
+000230	   03  CSH-VAL	       PIC S9(09)V99 COMP-3 OCCURS 12.
+000260	   03  CSH-DT	       PIC S9(09)V99 COMP-3.
+000260	   03  CSH-CR	       PIC S9(09)V99 COMP-3.
+000260	   03  CSH-BAL	       PIC S9(09)V99 COMP-3.

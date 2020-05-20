@@ -1,0 +1,2463 @@
+      $set LINKCOUNT"772"
+      ******************************************************************
+      *                                                                *
+      *    ******   *******   **     **  ********    ****	 **    *
+      *   **	**  **	  **  ***    **  **	    **	**	***    *
+      *   **	    **	  **  ** *   **  **	   **	 **    * **    *
+      *   **	    *******   **  *  **  *****	   **	 **   *  **    *
+      *   **	    **	 **   **   * **  **	   **	 **  *******   *
+      *   **	**  **	  **  **    ***  **	    **	**	 **    *
+      *    ******   **	  **  **     **  **	     ****	****   *
+      *                                                                *
+      *     ENGLISH                                                    *
+      *                                                                *
+      *     P R I N T	C R E D I T   N O T E	P R O G R A M	       *
+      *                                                                *
+      *     VERSION 8.14.03 - May 2010				       *
+      * 							       *
+      ******************************************************************
+      * 							       *
+      *  Jun 2008	- Include user number and name on the invoice  *
+      * 		  header record to enable lookup of person     *
+      * 		  who captured the Invoice/Credit note.        *
+      * 							       *
+      ******************************************************************
+000010 IDENTIFICATION DIVISION.
+000020 PROGRAM-ID.     CRNF04.
+000030 AUTHOR.         J.W.LEMMON (APAC).
+000040 DATE-WRITTEN.   NOVEMBER 1983.
+
+		   COPYRIGHT NOTICE: COPYRIGHT (C) 1983 - 2010
+				     by James William Lemmon.
+				       (Id No. 4412165050082).
+
+		   All rights reserved.
+
+		   e-mail jwlemmon@gmail.com.
+
+000050 SECURITY.
+		   This program is free software; you can redistribute
+		   it and/or modify it under the terms of the GNU General
+		   Public License as published by the Free Software
+		   Foundation; either version 2 of the License, or (at
+		   your option) any later version.
+
+		   This program is distributed in the hope that it will
+		   be useful, but WITHOUT ANY WARRANTY; without even the
+		   implied warranty of MERCHANTABILITY or FITNESS FOR A
+		   PARTICULAR PURPOSE.	See the GNU General Public License
+		   for more details.
+
+		   You should have received a copy of the GNU General
+		   Public License along with this program; if not, write
+		   to the Free Software Foundation, Inc., 59 Temple Place
+		   - Suite 330, Boston, MA 02111-1307, USA.
+
+000050 ENVIRONMENT DIVISION.
+000060 CONFIGURATION SECTION.
+000070 SPECIAL-NAMES.
+000080		       CURSOR IS CSTART
+000090		       CONSOLE IS CRT
+		       CRT STATUS IS KEY-STATUS.
+000100 INPUT-OUTPUT SECTION.
+000110 FILE-CONTROL.
+
+       COPY APACFIDS.SL.
+
+000130 COPY AUDIT.SL.
+
+       COPY CARDEX.SL.
+
+000150 COPY CONTROL.SL.
+
+000170 COPY DBTRAN.SL.
+
+000190 COPY DEBTOR.ISL.
+
+000140 COPY DEBTRN.SL.
+
+000210 COPY DEPART.SL.
+
+000250 COPY GARTEE.SL.
+
+000250 COPY INVOIC.SL.
+
+       COPY LEDTRF.SL.
+
+000270 COPY PARAM.SL.
+
+000290 COPY RECOVER.SL.
+
+000310 COPY SALE.SL.
+
+       COPY SHARED.SL.
+
+000330 COPY STOCK.SL.
+
+000350 COPY TXTRAN.SL.
+
+000370     SELECT PRNREP  ASSIGN W02-PRINTER
+000380                    ORGANIZATION LINE SEQUENTIAL.
+
+      /
+000390 DATA DIVISION.
+000400 FILE SECTION.
+
+       COPY APACFIDS.FDE.
+
+000420 COPY AUDIT.FDE.
+
+       COPY CARDEX.FDE.
+
+000440 COPY CONTROL.FDE.
+
+000460 COPY DBTRAN.FDE.
+
+000480 COPY DEBTOR.FDE.
+
+000140 COPY DEBTRN.GFD.
+
+000500 COPY DEPART.FDE.
+
+000250 COPY GARTEE.FDE.
+
+000540 COPY INVOIC.FDE.
+
+       COPY LEDTRF.FDE.
+
+000560 COPY PARAM.FDE.
+
+000580 COPY RECOVER.GFD.
+
+000600 COPY SALE.FDE.
+
+       COPY SHARED.FDE.
+
+000620 COPY STOCK.FDE.
+
+000640 COPY TXTRAN.FDE.
+
+000660 FD  PRNREP    LABEL RECORD OMITTED
+000670               LINAGE WS-PGE-LENGTH.
+000680 01  REP-LINE1.
+000690	   03  REP-DETAIL1     PIC X(132).
+000700 01  REP-L1.
+000710     03  FILLER          PIC X(10).
+000720     03  BAL-REP         PIC X(60).
+000730     03  FILLER          PIC X(10).
+000740 01  REP-LINE2.
+000750	   03  REP-DETAIL2     PIC X(132).
+000910 01  INV-L1.
+	   03  INV-EXP	       PIC  X(01).
+000920	   03  FILLER	       PIC  X(03).
+	   03  INV-EXPNAME     PIC  X(40).
+	   03  FILLER	       PIC  X(88).
+       01  INV-L2.
+	   03  FILLER	       PIC  X(06).
+000930	   03  INV-NADD        PIC  X(44).
+000940     03  INV-RADD      REDEFINES INV-NADD.
+000950	       05  INV-PC      PIC  X(04).
+000960	       05  FILLER      PIC  X(40).
+	   03  FILLER	       PIC  X(40).
+001120	   03  INV-H2	       PIC  X(16).
+001130	   03  INV-TEL	       PIC  X(14).
+	   03  INV-GNO REDEFINES INV-TEL
+			       PIC  X(14).
+	   03  FILLER	       PIC  X(12).
+000980 01  INV-L3.
+000990	   03  FILLER	       PIC  X(06).
+001000	   03  INV-NAME        PIC  X(40).
+001010     03  INV-DADD      REDEFINES INV-NAME.
+001020	       05  INV-PC1     PIC  X(04).
+001030	       05  FILLER      PIC  X(36).
+001040	   03  FILLER	       PIC  X(24).
+001060	   03  INV-DADD2.
+001070	       05  INV-PC2     PIC  X(30).
+001090	   03  FILLER	       PIC  X(14).
+001550	   03  INV-REF	       PIC  X(08).
+	   03  FILLER	       PIC  X(10).
+001100 01  INV-L4.
+001110	   03  FILLER	       PIC  X(71).
+001490	   03  INV-AC	       PIC  X(06).
+001140	   03  FILLER	       PIC  X(01).
+001510	   03  INV-ORD.
+001140	       05  FILLER      PIC  X(02).
+001700	       05  INV-DTE     PIC  99/99/9999.
+	   03  FILLER	       PIC  X(01).
+	   03  INV-VAT-RATE    PIC  Z9.99.
+	   03  FILLER	       PIC  X(07).
+	   03  INV-TYPE.
+	       05  INV-PGE     PIC  ZZ9.
+	       05  FILLER      PIC  X(06).
+	   03  FILLER	       PIC  X(02).
+	   03  INV-REG	       PIC  X(18).
+001150 01  INV-L5.
+001750	   03  FILLER	       PIC  X(01).
+001780	   03  INV-ITM	       PIC  X(14).
+	   03  FILLER	       PIC  X(03).
+001790	   03  INV-MES.
+001800	       05  FILLER      PIC  X(01).
+001810	       05  INV-DESC    PIC  X(30).
+	   03  FILLER	       PIC  X(08).
+001760	   03  INV-QNT	       PIC  Z(05)9.99.
+001770	   03  FILLER	       PIC  X(04).
+	   03  INV-UNIT        PIC  X(07).
+	   03  FILLER	       PIC  X(02).
+001930	   03  INV-PRICE       PIC  Z(06)9.99-.
+	   03  FILLER	       PIC  X(02).
+001850	   03  INV-DSC	       PIC  Z9.99.
+	   03  FILLER	       PIC  X(03).
+001910	   03  INV-TAX	       PIC  Z(07)9.99- BLANK WHEN ZERO.
+001940	   03  FILLER	       PIC  X(01).
+001950	   03  INV-VAL	       PIC  Z(08)9.99-.
+001960	   03  FILLER	       PIC  X(06).
+       01  INV-L6.
+	   03  FILLER	       PIC  X(09).
+           03  INV-HD          PIC  X(10).
+           03  INV-SERNOS.
+               05  FILLER      PIC  X(01).
+               05  INV-SERNO   PIC  X(10).
+	       05  FILLER      PIC  X(25).
+	   03  FILLER	       PIC  X(77).
+001970 01  INV-L7.
+001980	   03  FILLER	       PIC  X(02).
+001990	   03  INV-REMKS.
+	       05  INV-SM      PIC  X(09).
+000970	       05  INV-SMAN    PIC  X(31).
+002000	   03  FILLER	       PIC  X(05).
+002010	   03  INV-RMKS.
+	       05  FILLER      PIC  X(17).
+	       05  INV-H18     PIC  X(12).
+	       05  INV-TERMS.
+		 07  INV-ADV   PIC  Z(06)9.99-.
+002020	   03  FILLER	       PIC  X(26).
+001450	   03  INV-TOT	       PIC  Z(08)9.99-.
+002040	   03  FILLER	       PIC  X(06).
+       01  INV-L8.
+	   03  INV-EXP2        PIC  X(01).
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ Format  of the ALL Forms A1/10068/A & A1/10069/A  changed ³
+      *    ³ and  the following changes have been made to the  program ³
+      *    ³ to accomodate them.				       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+001540*    03  FILLER	       PIC  X(17).
+001540	   03  FILLER	       PIC  X(03).
+	   03  INV-INVOICE     PIC  X(30).
+	   03  FILLER	       PIC  X(98).
+      /
+002130 WORKING-STORAGE SECTION.
+       77  WS-CHECK	   PIC	X(18)	 VALUE
+			   "aeWlimemnomLalismJ".
+002140 77  WS-DISC	   PIC	99V99	 COMP-3.
+002150 77  WS-TDISC        PIC  99V99    COMP-3.
+002160 77  WS-CASH-AC      PIC  X(06).
+002170 77  WS-SUB          PIC  9(04)    COMP-5.
+002170 77  WS-SUPER        PIC  9(02)    COMP-5.
+002180 77  WS-P1	   PIC	9(04)	 COMP-5.
+002180 77  WS-S1	   PIC	9(04)	 COMP-5.
+002190 77  WS-S2           PIC  9(04)    COMP-5.
+002200 77  WS-S3           PIC  9(04)    COMP-5.
+002210 77  WS-S4           PIC  9(04)    COMP-5.
+002220 77  WS-S5           PIC  9(04)    COMP-5.
+002230 77  WS-S6           PIC  9(04)    COMP-5.
+002240 77  WS-S7           PIC  9(04)    COMP-5.
+002250 77  WS-S8           PIC  9(04)    COMP-5.
+002260 77  WS-S9           PIC  9(04)    COMP-5.
+002270 77  WS-IXS          PIC  9(04)    COMP-5.
+002280 77  WS-IXS1         PIC  9(04)    COMP-5.
+002290 77  WS-IXS2         PIC  9(04)    COMP-5.
+002300 77  WS-IXS3         PIC  9(04)    COMP-5.
+002310 77  WS-IXS4         PIC  9(04)    COMP-5.
+002320 77  WS-DBTKEY	   PIC	9(04)	 COMP-5.
+002320 77  WS-PARKEY       PIC  9(04)    COMP-5.
+002350 77  WS-KEYSTR       PIC  9(06)    COMP-5.
+002380 77  WS-SALSTR	   PIC	9(04)	 COMP-5.
+002390 77  WS-SALKEY       PIC  9(04)    COMP-5.
+002400 77  WS-NETKEY       PIC  9(04)    COMP-5.
+002410 77  WS-AUDKEY       PIC  9(06)    COMP-5.
+002420 77  WS-RECKEY       PIC  9(06)    COMP-5.
+002430 77  WS-RECOVER      PIC  9(06)    COMP-5.
+000820 77  WS-SHARED	   PIC	9(04)	 COMP-5 VALUE 1.
+002440 77  WS-TRANS        PIC  9(06)    COMP-5 VALUE 1.
+000820 77  WS-STOCK	   PIC	X(01).
+       77  WS-CARDEX	   PIC	X(01).
+       77  WS-USE-ITM	   PIC	X(01).
+       77  WS-EXT-STK	   PIC	X(01).
+       77  WS-PRC-IND	   PIC	X(01).
+002450 77  WS-GAR	   PIC	9(01) VALUE 0.
+       77  WS-NUM          PIC  Z9.
+002480 77  WS-START	   PIC	9(08).
+002490 77  WS-END          PIC  9(08).
+002510 77  WS-TME2         PIC  9(08).
+002520 77  WS-PORT         PIC  9(05) VALUE 1004.
+002530 77  WS-OPEN         PIC  X(01) VALUE X"01".
+002540 77  WS-CLOSE        PIC  X(01) VALUE X"00".
+002550 77  WS-PAR          PIC  9(01) VALUE 0.
+002560 77  WS-INO          PIC  9(02) VALUE 0.
+002570 77  WS-PGE-LENGTH   PIC  9(02) VALUE 48.
+002570 77  WS-LINES        PIC  9(02) VALUE 0.
+002580 77  WS-FIRST	   PIC	9(03) VALUE 0.
+002590 77  WS-LAST	   PIC	9(03) VALUE 0.
+002600 77  WS-LASTINV      PIC  9(04)    COMP-5.
+002610 77  WS-LINE         PIC  9(04)    COMP-5.
+002620 77  WS-PAGE         PIC  9(02)    COMP-5.
+002630 77  WS-L1           PIC  9(04)    COMP-5.
+003650 77  WS-COND	   PIC	X(06).
+003660 77  WS-NORM	   PIC	X(06).
+003070 77  WS-EXPP	   PIC	X(06).
+003080 77  WS-ECAN	   PIC	X(06).
+003090 77  WS-8LPI	   PIC	X(06).
+003100 77  WS-6LPI	   PIC	X(06).
+       77  WS-10CPI	   PIC	X(06).
+       77  WS-12CPI	   PIC	X(06).
+       77  WS-17CPI	   PIC	X(06).
+001820 77  WS-ALLOCATE	   PIC	X(01).
+002750 77  WS-OPTION	   PIC	X(01).
+002770 77  WS-SKIP         PIC  X(01) VALUE " ".
+002780 77  WS-LOOK         PIC  X(01) VALUE "S".
+002790 77  WS-ETYPE        PIC  X(01) VALUE "I".
+002820 77  WS-ERROR        PIC  9(01).
+003150 77  WS-PRN-NO	   PIC X(01)	 COMP-X VALUE 9.
+003160 77  WS-PRN-STAT	   PIC X(01)	 COMP-X.
+002840 77  WS-CHAR1	   PIC	X(01).
+002850 77  WS-CHAR2        PIC  X(01).
+002860 77  WS-COMP         PIC  9(01).
+002870 77  WS-UPDATE       PIC  9(01) VALUE ZERO.
+002880 77  WS-CONREC       PIC  9(01) VALUE ZERO.
+002890 77  WS-HEAD         PIC  X(01).
+002900 77  WS-TYPE         PIC  X(01).
+002910 77  WS-AGE          PIC  X(01).
+002920 77  WS-PRC          PIC  X(01).
+002920 77  WS-INPUT        PIC  X(01) VALUE "N".
+002920 77  WS-COPY         PIC  X(01) VALUE "N".
+002920 77  WS-NOSELL       PIC  X(01) VALUE "N".
+       77  WS-PRNINV       PIC  X(01) VALUE "Y".
+002950 77  WS-BATCH        PIC  9(05).
+002960 77  WS-CHK          PIC  X(33) VALUE
+002970                          "ENTER if correct - N if incorrect".
+002980 77  WS-A            PIC  X(19) VALUE "Any key to continue".
+002990 77  WS-E            PIC  X(15) VALUE "**END** - ENTER".
+003000 77  WS-ERR1         PIC  X(22) VALUE "Invalid Account Number".
+003010 77  WS-ERR2         PIC  X(09) VALUE "No Record".
+003020 77  WS-PER          PIC  Z(02)9.99.
+003030 77  WS-CR           PIC  X(01).
+003040 77  WS-TAXRES       PIC  S9(07)V9(08) COMP-3.
+003040 77  WS-BAL          PIC  S9(09)V9(02) COMP-3.
+       77  TODAY-DDMMYY	   PIC	9(08) COMP-5.
+       77  WS-USUB	   PIC	9(04) COMP-5.
+000070 77  WS-DRAW	   PIC	9(02).
+      /
+003050 01  WS-DB-LINE.
+003080     03  WS-TOP-LNE2.
+003090	       05  WS-TCR  PIC X(80) VALUE "ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      - 	 "ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿".
+003100	   03  WS-TP-LINE2 REDEFINES WS-TOP-LNE2.
+003110         05  FILLER      PIC  X(01).
+003120         05  WS-TOP-COMP PIC  X(40).
+003130         05  FILLER      PIC  X(39).
+003160	   03  WS-MID-LNE2.
+	       05  FILLER      PIC  X(01) VALUE "³".
+	       05  WS-BLNK78   PIC  X(78) VALUE ALL "°".
+	       05  FILLER      PIC  X(01) VALUE "³".
+
+003480 COPY WS.WS.
+
+       COPY LEDTRF.WS.
+
+003520 01  W00-TRAN-CODES.
+003530     03  W00-T-VAT   PIC S9(09)V99 COMP-3.
+003540     03  W00-E-DESC  PIC  X(12).
+003550     03  W00-A-DESC  PIC  X(12).
+003560     03  W00-ACTION  PIC  9(01).
+003570     03  W00-T-CODE  PIC  9(02)    COMP-5.
+003580     03  W00-T-GL    PIC  9(06)    COMP-3.
+003590     03  W00-T-DAY   PIC  9(06)    COMP-5.
+003600     03  W00-T-VAL   PIC S9(09)V99 COMP-3.
+003610     03  W00-T-MTD   PIC  9(06)    COMP-5.
+003620     03  W00-T-MTDV  PIC S9(09)V99 COMP-3.
+003630     03  W00-T-YTD   PIC  9(06)    COMP-5.
+003640     03  W00-T-YTDV  PIC S9(09)V99 COMP-3.
+
+000290 01  WS-PARID.
+000020	   03  WS-SYS-ID       PIC  X(03).
+
+003660 01  W02-FID.
+
+       COPY APACFIDS.ID.
+
+003680 COPY AUDIT.ID.
+
+       COPY CARDEX.ID.
+
+003700 COPY CONTROL.ID.
+
+003720 COPY DBTRAN.ID.
+
+003740 COPY DEBTOR.ID.
+
+000140 COPY DEBTRN.ID.
+
+003760 COPY DEPART.ID.
+
+000250 COPY GARTEE.ID.
+
+       COPY LEDTRF.ID.
+
+003800 COPY INVOIC.ID.
+
+       COPY PARAM.ID.
+
+003820 COPY RECOVER.ID.
+
+003840 COPY SALE.ID.
+
+       COPY SHARED.ID.
+
+003860 COPY STOCK.ID.
+
+003880 COPY TXTRAN.ID.
+
+003900 01  W02-FILE-IDS.
+003910     03  W02-PRINTER.
+	       05  W02-REPORT PIC X(07) VALUE "CRNF04.".
+               05  W02-USER   PIC X(05) VALUE SPACES.
+	   03  W02-CSHDRW     PIC X(04) VALUE "COM1".
+
+       COPY W05.VAT.
+
+       COPY W10.SAL.
+
+       01  W10-REF.
+           03  W10-NUM         PIC  9(08).
+
+       COPY W12.WS.
+
+004610 01  W15-DISCOUNT.
+004620     03  W15-DISC        PIC S9(03)V99 COMP-3 OCCURS 10.
+
+       COPY W20.WS.
+
+004720 01  W25-CALCS.
+004730     03  W25-RESULT      PIC 9(05)V99.
+004740     03  W25-RESULT1 REDEFINES W25-RESULT.
+004750         05  W25-WHOLE   PIC 9(03).
+004760         05  W25-DECIMAL PIC 9(02).
+           03  W25-RESULT2 REDEFINES W25-RESULT.
+               05  W25-KEY     PIC 9(04).
+               05  W25-SUB     PIC 9(01).
+               05  FILLER      PIC 9(02).
+004770     03  W25-TOTAL       PIC 9(07)V99  COMP-3.
+004780     03  W25-VALUE       PIC S9(07)V99 COMP-3.
+004790     03  W25-CREDIT      PIC S9(07)V99 COMP-3.
+
+       COPY W40.DBT.
+
+       COPY W40.WS.
+
+003890 01  W45-TRAN.
+003900     03  W45-CODE        PIC 9(02).
+003910     03  W45-ENG         PIC X(12).
+003920     03  W45-AFR         PIC X(12).
+003930     03  W45-ACT         PIC X(01).
+
+       COPY FUNCTION.WS.
+
+005610 COPY W50.WS.
+
+003550 01  W60-NME-ADD.
+003560     03  W60-NAME.
+003570         05  W60-NCHAR OCCURS 40 PIC X(01).
+003580     03  W60-ADDRESS.
+003590         05  W60-ACHAR OCCURS 70 PIC X(01).
+003580     03  W60-ADDR REDEFINES W60-ADDRESS.
+               05  W60-ADD     PIC X(60).
+               05  FILLER      PIC X(10).
+003600     03  W60-ADDRESS1.
+               05  W60-PAD     PIC X(60).
+               05  FILLER      PIC X(10).
+005690     03  W60-ITM.
+005700         05  W60-ICHAR OCCURS 14 PIC X(01).
+
+005810 COPY W70DEBT.IWS.
+
+005830 01  W75-KEYS.
+005840     03  W75-S          PIC 9(02) COMP-5.
+005850     03  W75-S1         PIC 9(02) COMP-5.
+           03  W75-S2         PIC 9(02) COMP-5.
+           03  W75-KEY        PIC  9(06)    COMP-5.
+           03  W75-ALLOCATED  PIC S9(09)V99 COMP-3.
+           03  W75-BALANCE    PIC S9(09)V99 COMP-3.
+005860     03  W75-DNO        PIC X(06) OCCURS 18.
+
+005880 01  W75-TITLES.
+005890     03  W75-DESCRIP.
+005900         05  FILLER      PIC X(28)      VALUE
+005910                     "Mr     Mnr    Mrs    Mev    ".
+005920         05  FILLER      PIC X(28)      VALUE
+005930                     "Miss   Mej    Ms     Ms     ".
+005940         05  FILLER      PIC X(28)      VALUE
+005950                     "Dr     Dr     Rev    Ds     ".
+005960         05  FILLER      PIC X(28)      VALUE
+005970                     "Prof   Prof   The HonSy Edel".
+005980         05  FILLER      PIC X(28)      VALUE
+005990                     "                            ".
+006000     03  W75-CODES REDEFINES W75-DESCRIP.
+006010         05  W75-TITLE  OCCURS 10.
+006020             07  W75-ETITLE PIC X(07).
+006030             07  W75-ATITLE PIC X(07).
+
+006040 01  W80-ACCOUNT.
+006050     03  W80-ACNO        PIC X(06).
+006060     03  W80-CRED REDEFINES W80-ACNO.
+006070         05  W80-CNO     PIC 9(05).
+006080         05  W80-CAC REDEFINES W80-CNO.
+006090             07  W80-CTYPE PIC 9(01).
+006100             07  W80-SER   PIC 9(04).
+006110         05  FILLER        PIC 9(01).
+006120     03  W80-TYPE        PIC 9(01).
+
+       COPY W90.DBT.
+
+       COPY W91.TRN.
+
+       COPY W95.STM.
+
+007010 01  W100-EDIT.
+007020     03  W100-LBAL       PIC Z(06)9.99-.
+007030     03  W100-LARR       PIC Z(06)9.99.
+007040     03  W100-BAL        PIC Z(08)9.99-.
+007050     03  W100-CUR        PIC Z(08)9.99-.
+007060     03  W100-30         PIC Z(08)9.99-.
+007070     03  W100-60         PIC Z(08)9.99-.
+007080     03  W100-90         PIC Z(08)9.99-.
+007090     03  W100-120        PIC Z(08)9.99-.
+007100     03  W100-INT        PIC Z(08)9.99-.
+007110     03  W100-CRL        PIC Z(06)9.
+           03  W100-SER        PIC ZZ9.
+007120     03  W100-V2.
+007130         05  W100-S6V2   PIC Z(05)9.99-.
+007140     03  W100-V3 REDEFINES W100-V2.
+007150         05  W100-PRICE  PIC X(09).
+007160         05  FILLER      PIC X(01).
+007170     03  W100-V4 REDEFINES W100-V2.
+007180         05  W100-EXT    PIC Z(06)9.99.
+           03  W100-V5 REDEFINES W100-V2.
+               05  W100-QNT    PIC Z(05)9.99-.
+
+       LINKAGE SECTION.
+
+       COPY CHAIN.LS.
+
+      /
+007190 SCREEN SECTION.
+
+       COPY BLANK.CRT.
+
+       01  S08A.
+           03  LINE 16 COLUMN  6 VALUE "Allocation:".
+           03  LINE 17 COLUMN  6 VALUE "Ref. No.".
+	   03	       COLUMN 18 VALUE "Date".
+	   03	       COLUMN 26 VALUE "Transaction".
+	   03	       COLUMN 46 VALUE "Value".
+	   03	       COLUMN 57 VALUE "Balance".
+	   03	       COLUMN 69 VALUE "Allocate".
+
+       01  S-ALLOC.
+	   03  LINE 21 COLUMN 14 VALUE "Un-allocated balance : ".
+	   03	       COLUMN 37 FOREGROUND-COLOR 6 HIGHLIGHT
+				   PIC Z(08)9.99 FROM W75-BALANCE.
+	   03	       COLUMN 51 VALUE "Allocated : ".
+	   03	       COLUMN 63 FOREGROUND-COLOR 6 HIGHLIGHT
+				   PIC Z(08)9.99 FROM W75-ALLOCATED.
+
+       01  S-DTRN.
+	   03  COLUMN  6 FOREGROUND-COLOR 3 HIGHLIGHT BACKGROUND-COLOR 5
+                                   PIC X(08) FROM DBT-REF.
+	   03  COLUMN 15 FOREGROUND-COLOR 3 HIGHLIGHT BACKGROUND-COLOR 5
+				   PIC 9999/99/99 FROM DBT-DATE.
+	   03  COLUMN 26 FOREGROUND-COLOR 3 HIGHLIGHT BACKGROUND-COLOR 5
+                                   PIC X(12) FROM W00-E-DESC.
+	   03  COLUMN 39 FOREGROUND-COLOR 3 HIGHLIGHT BACKGROUND-COLOR 5
+                                   PIC Z(08)9.99 FROM DBT-VALUE.
+	   03  COLUMN 52 FOREGROUND-COLOR 3 HIGHLIGHT BACKGROUND-COLOR 5
+                                   PIC Z(08)9.99 FROM DBT-OUTSTD.
+	   03  COLUMN 65 FOREGROUND-COLOR 3 HIGHLIGHT BACKGROUND-COLOR 5
+                                   PIC Z(08)9.99 USING DBT-ALLOC AUTO.
+
+       COPY ERROR.CRT.
+
+      /
+010220 PROCEDURE DIVISION USING LS-PARID
+				LS-USER-ID
+				LS0-PROGRAMS
+				LS0-SECURITY
+				W40-COMPANY
+				W90-TRAN.
+010230 AA000-MAIN      SECTION.
+010240 AA000-INIT.
+010250       PERFORM ZA000-INIT.
+016330	     PERFORM BD000.
+010410	     GO TO AZ000-EOJ.
+
+       COPY ERROR.SCR.
+
+       COPY FUNCTION.SCR.
+
+010930 COPY LOCKED.RC2.
+
+010950 COPY CLEAR.CRT.
+
+010970 COPY DEBTOR.TRN.
+
+      /
+      *    ****    READ FILES ROUTINES
+      *
+011110 AC000              SECTION.
+
+011130 COPY AUDIT.RD.
+
+011150 COPY CONTROL.RD.
+
+011170 COPY DBTRAN.RD1.
+
+011190 COPY DEBTOR.RD.
+
+000140 COPY DEBTRN.RD.
+
+011210 COPY DEPART.RD.
+
+000250 COPY GARTEE.RD.
+
+       COPY LEDTRF.RD.
+
+011250 COPY INVOIC.RD.
+
+011270 COPY PARAM.RD.
+
+011290 COPY SALE.RD.
+
+       COPY SHARED.RD.
+
+011310 COPY STOCK.RD.
+
+011330 COPY TXTRAN.RD.
+
+      /
+011350 AD000-WRITE             SECTION.
+
+011370 COPY AUDIT.WR.
+
+       COPY CARDEX.WR.
+
+011390 COPY CONTROL.WR.
+
+011410 COPY DBTRAN.WR.
+
+011430 COPY DEBTOR.WR.
+
+000140 COPY DEBTRN.WR.
+
+011450 COPY DEPART.WR.
+
+000250 COPY GARTEE.WR.
+
+011490 COPY INVOIC.WR.
+
+       COPY LEDTRF.WR.
+
+011510 COPY PARAM.WR.
+
+011530 COPY SALE.WR.
+
+       COPY SHARED.WR.
+
+011550 COPY STOCK.WR.
+
+011570 COPY TXTRAN.WR.
+
+      /
+      *    THIS ROUTINE GENERATES THE RECOVERY FILE RECORDS
+      *
+011670 AY000           SECTION.
+011680 AY01.
+011690       MOVE 01             TO REC-FILE.
+011700       MOVE WS-PARKEY      TO REC-KEY.
+011710	     PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+011720       MOVE PAR-RECORD1    TO REC-PARAM.
+011730       GO TO AY50.
+011740 AY02.
+011750       MOVE 02             TO REC-FILE.
+008020       MOVE ZERO           TO REC-KEY.
+             MOVE ZERO           TO REC-TYPE
+011770       PERFORM READ-DEBTOR-LOCK THRU READ-DEBTOR-EXIT.
+011780       MOVE DEB-RECORD1    TO REC-DEBTOR.
+011790       GO TO AY50.
+011800 AY04.
+011810       MOVE 04             TO REC-FILE.
+008020       MOVE ZERO           TO REC-KEY.
+             MOVE WS-ACTION      TO REC-TYPE
+011830       MOVE TRA-RECORD1    TO REC-DBTRAN.
+011840       GO TO AY50.
+011850 AY05.
+011860       MOVE 05             TO REC-FILE.
+011870       MOVE ZERO           TO REC-KEY.
+011880       MOVE ZERO           TO REC-TYPE.
+011890	     PERFORM READ-STOCK THRU READ-STOCK-EXIT.
+011900       MOVE STK-RECORD1    TO REC-STOCKF.
+011910       GO TO AY50.
+011850 AY09.
+011860       MOVE 09             TO REC-FILE.
+011870       MOVE ZERO           TO REC-KEY.
+011880       MOVE WS-ACTION      TO REC-TYPE.
+011900       MOVE GUA-RECORD1    TO REC-GARTEE.
+011910       GO TO AY50.
+011920 AY16.
+011930       MOVE 16             TO REC-FILE.
+011940       MOVE WS-AUDKEY      TO REC-KEY.
+011950       MOVE AUD-REC1       TO REC-AUDITF.
+011960       GO TO AY50.
+011970 AY19.
+011980       MOVE 19             TO REC-FILE.
+011990       MOVE ZERO           TO REC-KEY.
+012000       MOVE WS-ACTION      TO REC-TYPE.
+012010       MOVE TAX-RECORD1    TO REC-TXTRAN.
+012020       GO TO AY50.
+012030 AY22.
+012040       MOVE 22             TO REC-FILE.
+012050       MOVE ZERO           TO REC-KEY.
+012060       MOVE WS-ACTION      TO REC-TYPE.
+012070       MOVE DOC-REC1       TO REC-INVOIC.
+012080       GO TO AY50.
+012150 AY37.
+012160	     MOVE 37		 TO REC-FILE.
+012170	     MOVE WS-SHARED	 TO REC-KEY.
+012180	     MOVE SHR-RECORD	 TO REC-NETWORK.
+012190       GO TO AY50.
+012090 AY38.
+	     MOVE 38		 TO REC-FILE.
+008020	     MOVE ZERO		 TO REC-KEY.
+	     MOVE ZERO		 TO REC-TYPE.
+012120	     PERFORM READ-DEPART THRU READ-DEPART-EXIT.
+	   IF WS-F-ERROR = 7
+	       MOVE "XXXX"	 TO DPT-CODE
+	       GO TO AY38.
+012130	     MOVE DPT-RECORD	 TO REC-DEPART.
+012140       GO TO AY50.
+012150 AY39.
+012160       MOVE 39             TO REC-FILE.
+012170       MOVE WS-NETKEY      TO REC-KEY.
+012180       MOVE NET-RECORD     TO REC-NETWORK.
+012190       GO TO AY50.
+011070 AY40.
+011080       MOVE 40             TO REC-FILE.
+008020       MOVE ZERO           TO REC-KEY.
+             MOVE WS-ACTION      TO REC-TYPE
+011100       MOVE XFR-REC        TO REC-LEDTRF.
+011110       GO TO AY50.
+011070 AY43.
+011080	     MOVE 43		 TO REC-FILE.
+008020       MOVE ZERO           TO REC-KEY.
+             MOVE WS-ACTION      TO REC-TYPE
+011100	     MOVE CRD-REC1	 TO REC-CARDEX.
+011110       GO TO AY50.
+012200 AY49.
+012210       MOVE 99             TO REC-FILE.
+012220       MOVE ZERO           TO REC-KEY.
+012230       MOVE SPACES         TO REC-DETAIL.
+012240       PERFORM AY50.
+012250       ADD 1               TO WS-TRANS.
+012260     IF WS-RECOVER > 95
+012270         CLOSE RECOVER
+012280         OPEN OUTPUT RECOVER
+012290         CLOSE RECOVER
+012300         OPEN I-O RECOVER
+012310         MOVE ZERO         TO WS-RECOVER.
+012320       GO TO AY59.
+012330 AY50.
+012340       ADD 1               TO WS-RECOVER.
+012350       MOVE WS-RECOVER     TO WS-RECKEY.
+012360       MOVE WS-TRANS       TO REC-TRAN.
+012370       WRITE REC-RECORD.
+012380     IF WS-STATUS NOT = "00"
+012390         DISPLAY "Write error Recovery file - Status " AT 2212
+012400                  WITH FOREGROUND-COLOR 14
+012410                  WS-STATUS WITH FOREGROUND-COLOR 15
+012420         STOP RUN.
+012430	     CLOSE RECOVER.
+012440	     OPEN I-O RECOVER.
+012450 AY59.
+012460       EXIT.
+
+012470 AY60.
+012480	   IF WS-SKIP = "Y" OR "A"
+012490         GO TO AY999.
+      *
+      *    ****    Start processing transaction
+      *
+012690	     MOVE 1		 TO WS-COUNT.
+012690	     MOVE 5		 TO WS-SHARED.
+012700	     PERFORM READ-SHARED-LOCK THRU READ-SHARED-EXIT.
+	     MOVE SHR-STOCK	 TO WS-STOCK.
+      *
+      *    ****    Read PARAM record 4 - Lock record and start recovery
+      *            file procedure.
+      *
+012500	     MOVE 4		 TO WS-PARKEY.
+012510       PERFORM READ-PARAM-LOCK THRU READ-PARAM-EXIT.
+012520     IF PAR-USERS < 24
+012530         MOVE 1            TO WS-SUB
+	       MOVE ZERO	 TO WS-WAIT
+012540         GO TO AY62.
+      *
+      *    ****   Q   F U L L  -  W A I T   F O R   4	S E C O N D S
+      *
+012550	     DISPLAY "WAITING" AT 2551
+		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 12.
+012560	     COMMIT.
+	     ACCEPT WS-STIME FROM TIME.
+	     MOVE 400		 TO WS-WAIT.
+012580	     PERFORM LOCK-REC-LOOP.
+012590	     DISPLAY SPACE AT 2551
+		     WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 3.
+012600       GO TO AY60.
+
+012610 AY61.
+012620	     MOVE "DS"		 TO PAR-PROG(WS-USUB).
+012630	     MOVE LS-USER	 TO PAR-USR(WS-USUB).
+012640       PERFORM REWRITE-PARAM-UNLOCK THRU WRITE-PARAM-EXIT.
+      *
+      *    ****    Read the DEBTOR control record in the NETWORK file
+      *            and lock it. Log details to the RECOVERY file.
+      *
+012670	     MOVE 1		 TO WS-NETKEY.
+012680       PERFORM READ-CONTROL-LOCK THRU READ-CONTROL-EXIT.
+012690       PERFORM AY39 THRU AY59.
+012700       MOVE NET-DEBTOR     TO W70-DEBT.
+	   IF WS-STOCK = "Y"
+012710	       MOVE 3		 TO WS-SHARED
+012720	       PERFORM READ-SHARED-LOCK THRU READ-SHARED-EXIT
+	       PERFORM AY37 THRU AY59
+	       MOVE SHR-RECORD	 TO NET-RECORD
+	   ELSE
+012710	       MOVE 3		 TO WS-NETKEY
+012720	       PERFORM READ-CONTROL-LOCK THRU READ-CONTROL-EXIT
+012730	       PERFORM AY39 THRU AY59.
+012740       GO TO AY999.
+      *
+      *    ****   A R E   A N Y   U P D A T E S   I N	P R O G R E S S
+      *
+012750 AY62.
+	   IF NOT (PAR-PROG(WS-SUB) = SPACES OR
+		   PAR-USR(WS-SUB) = SPACES)
+      *
+      *    ****   A R E   D E B T O R	O R   S T O C K   F I L E S
+      * 	  B E I N G   U P D A T E D
+      *
+	       IF NOT (PAR-PROG(WS-SUB) = SPACES)
+012760		   IF PAR-PROG(WS-SUB) = "DB" OR "DS" OR "CS" OR "ST"
+      *
+      *    ****   Y E S   -   S E T   W A I T	P E R I O D
+      *
+		       GO TO AY62-WAIT
+		   ELSE
+		       ADD 1	 TO WS-SUB
+		       GO TO AY62
+		   END-IF
+	       ELSE
+      *
+      *    ****   I S	T H I S   P R O G R A M   I N	T H E  Q
+      *
+	       IF PAR-USR(WS-SUB) = LS-USER
+      *
+      *    ****   I S	I T   N E X T	I N   L I N E	T O   P R O C E S S
+      *
+		   IF WS-WAIT = ZERO
+		       GO TO AY63
+		   ELSE
+		       GO TO AY62-WAIT
+		   END-IF
+	       ELSE
+		   GO TO AY62-WAIT
+	       END-IF
+	   END-IF.
+	     MOVE LS-USER	 TO PAR-USR(WS-SUB).
+	     MOVE WS-SUB	 TO PAR-USERS.
+	     PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+	     GO TO AY62-CHECK.
+      *
+      *    ****   S E T   W A I T   P E R I O D
+      *
+       AY62-WAIT.
+	     MOVE 300		 TO WS-WAIT.
+	   IF NOT (PAR-USR(WS-SUB) = LS-USER)
+	       IF WS-SUB < 24
+		   ADD 1	 TO WS-SUB
+		   GO TO AY62.
+
+       AY62-CHECK.
+	   IF WS-WAIT > ZERO
+	       COMMIT
+	       DISPLAY "Waiting" AT 2572
+			WITH BACKGROUND-COLOR 3
+			     FOREGROUND-COLOR 14 BLINK
+	       ACCEPT WS-STIME FROM TIME
+	       PERFORM LOCK-REC-LOOP
+	       DISPLAY "Waiting" AT 2572
+			WITH BACKGROUND-COLOR 3
+			     FOREGROUND-COLOR 14 BLINK
+	       GO TO AY60.
+012880	     DISPLAY SPACE AT 2572
+		     WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 3.
+
+012900 AY63.
+012920	     MOVE WS-SUB	 TO WS-USUB.
+012940	     GO TO AY61.
+
+012970 AY70.
+013030	     MOVE 4		 TO WS-PARKEY.
+013040       PERFORM READ-PARAM-LOCK-END THRU READ-PARAM-EXIT.
+      *
+      *    ****    Write links back and unlock PARAM record 4 and
+      *            NETWORK record 1.
+      *
+	   IF WS-STOCK = "Y"
+	       MOVE NET-RECORD	 TO SHR-RECORD
+012980	       PERFORM REWRITE-SHARED THRU WRITE-SHARED-EXIT
+	   ELSE
+012980	       PERFORM REWRITE-CONTROL THRU WRITE-CONTROL-EXIT.
+012990       MOVE 1              TO WS-NETKEY.
+013000       MOVE W70-DEBT       TO NET-DEBTOR.
+013010	     PERFORM REWRITE-CONTROL THRU WRITE-CONTROL-EXIT.
+013020       PERFORM AY49 THRU AY59.
+	     MOVE 1		 TO WS-USUB.
+
+       AY72.
+	   IF NOT (PAR-USR(WS-USUB) = LS-USER)
+	       ADD 1		 TO WS-USUB
+	       GO TO AY72.
+
+       AY75.
+013050	     MOVE SPACES	 TO PAR-PROG(WS-USUB)
+013060				    PAR-USR(WS-USUB).
+	   IF WS-USUB < 24
+	       ADD 1 WS-USUB	 GIVING WS-SUB
+	   ELSE
+	       GO TO AY80.
+	   IF NOT (PAR-PROG(WS-SUB) = SPACES)
+	       MOVE PAR-PROG(WS-SUB)
+				 TO PAR-PROG(WS-USUB)
+	       MOVE PAR-USR(WS-SUB)
+				 TO PAR-USR(WS-USUB)
+	       ADD 1		 TO WS-USUB
+	       GO TO AY75.
+
+       AY80.
+013070	     SUBTRACT 1 FROM WS-USUB
+				 GIVING PAR-USERS.
+013080	     PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+	   IF LS0-POS NOT = 2
+012430         CLOSE RECOVER
+012440         OPEN I-O RECOVER.
+013090       COMMIT.
+
+013100 AY999.
+013110       EXIT.
+      /
+013120 AZ000-END               SECTION.
+013130 AZ000-EOJ.
+013140       MOVE WS-10CPI       TO REP-DETAIL2.
+013150       WRITE REP-LINE2 BEFORE 0 LINES.
+013160	     CLOSE RECOVER
+013270             PRNREP.
+013280 AZ100.
+013290       EXIT PROGRAM.
+      *
+      *    ****    Read debtor record - using account number.
+      *
+013750 CA155-GET-DEBTOR  SECTION 2.
+013760 CA155.
+012010       MOVE W80-ACNO       TO DEB-ACNO.
+012020       PERFORM READ-DEBTOR THRU READ-DEBTOR-EXIT.
+           IF WS-F-ERROR = 6
+               MOVE 1            TO WS-ERROR
+014380     ELSE
+013870     IF DEB-ACNO NOT = W80-ACNO
+013880         MOVE 2            TO WS-ERROR
+013890     ELSE
+013900         MOVE 0            TO WS-ERROR
+013910         MOVE DEB-TYPE     TO W80-TYPE.
+013920 CA160-EXIT.
+013930       EXIT.
+      *
+013940 CA165-NAME        SECTION 2.
+013950 CA165.
+013960       UNSTRING W60-NAME DELIMITED BY "*" OR "!"
+013970                           INTO W40-SURNAME 
+013980                                W40-FNAME 
+013990                                W40-SNAME
+014000       OVERFLOW
+014010           MOVE 1          TO WS-ERROR.
+014020 CA170-EXIT.
+014030       EXIT.
+      *
+014040 CA175-ADDRESS     SECTION 2.
+014050 CA175.
+014060       UNSTRING W60-ADDRESS DELIMITED BY "*"
+014070                           INTO W40-ADD1 
+014080                                W40-ADD2 
+014090                                W40-ADD3 
+014100                                W40-ADD4
+014110       OVERFLOW
+014120           MOVE 1          TO WS-ERROR.
+014130 CA175-EXIT.
+014140       EXIT.
+      *
+014150 CA185-ADDRESS     SECTION 2.
+014160 CA185.
+014170       UNSTRING W60-ADDRESS1 DELIMITED BY "*"
+014180                           INTO W40-PADD1 
+014190                                W40-PADD2 
+014200                                W40-PADD3 
+014210                                W40-PADD4
+014220       OVERFLOW
+014230           MOVE 1          TO WS-ERROR.
+014240 CA185-EXIT.
+014250       EXIT.
+
+       COPY LEDTRF.UPD.
+
+      /
+      *    ****    G E N E R A T E   A   D E B T O R
+      *            T R A N S A C T I O N
+      *
+014810 GENERATE-DEBTOR-TRAN SECTION 2.
+014820
+014830 DEBTOR-TRAN.
+014910
+014920 LINK-DEBTOR-TRANS.
+015010       INITIALIZE TRA-RECORD1.
+015090       MOVE W20-DTE        TO TRA-DATE.
+015100       MOVE W20-DTE        TO DEB-ACTIVE.
+015110       MOVE W90-CODE       TO TRA-CODE.
+015120       MOVE W90-REF        TO TRA-REF TRA-REG.
+015130       MOVE DEB-ACNO       TO TRA-AC.
+015140     IF W90-DB NOT = ZERO
+015150         MOVE W90-DB       TO TRA-VALUE
+015160     ELSE
+015170         MOVE W90-CR       TO TRA-VALUE.
+015180     IF W00-ACTION = 1
+015190         MULTIPLY -1 BY W90-NONTAX
+015200                           GIVING TRA-TAXFREE
+015210     ELSE
+015220         MOVE W90-NONTAX   TO TRA-TAXFREE.
+015230       MOVE W90-TTAX       TO TRA-TAX.
+015240       ADD TRA-TAX         TO W00-T-VAT.
+015290	     PERFORM WRITE-DBTRAN THRU WRITE-DBTRAN-EXIT.
+000900	     MOVE 1		 TO WS-ACTION.
+000220	     PERFORM AY04 THRU AY59.
+015300       MOVE 1              TO TAX-ACTYPE.
+015310       MOVE TRA-CODE       TO TAX-CODE.
+015320       MOVE TRA-DATE       TO TAX-DATE.
+015330       MOVE TRA-REF        TO TAX-REF.
+015340       MOVE TRA-VALUE      TO TAX-VALUE.
+015350       MOVE TRA-TAXFREE    TO TAX-TAXFREE.
+015360*      MOVE TRA-TAX	 TO TAX-VAT.
+015370       MOVE TRA-AC         TO TAX-AC.
+015380       IF W90-CR NOT = ZERO
+015390           MOVE "1"        TO TAX-TYPE
+015400       ELSE
+015410           MOVE "2"        TO TAX-TYPE.
+015420       MOVE ZERO           TO TAX-SEQ.
+	     MOVE 1		 TO WS-S9.
+
+       DEBTOR-TAX.
+	     MULTIPLY -1 BY W90-TAXVAL(WS-S9)
+				 GIVING TAX-VAL(WS-S9).
+	     MULTIPLY -1 BY W90-VAT(WS-S9)
+				 GIVING TAX-VAT(WS-S9).
+	   IF WS-S9 < 12
+	       ADD 1		 TO WS-S9
+	       GO TO DEBTOR-TAX.
+000890	     PERFORM WRITE-TXTRAN THRU WRITE-TXTRAN-EXIT.
+000900	     MOVE 1		 TO WS-ACTION.
+000910	     PERFORM AY19 THRU AY59.
+015460	     ADD TRA-VALUE	 TO W00-T-VAL W00-T-MTDV W00-T-YTDV.
+015470       ADD 1               TO W00-T-DAY W00-T-MTD  W00-T-YTD.
+015480	     PERFORM UPDATE-TRAN-RECORD.
+           IF WX-INT = "Y"
+               PERFORM DEBTOR-INTEGRATE. 
+015490     IF W90-CR NOT = ZERO
+015500         GO TO DEBTOR-CR-TRANS.
+015510       ADD W90-DB          TO DEB-DEBT
+015520                              DEB-BAL
+015530                              DEB-PURYTD
+                                    DEB-MTHPUR (W20-MONTH).
+015540       GO TO DEBTOR-TRAN-EXIT.
+
+       DEBTOR-INTEGRATE.
+             MOVE W20-DTE        TO WX-DATE.
+	     MOVE "  DT"	 TO WX-LEDG.
+	     MOVE W90-CODE	 TO WX-TRN.
+	     MOVE W00-E-DESC	 TO WX-DESC.
+	     MOVE "- ACCOUNTS RECEIVABLE"
+				 TO WX-BOOK.
+             MOVE TRA-VALUE      TO WX-VALUE.
+             MOVE WX-DEBGL       TO WX-AC.
+             MOVE 01             TO WX-TYPE.
+             PERFORM GL-TRF-UPDATE.
+015550
+015560 DEBTOR-CR-TRANS.
+015570	     SUBTRACT W90-CR	 FROM DEB-CRED.
+015580	     ADD W90-CR 	 TO DEB-MTHPUR (W20-MONTH) DEB-PURYTD.
+015590       ADD W90-CR          TO DEB-BAL.
+           IF OPEN-ITEM
+               GO TO DEBTOR-TRAN-EXIT.
+015600     IF WS-AGE = "M"
+015610         GO TO DEBTOR-TRAN-EXIT.
+015620       MOVE ZERO           TO W90-CUR W90-30 W90-60 W90-90.
+015630       MOVE W90-CR         TO W90-VALUE.
+015640     IF WS-AGE = "1"
+015650         ADD W90-VALUE     TO DEB-120
+015660         MOVE W90-VALUE    TO W90-120.
+015670     IF DEB-120 < ZERO
+015680         SUBTRACT DEB-120  FROM W90-120
+015690         MOVE DEB-120      TO W90-VALUE
+015700         MOVE ZERO         TO DEB-120
+015710         MOVE "9"          TO WS-AGE.
+015720     IF WS-AGE = "9"
+015730         ADD W90-VALUE     TO DEB-90
+015740         MOVE W90-VALUE    TO W90-90.
+015750     IF DEB-90 < ZERO
+015760         SUBTRACT DEB-90   FROM W90-90
+015770         MOVE DEB-90       TO W90-VALUE
+015780         MOVE ZERO         TO DEB-90
+015790         MOVE "6"          TO WS-AGE.
+015800     IF WS-AGE = "6"
+015810         ADD W90-VALUE     TO DEB-60
+015820         MOVE W90-VALUE    TO W90-60.
+015830     IF DEB-60 < ZERO
+015840         SUBTRACT DEB-60   FROM W90-60
+015850         MOVE DEB-60       TO W90-VALUE
+015860         MOVE ZERO         TO DEB-60
+015870         MOVE "3"          TO WS-AGE.
+015880     IF WS-AGE = "3"
+015890         ADD W90-VALUE     TO DEB-30
+015900         MOVE W90-VALUE    TO W90-30.
+015910     IF DEB-30 < ZERO
+015920         SUBTRACT DEB-30   FROM W90-30
+015930         MOVE DEB-30       TO W90-VALUE
+015940         MOVE ZERO         TO DEB-30
+015950         MOVE "C"          TO WS-AGE.
+015960     IF WS-AGE = "C"
+015970         ADD W90-VALUE     TO DEB-CUR
+015980         MOVE W90-VALUE    TO W90-CUR.
+015990     IF DEB-CUR < ZERO
+016000         SUBTRACT DEB-CUR  FROM W90-CUR
+016010         MOVE ZERO         TO DEB-CUR.
+
+016030 DEBTOR-TRAN-EXIT.
+016040       EXIT.
+
+       COPY DEBTOR.ALL.
+
+      /
+016050 BA000	       SECTION 50.
+016840 BA80.
+016850       MOVE W70-AUDIT      TO WS-AUDKEY.
+016860       MOVE LOW-VALUES     TO AUD-REC1.
+016870       PERFORM AY16 THRU AY59.
+016880       MOVE STK-CODE       TO AUD-CODE.
+016890       MOVE 2 TO AUD-TYPE.
+016900       MOVE ZERO           TO AUD-SUB.
+016910       PERFORM WRITE-AUDIT THRU WRITE-AUDIT-EXIT.
+016920       ADD 1               TO W70-AUDIT.
+016930       MOVE 1              TO WS-AUDKEY.
+016940       PERFORM READ-AUDIT THRU READ-AUDIT-EXIT.
+016950       PERFORM AY16 THRU AY59.
+016960       MOVE 1              TO AUD-REP2.
+016970       PERFORM REWRITE-AUDIT THRU WRITE-AUDIT-EXIT.
+016980 BA90.
+016990       MOVE W70-AUDIT      TO WS-AUDKEY.
+017000       MOVE LOW-VALUES     TO AUD-REC1.
+017010       PERFORM AY16 THRU AY59.
+017050	     MOVE 7		 TO AUD-TYPE.
+017060       MOVE WS-DRAW        TO AUD-SUB.
+017070       MOVE W90-REF        TO AUD-CSH.
+017080       MOVE W90-EXCTOT     TO AUD-SELL.
+017090	     MOVE W90-TCOST	 TO AUD-COST.
+017100	     MOVE W10-SMAN	 TO AUD-SMAN.
+017110       PERFORM WRITE-AUDIT THRU WRITE-AUDIT-EXIT.
+017120       ADD 1               TO W70-AUDIT.
+017130       MOVE 1              TO WS-AUDKEY.
+017140       PERFORM READ-AUDIT THRU READ-AUDIT-EXIT.
+017150       PERFORM AY16 THRU AY59.
+017190	     MOVE 1		 TO AUD-REP7.
+017200       PERFORM REWRITE-AUDIT THRU WRITE-AUDIT-EXIT.
+017210 BA95.
+017220       MOVE W70-AUDIT      TO WS-AUDKEY.
+017230       MOVE LOW-VALUES     TO AUD-REC1.
+017240       PERFORM AY16 THRU AY59.
+017290	     MOVE 3		 TO AUD-TYPE
+017300	     MOVE DEB-ACNO	 TO AUD-AC.
+017310       MOVE WS-DRAW        TO AUD-SUB.
+017320       MOVE W90-REF        TO AUD-REF.
+017330       MOVE W90-TTAX       TO AUD-TAX.
+017340       MOVE W90-TOTAL      TO AUD-VAL.
+017350       PERFORM WRITE-AUDIT THRU WRITE-AUDIT-EXIT.
+017360       ADD 1               TO W70-AUDIT.
+017370       MOVE 1              TO WS-AUDKEY.
+017380       PERFORM READ-AUDIT THRU READ-AUDIT-EXIT.
+017390       PERFORM AY16 THRU AY59.
+017430	     MOVE 1		 TO AUD-REP3.
+017440       PERFORM REWRITE-AUDIT THRU WRITE-AUDIT-EXIT.
+017450 BA100.
+017460       MOVE W70-AUDIT      TO WS-AUDKEY.
+017470       MOVE LOW-VALUES     TO AUD-REC1.
+017480       PERFORM AY16 THRU AY59.
+017520	     MOVE 8		 TO AUD-TYPE.
+017530       MOVE WS-DRAW        TO AUD-SUB.
+017540       MOVE W10-SMAN       TO AUD-SMAN.
+017550       MOVE W90-REF        TO AUD-CSH.
+017560       MOVE W90-VALUE      TO AUD-SEL.
+017570       MOVE W90-ICST       TO AUD-CST.
+017580	     MOVE STK-CODE	 TO AUD-EXT-STOCK.
+             MOVE WS-SUPER       TO AUD-SUPER.
+017590       PERFORM WRITE-AUDIT THRU WRITE-AUDIT-EXIT.
+017600       ADD 1               TO W70-AUDIT.
+017610       MOVE 1              TO WS-AUDKEY.
+017620       PERFORM READ-AUDIT THRU READ-AUDIT-EXIT.
+017630       PERFORM AY16 THRU AY59.
+017670	     MOVE 1		 TO AUD-REP8.
+017680       PERFORM REWRITE-AUDIT THRU WRITE-AUDIT-EXIT.
+      /
+017690 BB050		   SECTION 50.
+017700 BB50.
+           IF WS-PRNINV = "N"
+               GO TO BB60.
+017710       MOVE SPACES         TO REP-DETAIL2.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ Format  of the ALL Forms A1/10068/A & A1/10069/A  changed ³
+      *    ³ and  the following changes have been made to the  program ³
+      *    ³ to accomodate them.				       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      *      WRITE INV-L1 BEFORE 1 LINES.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ Leave two blank lines at the top of the Invoice.	       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     WRITE INV-L1 BEFORE 2 LINES.
+	     MOVE X"0E" 	 TO INV-EXP2.
+      *      WRITE INV-L1 BEFORE 0 LINES.
+	     MOVE "TAX INVOICE/BELASTING FAKTUUR"
+				 TO INV-INVOICE.
+	     WRITE INV-L1 BEFORE 3 LINES.
+017710	     MOVE SPACES	 TO REP-DETAIL2.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ The following heading has been deleted from this invoice  ³
+      *    ³ format.						       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+      *	     MOVE X"0E" 	 TO INV-EXP2.
+      *	     MOVE "DELIVERY NOTE/AFLEWERINGSNOTA"
+      *				 TO INV-INVOICE.
+      *	     WRITE INV-L1 BEFORE 2 LINES.
+	     MOVE WS-ECAN	 TO REP-DETAIL2.
+	     WRITE INV-L1 BEFORE 0 LINES.
+017710	     MOVE SPACES	 TO REP-DETAIL2.
+017720	   IF WS-HEAD = "N"
+017730         WRITE INV-L1 BEFORE 7 LINES
+017740         GO TO BB60.
+	     MOVE X"0E" 	 TO INV-EXP.
+017750	     MOVE W95-COMP	 TO INV-EXPNAME.
+017760	     WRITE INV-L1 BEFORE 1 LINES.
+	     MOVE WS-ECAN	 TO REP-DETAIL2.
+	     WRITE INV-L1 BEFORE 0 LINES.
+	     MOVE SPACES	 TO REP-DETAIL2.
+017770	     MOVE W95-ADD1	 TO INV-NADD.
+026690	   IF W05-VATNO NOT = SPACES
+026700	       MOVE "VAT No/BTW Nr :"
+				 TO INV-H2
+026710         MOVE W05-VATNO    TO INV-GNO.
+017780       WRITE INV-L1 BEFORE 1 LINES.
+017790       MOVE SPACES         TO REP-DETAIL2.
+017800       MOVE W95-ADD2       TO INV-NADD.
+017910	   IF W95-TEL NOT = SPACES
+017920	       MOVE "TELEPHONE/FOON:"
+				 TO INV-H2
+017930         MOVE W95-TEL      TO INV-TEL.
+017810       WRITE INV-L1 BEFORE 1 LINES.
+	     MOVE SPACES	 TO REP-DETAIL2.
+017820       MOVE W95-ADD3       TO INV-NADD.
+017910	   IF W95-FAX NOT = SPACES
+017920	       MOVE "FAX / FAKS    :"
+				 TO INV-H2
+017930	       MOVE W95-FAX	 TO INV-TEL.
+017830	     WRITE INV-L1 BEFORE 1 LINES.
+	     MOVE SPACES	 TO REP-DETAIL2.
+017840       MOVE W95-ADD4       TO INV-NADD.
+017850	     WRITE INV-L1 BEFORE 1 LINES.
+017860 BB55.
+017870       MOVE SPACES         TO REP-DETAIL2.
+017880       MOVE W95-PC         TO INV-PC.
+017890	     WRITE INV-L1 BEFORE 2 LINES.
+017900       MOVE SPACES         TO REP-DETAIL2.
+017950 BB60.
+017960       EXIT.
+      /
+       BB070		   SECTION 50.
+       BB70.
+             INITIALIZE GUA-RECORD1.
+             MOVE ZERO           TO WS-F-ERROR.
+	     MOVE STK-CODE	 TO GUA-EXT-CODE.
+             MOVE W10-SERNO      TO GUA-SERIAL.
+	     PERFORM READ-GARTEE THRU READ-GARTEE-EXIT.
+           IF WS-F-ERROR = 9
+               GO TO BB99.
+             MOVE 2              TO WS-ACTION.
+             PERFORM AY09 THRU AY59.
+             PERFORM DELETE-GARTEE-REC THRU WRITE-GARTEE-EXIT.
+       BB99.
+             EXIT.
+      /
+      *    ****    C R E D I T   N O T E
+      *
+031980 BD000	       SECTION 50.
+031990 BD0-PASS.
+032520	     MOVE 1		 TO WS-FIRST WS-LAST.
+032540       MOVE "C"            TO WS-CR.
+	     MOVE ZERO		 TO W90-DISCOUNT.
+032550 BD05.
+      *
+      *    ****    D E B T O R   A C C O U N T   N U M B E R
+      *
+018770	     MOVE W40-ACNO	 TO W80-ACNO.
+018930	     PERFORM CA155-GET-DEBTOR.
+032610 BD06.
+      *
+      *    ****    S A L E S M A N   N U M B E R
+      *
+019990	     MOVE W40-SMAN	 TO W10-SMAN.
+	     MOVE W40-LAST	 TO WS-LAST.
+	     MOVE W40-PRC	 TO WS-PRC.
+      *
+      *    ****    P R O C E S S   T H E   C R E D I T   N O T E
+      *
+038610 BD118.
+038680	     MOVE 1		 TO WS-SALKEY.
+038690       PERFORM AY60 THRU AY999.
+038700       PERFORM AY02 THRU AY59.
+038710	     MOVE W70-CRNOTE	 TO W90-REF.
+025520	     DISPLAY W90-REF AT 0510
+		     WITH FOREGROUND-COLOR 6 HIGHLIGHT
+			  BACKGROUND-COLOR 0.
+038730	   IF W70-CRNOTE = 99999999
+038740	       MOVE 1		 TO W70-CRNOTE
+038750     ELSE
+038760	       ADD 1		 TO W70-CRNOTE.
+039500 BD145.
+      *
+      *    ****    P R I N T   C R - N O T E   H E A D I N G S
+      *
+047380	     MOVE SPACES	 TO REP-DETAIL2.
+047320	     MOVE X"0E" 	 TO INV-EXP2.
+047330	     MOVE "KR NOTA/CR NOTE"
+				 TO INV-INVOICE.
+	     WRITE INV-L1 BEFORE 0 LINES.
+047340	     MOVE WS-ECAN	 TO REP-DETAIL2.
+047370	     WRITE INV-L1 BEFORE 0 LINES.
+026320	     MOVE SPACES	 TO REP-DETAIL2.
+026320	     MOVE SPACES	 TO REP-DETAIL2.
+026360	     MOVE W40-PADD1	 TO INV-DADD2.
+026370       WRITE INV-L1 BEFORE 1 LINES.
+026390	     MOVE W40-PADD2	 TO INV-DADD2.
+026370       WRITE INV-L1 BEFORE 1 LINES.
+026420	     MOVE W40-PADD3	 TO INV-DADD2.
+026590       MOVE W90-REF        TO INV-REF.
+026370       WRITE INV-L1 BEFORE 1 LINES.
+026320       MOVE SPACES         TO REP-DETAIL2.
+026330       MOVE W40-NAME       TO INV-NAME.
+026450	     MOVE W40-PADD4	 TO INV-DADD2.
+026340       WRITE INV-L1 BEFORE 1 LINES.
+026320       MOVE SPACES         TO REP-DETAIL2.
+026350       MOVE W40-ADD1       TO INV-NAME.
+026370       WRITE INV-L1 BEFORE 1 LINES.
+026380       MOVE W40-ADD2       TO INV-NAME.
+026550	     MOVE W80-ACNO	 TO INV-AC.
+026560       MOVE W90-ORD        TO INV-ORD.
+027140*      MOVE W05-VAT(WS-VAT-SUB)
+027140	     MOVE W05-VAT(1)	 TO INV-VAT-RATE.
+028290	   IF W90-TAX NOT = SPACES
+	       MOVE "Exclusive"  TO INV-TYPE
+028310     ELSE
+028320     IF W05-VATNO NOT = SPACES
+028330	       MOVE "Inclusive"  TO INV-TYPE
+	   ELSE
+	       MOVE "Export"	 TO INV-TYPE.
+026400	     WRITE INV-L1 BEFORE 1 LINES.
+	     MOVE SPACES	 TO REP-DETAIL2.
+026410       MOVE W40-ADD3       TO INV-NAME.
+026430       WRITE INV-L1 BEFORE 1 LINES.
+026440       MOVE W40-ADD4       TO INV-NAME.
+026670       MOVE W12-TODAY      TO INV-DTE.
+	     ADD 1		 TO WS-PAGE.
+	     MOVE WS-PAGE	 TO INV-PGE.
+	     MOVE W90-REG	 TO INV-REG.
+026460	     WRITE INV-L1 BEFORE 1 LINES.
+026470 BD146.
+      *
+      *    ****    S T A R T   I N V O I C E   L O G G I N G   ( RE-PRINT )
+      *
+026500       MOVE SPACES         TO REP-DETAIL2.
+026510       MOVE W40-PC1        TO INV-PC1.
+026530	     WRITE INV-L1 BEFORE 4 LINES.
+026540	     MOVE SPACES	 TO REP-DETAIL2.
+026810	     MOVE 13		 TO WS-LINE.
+       BD150.
+             EXIT.
+       BD153.
+039680       MOVE WS-PAGE        TO DOC-PAGE.
+039740       MOVE W80-ACNO       TO DOC-AC.
+             MOVE 100            TO DOC-SQN.
+             MOVE ZERO           TO DOC-TYPE.
+             MOVE W40-NAME       TO DOC-NAME.
+             MOVE ZERO           TO DOC-PICNO.
+039830       MOVE WS-CR          TO DOC-DOC.
+             MOVE W90-EXP        TO DOC-EXP.
+             MOVE WS-PRC         TO DOC-PRC.
+039750       MOVE W90-ORD        TO DOC-ORD.
+039810       MOVE W90-REF        TO DOC-REF.
+039820       MOVE W90-REG        TO DOC-OREF.
+039890       MOVE W12-T-YMD      TO DOC-DTE.
+040020       MOVE W10-SMAN       TO DOC-SMAN.
+028820       MOVE W90-TOTAL      TO DOC-VALUE.
+	     MOVE LS0-NO	 TO DOC-USER.
+	     MOVE LS0-NAME	 TO DOC-UNME.
+      *
+      *    ****    L O G   R E C O R D   T O   I N V O I C E   F I L E
+      *
+       BD154.
+             PERFORM WRITE-INVOIC THRU WRITE-INVOIC-EXIT.
+015400       MOVE 1              TO WS-ACTION.
+             PERFORM AY22 THRU AY59.
+040050 BD155.
+      *
+      *    ****    R E A D   T H E   S A L E   F I L E   A N D
+      *            P R I N T   T H E   I N V O I C E
+      *
+040060     IF WS-SALKEY > WS-LAST
+040070         GO TO BD175.
+040080       PERFORM READ-SALE THRU READ-SALE-EXIT.
+040090     IF WS-LINE > 1
+040100         SUBTRACT 1        FROM WS-LINE
+040110     ELSE
+040120         PERFORM BD170.
+040130	   IF SAL-EXT-ITEM = SPACES
+040140         GO TO BD167.
+040150	     MOVE SAL-EXT-ITEM	 TO STK-CODE.
+040160       PERFORM AY05 THRU AY59.
+      *
+      *    ****    N E X T   E N T R Y   O N   I N V O I C E   L O G
+      *            R E C O R D
+      *
+	     MOVE W80-ACNO	 TO CRD-AC.
+	     MOVE ZERO		 TO CRD-SEQ.
+017540	     MOVE W10-SMAN	 TO CRD-SMAN.
+017550	     MOVE W90-REF	 TO CRD-REF.
+	     MOVE STK-SUPP	 TO CRD-SUPP.
+	     MOVE W12-T-YMD	 TO CRD-DTE.
+	     MOVE W40-NAME	 TO CRD-NAME.
+	     MOVE SPACES	 TO CRD-WHS.
+	     MOVE STK-LDG	 TO CRD-DEPT.
+040180	     MOVE 1		 TO DOC-TYPE.
+             INITIALIZE DOC-DET2.
+040190	     MOVE SAL-EXT-ITEM	 TO DOC-EXT-ITEM CRD-EXT-CODE.
+040200       MOVE SAL-DESC       TO DOC-DESC.
+040210	     MOVE SAL-QNT	 TO W10-QUANT DOC-QNT.
+      *	     MOVE SAL-CASES	 TO W10-CASES.
+	     MOVE SAL-PACK	 TO WS-P1.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ To avoid confusion, the system logs details to the sales  ³
+      *    ³ history file as single units and not as packs.	       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     MULTIPLY STK-UNT(WS-P1) BY W10-QUANT
+				 GIVING W10-QNT.
+	     MULTIPLY W10-QNT BY -1 GIVING CRD-QNT.
+040230	     MOVE SAL-COST	 TO W10-COST DOC-COST.
+	     COMPUTE CRD-COST = (SAL-COST / STK-UNT(WS-P1)) * -1.
+040240	     MOVE SAL-VAT	 TO DOC-VAT.
+040250       MOVE SAL-SELL       TO W10-SELL  DOC-SELL.
+040270	     MOVE SAL-VAL	 TO W25-VALUE DOC-VAL.
+026970	     MOVE SAL-EXT-ITEM	 TO INV-ITM.
+026980	     MOVE SAL-DESC	 TO INV-DESC.
+026990	     MOVE SAL-QNT	 TO INV-QNT.
+027020	     MOVE SAL-VAT	 TO INV-TAX .
+027030	     MOVE SAL-SELL	 TO INV-PRICE.
+027050	     MOVE SAL-VAL	 TO INV-VAL.
+040290       MOVE SAL-DISC       TO W90-CDISC W90-EXCDIS.
+040300	     MOVE SAL-DSC	 TO WS-DISC INV-DSC.
+             ADD W90-CDISC W25-VALUE
+040320                           GIVING W90-VALUE.
+             MOVE SAL-TAXVAL     TO DOC-TAXVAL.
+             MOVE SAL-NONTAX     TO DOC-NONTAX.
+      *      MOVE SAL-SERNO      TO W10-SERNO DOC-SERNO.
+             MOVE SAL-SUPER      TO WS-SUPER.
+	     MOVE SAL-VAT-SUB	 TO WS-VAT-SUB
+				    DOC-VAT-SUB.
+	   IF WS-VAT-SUB = ZERO
+	       MOVE ZERO	 TO DOC-V-PER
+	   ELSE
+	       MOVE W05-VAT(WS-VAT-SUB)
+				 TO DOC-V-PER.
+040330	   IF W90-TAX = SPACES
+040340       IF W90-EXP NOT = "X"
+040350	       IF WS-VAT-SUB > ZERO
+040360		   MOVE W05-VAT (WS-VAT-SUB)
+040370                           TO W05-RATE
+040380		   COMPUTE W90-VALUE ROUNDED = W90-VALUE -
+040390                 (((W90-VALUE / (W05-RATE + 100.00000)) * 
+040400			  W05-RATE))
+040410		   COMPUTE W90-EXCDIS ROUNDED = W90-CDISC -
+040420                 (((W90-CDISC / (W05-RATE + 100.00000)) *
+040430			  W05-RATE)).
+040440	     ADD W90-VALUE	 TO W90-EXCTOT.
+	     COMPUTE CRD-SELL ROUNDED = (W90-VALUE / SAL-QNT).
+	   IF WS-CARDEX = "Y"
+	       PERFORM WRITE-CARDEX THRU WRITE-CARDEX-EXIT
+015400	       MOVE 1		 TO WS-ACTION
+	       PERFORM AY43 THRU AY59.
+040450	     COMPUTE W25-CREDIT = W90-VALUE * -1.
+027230	     WRITE INV-L1 BEFORE 1 LINES.
+027240	     MOVE SPACES	 TO REP-DETAIL2.
+040480       ADD W25-VALUE       TO W90-STOTAL.
+      *
+      *    ****    H A S   L I N E   D I S C O U N T   B E E N   
+      *            A P P L I E D
+      *
+040490     IF W90-CDISC = ZERO
+040500         GO TO BD160.
+      *
+      *    ****    P R I N T   A N D   L O G   T H E   L I N E
+      *            D I S C O U N T
+      *
+040590       MOVE WS-DISC        TO DOC-DSC.
+040600       MOVE W90-CDISC      TO DOC-DISC.
+027420 BD160.
+      *    IF W10-SERNO = SPACES
+      *        GO TO BD162.
+027280*    IF WS-LINE > 1
+027290*        SUBTRACT 1        FROM WS-LINE
+027300*    ELSE
+027310*        PERFORM BD170.
+      *      MOVE "SERIAL NO:"   TO INV-HD.
+      *      MOVE W10-SERNO      TO INV-SERNO.
+027400*      WRITE INV-L1 BEFORE 1 LINES.
+027410*      MOVE SPACES         TO REP-DETAIL2.
+040630 BD162.
+      *
+      *    ****    U P D A T E   S A L E S   A N A L Y S I S
+      *
+040640	     MOVE STK-LDG	 TO DPT-CODE.
+040650       PERFORM AY38 THRU AY59.
+040660       SUBTRACT W90-VALUE  FROM DPT-RET-DAY
+040670                                DPT-RET-MTD
+040680                                DPT-RET-YTD.
+           IF WX-INT = "Y"
+               MOVE W12-T-YMD    TO WX-DATE
+	       MOVE STK-LDG	 TO WX-LEDG
+	       MOVE "RETURNS - ACCOUNTS RECEIVABLE"
+                                 TO WX-NAR
+               COMPUTE WX-VALUE = W90-VALUE * -1 
+               MOVE DPT-SALE-GL  TO WX-AC
+               MOVE 05           TO WX-TYPE
+               PERFORM GL-TRF-UPDATE.
+      *
+      *    ****    U P D A T E   C O S T - O F - S A L E S
+      *
+040690       COMPUTE W90-BDT ROUNDED = (1.000 * W10-QUANT * W10-COST).
+040700       ADD W90-BDT         TO DPT-CRET-DAY
+                                    DPT-CRET-MTD
+040710                              DPT-CRET-YTD.
+           IF WX-INT = "Y"
+               IF W90-BDT NOT = ZERO
+                   COMPUTE WX-VALUE = W90-BDT * -1
+                   MOVE DPT-COST-GL
+                                 TO WX-AC
+                   MOVE 09       TO WX-TYPE
+                   PERFORM GL-TRF-UPDATE
+                   MOVE W90-BDT  TO WX-VALUE 
+                   MOVE DPT-PUR-GL
+                                 TO WX-AC
+                   MOVE 20       TO WX-TYPE
+                   PERFORM GL-TRF-UPDATE.
+      *
+      *    ****    U P D A T E   D I S C O U N T   G I V E N
+      *
+040720       SUBTRACT W90-EXCDIS FROM DPT-DISC-DAY
+040730                                DPT-DISC-MTD
+040740				      DPT-DISC-YTD.
+	     ADD W90-EXCDIS	 TO DPT-RET-DAY
+040760				    DPT-RET-MTD
+040770				    DPT-RET-YTD.
+      *    IF (WX-INT = "Y") AND (W90-EXCDIS NOT = ZERO)
+      *        COMPUTE WX-VALUE = W90-EXCDIS * -1
+      *        MOVE DPT-DISC-GL  TO WX-AC
+      *        MOVE 16           TO WX-TYPE
+      *        PERFORM GL-TRF-UPDATE.
+040780	     PERFORM REWRITE-DEPART THRU WRITE-DEPART-EXIT.
+      *
+      *    ****    C H E C K   I F   S T O C K   C O N T R O L L E D    
+      *
+	   IF (WS-PRC-IND = "Y" AND STK-IND = 1) OR
+040790	      (STK-IND = 0)
+040800	       ADD W10-QNT	 TO STK-QUANT
+	       IF STK-USE-CASES = "Y"
+		   ADD SAL-CASES TO STK-CASES.
+040810	     SUBTRACT W90-BDT	 FROM W90-BCR.
+040830	     SUBTRACT W10-QNT	 FROM STK-YTD.
+040860	     SUBTRACT W10-QNT	 FROM STK-MTD.
+040890	     ADD W90-VALUE	 TO STK-YTDV.
+040910	     SUBTRACT W90-BDT	 FROM STK-MTDC.
+040930	     SUBTRACT W90-BDT	 FROM STK-YTDC.
+040950	     ADD W90-VALUE	 TO STK-MTDV.
+040960	     ADD W90-VALUE	 TO W90-SALES.
+040970	     PERFORM REWRITE-STOCK THRU WRITE-STOCK-EXIT.
+      *
+      *    ****    L O G   I N D I V I D U A L   I T E M S   T O   T H E
+      *            A U D I T   F I L E
+      *
+040980       MULTIPLY W90-BDT BY -1 
+040990                           GIVING W90-ICST.
+041000       PERFORM BA100.
+             ADD 1               TO DOC-SEQ.
+             MOVE ZERO           TO DOC-SUB.
+             PERFORM BD154.
+      *
+      *    ****    G O   A N D   G E T   T H E   N E X T   I T E M
+      *
+041010 BD165.
+041020       ADD 1               TO WS-SALKEY.
+041030       GO TO BD155.
+027770 BD167.
+027790       MOVE 3              TO DOC-TYPE.
+             INITIALIZE DOC-DET2.
+      *
+      *     C H E C K   F O R   S E R I A L   N U M B E R S
+      *
+           IF SAL-SUB NOT = ZERO
+               MOVE 1            TO WS-S1
+               PERFORM BD168 
+               MOVE "SERIAL NO:" TO INV-HD
+               MOVE SAL-MSER     TO INV-SERNOS DOC-MSER
+               ADD 1             TO DOC-SUB
+           ELSE
+               MOVE ZERO         TO DOC-SUB
+               ADD 1             TO DOC-SEQ
+027800	       MOVE SAL-DESC	 TO INV-MES DOC-DESC.
+027810       WRITE INV-L1 BEFORE 1 LINES.
+027820       MOVE SPACES         TO REP-DETAIL2.
+	     PERFORM BD154.
+027830       GO TO BD165.
+       BD168.
+             MOVE SAL-SNO (WS-S1)
+                                 TO W10-SERNO.
+             PERFORM BB070.
+             ADD 1               TO WS-S1.
+	   IF WS-S1 < 3
+               IF SAL-SNO (WS-S1) NOT = SPACES
+                   GO TO BD168.
+041110 BD170.
+      *
+      *    ****    C A R R I E D   F O R W A R D   -   N E X T   P A G E
+      *
+027850	     WRITE INV-L1 BEFORE 1 LINES.
+027860	     MOVE SPACES	 TO REP-DETAIL2.
+027870	     MOVE "C/FWD - OORGEDRA"
+027880				 TO INV-DADD2.
+027890	     MOVE W90-STOTAL	 TO INV-TOT.
+027900	     WRITE INV-L1 BEFORE 15 LINES.
+041210       PERFORM BB050.
+041220       PERFORM BD145 THRU BD150.
+027970	     MOVE "B/FWD - O/B"	 TO INV-DESC.
+027980	     MOVE W90-STOTAL	 TO INV-VAL.
+028000	     WRITE INV-L1 BEFORE 1 LINES.
+027860	     MOVE SPACES	 TO REP-DETAIL2.
+041260       SUBTRACT 2          FROM WS-LINE.
+041280 BD175.
+      *
+      *    ****    I N V O I C E   T O T A L S
+      *
+028020	     WRITE INV-L1 BEFORE WS-LINE LINES.
+028030	     MOVE SPACES	 TO REP-DETAIL2.
+028040	     WRITE INV-L1 BEFORE 1 LINES.
+      *
+      *    ****    P R I N T   S U B - T O T A L
+      *
+	     MOVE "Please check your credit note."
+				 TO INV-REMKS.
+      *	   IF W90-ADVTAX NOT = ZERO
+      *	       MOVE "Ad-Valorem:"
+      *				 TO INV-H18
+      *	       MOVE W90-ADVTAX	 TO INV-ADV.
+028070	     MOVE W90-CR	 TO INV-TOT.
+028080	     WRITE INV-L1 BEFORE 1 LINES.
+041360       MOVE SPACES         TO REP-DETAIL2.
+	     MOVE "Gaan aseblief u krediet nota na."
+				 TO INV-REMKS.
+028080	     WRITE INV-L1 BEFORE 1 LINES.
+	     MOVE 9		 TO DOC-TYPE.
+             MOVE 99900          TO DOC-SQN.
+             INITIALIZE DOC-DET3.
+041340       MOVE W90-CR         TO DOC-SUBTOT.
+041360       MOVE SPACES         TO REP-DETAIL2.
+	   IF W10-SMAN NOT = ZERO
+               MOVE "Assist :"   TO INV-SM
+               MOVE W40-ASSIST   TO INV-SMAN.
+      *
+      *    ****    P R I N T   D I S C O U N T   A N D   U P D A T E
+      *            T H E   S U N D R Y   D I S C O U N T   T O T A L S
+      *
+041370     IF W90-TDISC NOT = ZERO
+041400         MOVE W90-TDISC    TO DOC-DSCNT
+	       MOVE DOC-DSCNT	 TO INV-TOT
+041410         IF W90-LDISC = ZERO
+041420		   MOVE "YYYY"	 TO DPT-CODE
+041430             PERFORM AY38 THRU AY59
+041440             SUBTRACT W90-TDISC 
+041450                           FROM DPT-DISC-DAY
+041460                                DPT-DISC-MTD
+041470                                DPT-DISC-YTD
+                   IF WX-INT = "Y"
+                       COMPUTE WX-VALUE = W90-EXCDIS * -1
+                       MOVE DPT-DISC-GL  TO WX-AC
+		       MOVE DPT-CODE	 TO WX-LEDG
+                       MOVE 16           TO WX-TYPE
+                       PERFORM GL-TRF-UPDATE
+                   END-IF
+041480		   PERFORM REWRITE-DEPART THRU WRITE-DEPART-EXIT.
+028270	     WRITE INV-L1 BEFORE 2 LINES.
+041500       MOVE SPACES         TO REP-DETAIL2.
+      *
+      *    ****    P R I N T   T H E   T A X   F I G U R E S   A N D 
+      *            U P D A T E   T A X   T O T A L S
+      *
+      * 	   TAX CALCULATED IN DTPCRN
+      * 	       W90-NONTAX   =TOTAL NON TAXABLE VALUE
+      * 	       W90-TTAX     =TOTAL TAX (ALL RATES)
+      * 	       W90-TAXVAL(?)=TOTAL TAXABLE PER RATE
+      * 	       W90-VAT(?)   =TOTAL VAT PER RATE
+      * 	       W90-TOTAL    =TOTAL FOR CREDIT NOTE
+      *
+      *ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      * The following routine has been changed to remarks and must be
+      * deleted with the next release
+      *
+041570*    IF W90-TAX = SPACES
+041580*        MOVE W05-VAT-R1	 TO W05-RATE
+041590*        COMPUTE W90-TTAX = ((W90-TAXVAL /
+041600* 	  (100.00000 + W05-RATE)) * W05-RATE + .005) * -1
+041610*        COMPUTE W90-TAXVAL = W90-TAXVAL + W90-TTAX.
+041620*	     MOVE 9		 TO WS-PARKEY.
+041630*       PERFORM AY01 THRU AY59.
+041810*       ADD W90-NONTAX	  TO PAR-CNGS-DAY
+041820* 			     PAR-CNGS-MTD
+041830* 			     PAR-CNGS-YTD.
+041840*      ADD W90-TAXVAL	 TO PAR-CVAT-DAY
+041850* 			    PAR-CVAT-MTD
+041860* 			    PAR-CVAT-YTD.
+041870*	     PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+	     MULTIPLY -1 BY W90-EXCTOT
+				 GIVING INV-TOT.
+028700	       WRITE INV-L1 BEFORE 2 LINES.
+041880       MOVE W05-RATE       TO WS-PER.
+028680	     MOVE W90-TTAX	   TO DOC-TAX.
+041890     IF W90-TAX NOT = SPACES
+028680	       MOVE W90-TTAX	   TO INV-TOT.
+041910 BD180.
+028700	     WRITE INV-L1 BEFORE 3 LINES.
+041930       MOVE SPACES         TO REP-DETAIL2.
+041940	     MOVE ALL "*"	 TO DOC-TERMS.
+      *
+      *    ****    C R E D I T   N O T E   T O T A L   ( PRINT & LOG )
+      *
+041950       MOVE W90-TOTAL      TO W90-CR.
+041960       MOVE W90-BCR        TO W90-TCOST.
+041970       MOVE W90-CR         TO DOC-TOT .
+	     MOVE W90-EXCTOT	 TO DOC-TAXABLE.
+             MOVE W90-NONTAX     TO DOC-NON-TXBL.
+             MOVE W90-BAL        TO DOC-BAL.
+	     MOVE ZERO		 TO DOC-ADVTAX.
+041980       PERFORM BD154.
+028840	     MOVE W90-CR	 TO INV-VAL.
+028880	     WRITE INV-L1 BEFORE 2 LINES.
+	     MOVE SPACES	 TO REP-DETAIL2.
+	     MOVE "Processed by APAC Accounting - 082-566-3095"
+				 TO REP-DETAIL2.
+	     WRITE INV-L1 BEFORE 2 LINES.
+042020	     MOVE SPACES	 TO REP-DETAIL2.
+042030       MOVE W12-T-YMD      TO W20-DTE.
+      *
+      *    ****    U P D A T E   T H E   D E B T O R   A C C O U N T
+      *
+042040       MOVE 4              TO W90-CODE.
+042050       PERFORM GET-DEBTOR-TRAN-RECORD.
+042060       PERFORM GENERATE-DEBTOR-TRAN.
+041620	     MOVE 9		 TO WS-PARKEY.
+041630	     PERFORM AY01 THRU AY59.
+	     MOVE 1		 TO W05-V-RATE.
+
+       BD185-VAT.
+	   IF W90-VAT(W05-V-RATE) = ZERO
+	       GO TO BD185-CHECK-END.
+	     MOVE W05-VAT-CODE	 TO DPT-CODE.
+027840	     PERFORM AY38 THRU AY59.
+027850	     SUBTRACT W90-VAT(W05-V-RATE)
+				 FROM DPT-O-VRET-DAY
+027860				      DPT-O-VRET-MTD
+027870				      DPT-O-VRET-YTD
+	     SUBTRACT W90-TAXVAL(W05-V-RATE)
+				 FROM DPT-V-RET-DAY
+				      DPT-V-RET-MTD
+				      DPT-V-RET-YTD.
+041840	     ADD W90-TAXVAL(W05-V-RATE)
+				 TO PAR-CVAT-DAY
+041850				    PAR-CVAT-MTD
+041860				    PAR-CVAT-YTD.
+      *
+      *    ****    I N T E G R A T I O N   T O	 T H E	 G / L E D G E R
+      *
+	   IF (WX-INT = "Y") AND (W90-VAT(W05-V-RATE) NOT = ZERO)
+		MOVE W90-VAT(W05-V-RATE)
+				 TO WX-VALUE
+      *		COMPUTE WX-VALUE = W90-VAT(W05-V-RATE) * -1
+		MOVE DPT-I-VAT-GL
+				 TO WX-AC
+		MOVE DPT-CODE	 TO WX-LEDG
+		MOVE 11 	 TO WX-TYPE
+                PERFORM GL-TRF-UPDATE.
+027880	     PERFORM REWRITE-DEPART THRU WRITE-DEPART-EXIT.
+
+       BD185-CHECK-END.
+	   IF W05-V-RATE < 6
+	       ADD 1		 TO W05-V-RATE
+	       GO TO BD185-VAT.
+041810	     ADD W90-NONTAX	 TO PAR-CNGS-DAY
+041820				    PAR-CNGS-MTD
+041830				    PAR-CNGS-YTD.
+041870	     PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+      *
+      *    ****    L O G   T H E   S A L E S M A N   &   C R   N O T E -
+      *            A U D I T   F I L E   D E T A I L S
+      *
+042070       PERFORM BA90.
+042080       PERFORM BA95.
+      *
+      *    ****    P R I N T   T H E   N E X T   I N V O I C E   /  
+      *            C R E D I T   N O T E   H E A D I N G 
+      *            ( OVERLAP WITH DISK PROCESSING )
+      * 
+042090       PERFORM BB050.
+      *
+      *    ****    U P D A T E   T H E   D E B T O R   C A T E G O R Y
+      *
+042100       ADD 121 DEB-CAT     GIVING W90-RESULT.
+042110       DIVIDE W90-RESULT BY 2
+042120                           GIVING W90-CATKEY
+042130                           REMAINDER W90-CS.
+042140       ADD 1               TO W90-CS.
+042150       MOVE W90-CATKEY     TO WS-PARKEY.
+042160       PERFORM AY01 THRU AY59.
+042170       ADD W90-CR          TO PAR-CCRMTD (W90-CS)
+042180                              PAR-CCRYTD (W90-CS).
+042190	     PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+      *
+      *    ****    U P D A T E   T H E   S A L E S M A N   R E C O R D
+      *
+042200     IF W10-SMAN NOT = ZERO
+042210         ADD 100 W10-SMAN  GIVING WS-PARKEY
+042220         PERFORM AY01 THRU AY59
+042230         ADD W90-TCOST     TO PAR-CT-MTD PAR-CT-YTD
+042240         ADD W90-EXCTOT    TO PAR-SL-MTD PAR-SL-YTD
+042250	       PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+      *
+      *    ****    R E W R I T E   T H E   D E B T O R   R E C O R D
+      *
+042260       PERFORM REWRITE-DEBTOR THRU WRITE-DEBTOR-EXIT.
+      *
+      *    ****    U P D A T E   T H E   D E B T O R   C O N T R O L
+      *            R E C O R D
+      *
+042270       ADD W90-CR          TO W70-OUT.
+042280       ADD W90-CUR         TO W70-MTD.
+042290       ADD W90-30          TO W70-ONE.
+042300       ADD W90-60          TO W70-TWO.
+042310       ADD W90-90          TO W70-THREE.
+042320       ADD W90-120         TO W70-FOUR.
+042330       SUBTRACT W90-CR     FROM W70-CR.
+      *
+      *    ****    U P D A T E   T H E   S T O C K   C O N T R O L
+      *            R E C O R D
+      *
+042360       ADD W90-BAL         TO STK-TOTAL.
+042370       ADD W90-SALES       TO STK-SMTD STK-SYTD.
+042380 BD190.
+      *
+      *    ****    U P D A T E   T H E   C O S T - O F - S A L E S
+      *
+042390       MOVE 8              TO WS-PARKEY.
+042400       PERFORM AY01 THRU AY59.
+042410       ADD W90-BCR         TO PAR-CSHT PAR-CMTD PAR-CYTD.
+042420       PERFORM REWRITE-PARAM THRU WRITE-PARAM-EXIT.
+042430 BD195.
+      *
+      *    ****    E N D   O F F   T H E   R E C O V E R Y   L O G
+      *
+042440       PERFORM AY70 THRU AY999.
+      *
+      *    ****    C L O S E   F I L E S   
+      *            ( FORCE SYSTEM TO WRITE DETAILS TO DISK )
+      *
+042450       CLOSE PARAM 
+042460             DEPART 
+042470             DEBTOR 
+042480             AUDIT 
+042490             STOCK 
+042500		   INVOICE .
+042540       OPEN I-O PARAM 
+042550                DEPART 
+042560                DEBTOR 
+042570                AUDIT 
+042580                STOCK 
+042590		      INVOICE.
+042610	     DISPLAY CLEAR-L25.
+           IF OPEN-ITEM
+               PERFORM BD270 THRU BD299.
+042740	     GO TO BD999.
+       BD270.
+037070       DISPLAY CLR-SCREEN.
+             DISPLAY "CREDIT TRANSACTION ALLOCATION" AT 0226
+                      WITH FOREGROUND-COLOR 15.
+020350       DISPLAY "Account :" AT 0302.
+042260       PERFORM READ-DEBTOR THRU READ-DEBTOR-EXIT.
+             DISPLAY W80-ACNO AT 0312 WITH FOREGROUND-COLOR 11.
+032880       DISPLAY W40-NAME AT 0320 WITH FOREGROUND-COLOR 11.
+007520       DISPLAY "Date" AT 0504
+007530               "Cde/description" AT 0511
+007550               "Ref. No." AT 0527
+007560               "Value" AT 0543.
+023390       PERFORM READ-DBTRAN THRU READ-DBTRAN-EXIT.
+             MOVE TRA-CODE       TO W90-CODE.
+             PERFORM GET-DEBTOR-TRAN-DESC.
+023400	     MOVE TRA-DATE	 TO W22-DTE2.
+	     MOVE W22-CC2	 TO W22-CC3.
+	     MOVE W22-YY2	 TO W22-YY3.
+	     MOVE W22-MM2	 TO W22-MM3.
+	     MOVE W22-DD2	 TO W22-DD3.
+	     MOVE W22-DTE3	 TO W90-DTE.
+             MOVE TRA-REF        TO W90-REF.
+023410       DISPLAY W90-DTE AT 0702 WITH FOREGROUND-COLOR 11.
+             DISPLAY W90-CODE AT 0711 WITH FOREGROUND-COLOR 11.
+023420       DISPLAY W00-E-DESC AT 0714 WITH FOREGROUND-COLOR 11.
+023440       DISPLAY TRA-REF AT 0727 WITH FOREGROUND-COLOR 11.
+023450       MOVE TRA-VALUE      TO W95-B.
+023460       DISPLAY W95-V2 AT 0736 WITH FOREGROUND-COLOR 11.
+             COMPUTE W90-CR = (TRA-VALUE + TRA-ALLOCATED) * -1.
+             MOVE TRA-RECORD1    TO W91-TRAN.
+             MOVE ZERO           TO W90-ALLOCATED.
+             DISPLAY S08A.
+             MOVE 19             TO CLIN.
+             PERFORM ALLOCATE-CREDIT.
+           IF (WS-ERROR = 9) OR
+              (W75-ALLOCATED = W91-ALLOCATED)
+               GO TO BD290.
+021960       PERFORM AY60 THRU AY999.
+             MOVE 0              TO WS-ACTION.
+021970       PERFORM AY02 THRU AY59.
+029570       MOVE ZERO           TO W90-90 W90-120 W90-CUR 
+029580                              W90-60 W90-INT W90-30.
+       BD275.
+           IF W75-KEY < WS-DBTKEY
+               GO TO BD285.
+             PERFORM READ-DEBTRN THRU READ-DEBTRN-EXIT.
+           IF DBT-UPDATE = SPACE
+               GO TO BD280.
+             ADD DBT-ALLOC       TO DBT-PAID.
+           IF DBT-VALUE > DBT-PAID
+               MOVE "X"          TO DBT-TYPE
+           ELSE
+               MOVE "P"          TO DBT-TYPE.
+           IF DBT-CODE = 20
+001200         SUBTRACT DBT-ALLOC
+001210                           FROM DEB-INT
+               ADD DBT-ALLOC     TO W90-INT
+           ELSE
+           IF DBT-AGE = 5
+001200         SUBTRACT DBT-ALLOC
+001210                           FROM DEB-120
+               ADD DBT-ALLOC     TO W90-120
+           ELSE
+           IF DBT-AGE = 4
+001200         SUBTRACT DBT-ALLOC
+001210                           FROM DEB-90
+               ADD DBT-ALLOC     TO W90-90
+           ELSE
+           IF DBT-AGE = 3
+001200         SUBTRACT DBT-ALLOC
+001210                           FROM DEB-60
+               ADD DBT-ALLOC     TO W90-60
+           ELSE
+           IF DBT-AGE = 2
+001200         SUBTRACT DBT-ALLOC
+001210                           FROM DEB-30
+               ADD DBT-ALLOC     TO W90-30
+           ELSE
+           IF DBT-AGE = 1
+001200         SUBTRACT DBT-ALLOC
+001210                           FROM DEB-CUR
+               ADD DBT-ALLOC     TO W90-CUR.
+             MOVE DBT-KEY        TO TRA-KEY.
+             PERFORM READ-DBTRAN THRU READ-DBTRAN-EXIT.
+             MOVE 0              TO WS-ACTION.
+             PERFORM AY04 THRU AY59.
+             MOVE DBT-TRA        TO TRA-RECORD1.
+             MOVE W90-REF        TO TRA-REC.
+             PERFORM REWRITE-DBTRAN THRU WRITE-DBTRAN-EXIT.
+       BD280.
+             ADD 1               TO WS-DBTKEY.
+             GO TO BD275.
+       BD285.
+             MOVE W91-TRAN       TO TRA-RECORD1.
+             MOVE 0              TO WS-ACTION.
+             PERFORM AY04 THRU AY59.
+             ADD W75-ALLOCATED   TO TRA-ALLOCATED.
+             PERFORM REWRITE-DBTRAN THRU WRITE-DBTRAN-EXIT.
+040490       PERFORM REWRITE-DEBTOR THRU WRITE-DEBTOR-EXIT.
+031380	     SUBTRACT W90-120	 FROM W70-FOUR.
+032240	     SUBTRACT W90-90	 FROM W70-THREE.
+032250	     SUBTRACT W90-60	 FROM W70-TWO.
+032260	     SUBTRACT W90-30	 FROM W70-ONE.
+032270	     SUBTRACT W90-CUR	 FROM W70-MTD.
+031830	     SUBTRACT W90-INT	 FROM W70-INTEREST.
+040600       PERFORM AY70 THRU AY999.
+       BD290.
+             CLOSE DEBTRN.
+041910	     DISPLAY CLEAR-L25.
+       BD299.
+             EXIT.
+044840 BD999.
+044850       EXIT.
+      /
+052700 ZA000-INIT	       SECTION 90.
+052710 ZA000-OPEN.
+055960	     MOVE LS-COMPANY	 TO WS-TOP-COMP.
+	     MOVE LS-PARID	 TO WS-PARID.
+	     MOVE LS-L-OR-N	 TO W02-L-OR-N.
+	     MOVE WS-SYS-ID	 TO W02-SYSID.
+	     MOVE LS-TODAY-DDMMYY
+				 TO TODAY-DDMMYY W12-TODAY.
+	     MOVE LS-USUB	 TO WS-USUB.
+	     MOVE LS-DRAW	 TO WS-DRAW.
+	     MOVE W90-AGE	 TO WS-AGE.
+      *
+      *    ****    P A R A M E T E R   F I L E
+      *
+       ZA00A.
+	     MOVE "PARAM"	 TO AFID-KEY.
+
+       ZA00-READ-APACFIDS.
+000030	     READ APACFIDS WITH IGNORE LOCK
+	       KEY IS AFID-KEY.
+	   IF WS-STATUS = "00"
+	       GO TO ZA00-READ-APACFIDS-EXIT.
+006260	     STRING "Missing " DELIMITED SIZE
+		     AFID-KEY DELIMITED BY " "
+		     " file ID - Status " DELIMITED SIZE
+		     WS-STATUS DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+006370	     STOP RUN.
+
+       ZA00-READ-APACFIDS-EXIT.
+	     EXIT.
+
+       ZA00A-CONTINUE.
+	     MOVE AFID-PATH	 TO W02-PARAM.
+	     MOVE "AUDITF"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-AUDITF.
+	     MOVE "CARDEX"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-CARDEX.
+	     MOVE "DBTRAN"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-DBTRAN.
+	     MOVE "DEBTOR"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-DEBTOR.
+	     MOVE "DEBTRN"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     INSPECT AFID-PATH REPLACING FIRST "XXX"
+			       BY LS-USER.
+	     MOVE AFID-PATH	 TO W02-DEBTRN.
+	     MOVE "DEPART"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-DEPART.
+	     MOVE "GARTEE"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-GARTEE.
+	     MOVE "INVOIC"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-INVOIC.
+	     MOVE "LEDTRF"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-LEDTRF.
+	     MOVE "NETWORK"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-NETWORK.
+	     MOVE "RECOVER"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     INSPECT AFID-PATH REPLACING FIRST "XXX"
+			       BY LS-USER.
+	     MOVE AFID-PATH	 TO W02-RECOVER.
+	     MOVE "SALE"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     INSPECT AFID-PATH REPLACING FIRST "XXX"
+			       BY LS-USER.
+	     MOVE AFID-PATH	 TO W02-SALE.
+	     MOVE "SHARED"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-SHARED.
+	     MOVE "STOCKF"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-STOCKF.
+	     MOVE "TXTRAN"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-TXTRAN.
+052980	     MOVE 3		 TO WS-PARKEY.
+052990       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+053550	     MOVE PAR-VAT-REG	 TO W05-VATNO.
+	     MOVE PAR-CRDX	 TO WS-CARDEX.
+	     MOVE PAR-PRICED-IND TO WS-PRC-IND.
+	   IF LS-USER NUMERIC
+	       IF LS-USE > ZERO AND < 110
+		   MOVE LS-USE	 TO WS-USUB
+                   GO TO ZA01A.
+             MOVE 110            TO WS-USUB.
+       ZA01A.
+014240       ADD 2549 WS-USUB    GIVING W25-RESULT.
+             MOVE W25-KEY        TO WS-PARKEY.
+             ADD 1 W25-SUB       GIVING WS-S6.
+014250       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+	   IF TRM-INVP (WS-S6) = 1
+               MOVE "LPT1"       TO W02-PRINTER
+	       MOVE ZERO	 TO WS-PRN-NO
+           ELSE
+           IF TRM-INVP (WS-S6) = 2
+               MOVE "LPT2"       TO W02-PRINTER
+	       MOVE 1		 TO WS-PRN-NO
+           ELSE
+           IF TRM-INVP (WS-S6) = 3
+               MOVE "LPT3"       TO W02-PRINTER
+	       MOVE 2		 TO WS-PRN-NO
+	   ELSE
+           IF TRM-INVP (WS-S6) = 4
+               MOVE "COM1"       TO W02-PRINTER
+           ELSE
+           IF TRM-INVP (WS-S6) = 5
+               MOVE "COM2"       TO W02-PRINTER
+           ELSE
+           IF TRM-INVP (WS-S6) = 9
+	       MOVE LS-USER	 TO W02-USER.
+             ADD 501 TRM-PRN2 (WS-S6)
+                                 GIVING W25-RESULT.
+             DIVIDE W25-RESULT BY 2
+                                 GIVING WS-PARKEY
+                                 REMAINDER WS-S6.
+             ADD 1               TO WS-S6.
+             PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+             MOVE TRM-CONP (WS-S6)
+                                 TO WS-COND.
+             MOVE TRM-NORP (WS-S6)
+                                 TO WS-NORM.
+             MOVE TRM-EXPP (WS-S6)
+                                 TO WS-EXPP.
+             MOVE TRM-ECAN (WS-S6)
+                                 TO WS-ECAN.
+             MOVE TRM-8LPI (WS-S6)
+                                 TO WS-8LPI.
+             MOVE TRM-6LPI (WS-S6)
+                                 TO WS-6LPI.
+             MOVE TRM-10CPI (WS-S6)
+                                 TO WS-10CPI.
+             MOVE TRM-12CPI (WS-S6)
+                                 TO WS-12CPI.
+             MOVE TRM-17CPI (WS-S6)
+                                 TO WS-17CPI.
+       ZA01B.
+042490	     OPEN OUTPUT RECOVER.
+042500       CLOSE RECOVER.
+042510       OPEN I-O RECOVER.
+	   IF WS-PRN-NO < 3
+	       PERFORM ZA210 THRU ZA215
+	       IF WS-ERROR = 1
+		   GO TO ZA205
+	   ELSE
+	       DISPLAY "Waiting for printer response" AT 2525
+			WITH BACKGROUND-COLOR 3
+			     FOREGROUND-COLOR 6 HIGHLIGHT BLINK.
+053560	     OPEN OUTPUT PRNREP.
+	     CALL X"91" USING X91-RES X91-FUN PRNREP.
+	     DISPLAY SPACES AT 2525
+		     WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 1.
+053570	     MOVE WS-17CPI	 TO REP-DETAIL2.
+053580       WRITE REP-LINE2 BEFORE 0 LINES.
+053590       MOVE SPACES         TO REP-DETAIL2.
+054760       MOVE 1              TO WS-PARKEY.
+054770       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+054780       MOVE PAR-DMY        TO W12-TODAY.
+054790       MOVE PAR-YMD        TO W12-T-YMD.
+054800       MOVE PAR-COMPANY    TO W95-COMP.
+054820       MOVE PAR-TELEPHONE  TO W95-TEL.
+054830     IF PAR-STMINV = "I" OR "X"
+054840         MOVE "N"          TO WS-HEAD
+054850     ELSE
+054860         MOVE "Y"          TO WS-HEAD.
+054870       ADD 1               TO WS-PARKEY.
+054880       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+054890       MOVE PAR-ADDRESS1   TO W95-ADD1.
+054900       MOVE PAR-ADDRESS2   TO W95-ADD2.
+054910       MOVE PAR-ADDRESS3   TO W95-ADD3.
+054920       MOVE PAR-ADDRESS4   TO W95-ADD4.
+054930       MOVE PAR-POST-CDE   TO W95-POST.
+054940     IF W95-ADD4 = SPACES
+054950         MOVE W95-PC       TO W95-ADD4
+054960         MOVE SPACES       TO W95-PC.
+054970     IF W95-ADD3 = SPACES
+054980         MOVE W95-ADD4     TO W95-ADD3
+054990         MOVE SPACES       TO W95-ADD4.
+055000     IF W95-ADD2 = SPACES
+055010         MOVE W95-ADD3     TO W95-ADD2
+055020         MOVE SPACES       TO W95-ADD3.
+055030     IF W95-ADD1 = SPACES
+055040         MOVE W95-ADD2     TO W95-ADD1
+055050         MOVE SPACES       TO W95-ADD2.
+054710       MOVE 5              TO WS-PARKEY.
+054720       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+054750	     MOVE PAR-DISCOUNT	 TO W15-DISCOUNT.
+	     MOVE 1		 TO W05-V-RATE.
+
+       ZA05-VAT.
+	     MOVE W05-VAT-CODE	 TO DPT-CODE.
+	     PERFORM READ-DEPART THRU READ-DEPART-EXIT.
+	     MOVE DPT-R-DATE	 TO WS-VAT-DATE(W05-V-RATE).
+	     MOVE DPT-RATE	 TO W05-VAT(W05-V-RATE).
+	     ADD 6 W05-V-RATE	 GIVING WS-S1.
+	     MOVE DPT-P-RATE	 TO W05-VAT(WS-S1).
+	   IF W05-V-RATE < 6
+	       ADD 1		 TO W05-V-RATE
+	       GO TO ZA05-VAT.
+042520	     MOVE 6		 TO WS-PARKEY.
+042550       PERFORM READ-PARAM THRU READ-PARAM-EXIT.
+           IF PAR-INTEGRATE NOT = "Y"
+               MOVE "N"          TO WX-INT
+           ELSE
+               MOVE "Y"          TO WX-INT.
+             MOVE PAR-DEBGL      TO WX-DEBGL.
+             MOVE PAR-CREGL      TO WX-CREGL.
+             MOVE PAR-INTGL      TO WX-INTGL.
+             MOVE PAR-BNKGL      TO WX-BNKGL.
+             MOVE PAR-UNPROF     TO WX-UNPROF.
+             MOVE PAR-REDGL      TO WX-REDGL.
+             MOVE PAR-ADJGL      TO WX-ADJGL.
+             MOVE PAR-RLGL       TO WX-RLGL.
+             MOVE PAR-DSGL       TO WX-DSGL.
+	     MOVE PAR-FAX	 TO W95-FAX.
+055260       GO TO ZA999.
+055270 ZA49.
+055280       DISPLAY "Too many files OPEN" AT 0812
+055290                WITH FOREGROUND-COLOR 14.
+055300       DISPLAY "Check the FILES option in CONFIG.SYS" AT 1012.
+055310       DISPLAY "Press any key to continue" AT 1212.
+055320       ACCEPT WS-OPTION AT 1238 WITH FOREGROUND-COLOR 15.
+055330       GO TO ZA205.
+055970 ZA200.
+055980       DISPLAY "Files locked - Try later" AT 2312
+055990                WITH FOREGROUND-COLOR 14
+056000               " " WS-STATUS WITH FOREGROUND-COLOR 15.
+056010       DISPLAY "Press any key" AT 2512 
+056020		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+056030	     ACCEPT WS-OPTION AT 2526
+		    WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15 AUTO.
+056040 ZA205.
+056050       EXIT PROGRAM.
+       ZA210.
+	     MOVE ZERO		 TO WS-ERROR
+				    WS-S1 WS-S2 WS-S3 WS-S4
+				    WS-S5 WS-S6 WS-S7 WS-S8.
+	     CALL "PC_TEST_PRINTER" USING WS-PRN-NO
+					  WS-PRN-STAT
+				    RETURNING WS-STATUS.
+	   IF WS-PRN-STAT > 127
+	       MOVE 1		 TO WS-S1
+	       SUBTRACT 128	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 63
+	       MOVE 1		 TO WS-S2
+	       SUBTRACT 64	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 31
+	       MOVE 1		 TO WS-S3
+	       SUBTRACT 32	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 15
+	       MOVE 1		 TO WS-S4
+	       SUBTRACT 16	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 7
+	       MOVE 1		 TO WS-S5
+	       SUBTRACT 8	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 3
+	       MOVE 1		 TO WS-S6
+	       SUBTRACT 4	 FROM WS-PRN-STAT.
+	   IF WS-PRN-STAT > 1
+	       MOVE 1		 TO WS-S7
+	       SUBTRACT 2	 FROM WS-PRN-STAT.
+	     MOVE WS-PRN-STAT	 TO WS-S8.
+	   IF WS-S3 = 0 AND
+	      WS-S5 = 0 AND
+	      WS-S8 = 0
+	       GO TO ZA215.
+	     DISPLAY "Check printer - " AT 2304
+		      WITH FOREGROUND-COLOR 6 HIGHLIGHT
+		     "R" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+		     "etry - "
+		     "A" WITH FOREGROUND-COLOR 7 HIGHLIGHT
+		     "bort".
+       ZA212.
+	     ACCEPT WS-OPTION AT 2334
+		    WITH FOREGROUND-COLOR 7 HIGHLIGHT AUTO.
+	     CALL "CBL_TOUPPER" USING WS-OPTION
+				BY VALUE WS-LENGTH
+				RETURNING WS-STATUS.
+	     IF NOT (WS-OPTION = "A" OR "R")
+		 GO TO ZA212.
+	     IF WS-OPTION = "A"
+		 MOVE 1 	 TO WS-ERROR
+		 GO TO ZA215.
+	       GO TO ZA210.
+       ZA215.
+	     EXIT.
+056060 ZA999.
+056070       EXIT.
+
+056090 I-O-ERRORS      SECTION	91.
+056100 OPEN-ERROR.
+056110       DISPLAY CLR-SCREEN.
+056120       DISPLAY "Open error" AT 0812 WITH FOREGROUND-COLOR 14.
+056130       PERFORM DISPLAY-FILE-NAME.
+056140
+056150 READ-ERROR.
+056160       DISPLAY CLR-SCREEN.
+056170       DISPLAY "Read error" AT 0812 WITH FOREGROUND-COLOR 14.
+056180       PERFORM DISPLAY-FILE-NAME.
+056190
+056200 WRITE-ERROR.
+056210       DISPLAY CLR-SCREEN.
+056220       DISPLAY "Write error" AT 0812 WITH FOREGROUND-COLOR 14.
+056230       PERFORM DISPLAY-FILE-NAME.
+056240
+
+056260 DISPLAY-FILE-NAME.
+056270     IF WS-F-ERROR = 1
+056280         MOVE W02-AUDITF TO WS-FILE
+056290         MOVE WS-AUDKEY TO WS-KEY
+056300     ELSE
+056310     IF WS-F-ERROR = 2
+056320         MOVE W02-NETWORK TO WS-FILE
+056330         MOVE WS-NETKEY TO WS-KEY
+056340     ELSE
+056350     IF WS-F-ERROR = 5
+056360         MOVE W02-DBTRAN TO WS-FILE
+041750         MOVE ZERO         TO WS-KEY
+               MOVE TRA-KEY      TO WS-KEYX
+056380     ELSE
+056390     IF WS-F-ERROR = 6
+056400         MOVE W02-DEBTOR TO WS-FILE
+041790         MOVE ZERO         TO WS-KEY
+               MOVE DEB-ACNO     TO WS-KEYX
+056420     ELSE
+056430     IF WS-F-ERROR = 7
+041820	       MOVE W02-DEPART	 TO WS-FILE
+041870	       MOVE ZERO	 TO WS-KEY
+041830	       MOVE DPT-CODE	 TO WS-KEYX
+	   ELSE
+           IF WS-F-ERROR = 9
+               MOVE W02-GARTEE   TO WS-FILE
+               MOVE ZERO         TO WS-KEY
+               MOVE GUA-KEY      TO WS-KEYX
+056460     ELSE
+056470     IF WS-F-ERROR = 12
+056480         MOVE W02-INVOIC   TO WS-FILE
+056490         MOVE ZERO         TO WS-KEY
+               MOVE DOC-KEY      TO WS-KEYX
+056500     ELSE
+056510     IF WS-F-ERROR = 15
+056520         MOVE WS-PARID     TO WS-FILE
+056530         MOVE WS-PARKEY    TO WS-KEY
+056540     ELSE
+056550     IF WS-F-ERROR = 18
+056560         MOVE W02-RECOVER  TO WS-FILE
+056570         MOVE WS-RECKEY    TO WS-KEY
+056580     ELSE
+056590     IF WS-F-ERROR = 19
+056600         MOVE W02-SALE TO WS-FILE
+056610         MOVE WS-SALKEY TO WS-KEY
+056620     ELSE
+056630     IF WS-F-ERROR = 22
+056640         MOVE W02-STOCKF   TO WS-FILE
+056650         MOVE ZERO         TO WS-KEY
+               MOVE STK-CODE     TO WS-KEYX
+041840	   ELSE
+041850     IF WS-F-ERROR = 31
+041860         MOVE W02-DEBTRN   TO WS-FILE
+041870         MOVE WS-DBTKEY    TO WS-KEY
+056700	   ELSE
+056710     IF WS-F-ERROR = 32
+056720         MOVE W02-TXTRAN   TO WS-FILE
+056730         MOVE ZERO         TO WS-KEY
+	       MOVE TAX-KEY	 TO WS-KEYX
+041840	   ELSE
+041850	   IF WS-F-ERROR = 37
+041860	       MOVE W02-SHARED	 TO WS-FILE
+041870	       MOVE WS-SHARED	 TO WS-KEY
+041840	   ELSE
+041850     IF WS-F-ERROR = 40
+041860         MOVE W02-LEDTRF   TO WS-FILE
+041870         MOVE ZERO         TO WS-KEY
+	       MOVE XFR-KEY	 TO WS-KEYX
+041840	   ELSE
+041850	   IF WS-F-ERROR = 43
+041860	       MOVE W02-CARDEX	 TO WS-FILE
+041870         MOVE ZERO         TO WS-KEY
+	       MOVE CRD-KEY	 TO WS-KEYX.
+056740     IF WS-STATUS = "10"
+056750         MOVE "End of FILE" TO WS-STAT-MESSAGE
+056760     ELSE
+056770     IF WS-STATUS = "22"
+056780         MOVE "Duplicate record number" TO WS-STAT-MESSAGE
+056790     ELSE
+056800     IF WS-STATUS = "23"
+056810         MOVE "Invalid record number" TO WS-STAT-MESSAGE
+056820     ELSE
+056830     IF WS-STATUS = "24"
+056840         MOVE "DISK full" TO WS-STAT-MESSAGE
+056850     ELSE
+056860     IF WS-STATUS = "30"
+056870         MOVE "DISK error" TO WS-STAT-MESSAGE
+056880     ELSE
+056890     IF WS-STATUS = "94"
+056900         MOVE "FILE locked" TO WS-STAT-MESSAGE.
+056910       DISPLAY "File - " AT 1012 WS-FILE WITH FOREGROUND-COLOR 11.
+056920       DISPLAY "Status " AT 1212 
+056930                WS-STATUS WITH FOREGROUND-COLOR 11
+056940               ": " WS-STAT-MESSAGE WITH FOREGROUND-COLOR 14.
+056950     IF WS-STATUS NOT = "94" 
+056960         DISPLAY "Key    " AT 1412 
+056970                  WS-KEY WITH FOREGROUND-COLOR 11
+056980         DISPLAY "Reverse backup or contact program Support"
+056990                  AT 1612.
+057000         DISPLAY "Please make a note of these details" AT 1812.
+057010       STOP RUN.

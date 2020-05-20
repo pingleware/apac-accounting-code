@@ -1,0 +1,142 @@
+      ******************************************************************
+      *                                                                *
+      * Changed DEB-ADDRESS  and DEB-PADDR  from  group fields with 70 *
+      * characters to  group  fields  containing  DEB-ADD-L1/2/3/4 and *
+      * DEB-PADD-L1/2/3/4  respectively. Each  of these new fields are *
+      * defined as PIC X(30).  As new  PC's and  Servers  contain huge *
+      * amounts of  disk  space  this  has  been  changed,  which also *
+      * results in simplifying the code for handling addresses in Data *
+      * capture, enquiries, reports etc. This also removes the restric-*
+      * tion on the number of characters that an address may contain.  *
+      *                                                                *
+      * Added Cell phone number field DEB-C-TEL (W40-C-TEL) PIC X(14). *
+      *                                                                *
+      * Changed DEB-FIN (W40-FIN) from a 9 to an X field.              *
+      *                                                                *
+      * Changed DEB-NAME from 40 characters to a group name containing *
+      * the following fields: DEB-SNAME, DEB-1ST-NAME and DEB-2ND-NAME *
+      * each defined as PIC X(24) as well as DEB-INIT PIC X(08)        *
+      * (W40-SURNAME, W40-FNAME, W40-FNAME and W40-INITIALS).  This    *
+      * allows for a name of 80 characters although the screen layout  *
+      * (due to the fact that the system is using an 80 character width*
+      * screen) for a Company and Internal accounts is providing for   *
+      * only 60 characters. This allows an additional 20 characters    *
+      * for Company and Internal account names.                        *
+      *                                                                *
+      * Added eMail address field DEB-EMAIL (W40-EMAIL) PIC X(64).     *
+      *                                                                *
+      ******************************************************************
+       FD  DEBTOR    IS EXTERNAL
+                     LABEL RECORD STANDARD
+                     VALUE OF FILE-ID W02-DEBTOR.
+       01  DEB-RECORD1.
+           03  DEB-ACNO              PIC  X(06).
+           03  DEB-TYPE              PIC  9(01).
+           03  DEB-CATEGORY.
+               05  DEB-CAT           PIC  9(02).
+           03  DEB-TITLE             PIC  9(02)    COMP-5.
+           03  DEB-NAME.
+               05  DEB-SNAME.
+                 07  DEB-NKEY.
+                   09  DEB-NCASH     PIC  X(09).
+                   09  FILLER        PIC  X(03).
+                 07  FILLER          PIC  X(12).
+               05  DEB-1ST-NAME      PIC  X(24).
+               05  DEB-2ND-NAME      PIC  X(24).
+               05  DEB-INIT          PIC  X(08).
+           03  DEB-ADDRESS.
+               05  DEB-ADD-L1        PIC  X(30).
+               05  DEB-ADD-L2        PIC  X(30).
+               05  DEB-ADD-L3        PIC  X(30).
+               05  DEB-ADD-L4        PIC  X(30).
+           03  DEB-PADDR.
+               05  DEB-PADD-L1       PIC  X(30).
+               05  DEB-PADD-L2       PIC  X(30).
+               05  DEB-PADD-L3       PIC  X(30).
+               05  DEB-PADD-L4       PIC  X(30).
+           03  DEB-POST              PIC  X(08).
+           03  DEB-PPOST             PIC  X(08).
+           03  DEB-H-TEL             PIC  X(14).
+           03  DEB-B-TEL             PIC  X(14).
+           03  DEB-C-TEL             PIC  X(14).
+           03  DEB-FAX               PIC  X(14).
+           03  DEB-ID                PIC  X(14).
+           03  DEB-TAX               PIC  X(14).
+           03  DEB-CONTACT           PIC  X(30).
+           03  DEB-EMAIL             PIC  X(64).
+           03  DEB-ACTIVE            PIC  9(08)    COMP-3.
+           03  DEB-STM               PIC S9(09)V99 COMP-3.
+           03  DEB-BAL               PIC S9(09)V99 COMP-3.
+           03  DEB-CUR               PIC S9(09)V99 COMP-3.
+           03  DEB-30                PIC S9(09)V99 COMP-3.
+           03  DEB-60                PIC S9(09)V99 COMP-3.
+           03  DEB-90                PIC S9(09)V99 COMP-3.
+           03  DEB-120               PIC S9(09)V99 COMP-3.
+           03  DEB-DEBT              PIC S9(09)V99 COMP-3.
+           03  DEB-CRED              PIC S9(09)V99 COMP-3.
+           03  DEB-PURYTD            PIC S9(09)V99 COMP-3.
+           03  DEB-PURPRV            PIC S9(09)V99 COMP-3.
+           03  DEB-INT               PIC S9(05)V99 COMP-3.
+           03  DEB-VAT               PIC S9(05)V99 COMP-3.
+           03  DEB-CRL               PIC  9(07)    COMP-3.
+           03  DEB-FINANCE.
+               05  DEB-FIN           PIC  X(01).
+           03  DEB-TERMS             PIC  X(01).
+           03  DEB-BDT               PIC  9(01).
+           03  DEB-LANG              PIC  X(01).
+           03  DEB-PMT               PIC  9(08)    COMP-3.
+           03  DEB-INV-TYPE          PIC  X(01).
+           03  DEB-LAST-PMT          PIC S9(09)V99 COMP-3.
+           03  DEB-LAB               PIC  X(01).
+           03  DEB-OI                PIC  X(01).
+               88  OPEN-ITEM                               VALUE "O".
+               88  BAL-FORWARD                             VALUE "B".
+           03  DEB-PRICE             PIC  X(01).
+               88  VALID-PRICE                             VALUE "1" "2" "3".
+           03  DEB-ART11             PIC  X(01).
+               88  TAX-EXEMPT                              VALUE "Y".
+           03  DEB-SDISC             PIC  9(02)    COMP-5.
+           03  DEB-DISC              PIC  9(02)    COMP-5.
+           03  DEB-SMAN              PIC  9(02)    COMP-5.
+           03  DEB-CONAC             PIC  X(06).
+           03  DEB-PURMTH.
+      *
+      *    ****   The total amount PURCHASED each MONTH for the PAST
+      *           TWELVE MONTHS (Credit notes adjust these figures)
+      *
+               05  DEB-MTHPUR        PIC S9(09)V99 COMP-3 OCCURS 12.
+           03  DEB-AREA.
+               05  DEB-GROUP         PIC  X(04).
+               05  FILLER            PIC  X(04).
+           03  DEB-PMTMTH.
+               05  DEB-PMTS OCCURS 12.
+      *
+      *    ****   The total amount PAID each MONTH for the PAST TWELVE
+      *           MONTHS (Payment reversals adjust these figures)
+      *
+                   07  DEB-MTHPMT    PIC S9(09)V99 COMP-3.
+      *
+      *    ****   INDICATOR
+      *                     C = STATEMENT BALANCE
+      *                     S = SHORT PAID
+      *                     1 = 30 DAYS
+      *                     2 = 60 DAYS
+      *                     3 = 90 DAYS
+      *                     4 = 120 + DAYS
+      *
+                   07  DEB-MTHPRF    PIC  X(01).
+                   07  DEB-MTHDTE    PIC  9(08)    COMP-5.
+      *
+      *    ****   Number of outstanding Jobs
+      *
+           03  DEB-JOBS              PIC  9(02)    COMP-5.
+      *
+      *    ****   Departments Excluded or Allowed.
+      *                       Excluded - All others are allowed.
+      *                       Allowed  - All others are excluded.
+      *
+           03  DEB-RESTRICT          PIC  X(01).
+               88  SALES-EXCLUDED                          VALUE "E".
+               88  SALES-ALLOWED                           VALUE "A".
+               88  NO-SALES-RESTRICTIONS VALUE "N".
+           03  FILLER                PIC  X(14).

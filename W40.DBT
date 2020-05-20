@@ -1,0 +1,127 @@
+002920 01  W40-COMPANY.
+002930     03  W40-NAME1.
+002940         05  W40-NAME.
+002950		   07  W40-ENTRY PIC  X(08).
+002960		   07  FILLER  PIC  X(32).
+002970	       05  FILLER      PIC  X(32).
+002980     03  W40-NAME2 REDEFINES W40-NAME1.
+002990	       05  W40-SURNAME PIC  X(24).
+003000	       05  W40-FNAME   PIC  X(24).
+003010	       05  W40-SNAME   PIC  X(24).
+003020     03  W40-NAME3 REDEFINES W40-NAME1.
+003030         05  W40-NCHAR OCCURS 72 PIC X(01).
+003040	   03  W40-ANAME.
+	       05  W40-ALT-LUP.
+		 07  W40-ALT-CHAR PIC X(01) OCCURS 12.
+	       05  FILLER      PIC  X(28).
+	   03  W40-CONTACT     PIC  X(30).
+	   03  W40-CON-NME REDEFINES W40-CONTACT.
+	       05  W40-ALT-KEY.
+		 07  W40-NME-CH	PIC X(01) OCCURS 12.
+	       05  FILLER      PIC  X(18).
+003050	  03  W40-DEBTREC.
+	       05  W40-ACNO    PIC  X(06).
+003060	       05  FILLER      PIC  X(614).
+003070     03  W40-ADD REDEFINES W40-DEBTREC.
+	     05  FILLER        PIC  X(06).
+003080       05  W40-ADDRESS1.
+003090	       07  W40-ADD1    PIC  X(30).
+003100	       07  W40-ADD2    PIC  X(30).
+003110	       07  W40-ADD3    PIC  X(30).
+003120	       07  W40-ADD4    PIC  X(30).
+003130       05  W40-ADDRESS2 REDEFINES W40-ADDRESS1.
+003140         07  W40-ACHAR OCCURS 120 PIC X(01).
+005160	     05  W40-PC1       PIC  X(08).
+003150	     05  W40-PADDRESS.
+003160	       07  W40-PADD1   PIC  X(30).
+003170	       07  W40-PADD2   PIC  X(30).
+003180	       07  W40-PADD3   PIC  X(30).
+003190	       07  W40-PADD4   PIC  X(30).
+003200       05  W40-PADDR2   REDEFINES W40-PADDRESS.
+003210         07  W40-PCHAR OCCURS 120 PIC X(01).
+005240	     05  W40-PC2       PIC  X(08).
+	     05  W40-ASSIST    PIC  X(30).
+	     05  W40-TERMSD    PIC  X(30).
+	     05  W40-SPACES    PIC  X(30).
+             05  W40-TOP.
+               07  W40-T1      PIC  X(01).
+               07  W40-T2-27   PIC  X(26).
+               07  W40-T28     PIC  X(01).
+             05  W40-MID.
+               07  W40-M1      PIC  X(01).
+               07  W40-M2-27   PIC  X(26).
+               07  W40-M28     PIC  X(01).
+             05  W40-BOT.
+               07  W40-B1      PIC  X(01).
+               07  W40-B2-27   PIC  X(26).
+               07  W40-B28     PIC  X(01).
+	     05	 W40-PRNINV    PIC  X(01).
+005360	     05	 W40-SMAN      PIC  9(02).
+002590	     05	 W40-LAST      PIC  9(03).
+	     05  W40-REPRINT   PIC  X(01).
+002920	     05	 W40-PRC       PIC  X(01).
+	     05  W40-CR        PIC  X(01).
+	     05  W40-DTE       PIC  9(08).
+	     05  W40-PARCELS   PIC  9(03).
+	     05  W40-SPAR      PIC  X(01).
+003220	     05  W40-NOSELL    PIC  X(01).
+003220	     05  FILLER        PIC  X(27).
+003230	   03  W40-POST        PIC  X(08).
+003240	   03  W40-PPOST       PIC  X(08).
+003250	   03  W40-TEL	       PIC  X(14).
+003260	   03  W40-HTEL        PIC  X(14).
+003260	   03  W40-FAX	       PIC  X(14).
+000180	   03  W40-ID	       PIC  X(14).
+000190	   03  W40-TAX	       PIC  X(14).
+003310	   03  W40-TITLE       PIC  9(02).
+003320	   03  W40-LANG        PIC  X(01).
+004900	   03  W40-NME.
+004910         05  W40-NCH     PIC  X(01) OCCURS 32.
+	   03  W40-CODE	       PIC  X(06) VALUE SPACES.
+003330	   03  W40-CAT	       PIC  9(02).
+003330	   03  W40-OCAT        PIC  9(02).
+003340	   03  W40-LEDG.
+	       05  W40-SCDE    PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  W40-PRICE       PIC  X(01).
+003350	   03  W40-FIN	       PIC  X(01).
+003360     03  W40-CRL         PIC S9(07)    COMP-3.
+003370	   03  W40-BAL	       PIC S9(09)V99 COMP-3.
+003370	   03  W40-STM	       PIC S9(09)V99 COMP-3.
+003370	   03  W40-ONE	       PIC S9(09)V99 COMP-3.
+003380     03  W40-MTD         PIC S9(09)V99 COMP-3.
+003390     03  W40-CUR         PIC S9(09)V99 COMP-3.
+003400     03  W40-30          PIC S9(09)V99 COMP-3.
+003410     03  W40-60          PIC S9(09)V99 COMP-3.
+003420     03  W40-90          PIC S9(09)V99 COMP-3.
+003420     03  W40-120         PIC S9(09)V99 COMP-3.
+003430     03  W40-INT         PIC S9(09)V99 COMP-3.   
+003420	   03  W40-DEBT	       PIC S9(09)V99 COMP-3.
+003420	   03  W40-CRED	       PIC S9(09)V99 COMP-3.
+	   03  W40-LAST-PMT    PIC S9(09)V99 COMP-3.
+000300	   03  W40-PURYTD      PIC S9(09)V99 COMP-3.
+000310	   03  W40-PURPRV      PIC S9(09)V99 COMP-3.
+	   03  W40-ACTIVE      PIC  9(08)    COMP-3.
+	   03  W40-PMT	       PIC  9(08)    COMP-3.
+003440	   03  W40-TERMS       PIC  X(01).
+003440	   03  W40-INV-TYPE    PIC  X(01).
+000370	   03  W40-BDT	       PIC  9(01).
+003450	   03  W40-SDISC       PIC  9(02).
+003450	   03  W40-DISC        PIC  9(02).
+           03  W40-LAB         PIC  X(01).
+           03  W40-OI          PIC  X(01).
+           03  W40-OOI         PIC  X(01).
+	   03  W40-ART11       PIC  X(01).
+	   03  W40-EXEMPT      PIC  X(01).
+	   03  W40-CONAC       PIC  X(06).
+	   03  W40-GROUP       PIC  X(04).
+	   03  W40-PURMTH.
+	       05  W40-MTHPUR  PIC S9(09)V99 COMP-3 OCCURS 12.
+           03  W40-STATUS      PIC  9(03) COMP-3.
+	   03  W40-CUS-DET.
+               05  W40-NM1     PIC  X(40).
+               05  W40-AD1     PIC  X(30).
+               05  W40-AD2     PIC  X(30).
+               05  W40-AD3     PIC  X(30).
+               05  W40-AD4     PIC  X(30).
+               05  W40-PC      PIC  X(04).

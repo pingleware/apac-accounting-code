@@ -1,0 +1,22 @@
+000010 FD  JCPLIN    IS EXTERNAL
+		     LABEL RECORD STANDARD
+000020		     VALUE OF FILE-ID W02-JCPLIN.
+000030 01  LIN-RECORD1.
+	   03  LIN-KEY.
+	       05  LIN-AC      PIC  X(06).
+	       05  LIN-REF     PIC  X(08).
+	       05  LIN-SEQ     PIC  9(03).
+      *
+      *    ****    TYPE : 1  -	ITEM DETAILS
+      * 		: 2  -	REMARKS
+      *                 : 9  -  TRAILER
+      *
+	   03  LIN-TYPE        PIC  9(01).
+	   03  LIN-EXT-ITEM.
+	       05  LIN-ITEM    PIC  X(14).
+	       05  LIN-ITM     PIC  X(03).
+	       05  FILLER      PIC  X(01).
+	   03  LIN-REMKS.
+	       05  LIN-DESC    PIC  X(30).
+	       05  FILLER      PIC  X(10).
+	   03  FILLER	       PIC  X(18).

@@ -1,0 +1,598 @@
+      ******************************************************************
+      *                                                                *
+      *    ******    ******   *******	 ******    *****   **	 **    *
+      *   **	**  **	  **  **    **	**    **  **   **  ***	 **    *
+      *   **	    **	  **  **    **	**	  **   **  ****  **    *
+      *    ******   **	  **  *******	**	  **   **  ** ** **    *
+      * 	**  **	  **  **    **	**	  **   **  **  ****    *
+      *   **	**  **	  **  **    **	**    **  **   **  **	***    *
+      *    ******    ******   **    **	 ******	   *****   **	 **    *
+      *                                                                *
+      *   ENGLISH                                                      *
+      *                                                                *
+      *   S A L E S   O R D E R	  C O N V E R T	  P R O G R A M	       *
+      *                                                                *
+      *     VERSION 8.09 - July 2003				       *
+      * 							       *
+      ******************************************************************
+000010 IDENTIFICATION DIVISION.
+000020 PROGRAM-ID.     SORCON.
+000030 AUTHOR.         J W LEMMON (APAC).
+000040 DATE-WRITTEN.   MAY 2003.
+
+		   COPYRIGHT NOTICE: COPYRIGHT (C) 2003 - 2003
+				     by James William Lemmon.
+
+		   All rights reserved.
+
+000050 SECURITY.   PROGRAM MATERIAL IS THE SOLE PROPERTY OF
+000060		   James William Lemmon.(Id No. 4412165050082).
+
+000050 ENVIRONMENT DIVISION.
+000060 CONFIGURATION SECTION.
+000070 SPECIAL-NAMES.
+000080                CONSOLE IS CRT.
+000090 INPUT-OUTPUT SECTION.
+000100 FILE-CONTROL.
+
+       COPY APACFIDS.SL.
+
+       COPY CONTROL.SL.
+
+       COPY PARAM.SL.
+
+      $SET KEYCOMPRESS "7"
+000230	   SELECT SORDER  ASSIGN DISK
+                          LOCK EXCLUSIVE
+000240                    STATUS WS-STATUS
+000250                    ACCESS DYNAMIC
+000260                    ORGANIZATION INDEXED
+000270                    RECORD SOR-KEY
+                          ALTERNATE RECORD SOR-AKEY = 
+                            SOR-AC SOR-KEY DUPLICATES.
+      $SET NOKEYCOMPRESS
+
+000180     SELECT SOROLD  ASSIGN DISK
+                          LOCK EXCLUSIVE
+000190                    STATUS WS-STATUS
+000200                    ACCESS SEQUENTIAL
+000210                    ORGANIZATION SEQUENTIAL.
+      /
+000260 DATA DIVISION.
+000270 FILE SECTION.
+
+       COPY APACFIDS.FDE.
+
+000290 COPY CONTROL.IFD.
+
+000290 COPY PARAM.IFD.
+
+000140 COPY SORDER.FD.
+
+000160*COPY SOROLD.FD.
+      /
+000010 FD  SOROLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-SOROLD
+000220               RECORDING MODE IS VARIABLE.
+000030 01  SOO-REC1.
+	   03  SOO-KEY.
+000050	     05  SOO-REF       PIC  X(08).
+	     05  SOO-SEQN.
+		 07  SOO-SEQ   PIC  9(03).
+		 07  SOO-SUB   PIC  9(02).
+	     05  SOO-SQN REDEFINES SOO-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 0  -  HEADER RECORD
+      *                 : 1  -  ITEM DETAILS
+      *                 : 2  -  PARTS DETAILS
+      *                 : 3  -  REMARKS
+      *                 : 4  -  INTERNAL NOTES FOR PICKING SLIP 
+      *                 : 5  -  ADDRESS
+      *                 : 9  -  TRAILER
+      *
+	   03  SOO-TYPE        PIC  9(01).
+	   03  SOO-AC	       PIC  X(06).
+	   03  SOO-DETAIL.
+	     05  SOO-NAME      PIC  X(40).
+000070	     05  SOO-DTE       PIC  9(08)    COMP-3.
+	     05  SOO-PICNO     PIC  9(02)    COMP-5.
+000090	     05  SOO-ORD       PIC  X(12).
+000130	     05  SOO-SMAN      PIC  9(04)    COMP-5.
+	     05  SOO-DOC       PIC  X(01).
+	       88  SOO-DELIV   VALUE "D".
+	       88  SOO-INVOIC  VALUE "I".
+	       88  SOO-ORDER   VALUE "O".
+	       88  SOO-QUOTE   VALUE "Q".
+	     05  SOO-PAGE      PIC  9(02).
+	     05  SOO-OREF      PIC  X(09).
+	     05  SOO-EXP       PIC  X(01).
+	     05  SOO-PRC       PIC  X(01).
+	     05  SOO-ADV       PIC  X(01).
+	     05  SOO-TEL       PIC  X(14).
+	     05  SOO-CONTACT   PIC  X(19).
+	     05  SOO-BIN       PIC  X(06).
+000140	   03  SOO-DET2 REDEFINES SOO-DETAIL.
+	     05  SOO-EXT-ITEM.
+000190	       07  SOO-ITEM    PIC  X(14).
+	       07  SOO-ITM     PIC  X(03).
+	       07  FILLER      PIC  X(01).
+000210	     05  SOO-DESC      PIC  X(40).
+	     05  SOO-SERIAL REDEFINES SOO-DESC.
+                 07  FILLER    PIC X(01).
+		 07  SOO-SNUM OCCURS 2.
+		     09  SOO-SNO
+			       PIC X(18).
+                     09  FILLER
+                               PIC X(01).
+                 07  FILLER    PIC X(01).
+000160	     05  SOO-QNT       PIC S9(05)V99 COMP-3.
+	     05  SOO-COST      PIC S9(06)V999 COMP-3.
+	     05  SOO-SELL      PIC S9(08)V999 COMP-3.
+	     05  SOO-VAT       PIC S9(07)V99 COMP-3.
+000280	     05  SOO-VAL       PIC S9(09)V99 COMP-3.
+000270	     05  SOO-INCTAX    PIC S9(09)V99 COMP-3.
+000270	     05  SOO-NONTAX    PIC S9(09)V99 COMP-3.
+000270	     05  SOO-TAXVAL    PIC S9(09)V99 COMP-3.
+	     05  SOO-DSC       PIC S9(02)V99 COMP-3.
+	     05  SOO-DISC      PIC S9(07)V99 COMP-3.
+	     05  SOO-SERNO     PIC  X(01).
+	     05  SOO-PER       PIC  X(07).
+	     05  SOO-VAT-SUB   PIC  9(01).
+	     05  SOO-PACK      PIC  9(01)    COMP-0.
+000140	   03  SOO-DET3 REDEFINES SOO-DETAIL.
+000290	     05  SOO-SUBTOT    PIC S9(09)V99 COMP-3.
+000300	     05  SOO-DSCNT     PIC S9(07)V99 COMP-3.
+	     05  SOO-NON-TXBL  PIC S9(09)V99 COMP-3.
+	     05  SOO-TAXABLE   PIC S9(09)V99 COMP-3.
+000310	     05  SOO-TAX       PIC S9(07)V99 COMP-3.
+000320	     05  SOO-TOT       PIC S9(09)V99 COMP-3.
+	     05  SOO-INVOICE   PIC  X(08).
+	     05  SOO-BAL       PIC S9(09)V99 COMP-3.
+000310	     05  SOO-ADVTAX    PIC S9(07)V99 COMP-3.
+	     05  SOO-INSTRUCT  PIC  X(09).
+	     05  SOO-PMETH     PIC  9(01).
+	     05  SOO-STATUS    PIC  9(03)    COMP-3.
+	     05  SOO-HTEL      PIC  X(14).
+	     05  SOO-ID        PIC  X(14).
+	     05  SOO-COMMENT   PIC  X(29).
+000140	   03  SOO-DET4 REDEFINES SOO-DETAIL.
+	     05  SOO-AD1       PIC  X(30).
+	     05  SOO-AD2       PIC  X(26).
+	     05  SOO-AD3       PIC  X(26).
+	     05  SOO-AD4       PIC  X(26).
+	     05  SOO-PC        PIC  X(04).
+	     05  FILLER        PIC  X(02).
+000140	   03  SOO-DET5 REDEFINES SOO-DETAIL.
+	     05  SOO-TEXT      PIC  X(63).
+	     05  SOO-SIGN      PIC  X(20).
+	     05  FILLER        PIC  X(31).
+
+      /
+000430 WORKING-STORAGE SECTION.
+       77  WS-CHECK	   PIC	X(18)	 VALUE
+			   "aeWlimemnomLalismJ".
+000440 77  WS-S1	    PIC 9(04)	  COMP-5.
+001890 77  WS-S2	   PIC	9(04)	 COMP-5.
+001890 77  WS-S3           PIC  9(04)    COMP-5.
+001890 77  WS-S4	   PIC	9(04)	 COMP-5.
+001890 77  WS-S6           PIC  9(04)    COMP-5.
+000440 77  WS-SUB	    PIC 9(04)	  COMP-5.
+003290 77  WS-NETKEY        PIC 9(04)     COMP-5 VALUE 1.
+003290 77  WS-DEPKEY        PIC 9(04)     COMP-5 VALUE 1.
+003300 77  WS-CTRKEY        PIC 9(04)     COMP-5 VALUE 1.
+003340 77  WS-PARKEY        PIC 9(04)     COMP-5 VALUE 1.
+003360 77  WS-RECKEY        PIC 9(04)     COMP-5.
+000520 77  WS-RECOVER       PIC 9(05)     COMP-0.
+000530 77  WS-TRANS         PIC 9(05)     COMP-0 VALUE 1.
+000540 77  WS-EKEY          PIC Z(04)9.
+000560 77  WS-ERROR         PIC 9(01)     VALUE ZERO.
+000570 77  WS-PROG          PIC X(02).
+       77  WS-OPTION        PIC X(01).
+       77  TODAY-DDMMYY	   PIC	9(08) COMP-5.
+       77  WS-USUB	   PIC	9(04) COMP-5.
+002420 01  WS-DB-LINE.
+002430     03  WS-TOP-LNE.
+002440         05  WS-TCHR PIC  X(01) OCCURS 80.
+           03  WS-T-LINE REDEFINES WS-TOP-LNE.
+               05  FILLER  PIC  X(01).
+               05  WS-H-LINE
+                           PIC  X(78).
+               05  FILLER  PIC  X(01).
+002430     03  WS-TOP-LNE2.
+002440         05  WS-TCH  PIC  X(01) OCCURS 80.
+           03  WS-TP-LINE2 REDEFINES WS-TOP-LNE2.
+               05  FILLER      PIC  X(01).
+               05  WS-TOP-COMP PIC  X(40).
+001430	       05  FILLER      PIC  X(23).
+	       05  WS-WRKHD    PIC  X(11).
+001430	       05  FILLER      PIC  X(01).
+	       05  WS-WRKST    PIC  X(03).
+001430	       05  FILLER      PIC  X(01).
+002450	   03  WS-MID-LNE.
+002460         05  WS-MCHR PIC  X(01) OCCURS 80.
+002450     03  WS-MID-LNE2.
+	       05  FILLER      PIC  X(01) VALUE "³".
+	       05  WS-BLNK78   PIC  X(78) VALUE ALL "°".
+	       05  FILLER      PIC  X(01) VALUE "³".
+002470	   03  WS-BOT-LNE.
+002480         05  WS-BCHR PIC  X(01) OCCURS 80.
+           03  WS-B-LINE REDEFINES WS-BOT-LNE.
+               05  FILLER  PIC  X(01).
+               05  WS-F-LINE
+                           PIC  X(78).
+               05  FILLER  PIC  X(01).
+002470     03  WS-BOT-LNE2.
+002480         05  WS-BCH  PIC  X(01) OCCURS 80.
+
+000590 COPY WS.WS.
+
+000290 01  WS-PARID.
+000020	   03  WS-SYS-ID       PIC  X(03).
+
+004000 01  W02-FID.
+
+       COPY APACFIDS.ID.
+
+000290 COPY CONTROL.ID.
+
+       COPY PARAM.ID.
+
+000140 COPY SORDER.ID.
+
+000160 COPY SOROLD.ID.
+
+       COPY W12.WS.
+
+       COPY W40.WS.
+
+       COPY FUNCTION.WS.
+
+       LINKAGE SECTION.
+
+       COPY CHAIN.LS.
+
+      /
+000850 SCREEN SECTION.
+
+       COPY BLANK.CRT.
+
+000860 01  S00.
+000910     03  LINE  2 COLUMN 25 FOREGROUND-COLOR 15
+000920		       VALUE "SALES ORDER FILE CONVERTION PROGRAM".
+000930     03  LINE  4 COLUMN  2 VALUE "Reading :".
+000950     03  LINE  6 COLUMN  2 VALUE "Writing :".
+001080 01  S04.
+001090     03  LINE 12 COLUMN 12 FOREGROUND-COLOR 11
+001100                 VALUE "Rebuilt of SALES ORDER file completed".
+001110     03  LINE 14 COLUMN 12 FOREGROUND-COLOR 11
+001120                 VALUE "Press any key to continue".
+001130 01  S05.
+001140     03  LINE 12 COLUMN 12 FOREGROUND-COLOR 11
+001150		       VALUE "Convertion unsuccessfull !".
+001160     03  LINE 14 COLUMN 12 FOREGROUND-COLOR 11
+001170		       VALUE "Reload files from last backup.".
+
+       COPY ERROR.CRT.
+
+      /
+001230 PROCEDURE DIVISION
+		 USING LS-PARID LS-USER-ID LS0-PROGRAMS LS0-SECURITY.
+001220 AA000	       SECTION.
+001230 AA00.
+041220	     MOVE 1		 TO WS-S1.
+021870	     MOVE SPACES	 TO WS-MID-LNE.
+041240 AA02.
+041250	     MOVE WS-G1 	 TO WS-TCHR(WS-S1) WS-BCHR(WS-S1).
+	     MOVE WS-G8 	 TO WS-TCH(WS-S1)  WS-BCH(WS-S1).
+041260     IF WS-S1 < 80
+041270	       ADD 1		 TO WS-S1
+041280         GO TO AA02.
+	     MOVE WS-G9 	 TO WS-TCH(1).
+	     MOVE WS-G10	 TO WS-TCH(80).
+	     MOVE WS-G11	 TO WS-BCH(1).
+	     MOVE WS-G12	 TO WS-BCH(80).
+	     MOVE WS-G14	 TO WS-TCHR(1)	WS-BCHR(1).
+	     MOVE WS-G13	 TO WS-TCHR(80) WS-BCHR(80).
+021930	     MOVE WS-G2 	 TO WS-TCHR(16) WS-TCHR(41)
+021940				    WS-TCHR(64) WS-TCHR(71).
+021950	     MOVE WS-G3 	 TO WS-MCHR(16) WS-MCHR(41)
+021960				    WS-MCHR(64) WS-MCHR(71)
+				    WS-MCHR(1)	WS-MCHR(80).
+021970	     MOVE WS-G4 	 TO WS-BCHR(16) WS-BCHR(41)
+021980				    WS-BCHR(64) WS-BCHR(71).
+	     MOVE LS-COMPANY	 TO WS-TOP-COMP.
+	   IF LS-USER = LS-SYS-ID
+	       MOVE "SupervisorÄ"
+				 TO WS-WRKHD
+	   ELSE
+	       MOVE "Workstation"
+				 TO WS-WRKHD
+	       MOVE LS-USER	 TO WS-WRKST.
+001250	     DISPLAY CLR-SCREEN.
+001270       PERFORM ZA000.
+           IF WS-ERROR = 9
+               GO TO AA50.
+001260       DISPLAY S00.
+001340 AA05.
+001350       READ SOROLD
+               AT END
+               GO TO AA10.
+             DISPLAY SOO-REF AT 0412 WITH FOREGROUND-COLOR 11
+                     " " SOO-AC WITH FOREGROUND-COLOR 11.
+001600       PERFORM AW000.
+             GO TO AA05.
+001450 AA10.
+001830       CLOSE SORDER
+                   SOROLD
+                   PARAM
+001870             NETWORK.
+001910       DISPLAY S04.
+             ACCEPT WS-OPTION AT 1439 WITH FOREGROUND-COLOR 15 AUTO.
+004990	     CALL "CBL_DELETE_FILE" USING W02-SOROLD
+005030				    RETURNING WS-STATUS.
+
+       AA15.
+001920       EXIT PROGRAM.
+
+001930 AA50.
+001940       DISPLAY S05.
+001950       STOP RUN.
+      /
+      *    THIS ROUTINE WRITES THE DETAILS TO THE NEW FILE.
+      *
+001960 AW000           SECTION.
+011840 AW01.
+	     MOVE SOO-KEY	 TO SOR-KEY.
+	     MOVE SOO-TYPE	 TO SOR-TYPE.
+	     MOVE SOO-AC	 TO SOR-AC.
+	   IF SOO-TYPE = 0
+	       INITIALIZE SOR-DETAIL
+	       MOVE SOO-NAME	 TO SOR-NAME
+000070	       MOVE SOO-DTE	 TO SOR-DTE
+	       MOVE SOO-PICNO	 TO SOR-PICNO
+000090	       MOVE SOO-ORD	 TO SOR-ORD
+000130	       MOVE SOO-SMAN	 TO SOR-SMAN
+	       MOVE SOO-DOC	 TO SOR-DOC
+	       MOVE SOO-PAGE	 TO SOR-PAGE
+	       MOVE SOO-OREF	 TO SOR-OREF
+	       MOVE SOO-EXP	 TO SOR-EXP
+	       MOVE SOO-PRC	 TO SOR-PRC
+	       MOVE SOO-ADV	 TO SOR-ADV
+	       MOVE SOO-TEL	 TO SOR-TEL
+	       MOVE SOO-CONTACT  TO SOR-CONTACT
+	       MOVE SOO-BIN	 TO SOR-BIN
+	   ELSE
+	   IF SOO-TYPE = 1
+	       INITIALIZE SOR-DET2
+	       MOVE SOO-EXT-ITEM TO SOR-EXT-ITEM
+000210	       MOVE SOO-DESC	 TO SOR-DESC
+000160	       MOVE SOO-QNT	 TO SOR-QNT
+				    SOR-QORD
+	       MOVE SOO-COST	 TO SOR-COST
+	       MOVE SOO-SELL	 TO SOR-SELL
+	       MOVE SOO-VAT	 TO SOR-VAT
+000280	       MOVE SOO-VAL	 TO SOR-VAL
+000270	       MOVE SOO-INCTAX	 TO SOR-INCTAX
+000270	       MOVE SOO-NONTAX	 TO SOR-NONTAX
+000270	       MOVE SOO-TAXVAL	 TO SOR-TAXVAL
+	       MOVE SOO-DSC	 TO SOR-DSC
+	       MOVE SOO-DISC	 TO SOR-DISC
+	       MOVE SOO-SERNO	 TO SOR-SERNO
+	       MOVE SOO-PER	 TO SOR-PER
+	       MOVE SOO-VAT-SUB  TO SOR-VAT-SUB
+	       MOVE SOO-PACK	 TO SOR-PACK
+	   ELSE
+	   IF SOO-TYPE = 2
+	       INITIALIZE SOR-DET2
+	       MOVE SOO-EXT-ITEM TO SOR-EXT-ITEM
+	       MOVE SOO-DESC	 TO SOR-DESC
+	       MOVE SOO-QNT	 TO SOR-QNT
+	       MOVE SOO-SERNO	 TO SOR-SERNO
+	       MOVE SOO-SQN	 TO SOR-SQN
+	   ELSE
+	   IF SOO-TYPE = 3 OR 4
+	       INITIALIZE SOR-DET2
+000210	       MOVE SOO-DESC	 TO SOR-DESC
+	   ELSE
+	   IF SOO-TYPE = 5
+	       INITIALIZE SOR-DET4
+	       MOVE SOO-AD1	 TO SOR-AD1
+	       MOVE SOO-AD2	 TO SOR-AD2
+	       MOVE SOO-AD3	 TO SOR-AD3
+	       MOVE SOO-AD4	 TO SOR-AD4
+	       MOVE SOO-PC	 TO SOR-PC
+	   ELSE
+	   IF SOO-TYPE = 7 OR 8
+	       INITIALIZE SOR-DET5
+	       MOVE SOO-TEXT	 TO SOR-TEXT
+	       MOVE SOO-SIGN	 TO SOR-SIGN
+	   ELSE
+	   IF SOO-TYPE = 9
+	       INITIALIZE SOR-DET3
+000290	       MOVE SOO-SUBTOT	 TO SOR-SUBTOT
+000300	       MOVE SOO-DSCNT	 TO SOR-DSCNT
+	       MOVE SOO-NON-TXBL TO SOR-NON-TXBL
+	       MOVE SOO-TAXABLE  TO SOR-TAXABLE
+000310	       MOVE SOO-TAX	 TO SOR-TAX
+000320	       MOVE SOO-TOT	 TO SOR-TOT
+	       MOVE SOO-INVOICE  TO SOR-INVOICE
+	       MOVE SOO-BAL	 TO SOR-BAL
+000310	       MOVE SOO-ADVTAX	 TO SOR-ADVTAX
+	       MOVE SOO-INSTRUCT TO SOR-INSTRUCT
+	       MOVE SOO-PMETH	 TO SOR-PMETH
+	       MOVE SOO-STATUS	 TO SOR-STATUS
+	       MOVE SOO-HTEL	 TO SOR-HTEL
+	       MOVE SOO-ID	 TO SOR-ID
+	       MOVE SOO-COMMENT  TO SOR-COMMENT.
+             DISPLAY SOR-REF AT 0612 WITH FOREGROUND-COLOR 14
+                     " " SOR-AC WITH FOREGROUND-COLOR 14.
+002310       WRITE SOR-REC1.
+           IF WS-STAT1 NOT = "0"
+               MOVE 20           TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+002440 AW999.
+002450       EXIT.
+
+       COPY FUNCTION.SCR.
+
+       COPY ERROR.SCR.
+
+      /
+002460 ZA000           SECTION.
+002470 ZA00.
+	     MOVE LS-PARID	 TO WS-PARID.
+	     MOVE LS-L-OR-N	 TO W02-L-OR-N.
+	     MOVE WS-SYS-ID	 TO W02-SYSID.
+	     MOVE LS-TODAY-DDMMYY
+				 TO TODAY-DDMMYY.
+	     MOVE LS-USUB	 TO WS-USUB.
+      *
+      *    ****    P A R A M E T E R   F I L E
+      *
+       ZA00A.
+	     MOVE "PARAM"	 TO AFID-KEY.
+
+       ZA00-READ-APACFIDS.
+000030	     READ APACFIDS WITH IGNORE LOCK
+	       KEY IS AFID-KEY.
+	   IF WS-STATUS = "00"
+	       GO TO ZA00-READ-APACFIDS-EXIT.
+006260	     STRING "Missing " DELIMITED SIZE
+		     AFID-KEY DELIMITED BY " "
+		     " file ID - Status " DELIMITED SIZE
+		     WS-STATUS DELIMITED SIZE
+		     INTO WS-ERR-MES.
+	     PERFORM ERROR-LENGTH THRU ERROR-EXIT.
+006370	     STOP RUN.
+
+       ZA00-READ-APACFIDS-EXIT.
+	     EXIT.
+
+       ZA00A-CONTINUE.
+	     MOVE AFID-PATH	 TO W02-PARAM.
+	     MOVE "NETWORK"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-NETWORK.
+	     MOVE "SORDER"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-SORDER.
+	     MOVE "SOROLD"	 TO AFID-KEY.
+	     PERFORM ZA00-READ-APACFIDS THRU ZA00-READ-APACFIDS-EXIT.
+	     MOVE AFID-PATH	 TO W02-SOROLD.
+002480	     OPEN I-O PARAM.
+042120     IF WS-STAT1 = "9"
+               IF FLE-LOCKED
+042130             GO TO ZA200.
+002490     IF WS-STATUS NOT = "00"
+002500	       MOVE 15		 TO WS-F-ERROR
+002510         PERFORM OPEN-ERROR.
+002520	     MOVE 1		 TO WS-PARKEY.
+             READ PARAM.
+002540     IF WS-STATUS NOT = "00"
+002550	       MOVE 15		 TO WS-F-ERROR
+002560         PERFORM READ-ERROR.
+	     MOVE PAR-DMY	 TO W12-TODAY.
+042140	     OPEN I-O NETWORK.
+042150     IF WS-STAT1 = "9"
+               IF FLE-LOCKED
+042160             GO TO ZA200.
+003050	   IF NOT (WS-STATUS = "00" OR "41")
+003060	       MOVE 2		 TO WS-F-ERROR
+003070         PERFORM OPEN-ERROR.
+004990	     CALL "CBL_RENAME_FILE" USING W02-SORDER
+005000					  W02-SOROLD
+005030				    RETURNING WS-STATUS.
+	   IF NOT (WS-STATUS = X"0000")
+	       MOVE "Unable to Convert ORDER file"
+				 TO WS-ERR-STRING
+003260	       PERFORM ERROR-MESSAGE
+	       MOVE 9		 TO WS-ERROR
+	       GO TO ZA999-EXIT.
+042240	     OPEN INPUT SOROLD.
+042250     IF WS-STAT1 = "9"
+               IF FLE-LOCKED
+042260             GO TO ZA200.
+003050     IF WS-STATUS NOT = "00"
+003060         MOVE 70 TO WS-F-ERROR
+003070         PERFORM OPEN-ERROR.
+042240       OPEN OUTPUT SORDER.
+042250     IF WS-STAT1 = "9"
+               IF FLE-LOCKED
+042260             GO TO ZA200.
+003050     IF WS-STATUS NOT = "00"
+003060         MOVE 20 TO WS-F-ERROR
+003070         PERFORM OPEN-ERROR.
+002960       GO TO ZA999-EXIT.
+020110 ZA200.
+020120       DISPLAY "Files locked - Try later" AT 2412
+020130                WITH FOREGROUND-COLOR 14.
+020140       DISPLAY "Press any key" AT 2512 
+020150		      WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 14.
+020160	     ACCEPT WS-OPTION AT 2526
+		    WITH BACKGROUND-COLOR 3 FOREGROUND-COLOR 15 AUTO.
+             MOVE 9 TO WS-ERROR.
+003080 ZA999-EXIT.
+003090       EXIT.
+      /
+003100 ZB000-ERROR           SECTION.
+      
+041480 OPEN-ERROR.
+041490       DISPLAY CLR-SCREEN.
+041500       DISPLAY "Open error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041480 READ-ERROR.
+041490       DISPLAY CLR-SCREEN.
+041500       DISPLAY "Read error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041520 WRITE-ERROR.
+041530       DISPLAY CLR-SCREEN.
+041540       DISPLAY "Write error" AT 0812 WITH FOREGROUND-COLOR 14.
+041510       PERFORM DISPLAY-FILE-NAME.
+      
+041560 DISPLAY-FILE-NAME.
+041610     IF WS-F-ERROR = 2
+041620         MOVE W02-NETWORK TO WS-FILE
+041630         MOVE WS-NETKEY TO WS-KEY
+041640     ELSE
+041650     IF WS-F-ERROR = 20
+041660         MOVE W02-SORDER TO WS-FILE
+041670         MOVE ZERO       TO WS-KEY
+041640     ELSE
+041650     IF WS-F-ERROR = 70
+041660         MOVE W02-SOROLD TO WS-FILE
+041670         MOVE ZERO       TO WS-KEY
+041840     ELSE
+041850     IF WS-F-ERROR = 15
+041860         MOVE WS-PARID TO WS-FILE
+041870         MOVE WS-PARKEY TO WS-KEY.
+041880     IF WS-STATUS = "10"
+041890         MOVE "End of FILE" TO WS-STAT-MESSAGE
+041900     ELSE
+041910     IF WS-STATUS = "22"
+041920         MOVE "Duplicate record number" TO WS-STAT-MESSAGE
+041930     ELSE
+041940     IF WS-STATUS = "23"
+041950         MOVE "Invalid record number" TO WS-STAT-MESSAGE
+041960     ELSE
+041970     IF WS-STATUS = "24"
+041980         MOVE "DISK full" TO WS-STAT-MESSAGE
+041990     ELSE
+042000     IF WS-STATUS = "30"
+042010         MOVE "DISK error" TO WS-STAT-MESSAGE
+042020     ELSE
+042030     IF WS-STATUS = "94"
+042040         MOVE "FILE locked" TO WS-STAT-MESSAGE.
+045380       DISPLAY "File - " AT 1012 WS-FILE WITH FOREGROUND-COLOR 11.
+045390       DISPLAY "Status " AT 1212 
+                      WS-STATUS WITH FOREGROUND-COLOR 11
+                     ": " WS-STAT-MESSAGE WITH FOREGROUND-COLOR 14.
+045400     IF WS-STATUS NOT = "94" 
+045410         DISPLAY "Key    " AT 1412 
+                        WS-KEY WITH FOREGROUND-COLOR 11
+045420         DISPLAY "Reverse backup or contact program Support"
+                        AT 1612.
+045440         DISPLAY "Please make a note of these details" AT 1812.
+042170       STOP RUN.

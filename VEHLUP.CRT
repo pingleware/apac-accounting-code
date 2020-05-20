@@ -1,0 +1,32 @@
+009340 01  S-VEH.
+009350	   03  LINE  2 COLUMN 34 FOREGROUND-COLOR 15
+009360				 VALUE "VEHICLE LOOKUP".
+009370	   03  LINE  3 COLUMN  2 VALUE "Registration >".
+009380	   03	       COLUMN 26 VALUE	"<".
+009390     03  LINE  4 COLUMN  2 REVERSE-VIDEO VALUE 
+009400	       "Regist.No.    Vehicle Make / Description             Tel
+      -        "ephone No.    Driver  ".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออออออัอออออออออออออออออออออ
+      -        "อออออออออออออออออออัออออออออออออออัอออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออออออฯอออออออออออออออออออออ
+      -        "อออออออออออออออออออฯออออออออออออออฯอออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009440     03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE 
+009450	   "Key in at least the first character of the Reg. or press ".
+009460	   03	       COLUMN 59 FOREGROUND-COLOR 14 VALUE "Esc".
+009470	   03	       COLUMN 62 FOREGROUND-COLOR 7 VALUE " to exit".
+009480	   03  LINE 25 COLUMN  2 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 1 VALUE "Pressing ".
+009490	   03	       COLUMN 11 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 14 VALUE "ENTER".
+009500	   03	       COLUMN 16 BACKGROUND-COLOR 3
+				 FOREGROUND-COLOR 1 VALUE
+009510				 " key only, will start from the beginni
+009520- 			 "ng of the vehicle file".
+009530 01  SA-VEH.
+009540	   03  LINE  3 COLUMN 16 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009550				 PIC  X(10) USING W40-REGIST AUTO.

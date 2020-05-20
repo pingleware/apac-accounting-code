@@ -1,0 +1,28 @@
+      *
+      *    ****  *****	***  *	   ***** ****	   ***** *** *	   *****
+      *    *   * *     *   * *	   *	 *   *	   *	  *  *	   *
+      *    *   * *     *   * *	   *	 *   *	   *	  *  *	   *
+      *    *   * ***   ***** *	   ***	 ****	   ***	  *  *	   ***
+      *    *   * *     *   * *	   *	 *  *	   *	  *  *	   *
+      *    *   * *     *   * *	   *	 *   *	   *	  *  *	   *
+      *    ****  ***** *   * ***** ***** *   *	   *	 *** ***** *****
+      *
+010000 REWRITE-DEALER.
+010010	     REWRITE DEL-REC1.
+000030     IF WS-STAT1 NOT = "0"
+010030	       MOVE 44		 TO WS-F-ERROR
+010040         PERFORM WRITE-ERROR.
+010050	     GO TO WRITE-DEALER-EXIT.
+
+010060 WRITE-DEALER.
+010070	     WRITE DEL-REC1.
+000030     IF WS-STAT1 NOT = "0"
+010090	       IF WS-STATUS = "22"
+		   ADD 1	 TO DEL-SEQ
+010100		   GO TO WRITE-DEALER
+010110         ELSE
+010120		   MOVE 44	 TO WS-F-ERROR
+010130             PERFORM WRITE-ERROR.
+
+010140 WRITE-DEALER-EXIT.
+010150       EXIT.

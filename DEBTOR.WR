@@ -1,0 +1,45 @@
+000010
+000020 REWRITE-DEBTOR.
+000030       REWRITE DEB-RECORD1.
+000040     IF WS-STAT1 NOT = "0"
+000050         MOVE 6            TO WS-F-ERROR
+000060         PERFORM WRITE-ERROR.
+000070       GO TO WRITE-DEBTOR-EXIT. 
+
+000090 REWRITE-DEBTOR-UNLOCK.
+000100       REWRITE DEB-RECORD1.
+000110     IF WS-STAT1 NOT = "0"
+000120         MOVE 6            TO WS-F-ERROR
+000130         PERFORM WRITE-ERROR.
+000140       UNLOCK DEBTOR.
+000150       GO TO WRITE-DEBTOR-EXIT. 
+
+000170 DELETE-DEBTOR-REC.
+000180       DELETE DEBTOR.
+000190     IF WS-STAT1 NOT = "0"
+000200         MOVE 6            TO WS-F-ERROR
+000210         PERFORM WRITE-ERROR.
+000140       UNLOCK DEBTOR.
+000150       GO TO WRITE-DEBTOR-EXIT. 
+
+000170 WRITE-DEBTOR.
+000180       WRITE DEB-RECORD1.
+000190     IF WS-STAT1 NOT = "0"
+000200         MOVE 6            TO WS-F-ERROR
+000210         PERFORM WRITE-ERROR.
+      *    ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+      *    ³ To avoid problems of having data corrupted (MULTI USER)   ³
+      *    ³ by the cache (buffering) of data on the individual Work   ³
+      *    ³ stations. Cache results in data from one work station not ³
+      *    ³ being available on another Work Station until the cache   ³
+      *    ³ has been cleared. Including a close of the file after each³
+      *    ³ new Debtor has been added and then re-opening the file is ³
+      *    ³ the way in which the system will release the data for it  ³
+      *    ³ to be written to the server file and should resolve this  ³
+      *    ³ problem.						       ³
+      *    ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+	     CLOSE DEBTOR.
+	     OPEN I-O DEBTOR.
+
+000230 WRITE-DEBTOR-EXIT.
+000240       EXIT.

@@ -1,0 +1,39 @@
+008050 01  S-SOR.
+008060     03  LINE  2 COLUMN 35 FOREGROUND-COLOR 15
+008070                           VALUE "QUOTE LOOKUP".
+008080     03  LINE  3 COLUMN  2 "Start Quote No. :".
+008090     03  LINE  4 COLUMN  2 REVERSE-VIDEO VALUE 
+008100         "Slip.No  Ac No  Client Name (Account name)      Date  P/
+008110-        "S Document       Value".
+009160	   03  LINE  5 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009160	   03	       COLUMN  2 VALUE "ออออออออัออออออัออออออออออออออออ
+      -        "อออออออออออัออออออออออัออัออออออออัอออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+009160	   03  LINE 22 COLUMN  1 BACKGROUND-COLOR 0 VALUE "ฦ".
+009170	   03	       COLUMN  2 VALUE "ออออออออฯออออออฯออออออออออออออออ
+      -        "อออออออออออฯออออออออออฯออฯออออออออฯอออออออออออ".
+	   03	       COLUMN 80 BACKGROUND-COLOR 0 VALUE "ต".
+008140	   03  LINE 23 COLUMN  2 FOREGROUND-COLOR 7 VALUE
+008150       "Key in at least the first character of the quote no. or pr
+      -      "ess".
+008160     03          COLUMN 64 FOREGROUND-COLOR 14 VALUE "Esc".
+008170     03          COLUMN 67 FOREGROUND-COLOR 7 VALUE " to exit".
+008180     03  LINE 25 COLUMN  2 FOREGROUND-COLOR 14 VALUE 
+008190                           "Pressing 'ENTER' key only, will start 
+008200-                          "from the beginning of the order file".
+008210 01  S-SORA.
+008220     03  LINE  3 COLUMN  2 "Start Account No :".
+009260 01  S-SORB.
+009270	   03  LINE  3 COLUMN  2 "Starting Date (DDMMCCYY):".
+       01  SA-SOR.
+	   03  LINE  3 COLUMN 20 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+                                 PIC  Z(08) USING W10-SORD AUTO.
+       01  SA-SORA.
+	   03  LINE  3 COLUMN 21 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+                                 PIC  X(06) USING W80-ACNO AUTO.
+009310 01  SA-SORB.
+009320	   03  LINE  3 COLUMN 28 FOREGROUND-COLOR 7 HIGHLIGHT
+				 BACKGROUND-COLOR 5
+009330				 PIC  99/99/9999 USING W21-DTE AUTO.

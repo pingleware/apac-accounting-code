@@ -1,0 +1,406 @@
+FILE NAME       FILE ID          FILE NUMBER    LIBRARIES
+====================================================================
+
+AUDIT           X:AUDT_???.APC        1         SL  IFD  ID  RD  WR
+CARDEX          X:CRDX_???.APC       43         SL   FD  ID  RD  WR
+CHEQUE          X:CHEQ_???.APC       36         SL   FD  ID  RD  WR
+CONTROL         X:CONT_???.APC        2         SL  IFD  ID  RD  WR
+CONTRF          X:CTRF_???.APC       34         SL   FD  ID  RD  WR
+CREDIT          X:CRED_???.APC        3         SL  GFD  ID  RD  WR
+CRTRAN          X:CTRN_???.APC        4         SL   FD  ID  RD  WR
+DBTOLD		X:DTRN_???.OLD	     5O 	SL  GFD	 ID  RD	 WR
+DBTRAN          X:DTRN_???.APC        5         SL  GFD  ID  RD  WR
+DEBTOR          X:DEBT_???.APC        6        ISL  GFD  ID  RD  WR
+DEBOLD		X:DEBT_???.OLD	     6O	       ISL  GFD	 ID  RD	 WR
+DEBMEM          X:DMEM_???.APC       27         SL   FD  ID  RD  WR
+DEBTRN          X:DBTR_???.###       31         SL  GFD  ID  RD  WR
+DEPART          X:DEPT_???.APC        7         SL  GFD  ID  RD  WR
+EGGSLE          X:EGGS_???.APC       30         SL   FD  ID  RD  WR
+GACCNT          X:LEDG_???.APC        8         SL   FD  ID  RD  WR
+GACOLD		X:LEDG_???.OLD	     80 	SL   FD  ID  RD  WR
+GARTEE          X:GUAR_???.APC        9         SL   FD  ID  RD  WR
+GINDEX          X:GIDX_???.APC       28         SL   FD  ID  RD  WR
+GLINST          X:GINS_???.APC       10         SL   FD  ID  RD  WR
+GLJRN           X:GJRN_???.###       26         SL   FD  ID  RD  WR
+GLTRAN          X:GTRN_???.APC       11         SL   FD  ID
+INVOIC          X:INVC_???.APC       12         SL   FD  ID
+JOBCST          X:JOBC_???.APC       13         SL   FD  ID
+JOBREQ          X:JREQ_???.APC       42         SL   FD  ID
+JOBRMK          X:JRMK_???.APC       41         SL   FD  ID
+LAYBUY		X:LAYB_???.APC	     14 	SL   FD	 ID
+LEDTRN          X:LTRN_???.###       39         SL   FD  ID
+LEDTRF          X:LTRF_???.APC       40         SL   FD  ID
+PARAM           X:PARM_???.APC       15         SL  IFD  CHAIN.WS
+PDCHEQ		X:PCHQ_???.APC	     36 	SL   FD  ID  RD  WR
+PORDER          X:PORD_???.APC       16         SL  GFD  ID
+PRNDISK         X:PRNT_???.###       38         SL   FD  ID
+PRCLAB          X:PLAB_???.###       37         SL   FD  ID
+PURCH           X:PURC_???.###       17         SL   FD  ID
+RECOVER         X:RECV_???.###       18         SL  GFD  ID
+ROUTE		X:ROUT_???.APC	     29 	SL   FD	 ID
+SALE            X:SALE_???.###       19         SL  IFD  ID
+SORDER          X:SORD_???.APC       20         SL   FD  ID
+SPARTS          X:PART_???.APC       21         SL   FD  ID
+STKMEM          X:SMEM_???.APC       25         SL   FD  ID
+STKTRF          X:STRF_???.APC       33         SL   FD  ID
+STOCK           X:STCK_???.APC       22         SL  GFD  ID
+SYSTEM            SYST_???.APC       23         SL   FD  ID
+TRNTRF		X:TTRF_???.APC	     35 	SL   FD	 ID
+TXPTRN          X:TTRP_???.APC       32         SL   FD  ID
+TXTRAN          X:TTRN_???.APC       32         SL  IFD  ID
+VOUCHER 	X:VOUC_???.APC	     24 	SL   FD	 ID
+
+       FILE-ID:
+                X   = DISK DRIVE LOCATION - W02-DSK<file number>
+                ??? = COMPANY CODE        - W02-EXT<file number>
+                ### = USER/TERMINAL ID    - W02-USE<file number>
+
+       The USER/TERMINAL ID is used as the extention on certain files
+       as these files are used as WORKING or as RECOVERY files by the
+       individual  users/terminals and there may be more than one  of
+       these files in use at the same time.       
+
+
+
+PROGRAM  FILES USED  MODE              READ LOCK CHECK REWRITE WRITE UNLOCK
+===========================================================================
+
+APACINST AUDIT
+	 CONTROL     I-O
+	 CHEQUE      O
+	 DEPART      O
+	 PARAM	     O or I-O
+	 SYSTEM      O
+	 TXPTRN      O
+	 TXTRAN      O
+
+BUP000   SYSTEM      I-O                Y    Y            Y            Y
+         PARAM       I-O                Y    Y            Y            Y
+	 PRNTCONT
+         PRINTER     CONSOLE                                     Y
+
+BUP001   SYSTEM      I-O                Y    Y            Y            Y
+         PARAM       I-O                Y    Y            Y            Y
+
+CRP000   PARAM       INPUT              Y
+         CREDIT      OUTPUT                                      Y
+         CINDEX      OUTPUT                                      Y
+         CRTRAN      OUTPUT                                      Y
+         PORDER      OUTPUT                                      Y
+         POINDEX     OUTPUT                                      Y
+
+CRP001   PARAM       I-O                Y    Y            Y            Y
+         CREDIT      I-O                Y    Y     Y      Y      Y     Y
+         CRTRAN      INPUT              Y
+         CINDEX      I-O                Y          Y      Y      Y
+         PORDER      INPUT              Y
+         RECOVER     I-O                                         Y
+
+CRP002   PARAM       I-O                Y    Y            Y            Y
+         CREDIT      I-O                Y    Y            Y            Y
+         CINDEX      INPUT              Y
+         CRTRAN      I-O                Y                 Y      Y
+         STOCK       I-O                Y    Y            Y            Y
+         SINDEX      I-O                Y 
+         POINDEX     I-O                Y                 Y      Y 
+         PORDER      I-O                Y                 Y      Y 
+         RECOVER     I-O                                         Y 
+         PURCH       I-O                Y                 Y      Y
+
+         PRINTER     CONSOLE                                     Y
+
+CRP003   PARAM       INPUT              Y
+         CREDIT      INPUT              Y
+         CRTRAN      INPUT              Y
+         CINDEX      INPUT              Y
+         STOCK       INPUT              Y
+         SINDEX      INPUT              Y
+         PORDER      INPUT              Y
+
+         PRINTER     CONSOLE                                     Y
+
+CRP004   PARAM       I-O                Y    Y            Y            Y
+         CREDIT      I-O                Y    Y            Y            Y
+         CINDEX      INPUT              Y
+         CRTRAN      I-O                Y                 Y      Y
+         GACCNT      I-O                Y    Y            Y            Y
+         GLTRAN      I-O                Y                 Y      Y
+         GINDEX      INPUT              Y
+         GLJRN       I-O                Y                 Y      Y
+         RECOVER     I-O                                         Y
+
+         PRINTER     CONSOLE                                     Y
+
+CRPREB   CREDIT      I-O  (EXCLUSIVE)   Y                 Y
+
+CRPREC   PARAM       I-O  (EXCLUSIVE)   Y                 Y
+         CREDIT      I-O  (EXCLUSIVE)                     Y
+         CTRANS      I-O  (EXCLUSIVE)                     Y
+         CINDEX      I-O  (EXCLUSIVE)                     Y
+         STOCK       I-O  (EXCLUSIVE)                     Y
+         PORDER      I-O  (EXCLUSIVE)                     Y
+         POINDEX     I-O  (EXCLUSIVE)                     Y
+         RECOVER     I-O                Y                  
+
+CSH001   PARAM       I-O                Y    Y            Y            Y
+         DEBTOR      I-O                Y    Y            Y            Y
+         SINDEX      INPUT              Y
+         STOCK       I-O                Y    Y            Y            Y
+         SALE        I-O                Y                 Y      Y
+         AUDIT       I-O                Y                 Y      Y
+         RECOVER     I-O                                         Y
+
+         PRINTER     CASH SLIP                                   Y
+         CASH DRAW
+
+DTP000   PARAM       I-O                                         Y
+         SYSTEM      I-O                Y                 Y 
+         DEBTOR      OUTPUT                                      Y
+         DBTRAN      OUTPUT                                      Y
+         SORDER      OUTPUT                                      Y
+         AUDIT       OUTPUT                                      Y
+         INVOIC      OUTPUT                                      Y
+
+DTP001   PARAM       I-O                Y    Y            Y            Y
+         DEBTOR      I-O                Y    Y     Y      Y      Y     Y
+         DBTRAN      I-O                Y                 Y      Y
+         INVOIC      I-O                Y                 Y             
+         RECOVER     I-O                                         Y
+
+         PRINTER     CONSOLE                                     Y
+
+DTP002   PARAM       INPUT              Y
+         DEBTOR      INPUT              Y
+         DBTRAN      INPUT              Y
+
+         PRINTER     CONSOLE                                     Y
+         PRINTER     STATEMENTS                                  Y
+
+DTP003   PARAM       I-O                     Y                         Y
+         DEBTOR      I-O                     Y                         Y
+
+DTP004   PARAM       I-O                     Y                         Y
+         DEBTOR      I-O                     Y                         Y
+         DBTRAN      I-O                Y                 Y      Y
+         RECOVER     I-O                                         Y
+
+DTPREC   PARAM       I-O  (EXCLUSIVE)   Y                 Y
+         AUDIT       I-O  (EXCLUSIVE)   Y          Y      Y      Y
+         DEBTOR      I-O  (EXCLUSIVE)   Y          Y      Y      Y
+         DBTRAN      I-O  (EXCLUSIVE)   Y          Y      Y      Y
+         INVOIC      I-O  (EXCLUSIVE)   Y          Y      Y      Y
+         STOCK       I-O  (EXCLUSIVE)                     Y     
+         SORDER      I-O  (EXCLUSIVE)                     Y
+         RECOVER     I-O                Y                  
+
+GLP000   PARAM       INPUT              Y
+         GACCNT      OUTPUT                                      Y
+         GLTRAN      OUTPUT                                      Y
+         GINDEX      OUTPUT                                      Y
+         GLINST      OUTPUT                                      Y
+      
+PROGRAM  FILES USED  MODE              READ LOCK CHECK REWRITE WRITE UNLOCK
+===========================================================================
+
+GLP001   PARAM       I-O                Y    Y            Y            Y
+         GACCNT      I-O                Y    Y     Y      Y      Y     Y
+         GLTRAN      I-O                Y                 Y      Y
+         GINDEX      I-O                Y                 Y      Y
+         GLJRN       I-O                Y                 Y      Y
+         RECOVER     I-O                                         Y
+      
+         PRINTER     CONSOLE                                     Y
+
+GLP002
+      
+GLP003
+
+GLPREC        
+
+INV001        
+
+JCP000        
+
+JCP001        
+
+PRGMENU  PARAM       I-O                Y    Y            Y            Y
+
+PRP001        
+
+REP001        
+
+STP000        
+
+STP001   PARAM       I-O                Y    Y            Y            Y
+         STOCK       I-O                Y    Y     Y      Y      Y     Y
+         SINDEX      I-O                Y          Y      Y      Y
+         SPARTS      I-O                Y          Y      Y      Y
+         BINDEX      I-O                Y          Y      Y      Y
+
+STP002        
+
+STPREC        
+
+
+I-O LIBRARY ROUTINES
+====================
+
+ERRORS.IO     -    ERROR ROUTINES USED BY FILE I-O WHERE STATUS IS NOT "00"
+                   OPEN-ERROR
+                   READ-ERROR
+                   WRITE-ERROR
+
+ABORT.PRN
+
+AUDIT.RD      -    ROUTINES USED TO READ RECORDS FROM THE AUDIT FILE
+                       
+
+AUDIT.WR      -    ROUTINES USED TO WRITE OR REWRITE RECORDS TO THE AUDIT FILE
+
+BINDEX.RD     -    
+
+BINDEX.WR     -    
+
+CONTROL.RD    -    
+
+CONTROL.WR    -    
+
+CINDEX.RD     -    
+
+CINDEX.WR     -    
+
+CREDIT.RD     -    
+
+CREDIT.WR     -    
+
+CRTRAN.RD     -    
+
+CRTRAN.WR     -    
+
+DBTRAN.RD     -
+
+DBTRAN.WR     - 
+
+DEBTOR.RD     -
+
+DEBTOR.WR     -
+
+DEPART.RD     -
+
+DEPART.WR     -
+
+GACCNT.RD     -
+
+GACCNT.WR     -
+
+GARTEE.RD     -
+
+GARTEE.WR     -
+
+GINDEX.RD     -
+
+GINDEX.WR     -
+
+GLINST.RD     -
+
+GLINST.WR     -
+
+GLJRN.RD      -
+
+GLJRN.WR      -
+
+INVOIC.RD     -
+
+INVOIC.WR     -
+
+JOBCST.RD     -
+
+JOBCST.WR     -
+
+LAYBUY.RD     -
+
+LAYBUY.WR     -
+
+PARAM.RD      -
+
+PARAM.WR      -
+
+PURORD.RD     -
+
+PURORD.WR     -
+
+PURIDX.RD     -
+
+PURIDX.WR     -
+
+PURCH.RD      -
+
+PURCH.WR      -
+
+RECOVER.RD    -
+
+RECOVER.WR    -
+
+SALE.RD       -
+
+SALE.WR       -
+
+SINDEX.RD     -
+
+SINDEX.WR     -
+
+SALORD.RD     -
+
+SALORD.WR     -
+
+SALIDX.RD     -
+
+SALIDX.WR     -
+
+SPARTS.RD     -
+
+SPARTS.WR     -
+
+STOCK.RD      -
+
+STOCK.WR      -
+
+SYSTEM.RD     -
+
+SYSTEM.WR     -
+
+VOUCHER.RD    -
+
+VOUCHER.WR    -
+
+
+PROCEDURE LIBRARY ROUTINES
+==========================
+
+CASHDRAW.OPN
+
+CLEAR.CRT
+
+DATE.CHK
+
+DEBTOR.1ST
+
+DEBTOR.IDX
+
+DEBTOR.LUP
+
+DEBTOR.TRA
+
+DEBTOR.TRN
+
+LOCKED.REC
+
+LOCKED.RC2
+
+STOCK.1ST
+
+STOCK.NXT
+
+STOCK.LUP
+
+

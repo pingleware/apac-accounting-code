@@ -1,0 +1,28 @@
+      /
+002000 FD  GLTRNB    IS EXTERNAL
+		     LABEL RECORD IS STANDARD
+002010		     VALUE OF FILE-ID IS W02-GLTRNB.
+002020 01  TB-REC.
+	   03  TB-KEY.
+002160	       05  TB-AC       PIC  9(06).
+002030	       05  TB-DATE     PIC  9(08).
+002040	       05  TB-DTE REDEFINES TB-DATE.
+002050		   07  TB-CC   PIC  9(02).
+002050		   07  TB-YY   PIC  9(02).
+002060		   07  TB-MM   PIC  9(02).
+002070		   07  TB-DD   PIC  9(02).
+	       05  TB-AKEY.
+002120		   07  TB-CODE PIC  9(02).
+		   07  TB-REFER.
+002110		       09  TB-REF
+                               PIC  9(07).
+		   07  TB-SEQ  PIC  9(02).
+	       05  TB-SUB      PIC  9(01).
+002080	   03  TB-NAR	       PIC  X(40).
+002090	   03  TB-DESC REDEFINES TB-NAR.
+002100	       05  TB-NARATIVE PIC  X(36).
+               05  FILLER      PIC  9(07)    COMP-3.
+002130	   03  TB-VAL	       PIC S9(09)V99 COMP-3.
+002170	   03  TB-FLAG	       PIC  X(01).
+	   03  TB-BATCH	       PIC  9(06)    COMP-3.
+	   03  FILLER	       PIC  X(03).

@@ -1,0 +1,42 @@
+
+       REWRITE-JOBAUD.
+	     REWRITE JAU-REC1.
+	   IF WS-STAT1 NOT = "0"
+	       MOVE 24		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-JOBAUD-EXIT.
+
+       REWRITE-JOBAUD-UNLOCK.
+	     REWRITE JAU-REC1.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 24		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK JOBAUD.
+	     GO TO WRITE-JOBAUD-EXIT.
+
+       DELETE-JOBAUD-REC-UNLOCK.
+	     DELETE JOBAUD.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 24		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     UNLOCK JOBAUD.
+	     GO TO WRITE-JOBAUD-EXIT.
+
+       DELETE-JOBAUD-REC.
+	     DELETE JOBAUD.
+           IF WS-STAT1 NOT = "0"
+	       MOVE 24		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+	     GO TO WRITE-JOBAUD-EXIT.
+
+       WRITE-JOBAUD.
+	     WRITE JAU-REC1.
+	   IF WS-STATUS = "22"
+	       ADD 1		 TO JAU-SUB
+	       GO TO WRITE-JOBAUD.
+	   IF WS-STAT1 NOT = "0"
+	       MOVE 24		 TO WS-F-ERROR
+               PERFORM WRITE-ERROR.
+
+       WRITE-JOBAUD-EXIT.
+             EXIT.

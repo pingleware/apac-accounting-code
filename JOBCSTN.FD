@@ -1,0 +1,60 @@
+      /
+000010 FD  JOBCST    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-JOBCST.
+000030 01  JOB-REC1.
+	   03  JOB-KEY.
+000050       05  JOB-REF       PIC  X(08).
+             05  JOB-SEQN.
+                 07  JOB-SEQ   PIC  9(03).
+                 07  JOB-SUB   PIC  9(02).
+             05  JOB-SQN REDEFINES JOB-SEQN
+                               PIC  9(05).
+      *
+      *    ****    TYPE : 1  -	ITEM DETAILS
+      *                 : 2  -  DISCOUNT DETAILS
+      *                 : 3  -  REMARKS
+      *                 : 4  -  INTERNAL NOTES FOR PICKING SLIP 
+      * 		: 5  -
+      * 		: 6  -
+      * 		: 7  -	REQUISITIONS
+      *                 : 8  -  JOB REQUIRED
+      * 		: 9  -
+      *
+           03  JOB-TYPE        PIC  9(01).
+000140	   03  JOB-DETAIL.
+	     05  JOB-EXT-ITEM.
+000190		 07  JOB-ITEM  PIC  X(14).
+		 07  JOB-ITM   PIC  X(03).
+		 07  FILLER    PIC  X(01).
+000210	     05  JOB-DESC      PIC  X(40).
+             05  JOB-SERIAL REDEFINES JOB-DESC.
+                 07  FILLER    PIC X(01).
+		 07  JOB-SNUM OCCURS 2.
+                     09  JOB-SNO
+			       PIC X(18).
+                     09  FILLER
+                               PIC X(01).
+                 07  FILLER    PIC X(01).
+000160	     05  JOB-QNT       PIC S9(06)V999 COMP-3.
+	     05  JOB-COST      PIC S9(06)V999 COMP-3.
+	     05  JOB-SELL      PIC S9(08)V999 COMP-3.
+	     05  JOB-VAT       PIC S9(07)V99 COMP-3.
+000280       05  JOB-VAL       PIC S9(09)V99 COMP-3.
+000270       05  JOB-INCTAX    PIC S9(07)V99 COMP-3.
+000270       05  JOB-NONTAX    PIC S9(07)V99 COMP-3.
+000270       05  JOB-TAXVAL    PIC S9(07)V99 COMP-3.
+             05  JOB-DSC       PIC S9(02)V99 COMP-3.
+             05  JOB-DISC      PIC S9(07)V99 COMP-3.
+	     05  JOB-SERNO     PIC  X(18).
+             05  JOB-TECH      PIC  9(02).
+	     05  JOB-VAT-SUB   PIC  9(01).
+	     05	 JOB-LDG.
+000070		 07  JOB-LEDGN PIC  9(04).
+	     05	 JOB-LG REDEFINES JOB-LDG.
+		 07  FILLER    PIC  X(01).
+		 07  JOB-LEDG  PIC  9(03).
+	     05  FILLER        PIC  X(01).
+	   03  JOB-REMARKS REDEFINES JOB-DETAIL.
+	     05  FILLER        PIC  X(18).
+	     05  JOB-RMKS      PIC  X(40).
+	     05  FILLER        PIC  X(76).

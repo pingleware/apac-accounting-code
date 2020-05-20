@@ -1,0 +1,43 @@
+      /
+000010 FD  CREOLD    LABEL RECORD STANDARD
+000020               VALUE OF FILE-ID W02-CREOLD
+000220               RECORDING MODE IS VARIABLE.
+000510 01  PO-REC.
+	   03  PO-NUMBER.
+000520	       05  PO-ACNO     PIC  9(06).
+000610	   03  PO-TLK	       PIC  9(06)    COMP-5.
+000530     03  PO-NAME.
+               05  PO-NKEY     PIC  X(12).
+               05  FILLER      PIC  X(28).
+000540     03  PO-TERMS.
+000550         05  PO-30       PIC  9(01).
+000560         05  PO-60       PIC  9(01).
+000570         05  PO-90       PIC  9(01).
+000580         05  PO-120      PIC  9(01).
+000590         05  PO-150      PIC  9(01).
+000600         05  PO-180      PIC  9(01).
+000620     03  PO-ADDR         PIC  X(70).
+000630     03  PO-PC           PIC  9(04)     COMP-5.
+000620     03  PO-CONTACT      PIC  X(30).
+000620     03  PO-TEL          PIC  X(14).
+000620     03  PO-FAX          PIC  X(14).
+000640     03  PO-BAL          PIC S9(09)V99 COMP-3.
+000650     03  PO-DT           PIC S9(09)V99 COMP-3.
+000660     03  PO-CR           PIC S9(09)V99 COMP-3.
+000670     03  PO-PBAL         PIC S9(09)V99 COMP-3.
+000680	   03  PO-STM	       PIC  X(01).
+	       88 OPN-ITEM     VALUE "O".
+	       88 BALNCE-FWD   VALUE "B".
+	   03  FILLER	       PIC  X(05).
+000700	   03  PO-30D	       PIC S9(09)V99 COMP-3.
+000710     03  PO-60D          PIC S9(09)V99 COMP-3.
+000720     03  PO-90D          PIC S9(09)V99 COMP-3.
+000730     03  PO-120D         PIC S9(09)V99 COMP-3.
+000740     03  PO-150D         PIC S9(09)V99 COMP-3.
+000750     03  PO-180D         PIC S9(09)V99 COMP-3.
+000760     03  PO-OUT          PIC S9(09)V99 COMP-3.
+           03  PO-VAT          PIC S9(09)V99 COMP-3.
+           03  PO-TAX          PIC  X(01).
+	   03  PO-PMNT	       PIC  X(12).
+000770	   03  PO-PDATE	       PIC  9(08)    COMP-5.
+	   03  FILLER	       PIC  X(20).
